@@ -30,7 +30,22 @@ sub index :Path :Args(0) {
     my ( $self, $c ) = @_;
 
     # Hello World
-    $c->response->body( $c->welcome_message );
+    #$c->response->body( $c->welcome_message );
+}
+
+sub process :Local :Args(0) {
+    my ( $self, $c ) = @_;
+    
+    my $text = $c->req->body_params->{text};
+    $c->log->debug("Got text to process '$text'");
+    my $result;
+    if ($text) {
+        $result = `echo '$text' | treex -Len Read::Text scenario.scen Write::Treex to=- 2>&1`;
+    }
+    
+    $c->stash( result => $result );
+    
+    $c->go('index');
 }
 
 =head2 default

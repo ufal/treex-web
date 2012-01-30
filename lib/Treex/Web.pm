@@ -20,6 +20,8 @@ use Catalyst qw/
     -Debug
     ConfigLoader
     Static::Simple
+    Unicode
+    I18N
 /;
 
 extends 'Catalyst';

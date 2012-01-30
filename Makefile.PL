@@ -16,7 +16,11 @@ requires 'Catalyst::Action::RenderView';
 requires 'Moose';
 requires 'namespace::autoclean';
 requires 'Config::General'; # This should reflect the config file format you've chosen
-                 # See Catalyst::Plugin::ConfigLoader for supported formats
+                 # See Catalyst::Plugin::ConfigLoader for supported forma
+requires 'Catalyst::View::TT';
+requires 'Catalyst::Plugin::I18N';
+requires 'Catalyst::Plugin::Unicode';
+
 test_requires 'Test::More' => '0.88';
 catalyst;
 
