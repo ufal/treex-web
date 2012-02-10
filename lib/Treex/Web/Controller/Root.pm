@@ -27,25 +27,38 @@ The root page (/)
 =cut
 
 sub index :Path :Args(0) {
-    my ( $self, $c ) = @_;
-
-    # Hello World
-    #$c->response->body( $c->welcome_message );
+  my ( $self, $c ) = @_;
+  
+  # Hello World
+  #$c->response->body( $c->welcome_message );
 }
 
+=head2 process
+
+Process the main input form
+
+=cut
+
 sub process :Local :Args(0) {
-    my ( $self, $c ) = @_;
-    
-    my $text = $c->req->body_params->{text};
-    $c->log->debug("Got text to process '$text'");
-    my $result;
-    if ($text) {
-        $result = `echo '$text' | treex -Len Read::Text scenario.scen Write::Treex to=- 2>&1`;
-    }
-    
-    $c->stash( result => $result );
-    
-    $c->go('index');
+  my ( $self, $c ) = @_;
+  
+  my $text = $c->req->body_params->{text};
+  my $scenario = $c->req->body_params->{scenario};
+  
+  $c->log->debug("Got text to process '$text'") if $text;
+  $c->log->debug("Got scenario '$scenario'") if $scenario;
+  my $result;
+  if ($text) {
+    $result = $c->model('Treex')->run({text => $text, scenario => $scenario});
+  }
+  
+  unless ($result) {
+    $result = 'No result!'
+  }
+  
+  $c->stash( result => $result );
+  
+  $c->go('index');
 }
 
 =head2 default
@@ -55,9 +68,9 @@ Standard 404 error page
 =cut
 
 sub default :Path {
-    my ( $self, $c ) = @_;
-    $c->response->body( 'Page not found' );
-    $c->response->status(404);
+  my ( $self, $c ) = @_;
+  $c->response->body( 'Page not found' );
+  $c->response->status(404);
 }
 
 =head2 end

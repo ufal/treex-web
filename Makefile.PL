@@ -21,6 +21,30 @@ requires 'Catalyst::View::TT';
 requires 'Catalyst::Plugin::I18N';
 requires 'Catalyst::Plugin::Unicode';
 
+# DB stuff
+requires 'Catalyst::Model::DBIC::Schema';
+requires 'DBIx::Class::TimeStamp';
+requires 'SQL::Translator';
+requires 'Email::Valid';
+requires 'Data::GUID';
+
+# Auth stuff
+requires 'Catalyst::Plugin::Authentication';
+requires 'Catalyst::Authentication::Store::DBIx::Class';
+requires 'Catalyst::Plugin::Authorization::Roles';
+#requires 'Catalyst::Plugin::Session::State::Cookie';
+#requires 'Catalyst::Plugin::Session::Store::FastMmap';
+requires 'Catalyst::Plugin::CookiedSession';
+
+# HTML::FormFu
+requires 'Catalyst::Controller::HTML::FormFu';
+requires 'Catalyst::Helper::HTML::FormFu';
+requires 'HTML::FormFu::Element::RequestToken';
+
+# misc
+requires 'Catalyst::Plugin::Assets';
+requires 'IPC::Run'; # used to run treex command
+
 test_requires 'Test::More' => '0.88';
 catalyst;
 

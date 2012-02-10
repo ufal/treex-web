@@ -22,6 +22,9 @@ use Catalyst qw/
     Static::Simple
     Unicode
     I18N
+    CookiedSession
+    Authentication
+    Assets
 /;
 
 extends 'Catalyst';
