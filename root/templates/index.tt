@@ -1,0 +1,16 @@
+[% WRAPPER page.tt title = c.config.name; %]
+
+<form method="POST" action="[% c.uri_for(c.controller('Root').action_for('process')) %]">
+<textarea rows="5" cols="60" name="text">[% c.req.body_params.text or "This is test text." | html %]</textarea><br />
+<label for="scenario">Scenario</label>
+<textarea id="scenario" name="scenario" rows="5" cols="60">[% c.req.body_params.scenario | html %]</textarea><br />
+<input type="submit" value="Submit">
+</form>
+[% IF result %]
+<pre>
+[% result | html %]
+</pre>
+[% END %]
+
+
+[% END %]

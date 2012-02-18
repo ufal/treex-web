@@ -1,21 +1,21 @@
-package Treex::Web::Model::TreexDB;
+package Treex::Web::Model::WebDB;
 
 use strict;
 use base 'Catalyst::Model::DBIC::Schema';
 
-__PACKAGE__->config(
-    schema_class => 'Treex::Web::DB',
-                    
-    connect_info => {
-        dsn => 'dbi:SQLite:db/treex.db',
-        user => '',
-        password => '',
-    }
-);
+# __PACKAGE__->config(
+#     schema_class => 'Treex::Web::DB',
+
+#     connect_info => {
+#         dsn => 'dbi:SQLite:db/treex.db',
+#         user => '',
+#         password => '',
+#     }
+# );
 
 =head1 NAME
 
-Treex::Web::Model::TreexDB - Catalyst DBIC Schema Model
+Treex::Web::Model::WebDB - Catalyst DBIC Schema Model
 
 =head1 SYNOPSIS
 
