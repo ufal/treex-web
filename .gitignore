@@ -2,3 +2,6 @@
 /.project
 /blib
 /inc
+MYMETA.*
+/Makefile
+/pm_to_blib

@@ -1,13 +1,13 @@
 #!/usr/bin/env perl
 use strict;
 use warnings;
-use Test::More;
+use Test::More tests => 2;
 
-# test if we have Data::TUID available and if it works
-BEGIN { use_ok('Data::TUID') }
+# test if we have Data::Uniqid available and if it works
+BEGIN { use_ok('Data::Uniqid') }
 
-my $word1 = lc(Data::TUID::tuid length => -1);
-my $word2 = lc(Data::TUID::tuid length => -1);
+my $word1 = Data::Uniqid::luniqid;
+my $word2 = Data::Uniqid::luniqid;
 
 isnt($word1, $word2, "word1 '$word1' ne word2 '$word2'");
 

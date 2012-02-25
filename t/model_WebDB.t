@@ -2,18 +2,21 @@
 use strict;
 use warnings;
 use Test::More;
+use DBICx::TestDatabase;
 
-use Catalyst::Test 'Treex::Web';
+BEGIN { use_ok('Treex::Web::DB'); }
 
-BEGIN {use_ok 'Treex::Web';}
+my $schema = DBICx::TestDatabase->new('Treex::Web::DB');
 
-my $result_rs = Treex::Web->model('TreexDB::Result');
+ok($schema, 'DB test schema is ok');
 
-my $new_r1 = $result_rs->new;
-my $new_r2 = $result_rs->new;
+my $result_rs = $schema->resultset('Result');
 
-ok( $new_r1->hash and $new_r1->hash ne '', 'Result hash 1 ok' );
-ok( $new_r2->hash and $new_r2->hash ne '', 'Result hash 2 ok' );
+ok($result_rs, 'Result set is ok');
+
+my $new_r1 = $result_rs->create({ name => 'r1', scenario => '' });
+my $new_r2 = $result_rs->create({ name => 'r2', scenario => '' });
+
 isnt( $new_r1->hash, $new_r2->hash, 'Hashes are different' );
 
 done_testing();

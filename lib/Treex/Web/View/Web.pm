@@ -7,7 +7,10 @@ use base 'Catalyst::View::TT';
 
 __PACKAGE__->config(
     TEMPLATE_EXTENSION => '.tt',
-    render_die => 1,
+    ENCODING           => 'utf-8',
+    CATALYST_VAR       => 'c',
+    WRAPPER            => 'page',
+    render_die         => 1,
 );
 
 =head1 NAME
@@ -24,7 +27,7 @@ L<Treex::Web>
 
 =head1 AUTHOR
 
-THC,,,
+Michal Sedlák
 
 =head1 LICENSE
 

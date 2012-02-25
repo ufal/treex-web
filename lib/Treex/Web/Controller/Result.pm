@@ -24,7 +24,34 @@ Puts Treex::Web::DB::Result model to stash
 
 sub base :Chained('/') :PathPart('result') :CaptureArgs(0)  {
   my ($self, $c) = @_;
-  $c->stash(result_rs => $self->model('TreexDB::Result'));
+  $c->stash(result_rs => $c->model('WebDB::Result'));
+}
+
+=head2 process
+
+Process the scenario and create the new result
+
+=cut
+
+sub process :Chained('base') :PathPart('process') :Args(0) {
+  my ( $self, $c ) = @_;
+  
+  my $text = $c->req->body_params->{text};
+  my $scenario = $c->req->body_params->{scenario};
+  
+  $c->log->debug("Got text to process '$text'") if $text;
+  $c->log->debug("Got scenario '$scenario'") if $scenario;
+  my $result;
+  if ($text) {
+    $result = $c->model('Treex')->run({text => $text, scenario => $scenario});
+  }
+  
+  unless ($result) {
+    $result = 'No result!'
+  }
+  
+  $c->stash( result => $result );
+  
 }
 
 =head2 result
@@ -47,7 +74,15 @@ sub result :Chained('base') :PathPart('') :CaptureArgs(1) {
 
 =cut
 
-sub delete :Chained('result') :PathPart('delete') :CaptureArgs(0) {
+sub delete :Chained('result') :PathPart('delete') :Args(0) {
+  #TODO
+}
+
+=head2 update
+
+=cut
+
+sub update :Chained('result') :PathPart('delete') :Args(0) {
   #TODO
 }
 

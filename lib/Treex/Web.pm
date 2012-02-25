@@ -45,6 +45,17 @@ __PACKAGE__->config(
     # Disable deprecated behavior needed by old applications
     disable_component_resolution_regex_fallback => 1,
     enable_catalyst_header => 1, # Send X-Catalyst header
+    'Plugin::ConfigLoader' => {
+        driver => {
+            'General' => { -InterPolateVars => 1 }, # allows use of $variables in configs
+        },
+    },
+    cookiedsession => { key => 'treexK3Y', expires => '+1d' },
+    'View::Web' => {
+        INCLUDE_PATH => [
+            __PACKAGE__->path_to( 'root', 'templates' ),
+        ],
+    },
 );
 
 # Start the application
