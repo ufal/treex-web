@@ -3,7 +3,7 @@
 # expected.  You have been warned.
 use inc::Module::Install 1.02;
 use Module::Install::Catalyst; # Complain loudly if you don't have
-                               # Catalyst::Devel installed or haven't said
+# Catalyst::Devel installed or haven't said
                                # 'make dist' to create a standalone tarball.
 
 name 'Treex-Web';
@@ -24,9 +24,10 @@ requires 'Catalyst::Plugin::Unicode';
 # DB stuff
 requires 'Catalyst::Model::DBIC::Schema';
 requires 'DBIx::Class::TimeStamp';
+requires 'DBIx::Class::UUIDColumns';
 requires 'SQL::Translator';
-requires 'Email::Valid';
-requires 'Data::GUID';
+requires 'Email::Valid'; # used to check user mails
+requires 'Data::Uniqid'; # used to generate UUID Columns
 
 # Auth stuff
 requires 'Catalyst::Plugin::Authentication';
@@ -36,16 +37,15 @@ requires 'Catalyst::Plugin::Authorization::Roles';
 #requires 'Catalyst::Plugin::Session::Store::FastMmap';
 requires 'Catalyst::Plugin::CookiedSession';
 
-# HTML::FormFu
-requires 'Catalyst::Controller::HTML::FormFu';
-requires 'Catalyst::Helper::HTML::FormFu';
-requires 'HTML::FormFu::Element::RequestToken';
+# HTML::FormHandler
+requires 'HTML::FormHandler';
 
 # misc
 requires 'Catalyst::Plugin::Assets';
 requires 'IPC::Run'; # used to run treex command
 
 test_requires 'Test::More' => '0.88';
+test_requires 'DBICx::TestDatabase';
 catalyst;
 
 install_script glob('script/*.pl');
