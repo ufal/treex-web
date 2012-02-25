@@ -3,11 +3,11 @@ use strict;
 use warnings;
 use Test::More;
 
-# test if we have Data::GUID available and if it works
-BEGIN { use_ok('Data::GUID') }
+# test if we have Data::TUID available and if it works
+BEGIN { use_ok('Data::TUID') }
 
-my $word1 = Data::GUID->new()->as_base64();
-my $word2 = Data::GUID->new()->as_base64();
+my $word1 = lc(Data::TUID::tuid length => -1);
+my $word2 = lc(Data::TUID::tuid length => -1);
 
 isnt($word1, $word2, "word1 '$word1' ne word2 '$word2'");
 
