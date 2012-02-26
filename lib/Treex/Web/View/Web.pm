@@ -9,7 +9,7 @@ __PACKAGE__->config(
     TEMPLATE_EXTENSION => '.tt',
     ENCODING           => 'utf-8',
     CATALYST_VAR       => 'c',
-    WRAPPER            => 'page',
+    WRAPPER            => 'page.tt',
     render_die         => 1,
 );
 

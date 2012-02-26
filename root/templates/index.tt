@@ -1,11 +1,9 @@
-[% WRAPPER page.tt title = c.config.name; %]
+[% META title='Welcome - Treex::Web' %]
 
-<form method="POST" action="[% c.uri_for(c.controller('Root').action_for('process')) %]">
-<textarea rows="5" cols="60" name="text">[% c.req.body_params.text or "This is test text." | html %]</textarea><br />
-<label for="scenario">Scenario</label>
-<textarea id="scenario" name="scenario" rows="5" cols="60">[% c.req.body_params.scenario | html %]</textarea><br />
-<input type="submit" value="Submit">
-</form>
+<h1>Try out Treex now!</h1>
+
+[% PROCESS query/form.tt form=queryForm %]
+
 [% IF result %]
 <pre>
 [% result | html %]
@@ -13,4 +11,4 @@
 [% END %]
 
 
-[% END %]
+

@@ -1,10 +1,35 @@
 <!DOCTYPE html>
 <html lang="en-US" xml:lang="en-US">
 <head>
-<title>[% title %]</title>
-<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <title>[% template.title or title or c.config.name %]</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <link rel="stylesheet" href="static/css/reset.css" type="text/css" media="screen" />
+  <link rel="stylesheet" href="static/css/text.css" type="text/css" media="screen" />
+  <link rel="stylesheet" href="static/css/layout.css" type="text/css" media="screen" />
+  <link rel="stylesheet" href="static/css/formalize.css" type="text/css" media="screen" />
 </head>
 <body>
-[% content %]
+  <div id="site-wrapper">
+    <header>
+      <h1 id="logo"><span>Treex Web</span></h1>
+      <nav>
+        <ul>
+          <li><a href="#">Dashboard</a></li>
+          <li><a href="#">My Results</a></li>
+          <li><a href="#">Scenarios</a></li>
+          <li><a href="#">Translation</a></li>
+          <li class="to-right"><a href="#">Login</a></li>
+        </ul>
+      </nav>
+    </header>
+    <article>
+      <div id="content-container">
+        [% content %]
+      </div>
+    </article>
+    <footer>
+      <p>[%-c.config.name-%] (version [%treex_version%])</p>
+    </footer>
+  </div>
 </body>
 </html>

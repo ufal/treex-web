@@ -1,0 +1,129 @@
+/* --------------------------------------------------------------
+
+   layout.css
+   * Basic page layout
+
+-------------------------------------------------------------- */
+
+body {
+   text-align: center;
+   color: #646464;
+}
+
+#site-wrapper {
+   text-align: left;
+   width: 930px;
+   margin: 0 auto;
+}
+
+/* Header --------------------------------------- */
+
+nav ul {
+   width: 918px;
+   height: 37px;
+   padding: 6px;
+   margin: 0 0 30px 0;
+   background: url(../images/top-menu-bg.gif) no-repeat left top; 
+  /* We used a background image making the thick border and the thin one to keep the html structure simple */
+}
+
+nav ul li {
+   float: left;
+   height: 37px;
+   border-right: 1px solid #ddd;
+   list-style-type: none;
+}
+
+nav li a {
+   display: block;
+   float: left;
+   height: 37px;
+   font-weight: bold;
+   line-height: 37px;
+   text-decoration: none;
+   color: #646464;
+   padding: 0 20px;
+}
+
+nav ul li.to-right {
+   float: right;
+   border-left: 1px solid #ddd;
+   border-right: none;
+}
+
+nav ul li a:hover { background: #fdfcf6; }
+
+nav ul li a.active, #site-nav li a.active {
+   background: #f0f0f0 url(../images/top-menu-item-bg.gif) repeat-x left top;
+   color: #454545;
+}
+
+/* Logo  ---------------------------------------- */
+
+#logo {
+   margin: 15px 0 10px 5px;
+   width: 225px;
+   height: 28px;
+   background: url(../img/transdmin-light.gif) no-repeat left top;
+}
+
+#logo a {
+   display: block;
+   width: 225px;
+   height: 28px;
+}
+
+#logo span { display: none; }
+
+article {
+   background: #eee;
+   padding: 5px;
+}
+
+/* Main headline */
+article h1 {
+   color: #646464;
+   /*font-size: 16px;
+   line-height: 16px;
+   font-weight: bold;*/
+   margin: 20px 0 0 0;
+   padding: 0 0 10px 0;
+   border-bottom: 1px solid #ddd;
+}
+
+#content-container {
+   background-color: #fff;
+   border: 1px solid #ddd;
+   width: 880px;
+   padding: 0 19px;
+}
+
+footer {
+   margin: 10px 0 30px 0;
+   font-size: 11px;
+   line-height: 11px;
+   color: #9B9B9B;
+   padding: 0 0 0 5px;
+}
+
+footer a { color: #9B9B9B; }
+
+footer a:hover { text-decoration: none; }
+
+/* Forms  ---------------------------------------- */
+
+fieldset {
+   border: 1px solid #ddd;
+   padding: 19px;
+   margin: 0 0 20px 0;
+   background: #fbfbfb;
+}
+
+fieldset p { margin: 0 0 14px 0; float: left; width: 100%;  }
+
+fieldset label {
+   display: block;
+   width: 100%;
+   margin: 0 0 7px 0;
+   line-height: 12px;
+}

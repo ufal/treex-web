@@ -2,7 +2,7 @@ package Treex::Web::Controller::Root;
 use Moose;
 use namespace::autoclean;
 
-BEGIN { extends 'Catalyst::Controller' }
+BEGIN { extends 'Treex::Web::Controller::Base' }
 
 #
 # Sets the actions in this controller to be registered with no prefix
@@ -29,17 +29,19 @@ The root page (/)
 sub index :Path :Args(0) {
     my ( $self, $c ) = @_;
     
+    $c->stash( queryForm => $self->queryForm );
+    
 }
 
-=head2 process
-
-Process the main input form
+=head2 auto
 
 =cut
 
-sub process :Local :Args(0) {
+sub auto :Path {
     my ( $self, $c ) = @_;
-    $c->go('index');
+    
+    $c->stash( treex_version => $Treex::Web::VERSION );
+    
 }
 
 =head2 default
@@ -47,7 +49,7 @@ sub process :Local :Args(0) {
 Standard 404 error page
 
 =cut
-
+    
 sub default :Path {
     my ( $self, $c ) = @_;
     $c->response->body( 'Page not found' );

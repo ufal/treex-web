@@ -18,7 +18,7 @@ Base Treex::Web Controller.
 =cut
 
 has queryForm => ( is => 'rw', isa => 'Treex::Web::Forms::QueryForm',
-               lazy => 1, default => sub { Treex::Web::Forms::QueryForm->new });
+                   lazy => 1, default => sub { Treex::Web::Forms::QueryForm->new });
 
 
 =head1 AUTHOR

@@ -5,9 +5,14 @@ use warnings;
 
 use HTML::FormHandler::Moose;
 extends 'HTML::FormHandler';
-with 'HTML::FormHandler::Render::Simple';
+#with 'HTML::FormHandler::Render::Simple';
 
-has_field 'result' => (type => 'Hidden');
+has '+name' => (default => 'query_form');
+has '+is_html5' => (default => 1);
+has '+widget_tags' => ( default => sub { { wrapper_start => '<p>', wrapper_end => '</p>' } } );
+
+has_field 'result_hash' => (type => 'Hidden', widget_tags => { wrapper_start => '',
+                                                               wrapper_end => '' });
 has_field 'scenario' => (type => 'TextArea', required => 1);
 has_field 'input' => (type => 'TextArea', value => 'This is a test text.', required => 1);
 has_field 'submit' => (type => 'Submit', value => 'Submit');
