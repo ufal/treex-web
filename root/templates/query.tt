@@ -1,4 +1,7 @@
-[% META title='Welcome - Treex::Web' %]
+[% IF queryForm.posted %]
+[% META title='Compose new' %]
+[% ELSE %]
+[% END %]
 
 <h1>Try out Treex now!</h1>
 
@@ -6,7 +9,6 @@
 
 [% IF result %]
 <pre>
-  [% result | html %]
+[% result | html %]
 </pre>
 [% END %]
-
