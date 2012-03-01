@@ -36,9 +36,11 @@ requires 'Catalyst::Plugin::Authorization::Roles';
 #requires 'Catalyst::Plugin::Session::State::Cookie';
 #requires 'Catalyst::Plugin::Session::Store::FastMmap';
 requires 'Catalyst::Plugin::CookiedSession';
+requires 'Catalyst::Plugin::StatusMessage';
 
 # HTML::FormHandler
 requires 'HTML::FormHandler';
+requires 'HTML::FormHandler::Model::DBIC';
 
 # misc
 requires 'Catalyst::Plugin::Assets';

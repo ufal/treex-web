@@ -1,12 +1,12 @@
 <!DOCTYPE html>
-<html lang="en-US" xml:lang="en-US">
+<html xml:lang="en-US">
 <head>
   <title>[% template.title or title or c.config.name %]</title>
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-  <link rel="stylesheet" href="static/css/reset.css" type="text/css" media="screen" />
-  <link rel="stylesheet" href="static/css/text.css" type="text/css" media="screen" />
-  <link rel="stylesheet" href="static/css/layout.css" type="text/css" media="screen" />
-  <link rel="stylesheet" href="static/css/formalize.css" type="text/css" media="screen" />
+  <link rel="stylesheet" href="[% c.uri_for('/static/css/reset.css') %]" type="text/css" media="screen" />
+  <link rel="stylesheet" href="[% c.uri_for('/static/css/text.css') %]" type="text/css" media="screen" />
+  <link rel="stylesheet" href="[% c.uri_for('/static/css/layout.css') %]" type="text/css" media="screen" />
+  <link rel="stylesheet" href="[% c.uri_for('/static/css/formalize.css') %]" type="text/css" media="screen" />
 </head>
 <body>
   <div id="site-wrapper">
@@ -14,16 +14,25 @@
       <h1 id="logo"><span>Treex Web</span></h1>
       <nav>
         <ul>
-          <li><a href="#">Dashboard</a></li>
-          <li><a href="#">My Results</a></li>
-          <li><a href="#">Scenarios</a></li>
-          <li><a href="#">Translation</a></li>
+          [%- FOREACH item IN menu  -%]
+          <li[% IF item.active %] class="active"[% END %]>
+            <a href="[% item.url %]">[% item.name | html %]</a>
+          </li>
+          [%- END -%]
           <li class="to-right"><a href="#">Login</a></li>
         </ul>
       </nav>
     </header>
     <article>
       <div id="content-container">
+        <div id="flash-messages">
+          [%- IF status_msg -%]
+          <p class="message">[% status_msg %]</p>
+          [%- END -%]
+          [%- IF error_msg -%]
+          <p class="error">[% error_msg %]</p>
+          [%- END -%]
+        </div> 
         [% content %]
       </div>
     </article>

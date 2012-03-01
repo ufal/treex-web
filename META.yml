@@ -31,6 +31,7 @@ requires:
   Catalyst::Plugin::CookiedSession: 0
   Catalyst::Plugin::I18N: 0
   Catalyst::Plugin::Static::Simple: 0
+  Catalyst::Plugin::StatusMessage: 0
   Catalyst::Plugin::Unicode: 0
   Catalyst::Runtime: 5.90007
   Catalyst::View::TT: 0

@@ -23,6 +23,7 @@ use Catalyst qw/
     Unicode
     I18N
     CookiedSession
+    StatusMessage
     Authentication
     Assets
 /;

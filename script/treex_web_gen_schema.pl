@@ -40,7 +40,7 @@ if ($version && $preversion) {
     print "creating unversioned full dump\n";
 }
 
-my @supported_databases = ('MySQL', 'SQLite', 'PostgreSQL');
+my @supported_databases = $preversion ? ($web_config{database},) : ('MySQL', 'SQLite', 'PostgreSQL');
 
 map {
     #my $dbname = $_;

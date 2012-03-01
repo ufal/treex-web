@@ -40,8 +40,16 @@ sub index :Path :Args(0) {
 sub auto :Path {
     my ( $self, $c ) = @_;
     
-    $c->stash( treex_version => $Treex::Web::VERSION );
+    $c->stash(
+        treex_version => $Treex::Web::VERSION,
+        menu => [
+            { name => 'Dashboard', url => $c->uri_for($c->controller('Root')->action_for('index')) },
+            { name => 'Results', url => $c->uri_for($c->controller('Result')->action_for('index')) },
+            { name => 'Scenarios', url => $c->uri_for($c->controller('Scenario')->action_for('index')) }
+        ]
+           );
     
+    #$c->load_status_msgs;
 }
 
 =head2 default

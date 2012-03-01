@@ -96,6 +96,7 @@ article h1 {
    border: 1px solid #ddd;
    width: 880px;
    padding: 0 19px;
+   padding-top: 19px;
 }
 
 footer {

@@ -2,7 +2,7 @@ package Treex::Web::Controller::Result;
 use Moose;
 use namespace::autoclean;
 
-BEGIN {extends 'Catalyst::Controller'; }
+BEGIN {extends 'Treex::Web::Controller::Base'; }
 
 =head1 NAME
 
@@ -18,13 +18,17 @@ Catalyst Controller.
 
 =head2 base
 
-Puts Treex::Web::DB::Result model to stash
+Puts Treex::Web::DB::Result result set to stash
 
 =cut
 
 sub base :Chained('/') :PathPart('result') :CaptureArgs(0)  {
   my ($self, $c) = @_;
   $c->stash(result_rs => $c->model('WebDB::Result'));
+}
+
+sub index :Chained('base') :PathPart('') :Args(0) {
+    ## list all results use have 
 }
 
 =head2 process
@@ -43,7 +47,7 @@ sub process :Chained('base') :PathPart('process') :Args(0) {
   $c->log->debug("Got scenario '$scenario'") if $scenario;
   my $result;
   if ($text) {
-    $result = $c->model('Treex')->run({text => $text, scenario => $scenario});
+      $result = $c->model('Treex')->run({text => $text, scenario => $scenario});
   }
   
   unless ($result) {

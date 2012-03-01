@@ -1,0 +1,16 @@
+<h2>List of all Scenarios</h2>
+
+<p>List scenarios or go home</p>
+<h3>Todo list</h3>
+<ul>
+  <li>Autocomplete for scenario blocks</li>
+  <li>Allow attach files to the scenario</li>
+</ul>
+
+<h2>Do you want to add a new scenario?</h2>
+[% scenarioForm.render %]
+
+[% IF form_values %]
+<h2>Debug</h2>
+<pre>[% form_values %]</pre>
+[% END %]
