@@ -11,18 +11,16 @@ has '+name' => (default => 'scenario_form');
 has '+is_html5' => (default => 1);
 has '+widget_tags' => ( default => sub { { wrapper_start => '<p>', wrapper_end => '</p>' } } );
 
-has 'user_id' => ( isa => 'Int', is => 'rw', default => 0 );
+has '+unique_messages' => (
+    default => sub {
+          { name_user_unique => "Duplicate value for name" };
+     }
+  );
 
-# has_field 'id' => (
-#     type => 'Hidden',
-#     widget_tags => { wrapper_start => '',
-#                      wrapper_end => '' },
-#     noupdate => 1
-# );
 has_field 'name' => (type => 'Text', value => '', maxlength => 120, required => 1);
 has_field 'scenario' => (type => 'TextArea', required => 1);
 has_field 'comment' => (type => 'TextArea');
-has_field 'user' => (type => 'Integer', widget => 'NoRender', default => undef);
+has_field 'user' => (type => 'Integer', widget => 'NoRender', default => 0, input_without_param => 0);
 has_field 'submit' => (type => 'Submit', value => 'Submit');
 
 no HTML::FormHandler::Moose;

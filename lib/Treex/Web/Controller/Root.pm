@@ -49,7 +49,7 @@ sub auto :Path {
         ]
            );
     
-    #$c->load_status_msgs;
+    #
 }
 
 =head2 default

@@ -23,6 +23,7 @@ requires 'Catalyst::Plugin::Unicode';
 
 # DB stuff
 requires 'Catalyst::Model::DBIC::Schema';
+requires 'DBIx::Class::Migration';
 requires 'DBIx::Class::TimeStamp';
 requires 'DBIx::Class::UUIDColumns';
 requires 'SQL::Translator';

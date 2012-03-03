@@ -17,7 +17,6 @@ use Catalyst::Runtime 5.80;
 #                 directory
 
 use Catalyst qw/
-    -Debug
     ConfigLoader
     Static::Simple
     Unicode
@@ -47,9 +46,7 @@ __PACKAGE__->config(
     disable_component_resolution_regex_fallback => 1,
     enable_catalyst_header => 1, # Send X-Catalyst header
     'Plugin::ConfigLoader' => {
-        driver => {
-            'General' => { -InterPolateVars => 1 }, # allows use of $variables in configs
-        },
+        file => __PACKAGE__->path_to('share', 'etc'),
     },
     cookiedsession => { key => 'treexK3Y', expires => '+1d' },
     'View::Web' => {

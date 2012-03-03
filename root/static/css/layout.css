@@ -128,3 +128,7 @@ fieldset label {
    margin: 0 0 7px 0;
    line-height: 12px;
 }
+
+.error_message {
+   color: #8a1f11;
+}

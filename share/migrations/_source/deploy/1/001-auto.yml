@@ -1,0 +1,564 @@
+---
+schema:
+  procedures: {}
+  tables:
+    result:
+      constraints:
+        - deferrable: 1
+          expression: ''
+          fields:
+            - id
+          match_type: ''
+          name: ''
+          on_delete: ''
+          on_update: ''
+          options: []
+          reference_fields: []
+          reference_table: ''
+          type: PRIMARY KEY
+        - deferrable: 1
+          expression: ''
+          fields:
+            - hash
+          match_type: ''
+          name: hash_unique
+          on_delete: ''
+          on_update: ''
+          options: []
+          reference_fields: []
+          reference_table: ''
+          type: UNIQUE
+        - deferrable: 1
+          expression: ''
+          fields:
+            - user
+          match_type: ''
+          name: result_fk_user
+          on_delete: CASCADE
+          on_update: ''
+          options: []
+          reference_fields:
+            - id
+          reference_table: user
+          type: FOREIGN KEY
+      fields:
+        hash:
+          data_type: varchar
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 0
+          is_unique: 1
+          name: hash
+          order: 2
+          size:
+            - 60
+        id:
+          data_type: integer
+          default_value: ~
+          is_auto_increment: 1
+          is_nullable: 0
+          is_primary_key: 1
+          is_unique: 0
+          name: id
+          order: 1
+          size:
+            - 0
+        last_modified:
+          data_type: datetime
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 0
+          is_unique: 0
+          name: last_modified
+          order: 6
+          size:
+            - 0
+        name:
+          data_type: varchar
+          default_value: ~
+          is_nullable: 1
+          is_primary_key: 0
+          is_unique: 0
+          name: name
+          order: 4
+          size:
+            - 120
+        scenario:
+          data_type: text
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 0
+          is_unique: 0
+          name: scenario
+          order: 5
+          size:
+            - 0
+        user:
+          data_type: integer
+          default_value: &1 !!perl/ref
+            =: null
+          is_nullable: 1
+          is_primary_key: 0
+          is_unique: 0
+          name: user
+          order: 3
+          size:
+            - 0
+      indices:
+        - fields:
+            - user
+          name: result_idx_user
+          options: []
+          type: NORMAL
+      name: result
+      options: []
+      order: 1
+    scenario:
+      constraints:
+        - deferrable: 1
+          expression: ''
+          fields:
+            - id
+          match_type: ''
+          name: ''
+          on_delete: ''
+          on_update: ''
+          options: []
+          reference_fields: []
+          reference_table: ''
+          type: PRIMARY KEY
+        - deferrable: 1
+          expression: ''
+          fields:
+            - name
+            - user
+          match_type: ''
+          name: name_user_unique
+          on_delete: ''
+          on_update: ''
+          options: []
+          reference_fields: []
+          reference_table: ''
+          type: UNIQUE
+        - deferrable: 1
+          expression: ''
+          fields:
+            - user
+          match_type: ''
+          name: scenario_fk_user
+          on_delete: ''
+          on_update: ''
+          options: []
+          reference_fields:
+            - id
+          reference_table: user
+          type: FOREIGN KEY
+      fields:
+        comment:
+          data_type: text
+          default_value: ~
+          is_nullable: 1
+          is_primary_key: 0
+          is_unique: 0
+          name: comment
+          order: 4
+          size:
+            - 0
+        id:
+          data_type: integer
+          default_value: ~
+          is_auto_increment: 1
+          is_nullable: 0
+          is_primary_key: 1
+          is_unique: 0
+          name: id
+          order: 1
+          size:
+            - 0
+        last_modified:
+          data_type: datetime
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 0
+          is_unique: 0
+          name: last_modified
+          order: 6
+          size:
+            - 0
+        name:
+          data_type: varchar
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 0
+          is_unique: 1
+          name: name
+          order: 3
+          size:
+            - 120
+        scenario:
+          data_type: text
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 0
+          is_unique: 0
+          name: scenario
+          order: 2
+          size:
+            - 0
+        user:
+          data_type: integer
+          default_value: 0
+          is_nullable: 0
+          is_primary_key: 0
+          is_unique: 1
+          name: user
+          order: 5
+          size:
+            - 0
+      indices:
+        - fields:
+            - user
+          name: scenario_idx_user
+          options: []
+          type: NORMAL
+      name: scenario
+      options: []
+      order: 2
+    user:
+      constraints:
+        - deferrable: 1
+          expression: ''
+          fields:
+            - id
+          match_type: ''
+          name: ''
+          on_delete: ''
+          on_update: ''
+          options: []
+          reference_fields: []
+          reference_table: ''
+          type: PRIMARY KEY
+        - deferrable: 1
+          expression: ''
+          fields:
+            - email
+          match_type: ''
+          name: email_unique
+          on_delete: ''
+          on_update: ''
+          options: []
+          reference_fields: []
+          reference_table: ''
+          type: UNIQUE
+      fields:
+        email:
+          data_type: text
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 0
+          is_unique: 1
+          name: email
+          order: 2
+          size:
+            - 0
+        id:
+          data_type: integer
+          default_value: ~
+          is_auto_increment: 1
+          is_nullable: 0
+          is_primary_key: 1
+          is_unique: 0
+          name: id
+          order: 1
+          size:
+            - 0
+        last_modified:
+          data_type: datetime
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 0
+          is_unique: 0
+          name: last_modified
+          order: 4
+          size:
+            - 0
+        password:
+          data_type: text
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 0
+          is_unique: 0
+          name: password
+          order: 3
+          size:
+            - 0
+      indices: []
+      name: user
+      options: []
+      order: 3
+  triggers: {}
+  views: {}
+translator:
+  add_drop_table: 0
+  filename: ~
+  no_comments: 0
+  parser_args:
+    package: &2 !!perl/hash:Treex::Web::DB
+      class_mappings:
+        DBIx::Class::DeploymentHandler::VersionStorage::Standard::VersionResult: __VERSION
+        Treex::Web::DB::Result::Result: Result
+        Treex::Web::DB::Result::Scenario: Scenario
+        Treex::Web::DB::Result::User: User
+      source_registrations:
+        Result: !!perl/hash:DBIx::Class::ResultSource::Table
+          _columns:
+            hash:
+              data_type: varchar
+              is_nullable: 0
+              size: 60
+            id:
+              data_type: integer
+              is_auto_increment: 1
+              is_nullable: 0
+            last_modified:
+              _ic_dt_method: datetime
+              _inflate_info:
+                deflate: !!perl/code '{ "DUMMY" }'
+                inflate: !!perl/code '{ "DUMMY" }'
+              data_type: datetime
+              dynamic_default_on_create: get_timestamp
+              dynamic_default_on_update: get_timestamp
+              is_nullable: 0
+            name:
+              data_type: varchar
+              is_nullable: 1
+              size: 120
+            scenario:
+              data_type: text
+              is_nullable: 0
+            user:
+              _inflate_info:
+                deflate: !!perl/code '{ "DUMMY" }'
+                inflate: !!perl/code '{ "DUMMY" }'
+              data_type: integer
+              default_value: *1
+              is_foreign_key: 1
+              is_nullable: 1
+          _columns_info_loaded: 0
+          _ordered_columns:
+            - id
+            - hash
+            - user
+            - name
+            - scenario
+            - last_modified
+          _primaries: &3
+            - id
+          _relationships:
+            user:
+              attrs:
+                accessor: filter
+                is_deferrable: 1
+                is_foreign_key_constraint: 1
+                join_type: LEFT
+                undef_on_null_fk: 1
+              class: Treex::Web::DB::Result::User
+              cond:
+                foreign.id: self.user
+              source: Treex::Web::DB::Result::User
+          _unique_constraints:
+            hash_unique:
+              - hash
+            primary: *3
+          name: result
+          result_class: Treex::Web::DB::Result::Result
+          resultset_attributes: {}
+          resultset_class: DBIx::Class::ResultSet
+          schema: *2
+          source_name: Result
+        Scenario: !!perl/hash:DBIx::Class::ResultSource::Table
+          _columns:
+            comment:
+              data_type: text
+              is_nullable: 1
+            id:
+              data_type: integer
+              is_auto_increment: 1
+              is_nullable: 0
+            last_modified:
+              _ic_dt_method: datetime
+              _inflate_info:
+                deflate: !!perl/code '{ "DUMMY" }'
+                inflate: !!perl/code '{ "DUMMY" }'
+              data_type: datetime
+              dynamic_default_on_create: get_timestamp
+              dynamic_default_on_update: get_timestamp
+              is_nullable: 0
+            name:
+              data_type: varchar
+              is_nullable: 0
+              size: 120
+            scenario:
+              data_type: text
+              is_nullable: 0
+            user:
+              _inflate_info:
+                deflate: !!perl/code '{ "DUMMY" }'
+                inflate: !!perl/code '{ "DUMMY" }'
+              data_type: integer
+              default_value: 0
+              is_foreign_key: 1
+              is_nullable: 0
+          _columns_info_loaded: 0
+          _ordered_columns:
+            - id
+            - scenario
+            - name
+            - comment
+            - user
+            - last_modified
+          _primaries: &4
+            - id
+          _relationships:
+            user:
+              attrs:
+                accessor: filter
+                is_deferrable: 1
+                is_foreign_key_constraint: 1
+                join_type: LEFT
+                undef_on_null_fk: 1
+              class: Treex::Web::DB::Result::User
+              cond:
+                foreign.id: self.user
+              source: Treex::Web::DB::Result::User
+          _unique_constraints:
+            name_user_unique:
+              - name
+              - user
+            primary: *4
+          name: scenario
+          result_class: Treex::Web::DB::Result::Scenario
+          resultset_attributes: {}
+          resultset_class: DBIx::Class::ResultSet
+          schema: *2
+          source_name: Scenario
+        User: !!perl/hash:DBIx::Class::ResultSource::Table
+          _columns:
+            email:
+              data_type: text
+              is_nullable: 0
+            id:
+              data_type: integer
+              is_auto_increment: 1
+              is_nullable: 0
+            last_modified:
+              _ic_dt_method: datetime
+              _inflate_info:
+                deflate: !!perl/code '{ "DUMMY" }'
+                inflate: !!perl/code '{ "DUMMY" }'
+              data_type: datetime
+              dynamic_default_on_create: get_timestamp
+              dynamic_default_on_update: get_timestamp
+              is_nullable: 0
+            password:
+              data_type: text
+              is_nullable: 0
+          _columns_info_loaded: 0
+          _ordered_columns:
+            - id
+            - email
+            - password
+            - last_modified
+          _primaries: &5
+            - id
+          _relationships:
+            results:
+              attrs:
+                accessor: multi
+                cascade_copy: 0
+                cascade_delete: 1
+                join_type: LEFT
+              class: Treex::Web::DB::Result::Result
+              cond:
+                foreign.user: self.id
+              source: Treex::Web::DB::Result::Result
+          _unique_constraints:
+            email_unique:
+              - email
+            primary: *5
+          name: user
+          result_class: Treex::Web::DB::Result::User
+          resultset_attributes: {}
+          resultset_class: DBIx::Class::ResultSet
+          schema: *2
+          source_name: User
+        __VERSION: !!perl/hash:DBIx::Class::ResultSource::Table
+          _columns:
+            ddl:
+              data_type: text
+              is_nullable: 1
+            id:
+              data_type: int
+              is_auto_increment: 1
+            upgrade_sql:
+              data_type: text
+              is_nullable: 1
+            version:
+              data_type: varchar
+              size: 50
+          _columns_info_loaded: 0
+          _ordered_columns:
+            - id
+            - version
+            - ddl
+            - upgrade_sql
+          _primaries: &6
+            - id
+          _relationships: {}
+          _unique_constraints:
+            dbix_class_deploymenthandler_versions_version:
+              - version
+            primary: *6
+          name: dbix_class_deploymenthandler_versions
+          result_class: DBIx::Class::DeploymentHandler::VersionStorage::Standard::VersionResult
+          resultset_attributes: {}
+          resultset_class: DBIx::Class::DeploymentHandler::VersionStorage::Standard::VersionResultSet
+          schema: *2
+          source_name: __VERSION
+      storage: !!perl/hash:DBIx::Class::Storage::DBI::SQLite
+        _conn_pid: 9924
+        _connect_info:
+          - DBI:SQLite:/home/thc/src/Treex-Web/share/treex-web-db.db
+          - ''
+          - ''
+        _dbh: !!perl/hash:DBI::db {}
+        _dbh_autocommit: 1
+        _dbh_details: {}
+        _dbh_gen: 0
+        _dbi_connect_info:
+          - DBI:SQLite:/home/thc/src/Treex-Web/share/treex-web-db.db
+          - ''
+          - ''
+          - &7
+            AutoCommit: 1
+            PrintError: 0
+            RaiseError: 1
+            ShowErrorStatement: 1
+        _dbic_connect_attributes: *7
+        _driver_determined: 1
+        _in_do_block: 0
+        _sql_maker: ~
+        _sql_maker_opts: {}
+        savepoints: []
+        schema: *2
+        transaction_depth: 0
+    sources:
+      - Scenario
+      - Result
+      - User
+  parser_type: SQL::Translator::Parser::DBIx::Class
+  producer_args: {}
+  producer_type: SQL::Translator::Producer::YAML
+  show_warnings: 0
+  trace: 0
+  version: 0.11010
