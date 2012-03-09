@@ -26,8 +26,6 @@ Catalyst Controller.
 sub base :Chained('/') :PathPart('scenario') :CaptureArgs(0)  {
     my ( $self, $c ) = @_;
 
-    $c->load_status_msgs;
-    
     $c->stash(
         scenarioForm => Treex::Web::Forms::ScenarioForm->new(
             action => $c->uri_for( $self->action_for('add'), ),

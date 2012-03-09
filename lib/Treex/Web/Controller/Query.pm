@@ -42,13 +42,13 @@ sub index :Path :Args(0) {
         $c->forward('process_form');
         if ( my $result = $c->stash->{result} ) {
             my $uri = $c->uri_for(
-                $c->controller('Result')->action_for('result'),
+                $c->controller('Result')->action_for('show'),
                 [ $result->result_hash ],
             );
             $c->flash->{status_msg} = "Treex result successully created";
             $c->response->redirect($uri);
         } else {
-            $c->stash->{error_msg} = "Something went wrong... Treex did not returned any result";
+            $c->stash->{error_msg} = "Something went wrong... Treex did not returned any results";
         }
     }
 }
@@ -65,10 +65,10 @@ sub process_form :Private {
 
             my $rs = $c->model('WebDB::Result')->new({
                 scenario => $result->{scenario},
-                input => $result->{input},
+                stdin => $result->{input},
                 cmd => $result->{cmd},
-                out => $result->{out},
-                err => $result->{err},
+                stdout => $result->{out},
+                stderr => $result->{err},
                 ret => $result->{ret},
             });
             

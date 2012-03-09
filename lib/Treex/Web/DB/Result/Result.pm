@@ -97,7 +97,7 @@ __PACKAGE__->add_columns(
     { data_type => "varchar", is_nullable => 1, size => 120 },
     "scenario",
     { data_type => "text", is_nullable => 0 },
-    "input",
+    "stdin",
     {
         data_type => "varchar",
         is_nullable => 0,
@@ -107,7 +107,7 @@ __PACKAGE__->add_columns(
     },
     "cmd",
     { data_type => "text", is_nullable => 0 },
-    "out",
+    "stdout",
     {
         data_type => "varchar",
         is_nullable => 0,
@@ -115,7 +115,7 @@ __PACKAGE__->add_columns(
         is_fs_column => 1,
         fs_column_path => Treex::Web->path_to('data', 'results'),        
     },
-    "err",
+    "stderr",
     {
         data_type => "varchar",
         is_nullable => 0,

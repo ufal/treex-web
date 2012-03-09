@@ -96,26 +96,10 @@ translator:
             cmd:
               data_type: text
               is_nullable: 0
-            err:
-              _inflate_info:
-                deflate: !!perl/code '{ "DUMMY" }'
-                inflate: !!perl/code '{ "DUMMY" }'
-              data_type: varchar
-              is_fs_column: 1
-              is_nullable: 0
-              size: 200
             id:
               data_type: integer
               is_auto_increment: 1
               is_nullable: 0
-            input:
-              _inflate_info:
-                deflate: !!perl/code '{ "DUMMY" }'
-                inflate: !!perl/code '{ "DUMMY" }'
-              data_type: varchar
-              is_fs_column: 1
-              is_nullable: 0
-              size: 200
             last_modified:
               _ic_dt_method: datetime
               _inflate_info:
@@ -129,14 +113,6 @@ translator:
               data_type: varchar
               is_nullable: 1
               size: 120
-            out:
-              _inflate_info:
-                deflate: !!perl/code '{ "DUMMY" }'
-                inflate: !!perl/code '{ "DUMMY" }'
-              data_type: varchar
-              is_fs_column: 1
-              is_nullable: 0
-              size: 200
             result_hash:
               data_type: varchar
               is_nullable: 0
@@ -148,12 +124,70 @@ translator:
             scenario:
               data_type: text
               is_nullable: 0
+            stderr:
+              _inflate_info:
+                deflate: !!perl/code '{ "DUMMY" }'
+                inflate: !!perl/code '{ "DUMMY" }'
+              data_type: varchar
+              fs_column_path: !!perl/hash:Path::Class::Dir
+                dirs:
+                  - ''
+                  - home
+                  - thc
+                  - src
+                  - Treex-Web
+                  - data
+                  - results
+                file_spec_class: ~
+                volume: ''
+              is_fs_column: 1
+              is_nullable: 0
+              size: 200
+            stdin:
+              _inflate_info:
+                deflate: !!perl/code '{ "DUMMY" }'
+                inflate: !!perl/code '{ "DUMMY" }'
+              data_type: varchar
+              fs_column_path: !!perl/hash:Path::Class::Dir
+                dirs:
+                  - ''
+                  - home
+                  - thc
+                  - src
+                  - Treex-Web
+                  - data
+                  - results
+                file_spec_class: ~
+                volume: ''
+              is_fs_column: 1
+              is_nullable: 0
+              size: 200
+            stdout:
+              _inflate_info:
+                deflate: !!perl/code '{ "DUMMY" }'
+                inflate: !!perl/code '{ "DUMMY" }'
+              data_type: varchar
+              fs_column_path: !!perl/hash:Path::Class::Dir
+                dirs:
+                  - ''
+                  - home
+                  - thc
+                  - src
+                  - Treex-Web
+                  - data
+                  - results
+                file_spec_class: ~
+                volume: ''
+              is_fs_column: 1
+              is_nullable: 0
+              size: 200
             user:
               _inflate_info:
                 deflate: !!perl/code '{ "DUMMY" }'
                 inflate: !!perl/code '{ "DUMMY" }'
               data_type: integer
-              default_value: 0
+              default_value: !!perl/ref
+                =: null
               is_foreign_key: 1
               is_nullable: 1
           _columns_info_loaded: 0
@@ -163,10 +197,10 @@ translator:
             - user
             - name
             - scenario
-            - input
+            - stdin
             - cmd
-            - out
-            - err
+            - stdout
+            - stderr
             - ret
             - last_modified
           _primaries: &2
@@ -342,8 +376,7 @@ translator:
           resultset_class: DBIx::Class::DeploymentHandler::VersionStorage::Standard::VersionResultSet
           schema: *1
           source_name: __VERSION
-      storage: !!perl/hash:DBIx::Class::Storage::DBI::SQLite
-        _conn_pid: 15807
+      storage: !!perl/hash:DBIx::Class::Storage::DBI
         _connect_info:
           - auto_savepoint: 1
             cursor_class: DBIx::Class::Cursor::Cached
@@ -352,8 +385,6 @@ translator:
             password: ''
             quote_names: 1
             user: ''
-        _dbh: !!perl/hash:DBI::db {}
-        _dbh_autocommit: 1
         _dbh_details: {}
         _dbh_gen: 0
         _dbi_connect_info:
@@ -363,7 +394,6 @@ translator:
           PrintError: 0
           RaiseError: 1
           ShowErrorStatement: 1
-        _driver_determined: 1
         _in_do_block: 0
         _sql_maker: ~
         _sql_maker_opts:

@@ -1,0 +1,7 @@
+<h1>This is result.tt template</h1>
+
+[% IF current_result %]
+<p>We have a result</p>
+[% ELSE %]
+<p>No result found</p>
+[% END %]

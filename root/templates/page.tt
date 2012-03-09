@@ -27,7 +27,7 @@
       <div id="content-container">
         <div id="flash-messages">
           [%- IF status_msg || c.flash.status_msg -%]
-          <p class="message">[% status_msg || c.flash.status_msg %]</p>
+          <p class="success">[% status_msg || c.flash.status_msg %]</p>
           [%- END -%]
           [%- IF error_msg || c.flash.error_msg -%]
           <p class="error">[% error_msg || c.flash.error_msg %]</p>

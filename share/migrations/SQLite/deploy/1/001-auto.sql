@@ -1,6 +1,6 @@
 -- 
 -- Created by SQL::Translator::Producer::SQLite
--- Created on Sat Mar  3 23:44:34 2012
+-- Created on Fri Mar  9 13:08:07 2012
 -- 
 
 ;
@@ -11,13 +11,13 @@ BEGIN TRANSACTION;
 CREATE TABLE result (
   id INTEGER PRIMARY KEY NOT NULL,
   result_hash varchar(60) NOT NULL,
-  user integer DEFAULT 0,
+  user integer DEFAULT null,
   name varchar(120),
   scenario text NOT NULL,
-  input varchar(200) NOT NULL,
+  stdin varchar(200) NOT NULL,
   cmd text NOT NULL,
-  out varchar(200) NOT NULL,
-  err varchar(200) NOT NULL,
+  stdout varchar(200) NOT NULL,
+  stderr varchar(200) NOT NULL,
   ret integer NOT NULL DEFAULT 1,
   last_modified datetime NOT NULL,
   FOREIGN KEY(user) REFERENCES user(id)
