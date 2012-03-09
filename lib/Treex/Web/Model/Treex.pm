@@ -21,26 +21,32 @@ sub run {
   my ( $self, $opts ) = @_;
   $opts||={};
   
-  my ($ret, @cmd, $in, $out, $err,
-      $scenario, $lang);
+  my ($ret, @cmd, $out, $err,
+      $scenario, $input_ref, $lang);
   
   @cmd = qw(treex);# -Len Read::Text scenario.scen Write::Treex to=-);
-  $in = $opts->{text};
+  $input_ref = $opts->{input_ref};
   $scenario = $opts->{scenario} ? $opts->{scenario} : 'scenario.scen';
   $lang = $opts->{lang} ? $opts->{lang} : 'en';
-  
+
   push @cmd, "-L$lang";
   push @cmd, "Read::Text";
   push @cmd, "$scenario";
   push @cmd, "Write::Treex to=-";
-  if ($in ne '') {
-    $ret = IPC::Run::run \@cmd, \$in, \$out, \$err;
+  if ($$input_ref ne '') {
+    $ret = IPC::Run::run \@cmd, $input_ref, \$out, \$err;
   }
+
+  # map in/out/err to file handles
+  my $in_handle = IO::Scalar->new($input_ref);
+  my $out_handle = IO::Scalar->new(\$out);
+  my $err_handle = IO::Scalar->new(\$err);
   
   $opts = {
            %$opts,
-           out => $out,
-           err => $err,
+           input => $in_handle,
+           out => $out_handle,
+           err => $err_handle,
            cmd => join(' ', @cmd),
            ret => $ret
           };

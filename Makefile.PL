@@ -26,6 +26,7 @@ requires 'Catalyst::Model::DBIC::Schema';
 requires 'DBIx::Class::Migration';
 requires 'DBIx::Class::TimeStamp';
 requires 'DBIx::Class::UUIDColumns';
+requires 'DBIx::Class::InflateColumn::FS';
 requires 'SQL::Translator';
 requires 'Email::Valid'; # used to check user mails
 requires 'Data::Uniqid'; # used to generate UUID Columns

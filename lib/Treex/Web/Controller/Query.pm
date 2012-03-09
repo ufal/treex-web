@@ -1,5 +1,6 @@
 package Treex::Web::Controller::Query;
 use Moose;
+use Try::Tiny;
 use namespace::autoclean;
 
 BEGIN {extends 'Treex::Web::Controller::Base'; }
@@ -18,8 +19,12 @@ Catalyst Controller.
 
 sub begin :Private {
     my ( $self, $c ) = @_;
-    
-    $c->stash( queryForm => $self->queryForm,
+
+    my $form = Treex::Web::Forms::QueryForm->new(
+        action => $c->uri_for($self->action_for('index')),
+    );
+
+    $c->stash( queryForm => $form,
                template => 'query.tt');
 }
 
@@ -35,7 +40,16 @@ sub index :Path :Args(0) {
     # we have a post form
     if ( lc $c->req->method eq 'post' ) {
         $c->forward('process_form');
-        
+        if ( my $result = $c->stash->{result} ) {
+            my $uri = $c->uri_for(
+                $c->controller('Result')->action_for('result'),
+                [ $result->result_hash ],
+            );
+            $c->flash->{status_msg} = "Treex result successully created";
+            $c->response->redirect($uri);
+        } else {
+            $c->stash->{error_msg} = "Something went wrong... Treex did not returned any result";
+        }
     }
 }
 
@@ -44,11 +58,25 @@ sub process_form :Private {
     
     my $form = $c->stash->{queryForm};
     if ( $form->process( params => $c->req->parameters ) ) {
-        my $result = $c->model('Treex')->run($form->value);
-        $c->stash( result => $result );
-        
-        my $rs = $c->model('WebDB::Result');
-        #my $result_hash = $rs->
+        my ($scenario, $input) = ($form->value->{scenario}, $form->value->{input});
+                
+        try {
+            my $result = $c->model('Treex')->run({ scenario => $scenario, input_ref => \$input });
+
+            my $rs = $c->model('WebDB::Result')->new({
+                scenario => $result->{scenario},
+                input => $result->{input},
+                cmd => $result->{cmd},
+                out => $result->{out},
+                err => $result->{err},
+                ret => $result->{ret},
+            });
+            
+            $rs->insert;
+            $c->stash( result => $rs );
+        } catch {
+            $c->log->error("$_");
+        }
     }
 }
 

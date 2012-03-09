@@ -19,7 +19,7 @@ schema:
         - deferrable: 1
           expression: ''
           fields:
-            - hash
+            - result_hash
           match_type: ''
           name: hash_unique
           on_delete: ''
@@ -42,16 +42,26 @@ schema:
           reference_table: user
           type: FOREIGN KEY
       fields:
-        hash:
+        cmd:
+          data_type: text
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 0
+          is_unique: 0
+          name: cmd
+          order: 7
+          size:
+            - 0
+        err:
           data_type: varchar
           default_value: ~
           is_nullable: 0
           is_primary_key: 0
-          is_unique: 1
-          name: hash
-          order: 2
+          is_unique: 0
+          name: err
+          order: 9
           size:
-            - 60
+            - 200
         id:
           data_type: integer
           default_value: ~
@@ -63,6 +73,16 @@ schema:
           order: 1
           size:
             - 0
+        input:
+          data_type: varchar
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 0
+          is_unique: 0
+          name: input
+          order: 6
+          size:
+            - 200
         last_modified:
           data_type: datetime
           default_value: ~
@@ -70,7 +90,7 @@ schema:
           is_primary_key: 0
           is_unique: 0
           name: last_modified
-          order: 6
+          order: 11
           size:
             - 0
         name:
@@ -83,6 +103,36 @@ schema:
           order: 4
           size:
             - 120
+        out:
+          data_type: varchar
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 0
+          is_unique: 0
+          name: out
+          order: 8
+          size:
+            - 200
+        result_hash:
+          data_type: varchar
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 0
+          is_unique: 1
+          name: result_hash
+          order: 2
+          size:
+            - 60
+        ret:
+          data_type: integer
+          default_value: 1
+          is_nullable: 0
+          is_primary_key: 0
+          is_unique: 0
+          name: ret
+          order: 10
+          size:
+            - 0
         scenario:
           data_type: text
           default_value: ~
@@ -95,8 +145,7 @@ schema:
             - 0
         user:
           data_type: integer
-          default_value: &1 !!perl/ref
-            =: null
+          default_value: 0
           is_nullable: 1
           is_primary_key: 0
           is_unique: 0
@@ -303,23 +352,41 @@ translator:
   filename: ~
   no_comments: 0
   parser_args:
-    package: &2 !!perl/hash:Treex::Web::DB
+    package: &1 !!perl/hash:Treex::Web::DB
       class_mappings:
         DBIx::Class::DeploymentHandler::VersionStorage::Standard::VersionResult: __VERSION
         Treex::Web::DB::Result::Result: Result
         Treex::Web::DB::Result::Scenario: Scenario
         Treex::Web::DB::Result::User: User
+        Treex::Web::Model::WebDB::Result: Result
+        Treex::Web::Model::WebDB::Scenario: Scenario
+        Treex::Web::Model::WebDB::User: User
       source_registrations:
         Result: !!perl/hash:DBIx::Class::ResultSource::Table
           _columns:
-            hash:
-              data_type: varchar
+            cmd:
+              data_type: text
               is_nullable: 0
-              size: 60
+            err:
+              _inflate_info:
+                deflate: !!perl/code '{ "DUMMY" }'
+                inflate: !!perl/code '{ "DUMMY" }'
+              data_type: varchar
+              is_fs_column: 1
+              is_nullable: 0
+              size: 200
             id:
               data_type: integer
               is_auto_increment: 1
               is_nullable: 0
+            input:
+              _inflate_info:
+                deflate: !!perl/code '{ "DUMMY" }'
+                inflate: !!perl/code '{ "DUMMY" }'
+              data_type: varchar
+              is_fs_column: 1
+              is_nullable: 0
+              size: 200
             last_modified:
               _ic_dt_method: datetime
               _inflate_info:
@@ -333,6 +400,22 @@ translator:
               data_type: varchar
               is_nullable: 1
               size: 120
+            out:
+              _inflate_info:
+                deflate: !!perl/code '{ "DUMMY" }'
+                inflate: !!perl/code '{ "DUMMY" }'
+              data_type: varchar
+              is_fs_column: 1
+              is_nullable: 0
+              size: 200
+            result_hash:
+              data_type: varchar
+              is_nullable: 0
+              size: 60
+            ret:
+              data_type: integer
+              default_value: 1
+              is_nullable: 0
             scenario:
               data_type: text
               is_nullable: 0
@@ -341,18 +424,23 @@ translator:
                 deflate: !!perl/code '{ "DUMMY" }'
                 inflate: !!perl/code '{ "DUMMY" }'
               data_type: integer
-              default_value: *1
+              default_value: 0
               is_foreign_key: 1
               is_nullable: 1
           _columns_info_loaded: 0
           _ordered_columns:
             - id
-            - hash
+            - result_hash
             - user
             - name
             - scenario
+            - input
+            - cmd
+            - out
+            - err
+            - ret
             - last_modified
-          _primaries: &3
+          _primaries: &2
             - id
           _relationships:
             user:
@@ -368,13 +456,13 @@ translator:
               source: Treex::Web::DB::Result::User
           _unique_constraints:
             hash_unique:
-              - hash
-            primary: *3
+              - result_hash
+            primary: *2
           name: result
-          result_class: Treex::Web::DB::Result::Result
+          result_class: Treex::Web::Model::WebDB::Result
           resultset_attributes: {}
-          resultset_class: DBIx::Class::ResultSet
-          schema: *2
+          resultset_class: DBIx::Class::InflateColumn::FS::ResultSet
+          schema: *1
           source_name: Result
         Scenario: !!perl/hash:DBIx::Class::ResultSource::Table
           _columns:
@@ -417,7 +505,7 @@ translator:
             - comment
             - user
             - last_modified
-          _primaries: &4
+          _primaries: &3
             - id
           _relationships:
             user:
@@ -435,12 +523,12 @@ translator:
             name_user_unique:
               - name
               - user
-            primary: *4
+            primary: *3
           name: scenario
-          result_class: Treex::Web::DB::Result::Scenario
+          result_class: Treex::Web::Model::WebDB::Scenario
           resultset_attributes: {}
           resultset_class: DBIx::Class::ResultSet
-          schema: *2
+          schema: *1
           source_name: Scenario
         User: !!perl/hash:DBIx::Class::ResultSource::Table
           _columns:
@@ -469,7 +557,7 @@ translator:
             - email
             - password
             - last_modified
-          _primaries: &5
+          _primaries: &4
             - id
           _relationships:
             results:
@@ -485,12 +573,12 @@ translator:
           _unique_constraints:
             email_unique:
               - email
-            primary: *5
+            primary: *4
           name: user
-          result_class: Treex::Web::DB::Result::User
+          result_class: Treex::Web::Model::WebDB::User
           resultset_attributes: {}
           resultset_class: DBIx::Class::ResultSet
-          schema: *2
+          schema: *1
           source_name: User
         __VERSION: !!perl/hash:DBIx::Class::ResultSource::Table
           _columns:
@@ -512,45 +600,49 @@ translator:
             - version
             - ddl
             - upgrade_sql
-          _primaries: &6
+          _primaries: &5
             - id
           _relationships: {}
           _unique_constraints:
             dbix_class_deploymenthandler_versions_version:
               - version
-            primary: *6
+            primary: *5
           name: dbix_class_deploymenthandler_versions
           result_class: DBIx::Class::DeploymentHandler::VersionStorage::Standard::VersionResult
           resultset_attributes: {}
           resultset_class: DBIx::Class::DeploymentHandler::VersionStorage::Standard::VersionResultSet
-          schema: *2
+          schema: *1
           source_name: __VERSION
       storage: !!perl/hash:DBIx::Class::Storage::DBI::SQLite
-        _conn_pid: 9924
+        _conn_pid: 15807
         _connect_info:
-          - DBI:SQLite:/home/thc/src/Treex-Web/share/treex-web-db.db
-          - ''
-          - ''
+          - auto_savepoint: 1
+            cursor_class: DBIx::Class::Cursor::Cached
+            dbh_maker: &6 !!perl/code '{ "DUMMY" }'
+            dsn: ''
+            password: ''
+            quote_names: 1
+            user: ''
         _dbh: !!perl/hash:DBI::db {}
         _dbh_autocommit: 1
         _dbh_details: {}
         _dbh_gen: 0
         _dbi_connect_info:
-          - DBI:SQLite:/home/thc/src/Treex-Web/share/treex-web-db.db
-          - ''
-          - ''
-          - &7
-            AutoCommit: 1
-            PrintError: 0
-            RaiseError: 1
-            ShowErrorStatement: 1
-        _dbic_connect_attributes: *7
+          - *6
+        _dbic_connect_attributes:
+          AutoCommit: 1
+          PrintError: 0
+          RaiseError: 1
+          ShowErrorStatement: 1
         _driver_determined: 1
         _in_do_block: 0
         _sql_maker: ~
-        _sql_maker_opts: {}
+        _sql_maker_opts:
+          quote_names: 1
+        auto_savepoint: 1
+        cursor_class: DBIx::Class::Storage::DBI::Cursor
         savepoints: []
-        schema: *2
+        schema: *1
         transaction_depth: 0
     sources:
       - Scenario

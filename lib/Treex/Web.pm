@@ -21,8 +21,9 @@ use Catalyst qw/
     Static::Simple
     Unicode
     I18N
-    CookiedSession
-    StatusMessage
+    Session
+    Session::Store::FastMmap
+    Session::State::Cookie
     Authentication
     Assets
 /;
@@ -48,7 +49,17 @@ __PACKAGE__->config(
     'Plugin::ConfigLoader' => {
         file => __PACKAGE__->path_to('share', 'etc'),
     },
-    cookiedsession => { key => 'treexK3Y', expires => '+1d' },
+    'Plugin::Session' => {
+        expires => 3600,
+        storage => '/tmp/session',
+    },
+    'Model::WebDB' => {
+        schema_class => 'Treex::Web::DB',
+        traits => ['Caching', 'FromMigration', 'SchemaProxy'],
+        install_if_needed => {
+            default_fixture_sets => ['all_tables'],
+        },
+    },
     'View::Web' => {
         INCLUDE_PATH => [
             __PACKAGE__->path_to( 'root', 'templates' ),
@@ -58,7 +69,6 @@ __PACKAGE__->config(
 
 # Start the application
 __PACKAGE__->setup();
-
 
 =head1 NAME
 

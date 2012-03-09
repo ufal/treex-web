@@ -1,6 +1,6 @@
 -- 
 -- Created by SQL::Translator::Producer::SQLite
--- Created on Fri Mar  2 18:36:36 2012
+-- Created on Sat Mar  3 23:44:34 2012
 -- 
 
 ;
@@ -10,15 +10,20 @@ BEGIN TRANSACTION;
 --
 CREATE TABLE result (
   id INTEGER PRIMARY KEY NOT NULL,
-  hash varchar(60) NOT NULL,
-  user integer DEFAULT null,
+  result_hash varchar(60) NOT NULL,
+  user integer DEFAULT 0,
   name varchar(120),
   scenario text NOT NULL,
+  input varchar(200) NOT NULL,
+  cmd text NOT NULL,
+  out varchar(200) NOT NULL,
+  err varchar(200) NOT NULL,
+  ret integer NOT NULL DEFAULT 1,
   last_modified datetime NOT NULL,
   FOREIGN KEY(user) REFERENCES user(id)
 );
 CREATE INDEX result_idx_user ON result (user);
-CREATE UNIQUE INDEX hash_unique ON result (hash);
+CREATE UNIQUE INDEX hash_unique ON result (result_hash);
 --
 -- Table: scenario
 --

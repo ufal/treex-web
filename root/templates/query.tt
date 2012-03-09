@@ -1,14 +1,6 @@
-[% IF queryForm.posted %]
-[% META title='Compose new' %]
-[% ELSE %]
-[% END %]
+[% META title='Run new query' %]
 
-<h1>Try out Treex now!</h1>
+<h1>Run new query</h1>
 
 [% PROCESS query/form.tt form=queryForm %]
 
-[% IF result %]
-<pre>
-[% result | html %]
-</pre>
-[% END %]

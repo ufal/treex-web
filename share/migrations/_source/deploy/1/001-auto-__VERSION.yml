@@ -87,17 +87,35 @@ translator:
         Treex::Web::DB::Result::Result: Result
         Treex::Web::DB::Result::Scenario: Scenario
         Treex::Web::DB::Result::User: User
+        Treex::Web::Model::WebDB::Result: Result
+        Treex::Web::Model::WebDB::Scenario: Scenario
+        Treex::Web::Model::WebDB::User: User
       source_registrations:
         Result: !!perl/hash:DBIx::Class::ResultSource::Table
           _columns:
-            hash:
-              data_type: varchar
+            cmd:
+              data_type: text
               is_nullable: 0
-              size: 60
+            err:
+              _inflate_info:
+                deflate: !!perl/code '{ "DUMMY" }'
+                inflate: !!perl/code '{ "DUMMY" }'
+              data_type: varchar
+              is_fs_column: 1
+              is_nullable: 0
+              size: 200
             id:
               data_type: integer
               is_auto_increment: 1
               is_nullable: 0
+            input:
+              _inflate_info:
+                deflate: !!perl/code '{ "DUMMY" }'
+                inflate: !!perl/code '{ "DUMMY" }'
+              data_type: varchar
+              is_fs_column: 1
+              is_nullable: 0
+              size: 200
             last_modified:
               _ic_dt_method: datetime
               _inflate_info:
@@ -111,6 +129,22 @@ translator:
               data_type: varchar
               is_nullable: 1
               size: 120
+            out:
+              _inflate_info:
+                deflate: !!perl/code '{ "DUMMY" }'
+                inflate: !!perl/code '{ "DUMMY" }'
+              data_type: varchar
+              is_fs_column: 1
+              is_nullable: 0
+              size: 200
+            result_hash:
+              data_type: varchar
+              is_nullable: 0
+              size: 60
+            ret:
+              data_type: integer
+              default_value: 1
+              is_nullable: 0
             scenario:
               data_type: text
               is_nullable: 0
@@ -119,17 +153,21 @@ translator:
                 deflate: !!perl/code '{ "DUMMY" }'
                 inflate: !!perl/code '{ "DUMMY" }'
               data_type: integer
-              default_value: !!perl/ref
-                =: null
+              default_value: 0
               is_foreign_key: 1
               is_nullable: 1
           _columns_info_loaded: 0
           _ordered_columns:
             - id
-            - hash
+            - result_hash
             - user
             - name
             - scenario
+            - input
+            - cmd
+            - out
+            - err
+            - ret
             - last_modified
           _primaries: &2
             - id
@@ -147,12 +185,12 @@ translator:
               source: Treex::Web::DB::Result::User
           _unique_constraints:
             hash_unique:
-              - hash
+              - result_hash
             primary: *2
           name: result
-          result_class: Treex::Web::DB::Result::Result
+          result_class: Treex::Web::Model::WebDB::Result
           resultset_attributes: {}
-          resultset_class: DBIx::Class::ResultSet
+          resultset_class: DBIx::Class::InflateColumn::FS::ResultSet
           schema: *1
           source_name: Result
         Scenario: !!perl/hash:DBIx::Class::ResultSource::Table
@@ -216,7 +254,7 @@ translator:
               - user
             primary: *3
           name: scenario
-          result_class: Treex::Web::DB::Result::Scenario
+          result_class: Treex::Web::Model::WebDB::Scenario
           resultset_attributes: {}
           resultset_class: DBIx::Class::ResultSet
           schema: *1
@@ -266,7 +304,7 @@ translator:
               - email
             primary: *4
           name: user
-          result_class: Treex::Web::DB::Result::User
+          result_class: Treex::Web::Model::WebDB::User
           resultset_attributes: {}
           resultset_class: DBIx::Class::ResultSet
           schema: *1
@@ -305,29 +343,33 @@ translator:
           schema: *1
           source_name: __VERSION
       storage: !!perl/hash:DBIx::Class::Storage::DBI::SQLite
-        _conn_pid: 9924
+        _conn_pid: 15807
         _connect_info:
-          - DBI:SQLite:/home/thc/src/Treex-Web/share/treex-web-db.db
-          - ''
-          - ''
+          - auto_savepoint: 1
+            cursor_class: DBIx::Class::Cursor::Cached
+            dbh_maker: &6 !!perl/code '{ "DUMMY" }'
+            dsn: ''
+            password: ''
+            quote_names: 1
+            user: ''
         _dbh: !!perl/hash:DBI::db {}
         _dbh_autocommit: 1
         _dbh_details: {}
         _dbh_gen: 0
         _dbi_connect_info:
-          - DBI:SQLite:/home/thc/src/Treex-Web/share/treex-web-db.db
-          - ''
-          - ''
-          - &6
-            AutoCommit: 1
-            PrintError: 0
-            RaiseError: 1
-            ShowErrorStatement: 1
-        _dbic_connect_attributes: *6
+          - *6
+        _dbic_connect_attributes:
+          AutoCommit: 1
+          PrintError: 0
+          RaiseError: 1
+          ShowErrorStatement: 1
         _driver_determined: 1
         _in_do_block: 0
         _sql_maker: ~
-        _sql_maker_opts: {}
+        _sql_maker_opts:
+          quote_names: 1
+        auto_savepoint: 1
+        cursor_class: DBIx::Class::Storage::DBI::Cursor
         savepoints: []
         schema: *1
         transaction_depth: 0

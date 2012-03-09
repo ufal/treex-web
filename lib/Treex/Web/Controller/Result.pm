@@ -31,42 +31,15 @@ sub index :Chained('base') :PathPart('') :Args(0) {
     ## list all results use have 
 }
 
-=head2 process
-
-Process the scenario and create the new result
-
-=cut
-
-sub process :Chained('base') :PathPart('process') :Args(0) {
-  my ( $self, $c ) = @_;
-  
-  my $text = $c->req->body_params->{text};
-  my $scenario = $c->req->body_params->{scenario};
-  
-  $c->log->debug("Got text to process '$text'") if $text;
-  $c->log->debug("Got scenario '$scenario'") if $scenario;
-  my $result;
-  if ($text) {
-      $result = $c->model('Treex')->run({text => $text, scenario => $scenario});
-  }
-  
-  unless ($result) {
-    $result = 'No result!'
-  }
-  
-  $c->stash( result => $result );
-  
-}
-
 =head2 result
 
 =cut
 
-sub result :Chained('base') :PathPart('') :CaptureArgs(1) {
+sub result :Chained('base') :PathPart('') :Args(1) {
   my ($self, $c, $result_hash) = @_;
   
   my $result_rs = $c->stash->{result_rs};
-  my $result = $result_rs->find({ hash => $result_hash },
+  my $result = $result_rs->find({ result_hash => $result_hash },
                                 { key => 'hash_unique' });
   
   die 'Result does not exists!' unless $result;
@@ -79,14 +52,6 @@ sub result :Chained('base') :PathPart('') :CaptureArgs(1) {
 =cut
 
 sub delete :Chained('result') :PathPart('delete') :Args(0) {
-  #TODO
-}
-
-=head2 update
-
-=cut
-
-sub update :Chained('result') :PathPart('delete') :Args(0) {
   #TODO
 }
 

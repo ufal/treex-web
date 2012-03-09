@@ -9,6 +9,9 @@ Treex::Web::DB::Result::Result
 
 use strict;
 use warnings;
+use DBIx::Class::UUIDColumns;
+use File::Spec ();
+use Treex::Web;
 
 use Moose;
 use MooseX::NonMoose;
@@ -31,7 +34,7 @@ extends 'DBIx::Class::Core';
 
 =cut
 
-__PACKAGE__->load_components('InflateColumn::DateTime', 'TimeStamp', 'PK::Auto', 'UUIDColumns');
+__PACKAGE__->load_components('InflateColumn::DateTime', 'TimeStamp', 'PK::Auto', 'UUIDColumns', 'InflateColumn::FS');
 
 =head1 TABLE: C<result>
 
@@ -47,7 +50,7 @@ __PACKAGE__->table("result");
   is_auto_increment: 1
   is_nullable: 0
 
-=head2 hash
+=head2 result_hash
 
   data_type: 'varchar'
   is_nullable: 0
@@ -56,7 +59,7 @@ __PACKAGE__->table("result");
 =head2 user
 
   data_type: 'integer'
-  default_value: null
+  default_value: 0
   is_foreign_key: 1
   is_nullable: 0
 
@@ -81,7 +84,7 @@ __PACKAGE__->table("result");
 __PACKAGE__->add_columns(
     "id",
     { data_type => "integer", is_auto_increment => 1, is_nullable => 0 },
-    "hash",
+    "result_hash",
     { data_type => "varchar", is_nullable => 0, size => 60 },
     "user",
     {
@@ -94,6 +97,34 @@ __PACKAGE__->add_columns(
     { data_type => "varchar", is_nullable => 1, size => 120 },
     "scenario",
     { data_type => "text", is_nullable => 0 },
+    "input",
+    {
+        data_type => "varchar",
+        is_nullable => 0,
+        size => 200,
+        is_fs_column => 1,
+        fs_column_path => Treex::Web->path_to('data', 'results'),        
+    },
+    "cmd",
+    { data_type => "text", is_nullable => 0 },
+    "out",
+    {
+        data_type => "varchar",
+        is_nullable => 0,
+        size => 200,
+        is_fs_column => 1,
+        fs_column_path => Treex::Web->path_to('data', 'results'),        
+    },
+    "err",
+    {
+        data_type => "varchar",
+        is_nullable => 0,
+        size => 200,
+        is_fs_column => 1,
+        fs_column_path => Treex::Web->path_to('data', 'results'),
+    },
+    "ret",
+    { data_type => "integer", is_nullable => 0, default_value => 1 },
     "last_modified",
     {
         data_type => "datetime",
@@ -127,8 +158,8 @@ __PACKAGE__->set_primary_key("id");
 
 =cut
 
-__PACKAGE__->add_unique_constraint("hash_unique", ["hash"]);
-__PACKAGE__->uuid_columns( 'hash' );
+__PACKAGE__->add_unique_constraint("hash_unique", ["result_hash"]);
+__PACKAGE__->uuid_columns( 'result_hash' );
 __PACKAGE__->uuid_class('::Data::Uniqid');
 
 =head1 RELATIONS
@@ -151,5 +182,32 @@ __PACKAGE__->belongs_to(
     },
 );
 
-__PACKAGE__->meta->make_immutable;
+=head1 METHODS
+
+=cut
+
+sub new {
+    my ( $self, $attrs ) = @_;
+
+    for my $column (@{$self->uuid_columns}) {
+        $attrs->{$column} = $self->get_uuid
+            unless defined $attrs->{$column};
+    }
+    
+    return $self->next::method( $attrs );
+}
+
+sub fs_file_name {
+    my ($self, $column, $column_info) = @_;
+    return $column;
+}
+
+sub _fs_column_dirs {
+    my $self = shift;
+
+    my $hash = $self->result_hash;
+    return File::Spec->catfile( substr($hash, 0, 2), $hash );
+}
+
+__PACKAGE__->meta->make_immutable(inline_constructor => 0);
 1;

@@ -1,5 +1,6 @@
 package Treex::Web::Controller::Root;
 use Moose;
+use Treex::Web::Forms::QueryForm;
 use namespace::autoclean;
 
 BEGIN { extends 'Treex::Web::Controller::Base' }
@@ -28,9 +29,19 @@ The root page (/)
 
 sub index :Path :Args(0) {
     my ( $self, $c ) = @_;
+
+    my $form = Treex::Web::Forms::QueryForm->new(
+        action => $c->uri_for($c->controller('Query')->action_for('index')),
+    );
+
+    $form->defaults({
+        input => 'This is a test text.',
+        scenario => 's'
+    });
     
-    $c->stash( queryForm => $self->queryForm );
-    
+    $c->stash(
+        queryForm => $form
+    );
 }
 
 =head2 auto
