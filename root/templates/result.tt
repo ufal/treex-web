@@ -1,7 +1,13 @@
-<h1>This is result.tt template</h1>
+[% META sidebar=1 %]
 
-[% IF current_result %]
-<p>We have a result</p>
-[% ELSE %]
-<p>No result found</p>
-[% END %]
+<div id="sidebar" class="clearfix">
+[% PROCESS result/sidebar.tt %]  
+</div>
+
+<div id="main-content">
+  <h1>Result: [% current_result.result_hash %]</h1>
+  <h3>You have total [% result_rs.count %] results</h3>
+  [% PROCESS query/form.tt form=queryForm %]
+  [% PROCESS result/tabs.tt %]
+</div>
+<hr class="clear" />

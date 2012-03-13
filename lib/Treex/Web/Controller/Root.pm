@@ -55,7 +55,7 @@ sub auto :Path {
         treex_version => $Treex::Web::VERSION,
         menu => [
             { name => 'Dashboard', url => $c->uri_for($c->controller('Root')->action_for('index')) },
-            { name => 'Results', url => $c->uri_for($c->controller('Result')->action_for('index')) },
+            { name => 'My Results', url => $c->uri_for($c->controller('Result')->action_for('index')) },
             { name => 'Scenarios', url => $c->uri_for($c->controller('Scenario')->action_for('index')) }
         ]
            );

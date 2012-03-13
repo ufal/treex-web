@@ -35,10 +35,8 @@ requires 'Data::Uniqid'; # used to generate UUID Columns
 requires 'Catalyst::Plugin::Authentication';
 requires 'Catalyst::Authentication::Store::DBIx::Class';
 requires 'Catalyst::Plugin::Authorization::Roles';
-#requires 'Catalyst::Plugin::Session::State::Cookie';
-#requires 'Catalyst::Plugin::Session::Store::FastMmap';
-requires 'Catalyst::Plugin::CookiedSession';
-requires 'Catalyst::Plugin::StatusMessage';
+requires 'Catalyst::Plugin::Session::State::Cookie';
+requires 'Catalyst::Plugin::Session::Store::FastMmap';
 
 # HTML::FormHandler
 requires 'HTML::FormHandler';

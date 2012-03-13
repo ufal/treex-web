@@ -1,0 +1,5 @@
+<ul id="sidebar-nav">
+  [% FOREACH result = result_rs.all %]
+  <li><a[% IF result.id == current_result.id %] class="active"[% END %] href="[% c.uri_for(c.controller('Result').action_for('show'), [ result.result_hash ]) %]">[% result.result_hash %]</a></li>
+  [% END %]
+</ul>
