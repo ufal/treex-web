@@ -1,0 +1,15 @@
+<h1>Login</h1>
+
+<div id="login-form-container">
+  [% loginForm.render %]
+</div>
+<div id="login-sidebox">
+  <h2>Why should I login?</h2>
+  <p>Todo: list some cool advantages</p>
+  <ul>
+    <li><a href="signup">Sign up!</a></li>
+    <li><a href="forgotten">Forgot your password?</a></li>
+  </ul>
+</div>
+
+<hr class="clear" />

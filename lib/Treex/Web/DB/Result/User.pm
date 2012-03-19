@@ -11,6 +11,7 @@ use strict;
 use warnings;
 
 use Moose;
+use DBIx::Class::UUIDColumns;
 use MooseX::NonMoose;
 use MooseX::MarkAsMethods autoclean => 1;
 extends 'DBIx::Class::Core';
@@ -27,13 +28,13 @@ extends 'DBIx::Class::Core';
 
 =cut
 
-__PACKAGE__->load_components("InflateColumn::DateTime", "TimeStamp");
+__PACKAGE__->load_components('InflateColumn::DateTime', 'TimeStamp');
 
 =head1 TABLE: C<user>
 
 =cut
 
-__PACKAGE__->table("user");
+__PACKAGE__->table('user');
 
 =head1 ACCESSORS
 
@@ -45,13 +46,27 @@ __PACKAGE__->table("user");
 
 =head2 email
 
-  data_type: 'text'
-  is_nullable: 1
+  data_type: 'varchar'
+  size: 120
+  is_nullable: 0
 
 =head2 password
 
-  data_type: 'text'
+  data_type: 'char'
+  size: 40
+  is_nullable: 0
+
+=head2 active
+
+  data_type: boolean
+  default: 0
+
+=head2 activate_token
+
+  data_type: char
+  size: 20
   is_nullable: 1
+  default: null
 
 =head2 last_modified
 
@@ -60,21 +75,24 @@ __PACKAGE__->table("user");
 
 =cut
 
-__PACKAGE__->add_columns
-(
- "id",
- { data_type => "integer", is_auto_increment => 1, is_nullable => 0 },
- "email",
- { data_type => "text", is_nullable => 0 },
- "password",
- { data_type => "text", is_nullable => 0 },
- "last_modified",
- {
-  data_type => "datetime",
-  is_nullable => 0,
-  set_on_create => 1,
-  set_on_update => 1
- },
+__PACKAGE__->add_columns(
+    'id',
+    { data_type => 'integer', is_auto_increment => 1, is_nullable => 0 },
+    'email',
+    { data_type => 'varchar', size => 120, is_nullable => 0 },
+    'password',
+    { data_type => 'char', size => 40, is_nullable => 0 },
+    'active',
+    { data_type => 'boolean', default => 0 },
+    'activate_token',
+    { data_type => 'char', size => 20, is_nullable => 1 },
+    'last_modified',
+    {
+        data_type => 'datetime',
+        is_nullable => 0,
+        set_on_create => 1,
+        set_on_update => 1
+    },
 );
 
 =head1 PRIMARY KEY
@@ -87,7 +105,7 @@ __PACKAGE__->add_columns
 
 =cut
 
-__PACKAGE__->set_primary_key("id");
+__PACKAGE__->set_primary_key('id');
 
 =head1 UNIQUE CONSTRAINTS
 
@@ -101,7 +119,7 @@ __PACKAGE__->set_primary_key("id");
 
 =cut
 
-__PACKAGE__->add_unique_constraint("email_unique", ["email"]);
+__PACKAGE__->add_unique_constraint('email_unique', ['email']);
 
 =head1 RELATIONS
 
@@ -114,10 +132,25 @@ Related object: L<Treex::Web::DB::Result::Result>
 =cut
 
 __PACKAGE__->has_many(
-  "results",
-  "Treex::Web::DB::Result::Result",
-  { "foreign.user" => "self.id" },
+  'results',
+  'Treex::Web::DB::Result::Result',
+  { 'foreign.user' => 'self.id' },
   { cascade_copy => 0, cascade_delete => 1 },
+);
+
+=head2 scenarios
+
+Type: has_many
+
+Related object: L<Treex::Web::DB::Result::Scenario>
+
+=cut
+
+__PACKAGE__->has_many(
+    'scenarios',
+    'Treex::Web::DB::Result::Scenario',
+    { 'foreign.user' => 'self.id' },
+    { cascade_copy => 0, cascade_delete => 1},
 );
 
 __PACKAGE__->meta->make_immutable;

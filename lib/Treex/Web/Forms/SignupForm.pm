@@ -1,16 +1,18 @@
-package Treex::Web::Forms::QueryForm;
+package Treex::Web::Forms::SignupForm;
 
 use strict; 
 use warnings;
 
+use Moose;
 use HTML::FormHandler::Moose;
-extends 'Treex::Web::Forms::Base';
+extends 'Treex::Web::Forms::Base', 'HTML::FormHandler::Model::DBIC';
 
-has '+name' => (default => 'query_form');
+has '+item_class' => ( default => 'Treex::Web::DB::Result::User' );
+has '+name' => (default => 'signup_form');
 
-has_field 'result_hash' => (type => 'Hidden', widget_wrapper => 'None');
-has_field 'scenario' => (type => 'TextArea', required => 1);
-has_field 'input' => (type => 'TextArea', required => 1);
+has_field 'email' => (type => 'Email', value => '', required => 1);
+has_field 'password' => (type => 'Password', required => 1);
+has_field 'password_confirm' => (type => 'Password', label => 'Confirm password', required => 1);
 has_field 'submit' => (type => 'Submit', value => 'Submit');
 
 no HTML::FormHandler::Moose;
@@ -19,16 +21,16 @@ __END__
 
 =head1 NAME
 
-Treex::Web::Forms::QueryForm - Perl extension for blah blah blah
+Treex::Web::Forms::SignupForm - Perl extension for blah blah blah
 
 =head1 SYNOPSIS
 
-   use Treex::Web::Forms::QueryForm;
+   use Treex::Web::Forms::SignupForm;
    blah blah blah
 
 =head1 DESCRIPTION
 
-Stub documentation for Treex::Web::Forms::QueryForm, 
+Stub documentation for Treex::Web::Forms::SignupForm;
 
 Blah blah blah.
 

@@ -22,7 +22,11 @@
             <a href="[% item.url %]">[% item.name | html %]</a>
           </li>
           [%- END -%]
-          <li class="to-right"><a href="#">Login</a></li>
+          [% UNLESS c.user_exists %]
+          <li class="to-right"><a href="[% c.uri_for(c.controller('Auth').action_for('login')) %]">Login</a></li>
+          [% ELSE %]
+          <li class="to-right"><a href="[% c.uri_for(c.controller('Auth').action_for('logout')) %]">Logout</a></li>
+          [% END %]
         </ul>
       </nav>
     </header>
@@ -35,6 +39,8 @@
           [%- IF error_msg || c.flash.error_msg -%]
           <p class="error">[% error_msg || c.flash.error_msg %]</p>
           [%- END -%]
+          [% c.flash.status_msg = undef %]
+          [% c.flash.error_msg = undef %]
         </div> 
         [% IF template.sidebar %]
         [% content %]

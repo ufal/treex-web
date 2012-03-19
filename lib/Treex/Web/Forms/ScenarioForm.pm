@@ -4,12 +4,10 @@ use strict;
 use warnings;
 
 use HTML::FormHandler::Moose;
-extends 'HTML::FormHandler::Model::DBIC';
+extends 'Treex::Web::Forms::Base', 'HTML::FormHandler::Model::DBIC';
 
 has '+item_class' => ( default => 'Treex::Web::DB::Result::Scenario' );
 has '+name' => (default => 'scenario_form');
-has '+is_html5' => (default => 1);
-has '+widget_tags' => ( default => sub { { wrapper_start => '<p>', wrapper_end => '</p>' } } );
 
 has '+unique_messages' => (
     default => sub {

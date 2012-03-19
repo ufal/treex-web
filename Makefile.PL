@@ -3,7 +3,7 @@
 # expected.  You have been warned.
 use inc::Module::Install 1.02;
 use Module::Install::Catalyst; # Complain loudly if you don't have
-# Catalyst::Devel installed or haven't said
+                               # Catalyst::Devel installed or haven't said
                                # 'make dist' to create a standalone tarball.
 
 name 'Treex-Web';
@@ -39,7 +39,7 @@ requires 'Catalyst::Plugin::Session::State::Cookie';
 requires 'Catalyst::Plugin::Session::Store::FastMmap';
 
 # HTML::FormHandler
-requires 'HTML::FormHandler';
+requires 'HTML::FormHandler' => '0.40001';
 requires 'HTML::FormHandler::Model::DBIC';
 
 # misc

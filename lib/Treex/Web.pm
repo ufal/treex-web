@@ -27,6 +27,7 @@ use Catalyst qw/
     Authentication
     Assets
 /;
+#    Authorization::Roles
 
 extends 'Catalyst';
 
@@ -34,7 +35,7 @@ our $VERSION = '0.01';
 
 # Configure the application.
 #
-# Note that settings in treex_web.conf (or other external
+# Note that settings in share/etc/treex_web.conf (or other external
 # configuration file that you set up manually) take precedence
 # over this when using ConfigLoader. Thus configuration
 # details given here can function as a default configuration,
@@ -46,6 +47,23 @@ __PACKAGE__->config(
     # Disable deprecated behavior needed by old applications
     disable_component_resolution_regex_fallback => 1,
     enable_catalyst_header => 1, # Send X-Catalyst header
+    'Plugin::Authentication' => {
+        default_realm => 'members',
+        realms => {
+            members => {
+                credential => {
+                    class => 'Password',
+                    password_field => 'password',
+                    password_type => 'hashed',
+                    password_hash_type => 'SHA-1',
+                },
+                store => {
+                    class => 'DBIx::Class',
+                    user_model => 'WebDB::User',
+                }
+            }
+        }
+    },
     'Plugin::ConfigLoader' => {
         file => __PACKAGE__->path_to('share', 'etc'),
     },

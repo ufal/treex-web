@@ -1,17 +1,16 @@
-package Treex::Web::Forms::QueryForm;
+package Treex::Web::Forms::Base;
 
 use strict; 
 use warnings;
 
+use Moose;
 use HTML::FormHandler::Moose;
-extends 'Treex::Web::Forms::Base';
+extends 'HTML::FormHandler';
 
-has '+name' => (default => 'query_form');
+has '+is_html5' => (default => 1);
+has '+widget_tags' => ( default => sub { { wrapper_tag => 'p' } } );
 
-has_field 'result_hash' => (type => 'Hidden', widget_wrapper => 'None');
-has_field 'scenario' => (type => 'TextArea', required => 1);
-has_field 'input' => (type => 'TextArea', required => 1);
-has_field 'submit' => (type => 'Submit', value => 'Submit');
+sub build_do_form_wrapper { 1 }
 
 no HTML::FormHandler::Moose;
 1;
@@ -19,16 +18,16 @@ __END__
 
 =head1 NAME
 
-Treex::Web::Forms::QueryForm - Perl extension for blah blah blah
+Treex::Web::Forms::Base - Perl extension for blah blah blah
 
 =head1 SYNOPSIS
 
-   use Treex::Web::Forms::QueryForm;
+   use Treex::Web::Forms::Base;
    blah blah blah
 
 =head1 DESCRIPTION
 
-Stub documentation for Treex::Web::Forms::QueryForm, 
+Stub documentation for Treex::Web::Forms::Base;
 
 Blah blah blah.
 

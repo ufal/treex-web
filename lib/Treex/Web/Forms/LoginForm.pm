@@ -1,17 +1,18 @@
-package Treex::Web::Forms::QueryForm;
+package Treex::Web::Forms::LoginForm;
 
 use strict; 
 use warnings;
 
+use Moose;
 use HTML::FormHandler::Moose;
 extends 'Treex::Web::Forms::Base';
 
-has '+name' => (default => 'query_form');
+has '+name' => (default => 'login_form');
 
-has_field 'result_hash' => (type => 'Hidden', widget_wrapper => 'None');
-has_field 'scenario' => (type => 'TextArea', required => 1);
-has_field 'input' => (type => 'TextArea', required => 1);
-has_field 'submit' => (type => 'Submit', value => 'Submit');
+has_field 'email' => (type => 'Email', value => '', required => 1);
+has_field 'password' => (type => 'Password', required => 1);
+has_field 'remember' => (type => 'Checkbox', label => 'Keep me logged in', default => 1, do_label => 0);
+has_field 'submit' => (type => 'Submit', value => 'Login');
 
 no HTML::FormHandler::Moose;
 1;
@@ -19,16 +20,16 @@ __END__
 
 =head1 NAME
 
-Treex::Web::Forms::QueryForm - Perl extension for blah blah blah
+Treex::Web::Forms::LoginForm - Perl extension for blah blah blah
 
 =head1 SYNOPSIS
 
-   use Treex::Web::Forms::QueryForm;
+   use Treex::Web::Forms::LoginForm;
    blah blah blah
 
 =head1 DESCRIPTION
 
-Stub documentation for Treex::Web::Forms::QueryForm, 
+Stub documentation for Treex::Web::Forms::LoginForm;
 
 Blah blah blah.
 

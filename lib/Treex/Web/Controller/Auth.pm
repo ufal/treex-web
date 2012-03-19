@@ -1,8 +1,10 @@
 package Treex::Web::Controller::Auth;
 use Moose;
+use Treex::Web::Forms::LoginForm;
+use Treex::Web::Forms::SignupForm;
 use namespace::autoclean;
 
-BEGIN {extends 'Catalyst::Controller'; }
+BEGIN {extends 'Treex::Web::Controller::Base'; }
 
 =head1 NAME
 
@@ -16,17 +18,50 @@ Catalyst Controller.
 
 =cut
 
-
-=head2 index
+=head2 login
 
 =cut
 
-sub index :Path :Args(0) {
+sub login :Local :Args(0) {
     my ( $self, $c ) = @_;
 
-    $c->response->body('Matched Treex::Web::Controller::Auth in Auth.');
+    my $form = Treex::Web::Forms::LoginForm->new(
+        action => $c->uri_for($self->action_for('login')),
+    );
+    
+    if ( $c->req->method eq 'POST' && $form->process(params => $c->req->parameters) ) {
+        my $params = $form->value;
+        if ($c->authenticate({
+            password => $params->{password},
+            email => $params->{email},
+        })) {
+            $c->flash->{status_msg} = "You have beed successfully logged in.";
+            $c->response->redirect($c->uri_for($c->controller('Root')->action_for('index')));
+        } else {
+            $c->flash->{error_msg} = "Login has failed! Check your username and password";
+        }
+    }
+    
+    $c->stash( loginForm => $form, template => 'auth/login.tt' );
 }
 
+sub signup :Local :Args(0) {
+    my ( $self, $c ) = @_;
+
+    my $form = Treex::Web::Forms::SignupForm->new(
+        action => $c->uri_for($self->action_for('signup'))
+    );
+
+    if ( $c->req->method eq 'POST' && $form->process(params => $c->req->parameters)) {
+        
+    }
+    
+    $c->stash( signupForm => $form, template => 'auth/signup.tt' )
+}
+
+sub logout :Local :Args(0) {
+    my ( $self, $c ) = @_;
+}
 
 =head1 AUTHOR
 
