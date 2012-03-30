@@ -17,6 +17,10 @@ __PACKAGE__->config(
 
 Treex::Web::View::Web - TT View for Treex::Web
 
+=cut
+
+
+
 =head1 DESCRIPTION
 
 TT View for Treex::Web.

@@ -1,6 +1,6 @@
 -- 
 -- Created by SQL::Translator::Producer::SQLite
--- Created on Fri Mar  9 13:08:07 2012
+-- Created on Fri Mar 30 15:27:28 2012
 -- 
 
 ;
@@ -32,6 +32,7 @@ CREATE TABLE scenario (
   scenario text NOT NULL,
   name varchar(120) NOT NULL,
   comment text,
+  public boolean NOT NULL,
   user integer NOT NULL DEFAULT 0,
   last_modified datetime NOT NULL,
   FOREIGN KEY(user) REFERENCES user(id)
@@ -43,8 +44,10 @@ CREATE UNIQUE INDEX name_user_unique ON scenario (name, user);
 --
 CREATE TABLE user (
   id INTEGER PRIMARY KEY NOT NULL,
-  email text NOT NULL,
-  password text NOT NULL,
+  email varchar(120) NOT NULL,
+  password char(59) NOT NULL,
+  active boolean NOT NULL,
+  activate_token char(20),
   last_modified datetime NOT NULL
 );
 CREATE UNIQUE INDEX email_unique ON user (email);

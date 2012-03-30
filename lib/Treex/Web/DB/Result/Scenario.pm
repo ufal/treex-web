@@ -80,6 +80,13 @@ __PACKAGE__->add_columns(
     { data_type => "varchar", is_nullable => 0, size => 120 },
     "comment",
     { data_type => "text", is_nullable => 1 },
+    "public",
+    {
+        data_type => 'boolean',
+        is_nullable => 0,
+        is_boolean => 1,
+        default => 0
+    },
     "user",
     {
         data_type      => "integer",

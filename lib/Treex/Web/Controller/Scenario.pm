@@ -25,14 +25,18 @@ Catalyst Controller.
 
 sub base :Chained('/') :PathPart('scenario') :CaptureArgs(0)  {
     my ( $self, $c ) = @_;
-
+    
+    $c->stash->{public_scenarios} = $c->model('WebDB::Scenario')->search({public => 1});
     $c->stash(
         scenarioForm => Treex::Web::Forms::ScenarioForm->new(
-            action => $c->uri_for( $self->action_for('add'), ),
+            action => $c->uri_for($self->action_for('add')),
             schema => $c->model('WebDB')->schema,
-                                                          ),
+        ),
         template => 'scenario.tt',
     );
+    
+    $c->stash( user_scenarios => $c->user->search_related_rs('scenarios') )
+        if $c->user_exists;
 }
 
 sub index :Chained('base') :PathPart('') :Args(0) {
@@ -43,23 +47,11 @@ sub add :Chained(base) :PathPart('add') :Args(0) {
     my ( $self, $c ) = @_;
     my $form = $c->stash->{'scenarioForm'};
     
-    if ( $c->req->method eq 'POST' ) {
-        if ($form->process(params => $c->req->parameters)) {
-            use Data::Dumper;
-            local $Data::Dumper::Terse = 1;
-            my $str = Dumper($form->value);
-            $c->stash( form_values => $str );
-            # try {
-            #     my $scenario_rs = $c->model('WebDB::Scenario');
-            #     my $scenario = $scenario_rs->create( $form->value );
-            #     $c->response->redirect($c->uri_for($self->action_for('index')),
-            #                            {
-            #                                $c->status_msg_stash_key => $c->set_status_msg("Scenario ${scenario->name} successully created.")});
-            # } catch {
-            #     $c->log->error("$_");
-            #     $c->stash( $c->error_msg_stash_key => "$_" );
-            #     $c->clear_errors;
-            # };
+    if ( $c->req->method eq 'POST' && $c->user_exists ) {
+        my $new_scenario = $c->model('WebDB::Scenario')->new_result({ user => $c->user->id });
+        
+        if ($form->process(item => $new_scenario, params => $c->req->parameters)) {
+            $c->flash->{status_msg} = 'Scenario successfully created';
         }
     }
 }

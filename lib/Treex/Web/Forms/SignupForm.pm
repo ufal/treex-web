@@ -5,7 +5,8 @@ use warnings;
 
 use Moose;
 use HTML::FormHandler::Moose;
-extends 'Treex::Web::Forms::Base', 'HTML::FormHandler::Model::DBIC';
+extends 'Treex::Web::Forms::Base';
+with 'HTML::FormHandler::TraitFor::Model::DBIC';
 
 has '+item_class' => ( default => 'Treex::Web::DB::Result::User' );
 has '+name' => (default => 'signup_form');
@@ -14,6 +15,12 @@ has_field 'email' => (type => 'Email', value => '', required => 1);
 has_field 'password' => (type => 'Password', required => 1);
 has_field 'password_confirm' => (type => 'Password', label => 'Confirm password', required => 1);
 has_field 'submit' => (type => 'Submit', value => 'Submit');
+
+after 'validate' => sub {
+    my $self = shift;
+    $self->field('password_confirm')->add_error('Passwords are not the same.')
+        if $self->field('password')->value ne $self->field('password_confirm')->value;
+};
 
 no HTML::FormHandler::Moose;
 1;

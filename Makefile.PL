@@ -26,10 +26,13 @@ requires 'Catalyst::Model::DBIC::Schema';
 requires 'DBIx::Class::Migration';
 requires 'DBIx::Class::TimeStamp';
 requires 'DBIx::Class::UUIDColumns';
+requires 'DBIx::Class::EncodedColumn';
 requires 'DBIx::Class::InflateColumn::FS';
+requires 'DBIx::Class::InflateColumn::Boolean';
 requires 'SQL::Translator';
 requires 'Email::Valid'; # used to check user mails
 requires 'Data::Uniqid'; # used to generate UUID Columns
+requires 'Crypt::Eksblowfish::Bcrypt'; # used for encrypting password
 
 # Auth stuff
 requires 'Catalyst::Plugin::Authentication';

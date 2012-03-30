@@ -11,7 +11,7 @@ use strict;
 use warnings;
 
 use Moose;
-use DBIx::Class::UUIDColumns;
+use Catalyst::Authentication::User;
 use MooseX::NonMoose;
 use MooseX::MarkAsMethods autoclean => 1;
 extends 'DBIx::Class::Core';
@@ -28,7 +28,8 @@ extends 'DBIx::Class::Core';
 
 =cut
 
-__PACKAGE__->load_components('InflateColumn::DateTime', 'TimeStamp');
+__PACKAGE__->load_components('EncodedColumn', 'InflateColumn::DateTime', 'TimeStamp', 'UUIDColumns');
+__PACKAGE__->uuid_class('::Data::Uniqid');
 
 =head1 TABLE: C<user>
 
@@ -81,9 +82,17 @@ __PACKAGE__->add_columns(
     'email',
     { data_type => 'varchar', size => 120, is_nullable => 0 },
     'password',
-    { data_type => 'char', size => 40, is_nullable => 0 },
+    {
+        data_type => 'char',
+        size => 59,
+        is_nullable => 0,
+        encode_column => 1,
+        encode_class  => 'Crypt::Eksblowfish::Bcrypt',
+        encode_args   => { key_nul => 0, cost => 8 },
+        encode_check_method => 'check_password',
+    },
     'active',
-    { data_type => 'boolean', default => 0 },
+    { data_type => 'boolean', default => 0, is_boolean => 1 },
     'activate_token',
     { data_type => 'char', size => 20, is_nullable => 1 },
     'last_modified',
@@ -126,7 +135,7 @@ __PACKAGE__->add_unique_constraint('email_unique', ['email']);
 =head2 results
 
 Type: has_many
-
+p
 Related object: L<Treex::Web::DB::Result::Result>
 
 =cut
@@ -153,5 +162,21 @@ __PACKAGE__->has_many(
     { cascade_copy => 0, cascade_delete => 1},
 );
 
-__PACKAGE__->meta->make_immutable;
+=head1 METHODS
+
+=cut
+
+sub new {
+    my ( $self, $attrs ) = @_;
+    
+    $attrs->{active} = 0 unless defined $attrs->{active} && $attrs->{active};
+    $attrs->{activate_token} = $self->get_uuid
+        if $attrs->{active} == 0;
+    
+    my $new = $self->next::method($attrs);
+    
+    return $new;
+}
+
+__PACKAGE__->meta->make_immutable(inline_constructor => 0);
 1;

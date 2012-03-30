@@ -182,6 +182,11 @@ fieldset label {
    color: #8a1f11;
 }
 
+span.error_message {
+   display: block;
+   margin: 7px 0 0 0;
+}
+
 hr.clear {
    background: none;
 	 border: 0;

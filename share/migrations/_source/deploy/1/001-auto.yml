@@ -196,7 +196,7 @@ schema:
             - user
           match_type: ''
           name: scenario_fk_user
-          on_delete: ''
+          on_delete: CASCADE
           on_update: ''
           options: []
           reference_fields:
@@ -232,7 +232,7 @@ schema:
           is_primary_key: 0
           is_unique: 0
           name: last_modified
-          order: 6
+          order: 7
           size:
             - 0
         name:
@@ -245,6 +245,16 @@ schema:
           order: 3
           size:
             - 120
+        public:
+          data_type: boolean
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 0
+          is_unique: 0
+          name: public
+          order: 5
+          size:
+            - 0
         scenario:
           data_type: text
           default_value: ~
@@ -262,7 +272,7 @@ schema:
           is_primary_key: 0
           is_unique: 1
           name: user
-          order: 5
+          order: 6
           size:
             - 0
       indices:
@@ -301,8 +311,28 @@ schema:
           reference_table: ''
           type: UNIQUE
       fields:
+        activate_token:
+          data_type: char
+          default_value: ~
+          is_nullable: 1
+          is_primary_key: 0
+          is_unique: 0
+          name: activate_token
+          order: 5
+          size:
+            - 20
+        active:
+          data_type: boolean
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 0
+          is_unique: 0
+          name: active
+          order: 4
+          size:
+            - 0
         email:
-          data_type: text
+          data_type: varchar
           default_value: ~
           is_nullable: 0
           is_primary_key: 0
@@ -310,7 +340,7 @@ schema:
           name: email
           order: 2
           size:
-            - 0
+            - 120
         id:
           data_type: integer
           default_value: ~
@@ -329,11 +359,11 @@ schema:
           is_primary_key: 0
           is_unique: 0
           name: last_modified
-          order: 4
+          order: 6
           size:
             - 0
         password:
-          data_type: text
+          data_type: char
           default_value: ~
           is_nullable: 0
           is_primary_key: 0
@@ -341,7 +371,7 @@ schema:
           name: password
           order: 3
           size:
-            - 0
+            - 59
       indices: []
       name: user
       options: []
@@ -520,6 +550,11 @@ translator:
               data_type: varchar
               is_nullable: 0
               size: 120
+            public:
+              data_type: boolean
+              default: 0
+              is_boolean: 1
+              is_nullable: 0
             scenario:
               data_type: text
               is_nullable: 0
@@ -537,6 +572,7 @@ translator:
             - scenario
             - name
             - comment
+            - public
             - user
             - last_modified
           _primaries: &4
@@ -566,9 +602,18 @@ translator:
           source_name: Scenario
         User: !!perl/hash:DBIx::Class::ResultSource::Table
           _columns:
+            activate_token:
+              data_type: char
+              is_nullable: 1
+              size: 20
+            active:
+              data_type: boolean
+              default: 0
+              is_boolean: 1
             email:
-              data_type: text
+              data_type: varchar
               is_nullable: 0
+              size: 120
             id:
               data_type: integer
               is_auto_increment: 1
@@ -583,13 +628,22 @@ translator:
               dynamic_default_on_update: get_timestamp
               is_nullable: 0
             password:
-              data_type: text
+              data_type: char
+              encode_args:
+                cost: 8
+                key_nul: 0
+              encode_check_method: check_password
+              encode_class: Crypt::Eksblowfish::Bcrypt
+              encode_column: 1
               is_nullable: 0
+              size: 59
           _columns_info_loaded: 0
           _ordered_columns:
             - id
             - email
             - password
+            - active
+            - activate_token
             - last_modified
           _primaries: &5
             - id
@@ -604,6 +658,16 @@ translator:
               cond:
                 foreign.user: self.id
               source: Treex::Web::DB::Result::Result
+            scenarios:
+              attrs:
+                accessor: multi
+                cascade_copy: 0
+                cascade_delete: 1
+                join_type: LEFT
+              class: Treex::Web::DB::Result::Scenario
+              cond:
+                foreign.user: self.id
+              source: Treex::Web::DB::Result::Scenario
           _unique_constraints:
             email_unique:
               - email
@@ -647,7 +711,8 @@ translator:
           resultset_class: DBIx::Class::DeploymentHandler::VersionStorage::Standard::VersionResultSet
           schema: *2
           source_name: __VERSION
-      storage: !!perl/hash:DBIx::Class::Storage::DBI
+      storage: !!perl/hash:DBIx::Class::Storage::DBI::SQLite
+        _conn_pid: 5674
         _connect_info:
           - auto_savepoint: 1
             cursor_class: DBIx::Class::Cursor::Cached
@@ -656,6 +721,8 @@ translator:
             password: ''
             quote_names: 1
             user: ''
+        _dbh: !!perl/hash:DBI::db {}
+        _dbh_autocommit: 1
         _dbh_details: {}
         _dbh_gen: 0
         _dbi_connect_info:
@@ -665,6 +732,7 @@ translator:
           PrintError: 0
           RaiseError: 1
           ShowErrorStatement: 1
+        _driver_determined: 1
         _in_do_block: 0
         _sql_maker: ~
         _sql_maker_opts:

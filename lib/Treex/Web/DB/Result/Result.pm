@@ -188,7 +188,7 @@ __PACKAGE__->belongs_to(
 
 sub new {
     my ( $self, $attrs ) = @_;
-
+    
     for my $column (@{$self->uuid_columns}) {
         $attrs->{$column} = $self->get_uuid
             unless defined $attrs->{$column};
@@ -204,7 +204,7 @@ sub fs_file_name {
 
 sub _fs_column_dirs {
     my $self = shift;
-
+    
     my $hash = $self->result_hash;
     return File::Spec->catfile( substr($hash, 0, 2), $hash );
 }
