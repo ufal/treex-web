@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+ <head>
+  <title>[% template.title or site.title %] &ndash; [% c.config.name %]</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <link rel="stylesheet" href="[% c.uri_for('/static/css/reset.css') %]" type="text/css" media="screen" />
+  <link rel="stylesheet" href="[% c.uri_for('/static/css/text.css') %]" type="text/css" media="screen" />
+  <link rel="stylesheet" href="[% c.uri_for('/static/css/layout.css') %]" type="text/css" media="screen" />
+  <link rel="stylesheet" href="[% c.uri_for('/static/css/formalize.css') %]" type="text/css" media="screen" />
+  <script src="[% c.uri_for('/static/js/jquery.js') %]"></script>
+  <script src="[% c.uri_for('/static/js/jquery.formalize.js') %]"></script>
+  <script src="[% c.uri_for('/static/js/jquery.tools.min.js') %]"></script>
+ </head>
+ <body>
+[% content %]
+ </body>
+</html>

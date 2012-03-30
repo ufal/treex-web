@@ -1,0 +1,30 @@
+<header>[% PROCESS site/header %]</header>
+<article>
+  <div id="content-container">
+    <div id="flash-messages">
+      [%- IF status_msg || c.flash.status_msg -%]
+      <p class="success">[% status_msg || c.flash.status_msg %]</p>
+      [%- END -%]
+      [%- IF error_msg || c.flash.error_msg -%]
+      <p class="error">[% error_msg || c.flash.error_msg %]</p>
+      [%- END -%]
+      [% c.flash.status_msg = undef %]
+      [% c.flash.error_msg = undef %]
+    </div>
+    [% IF sidebar or template.sidebar %]
+    <div id="sidebar" class="clearfix">
+    [% PROCESS sidebar or template.sidebar %]
+    </div>
+    <div id="main-content">
+      <h1>[% title or template.title %]</h1>
+      [% content %]
+    </div>
+    [% ELSE %]
+    <div id="content">
+      <h1>[% title or template.title %]</h1>
+      [% content %]
+    </div>
+    [% END %]
+  </div>
+</article>
+<footer>[% PROCESS site/footer %]</footer>

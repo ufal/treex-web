@@ -6,10 +6,17 @@ use warnings;
 use base 'Catalyst::View::TT';
 
 __PACKAGE__->config(
-    TEMPLATE_EXTENSION => '.tt',
+    INCLUDE_PATH => [
+        Treex::Web->path_to( 'root', 'src' ),
+        Treex::Web->path_to( 'root', 'lib' )
+        ],
+    TEMPLATE_EXTENSION => '.tt2',
     ENCODING           => 'utf-8',
     CATALYST_VAR       => 'c',
-    WRAPPER            => 'page.tt',
+    PRE_PROCESS        => 'config/main',
+    WRAPPER            => 'site/wrapper',
+    ERROR              => 'error.tt2',
+    TIMER              => 0,
     render_die         => 1,
 );
 
