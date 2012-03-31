@@ -29,15 +29,10 @@ The root page (/)
 
 sub index :Path :Args(0) {
     my ( $self, $c ) = @_;
-
+    
     my $form = Treex::Web::Forms::QueryForm->new(
         action => $c->uri_for($c->controller('Query')->action_for('index')),
     );
-
-    $form->defaults({
-        input => 'This is a test text.',
-        scenario => 's'
-    });
     
     $c->stash(
         queryForm => $form
@@ -50,17 +45,6 @@ sub index :Path :Args(0) {
 
 sub auto :Path {
     my ( $self, $c ) = @_;
-    
-    $c->stash(
-        treex_version => $Treex::Web::VERSION,
-        menu => [
-            { name => 'Dashboard', url => $c->uri_for($c->controller('Root')->action_for('index')) },
-            { name => 'My Results', url => $c->uri_for($c->controller('Result')->action_for('index')) },
-            { name => 'Scenarios', url => $c->uri_for($c->controller('Scenario')->action_for('index')) }
-        ]
-           );
-    
-    #
 }
 
 =head2 default

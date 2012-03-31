@@ -1,0 +1,7 @@
+[% META sidebar="result/sidebar.tt2" %]
+[% META title="My Results" %]
+
+Result: [% current_result.result_hash %]
+<h3>You have total [% result_rs.count %] results</h3>
+[% PROCESS query/form.tt2 form=queryForm %]
+[% PROCESS result/tabs.tt2 %]

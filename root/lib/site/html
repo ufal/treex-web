@@ -12,6 +12,8 @@
   <script src="[% c.uri_for('/static/js/jquery.tools.min.js') %]"></script>
  </head>
  <body>
-[% content %]
+   <div id="site-wrapper">
+     [% content %]
+   </div>
  </body>
 </html>

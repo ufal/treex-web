@@ -13,12 +13,13 @@
     </div>
     [% IF sidebar or template.sidebar %]
     <div id="sidebar" class="clearfix">
-    [% PROCESS sidebar or template.sidebar %]
+    [% IF sidebar; PROCESS "$sidebar"; ELSE; PROCESS "$template.sidebar"; END; %]
     </div>
     <div id="main-content">
       <h1>[% title or template.title %]</h1>
       [% content %]
     </div>
+    <hr class="clear" />
     [% ELSE %]
     <div id="content">
       <h1>[% title or template.title %]</h1>

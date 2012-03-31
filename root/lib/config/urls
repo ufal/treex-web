@@ -1,8 +1,10 @@
-[% base = Catalyst.req.base;
-
+[%
    site.url = {
-     base    = base
-     home    = "${base}welcome"
-     message = "${base}message"
+     base        = Catalyst.req.base
+     home        = c.uri_for(c.controller('Root').action_for('index'))
+     my_results  = c.uri_for(c.controller('Result').action_for('index'))
+     scenarios   = c.uri_for(c.controller('Scenario').action_for('index'))
+     login       = c.uri_for(c.controller('Auth').action_for('login'))
+     logout      = c.uri_for(c.controller('Auth').action_for('logout'))
    }
 -%]

@@ -2,5 +2,5 @@
 
 <h1>Run new query</h1>
 
-[% PROCESS query/form.tt form=queryForm %]
+[% PROCESS query/form.tt2 form=queryForm %]
 

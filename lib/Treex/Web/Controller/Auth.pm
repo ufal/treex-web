@@ -24,7 +24,7 @@ Catalyst Controller.
 
 sub login :Local :Args(0) {
     my ( $self, $c ) = @_;
-
+    
     my $form = Treex::Web::Forms::LoginForm->new(
         action => $c->uri_for($self->action_for('login')),
     );
@@ -42,7 +42,7 @@ sub login :Local :Args(0) {
         }
     }
     
-    $c->stash( loginForm => $form, template => 'auth/login.tt' );
+    $c->stash( loginForm => $form, template => 'auth/login.tt2' );
 }
 
 sub signup :Local :Args(0) {
@@ -59,7 +59,7 @@ sub signup :Local :Args(0) {
         $c->stash( user => $user );
     }
     
-    $c->stash( signupForm => $form, template => 'auth/signup.tt' )
+    $c->stash( signupForm => $form, template => 'auth/signup.tt2' );
 }
 
 sub logout :Local :Args(0) {

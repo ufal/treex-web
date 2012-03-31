@@ -1,4 +1,4 @@
-<h1>Login</h1>
+[% META title="Login" %]
 
 <div id="login-form-container">
   [% loginForm.render %]

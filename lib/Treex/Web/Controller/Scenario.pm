@@ -32,7 +32,7 @@ sub base :Chained('/') :PathPart('scenario') :CaptureArgs(0)  {
             action => $c->uri_for($self->action_for('add')),
             schema => $c->model('WebDB')->schema,
         ),
-        template => 'scenario.tt',
+        template => 'scenario.tt2',
     );
     
     $c->stash( user_scenarios => $c->user->search_related_rs('scenarios') )

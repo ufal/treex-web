@@ -27,13 +27,13 @@ sub base :Chained('/') :PathPart('') :CaptureArgs(0)  {
     my ($self, $c) = @_;
     
     my $rs = $c->model('WebDB::Result');
-    $c->stash(template => 'result.tt',
+    $c->stash(template => 'result.tt2',
               result_rs => $rs);
 }
 
 sub index :Chained('base') :PathPart('results') :Args(0) {
     my ($self, $c) = @_;
-
+    
     my $rs = $c->stash->{result_rs};
     $c->stash(current_result => $rs->first);
 }
@@ -46,7 +46,7 @@ sub show :Chained('base') :PathPart('result') :Args(1) {
     my ($self, $c, $result_hash) = @_;
     
     my $rs = $c->stash->{result_rs};
-  
+    
     try {
         my $result = $rs->find({ result_hash => $result_hash },
                                { key => 'hash_unique' });

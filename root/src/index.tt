@@ -1,3 +1,0 @@
-[% META title='Try out Treex now!' %]
-
-[% PROCESS query/form.tt form=queryForm %]

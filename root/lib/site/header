@@ -1,5 +1,5 @@
 <!-- BEGIN site/header -->
-<h1 id="logo"><span>Treex Web</span></h1>
+<h1 id="logo"><a href="[% site.url.home %]" title="Treex Web Interface">Treex::Web <span>Interface</span></a></h1>
 <nav>
   <ul>
     [%- FOREACH item IN site.menu  -%]
@@ -8,9 +8,9 @@
 </li>
 [%- END -%]
 [% UNLESS c.user_exists %]
-<li class="to-right"><a href="[% c.uri_for(c.controller('Auth').action_for('login')) %]">Login</a></li>
+<li class="to-right"><a href="[% site.url.login %]">Login</a></li>
 [% ELSE %]
-<li class="to-right"><a href="[% c.uri_for(c.controller('Auth').action_for('logout')) %]">Logout</a></li>
+<li class="to-right"><a href="[% site.url.logout %]">Logout</a></li>
 [% END %]
 </ul>
 </nav>

@@ -76,11 +76,6 @@ __PACKAGE__->config(
             default_fixture_sets => ['all_tables'],
         },
     },
-    'View::Web' => {
-        INCLUDE_PATH => [
-            __PACKAGE__->path_to( 'root', 'templates' ),
-        ],
-    },
 );
 
 # Start the application

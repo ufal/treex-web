@@ -1,0 +1,7 @@
+[%
+   site.menu = [
+     { name = 'Home', url = site.url.home },
+     { name => 'My Results', url = site.url.my_results },
+     { name => 'Scenarios', url = site.url.scenarios },
+   ]
+-%]
