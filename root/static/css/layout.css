@@ -22,7 +22,7 @@ nav ul {
    width: 918px;
    height: 37px;
    padding: 6px;
-   margin: 0 0 30px 0;
+   margin: 0 0 2x0px 0;
    background: url(../images/top-menu-bg.gif) no-repeat left top; 
   /* We used a background image making the thick border and the thin one to keep the html structure simple */
 }
@@ -43,6 +43,11 @@ nav li a {
    text-decoration: none;
    color: #646464;
    padding: 0 20px;
+}
+
+nav li.active a, nav li.active a:hover {
+	 background: #f0f0f0 url(../images/top-menu-item-bg.gif) repeat-x left top;
+	 color: #454545;
 }
 
 nav ul li.to-right {

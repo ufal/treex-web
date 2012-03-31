@@ -1,7 +1,18 @@
 [%
    site.menu = [
-     { name = 'Home', url = site.url.home },
-     { name => 'My Results', url = site.url.my_results },
-     { name => 'Scenarios', url = site.url.scenarios },
-   ]
+     { name = 'home', title = 'Home', url = site.url.home, active = (c.namespace == '') },
+     { name = 'result', title = 'My Results', url = site.url.my_results, active = (c.namespace == 'result') },
+     { name = 'scenario', title = 'Scenarios', url = site.url.scenarios, active = (c.namespace == 'scenario') },
+   ];
+
+   UNLESS c.user_exists;
+   site.right_menu = [
+     { name = 'login', title = 'Login', url = site.url.login, active = (c.namespace == 'auth' && c.action.name == 'login') },  
+     { name = 'signup', title = 'Sign Up', url = site.url.signup, active = (c.namespace == 'auth' && c.action.name == 'signup') },
+   ];
+   ELSE;
+   site.right_menu = [
+     { name = 'logout', title = 'Logout', url = site.url.logout },  
+   ];   
+   END;
 -%]

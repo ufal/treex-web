@@ -4,14 +4,14 @@
   <ul>
     [%- FOREACH item IN site.menu  -%]
     <li[% IF item.active %] class="active"[% END %]>
-      <a href="[% item.url %]">[% item.name | html %]</a>
-</li>
-[%- END -%]
-[% UNLESS c.user_exists %]
-<li class="to-right"><a href="[% site.url.login %]">Login</a></li>
-[% ELSE %]
-<li class="to-right"><a href="[% site.url.logout %]">Logout</a></li>
-[% END %]
+      <a href="[% item.url %]">[% item.title | html %]</a>
+    </li>
+    [%- END -%]
+    [% FOREACH item IN site.right_menu %]
+    <li class="to-right[% IF item.active %] active[% END %]">
+      <a href="[% item.url %]">[% item.title | html %]</a>
+    </li>    
+    [% END %]
 </ul>
 </nav>
 <!-- END site/header -->

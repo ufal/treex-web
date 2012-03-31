@@ -2,5 +2,5 @@
 [% IF c.user_exists %]
 [% scenarioForm.render %]
 [% ELSE %]
-<p>You have to login first! <a href="[% c.uri_for(c.controller('Auth').action_for('login')) %]">Go to login page...</a></p>
+<p>You have to login first! <a href="[% site.url.login %]">Go to login page...</a></p>
 [% END %]

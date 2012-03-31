@@ -6,5 +6,6 @@
      scenarios   = c.uri_for(c.controller('Scenario').action_for('index'))
      login       = c.uri_for(c.controller('Auth').action_for('login'))
      logout      = c.uri_for(c.controller('Auth').action_for('logout'))
+     signup      = c.uri_for(c.controller('Auth').action_for('signup'))
    }
 -%]
