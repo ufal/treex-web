@@ -1,6 +1,0 @@
-<h2>Do you want to add a new scenario?</h2>
-[% IF c.user_exists %]
-[% scenarioForm.render %]
-[% ELSE %]
-<p>You have to login first! <a href="[% site.url.login %]">Go to login page...</a></p>
-[% END %]
