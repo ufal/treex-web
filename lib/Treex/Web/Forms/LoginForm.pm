@@ -1,18 +1,28 @@
 package Treex::Web::Forms::LoginForm;
 
-use strict; 
-use warnings;
-
-use Moose;
 use HTML::FormHandler::Moose;
-extends 'Treex::Web::Forms::Base';
+BEGIN {extends 'CatalystX::SimpleLogin::Form::Login';}
+with 'Treex::Web::Forms::Role::Base';
 
 has '+name' => (default => 'login_form');
 
-has_field 'email' => (type => 'Email', value => '', required => 1);
-has_field 'password' => (type => 'Password', required => 1);
-has_field 'remember' => (type => 'Checkbox', label => 'Keep me logged in', default => 1, do_label => 0);
-has_field 'submit' => (type => 'Submit', value => 'Login');
+sub after_build {
+    my $self = shift;
+    
+    my $remember_field = $self->field('remember');
+    $remember_field->label('Keep me logged in');
+    $remember_field->do_label(0);
+
+    my $username_field = $self->field('username');
+    $username_field->type('Email');
+    $username_field->accessor('email');
+    $username_field->label('Email');
+}
+
+# has_field 'email' => (type => 'Email', value => '', required => 1);
+# has_field 'password' => (type => 'Password', required => 1);
+# has_field 'remember' => (type => 'Checkbox', label => 'Keep me logged in', default => 1, do_label => 0);
+# has_field 'submit' => (type => 'Submit', value => 'Login');
 
 no HTML::FormHandler::Moose;
 1;

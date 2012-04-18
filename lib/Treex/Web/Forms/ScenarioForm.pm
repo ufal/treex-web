@@ -4,21 +4,23 @@ use strict;
 use warnings;
 
 use HTML::FormHandler::Moose;
-extends 'Treex::Web::Forms::Base', 'HTML::FormHandler::Model::DBIC';
+extends 'Treex::Web::Forms::Base';
+with 'HTML::FormHandler::TraitFor::Model::DBIC';
 
 has '+item_class' => ( default => 'Treex::Web::DB::Result::Scenario' );
-has '+name' => (default => 'scenario_form');
+has '+name' => ( default => 'scenario_form' );
 
 has '+unique_messages' => (
     default => sub {
-          { name_user_unique => "Duplicate value for name" };
-     }
-  );
+        { name_user_unique => "Duplicate value for name" };
+    }
+);
 
 has_field 'name' => (type => 'Text', value => '', maxlength => 120, required => 1);
 has_field 'scenario' => (type => 'TextArea', required => 1);
 has_field 'comment' => (type => 'TextArea');
-has_field 'user' => (type => 'Integer', widget => 'NoRender', default => 0, input_without_param => 0);
+has_field 'public' => (type => 'Boolean', do_label => 0, default => 0);
+has_field 'user' => (type => 'Integer', widget => 'NoRender');
 has_field 'submit' => (type => 'Submit', value => 'Submit');
 
 no HTML::FormHandler::Moose;

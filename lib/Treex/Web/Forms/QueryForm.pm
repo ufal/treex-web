@@ -1,10 +1,9 @@
 package Treex::Web::Forms::QueryForm;
 
-use strict; 
-use warnings;
-
 use HTML::FormHandler::Moose;
-extends 'Treex::Web::Forms::Base';
+BEGIN {extends 'HTML::FormHandler';}
+
+with 'Treex::Web::Forms::Role::Base';
 
 has '+name' => (default => 'query_form');
 

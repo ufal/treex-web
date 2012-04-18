@@ -1,0 +1,3 @@
+[% META title='Add new scenario' %]
+
+[% PROCESS scenario/form.tt2 %]

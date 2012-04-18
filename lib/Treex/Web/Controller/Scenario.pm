@@ -23,7 +23,7 @@ Catalyst Controller.
 
 =cut
 
-sub base :Chained('/') :PathPart('scenario') :CaptureArgs(0)  {
+sub base :Chained('/') :PathPart('') :CaptureArgs(0)  {
     my ( $self, $c ) = @_;
     
     $c->stash->{public_scenarios} = $c->model('WebDB::Scenario')->search({public => 1});
@@ -39,11 +39,38 @@ sub base :Chained('/') :PathPart('scenario') :CaptureArgs(0)  {
         if $c->user_exists;
 }
 
-sub index :Chained('base') :PathPart('') :Args(0) {
-    my ( $self, $c ) = @_;
+sub scenario :Chained('base') :PathPart('scenario') :CaptureArgs(1) {
+    my ( $self, $c, $scenario_id ) = @_;
+    
+    my $scenario = $c->model('WebDB::Scenario')->search({
+        id => $scenario_id,
+        
+    });
 }
 
-sub add :Chained(base) :PathPart('add') :Args(0) {
+sub index :Chained('base') :PathPart('scenarios') :Args(0) {
+    my ( $self, $c ) = @_;
+    
+    my $scenarios = $c->model('WebDB::Scenario')->search(undef, {
+        prefetch => 'user'
+    });
+    
+    $c->stash( scenarios => $scenarios );
+    $c->forward('list_all');
+}
+
+sub list_all :Private {
+    my ( $self, $c ) = @_;
+    
+    my $scenarios = $c->stash->{scenarios};
+    my @cond = ();
+    push @cond, {public => 1};
+    push @cond, {user => $c->user->id} if $c->user_exists;
+    
+    $scenarios = $scenarios->search(\@cond);
+}
+    
+sub add :Chained('base') :PathPart('scenario/add') :Args(0) {
     my ( $self, $c ) = @_;
     my $form = $c->stash->{'scenarioForm'};
     
@@ -52,8 +79,14 @@ sub add :Chained(base) :PathPart('add') :Args(0) {
         
         if ($form->process(item => $new_scenario, params => $c->req->parameters)) {
             $c->flash->{status_msg} = 'Scenario successfully created';
+            $c->response->redirect($c->uri_for($self->action_for('index')));
         }
     }
+    
+    $c->stash(template => 'scenario/new.tt2');
+}
+
+sub delete :Chained('base') :PathPart('scenario') {
 }
 
 =head1 AUTHOR

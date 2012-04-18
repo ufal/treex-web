@@ -178,5 +178,11 @@ sub new {
     return $new;
 }
 
+sub name {
+    my $self = shift;
+    my @parts = split /@/, $self->email; 
+    shift @parts;
+}
+    
 __PACKAGE__->meta->make_immutable(inline_constructor => 0);
 1;

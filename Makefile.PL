@@ -40,6 +40,7 @@ requires 'Catalyst::Authentication::Store::DBIx::Class';
 requires 'Catalyst::Plugin::Authorization::Roles';
 requires 'Catalyst::Plugin::Session::State::Cookie';
 requires 'Catalyst::Plugin::Session::Store::FastMmap';
+requires 'CatalystX::SimpleLogin';
 
 # HTML::FormHandler
 requires 'HTML::FormHandler' => '0.40001';

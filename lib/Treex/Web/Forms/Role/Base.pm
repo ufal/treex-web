@@ -1,30 +1,32 @@
-package Treex::Web::Forms::Base;
+package Treex::Web::Forms::Role::Base;
 
-use Moose;
-use HTML::FormHandler::Moose;
-extends 'HTML::FormHandler';
+use HTML::FormHandler::Moose::Role;
 
-has '+is_html5' => (default => 1);
-has '+widget_tags' => ( default => sub { { wrapper_tag => 'p' } } );
+before 'before_build' => sub {
+    my $class = shift;
+    $class->set_update_field_list( 'all', { tags => { wrapper_tag => 'p' } } );
+};
+
+has 'is_html5'  => ( isa => 'Bool', is => 'ro', default => 1 );
 
 sub build_do_form_wrapper { 1 }
 
-no HTML::FormHandler::Moose;
+no HTML::FormHandler::Moose::Role;
 1;
 __END__
 
 =head1 NAME
 
-Treex::Web::Forms::Base - Perl extension for blah blah blah
+Treex::Web::Forms::Role::Base - Perl extension for blah blah blah
 
 =head1 SYNOPSIS
 
-   use Treex::Web::Forms::Base;
+   use Treex::Web::Forms::Role::Base;
    blah blah blah
 
 =head1 DESCRIPTION
 
-Stub documentation for Treex::Web::Forms::Base;
+Stub documentation for Treex::Web::Forms::Role::Base;
 
 Blah blah blah.
 

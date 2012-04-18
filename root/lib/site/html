@@ -10,6 +10,7 @@
   <script src="[% c.uri_for('/static/js/jquery.js') %]"></script>
   <script src="[% c.uri_for('/static/js/jquery.formalize.js') %]"></script>
   <script src="[% c.uri_for('/static/js/jquery.tools.min.js') %]"></script>
+  <script src="[% c.uri_for('/static/js/application.js') %]"></script>
  </head>
  <body>
    <div id="site-wrapper">
