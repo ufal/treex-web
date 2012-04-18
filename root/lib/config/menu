@@ -7,8 +7,8 @@
 
    UNLESS c.user_exists;
    site.right_menu = [
-     { name = 'login', title = 'Login', url = site.url.login, active = (c.namespace == 'auth' && c.action.name == 'login') },  
-     { name = 'signup', title = 'Sign Up', url = site.url.signup, active = (c.namespace == 'auth' && c.action.name == 'signup') },
+     { name = 'login', title = 'Login', url = site.url.login, active = (c.namespace == 'login' && c.action.name == 'login') },  
+     { name = 'signup', title = 'Sign Up', url = site.url.signup, active = (c.namespace == 'login' && c.action.name == 'signup') },
    ];
    ELSE;
    site.right_menu = [
