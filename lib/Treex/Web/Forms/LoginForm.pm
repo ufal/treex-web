@@ -19,11 +19,6 @@ sub after_build {
     $username_field->label('Email');
 }
 
-# has_field 'email' => (type => 'Email', value => '', required => 1);
-# has_field 'password' => (type => 'Password', required => 1);
-# has_field 'remember' => (type => 'Checkbox', label => 'Keep me logged in', default => 1, do_label => 0);
-# has_field 'submit' => (type => 'Submit', value => 'Login');
-
 no HTML::FormHandler::Moose;
 1;
 __END__
