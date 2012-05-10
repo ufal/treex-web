@@ -1,3 +1,4 @@
+[% META sidebar="scenario/sidebar.tt2" %]
 [% META title="Browse Scenarios" %]
 
 <p>Total [% scenarios.count %] scenarios found.</p>
@@ -19,12 +20,8 @@
       <td>[% item.user.name | html %]</td>
       <td>[% item.public | html %]</td>
       <td>
-      
       </td>
     </tr>
     [% END -%]
   </tbody>
 </table>
-
-<h2>Do you want to add a new scenario?</h2>
-[% PROCESS scenario/form.tt2 %]
