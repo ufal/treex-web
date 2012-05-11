@@ -11,6 +11,7 @@
   <script src="[% c.uri_for('/static/js/jquery.formalize.js') %]"></script>
   <script src="[% c.uri_for('/static/js/jquery.tools.min.js') %]"></script>
   <script src="[% c.uri_for('/static/js/application.js') %]"></script>
+  <link rel="shortcut icon" href="[% c.uri_for('/favicon.ico')%]" />
  </head>
  <body>
    <div id="site-wrapper">

@@ -65,8 +65,12 @@ nav ul li a.active, #site-nav li a.active {
 
 /* Logo  ---------------------------------------- */
 
+header {
+   background: transparent url(../images/treex_logo.png) no-repeat left top;
+}
+
 #logo {
-   padding: 15px 0 0px 5px;
+   padding: 15px 0 0px 60px;
    font-family:
     "Bookman Old Style",	/* Windows, MacOS */
     "Serifa BT",		/* Windows XP. Not the same font,
