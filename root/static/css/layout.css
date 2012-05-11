@@ -113,6 +113,7 @@ article h1 {
    background-color: #fff;
    border: 1px solid #ddd;
    width: 918px;
+   min-height: 450px;
 }
 
 #content {
