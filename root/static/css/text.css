@@ -35,10 +35,16 @@ h1 img, h2 img, h3 img,
 
 /* Icons
 -------------------------------------------------------------- */
-.icon { text-indent: 22px; display: block; }
+.icon { text-indent: 22px; display: block; background: url(../images/icon-16/application.png) no-repeat center left;  }
 
-.magnifier { background: url(../images/icon-16/magnifier.png) no-repeat center left;  }
-.script--plus { background: url(../images/icon-16/script--plus.png) no-repeat center left; }
+.magnifier { background-image: url(../images/icon-16/magnifier.png);  }
+.script--plus { background-image: url(../images/icon-16/script--plus.png); }
+.script--minus { background-image: url(../images/icon-16/script--minus.png); }
+.script--pencil { background-image: url(../images/icon-16/script--pencil.png); }
+.script--arrow { background-image: url(../images/icon-16/script--arrow.png); }
+.arrow { background-image: url(../images/icon-16/arrow.png); }
+.shield { background-image: url(../images/icon-16/shield.png); }
+.tick-shield { background-image: url(../images/icon-16/tick-shield.png); }
 
 
 /* Text elements
@@ -98,15 +104,18 @@ dd          { margin-left: 1.5em;}
 table       { margin-bottom: 1.4em; width:100%; }
 th          { font-weight: bold; }
 thead th    { background: #c3d9ff; }
-th,td,caption { padding: 4px 10px 4px 5px; }
+th,td,caption { padding: 0.85em 0.5em 0.65em 0.5em; border: 1px solid transparent; border-bottom: 0; }
 /*
   You can zebra-stripe your tables in outdated browsers by adding 
   the class "even" to every other table row. 
  */
-tbody tr:nth-child(even) td, 
-   tbody tr.even td  { 
-      background: #e5ecf9; 
+tbody tr:nth-child(odd) td, 
+   tbody tr.odd td  { 
+      background: #F8F8F8; 
    }
+tbody tr:hover td { background: #fdfcf6; border-top: 1px solid #DDD; border-bottom: 1px solid #DDD; }
+tbody tr:hover td:first-child { border-left-color: #DDD;  }
+tbody tr:hover td:last-child { border-right-color: #DDD;  }
 tfoot       { font-style: italic; }
 caption     { background: #eee; }
 

@@ -4,23 +4,34 @@
 [% IF scenarios.count > 0 %]
 <p>Total [% scenarios.count %] scenarios found.</p>
 <table id="scenarios-list">
-  <thead>
-    <tr>
-      <th>Name</th>
-      <th>Description</th>
-      <th>User</th>
-      <th>Public</th>
-      <th></th>
-    </tr>
-  </thead>
+  <!-- <thead> -->
+  <!--   <tr> -->
+  <!--     <th>Name</th> -->
+  <!--     <th>Description</th> -->
+  <!--     <th>User</th> -->
+  <!--     <th>Public</th> -->
+  <!--     <th></th> -->
+  <!--   </tr> -->
+  <!-- </thead> -->
   <tbody>
     [% FOREACH item IN scenarios.all -%]
     <tr>
-      <td>[% item.name | html %]</td>
-      <td>[% item.comment | html %]</td>
-      <td>[% item.user.name | html %]</td>
-      <td>[% item.public | html %]</td>
-      <td>
+      <td class="scenarios-list-name">[% item.name | html %]</td>
+      <td class="scenarios-list-comment">[% item.comment | html %]</td>
+      <td class="scenarios-list-user">[% item.user.name | html %]</td>
+      <td class="scenarios-list-public">
+        [% IF item.public %]
+        <span class="icon tick-shield" title="Public">&nbsp;</span>
+        [% ELSE %]
+        <span class="icon shield" title="Private">&nbsp;</span>
+        [% END %]
+      </td>
+      <td class="actions">
+        <div class="show-actions">
+          <ul>
+            <li><a href="#" class="icon arrow" title="Run">Run</a></li>
+          </ul>
+        </div>
       </td>
     </tr>
     [% END -%]

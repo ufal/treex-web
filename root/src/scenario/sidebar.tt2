@@ -1,5 +1,5 @@
 <ul id="sidebar-nav">
-  <li><a href="#">
+  <li><a href="[% site.url.scenarios %]">
       <span class="icon magnifier">
         Browse scenarios
       </span>
