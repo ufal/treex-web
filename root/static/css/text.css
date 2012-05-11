@@ -33,6 +33,13 @@ h1 img, h2 img, h3 img,
       margin: 0;
    }
 
+/* Icons
+-------------------------------------------------------------- */
+.icon { text-indent: 22px; display: block; }
+
+.magnifier { background: url(../images/icon-16/magnifier.png) no-repeat center left;  }
+.script--plus { background: url(../images/icon-16/script--plus.png) no-repeat center left; }
+
 
 /* Text elements
 -------------------------------------------------------------- */

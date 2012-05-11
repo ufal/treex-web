@@ -1,5 +1,13 @@
 <ul id="sidebar-nav">
-  <li><a href="#">Browse scenarios</a></li>
-  <li><a href="[% site.url.add_scenario %]">Add new scenario</a></li>
+  <li><a href="#">
+      <span class="icon magnifier">
+        Browse scenarios
+      </span>
+  </a></li>
+  <li><a href="[% site.url.add_scenario %]">
+      <span class="icon script--plus">
+        Add new scenario  
+      </span>
+  </a></li>
 </ul>
 
