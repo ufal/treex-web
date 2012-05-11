@@ -1,6 +1,7 @@
 [% META sidebar="scenario/sidebar.tt2" %]
 [% META title="Browse Scenarios" %]
 
+[% IF scenarios.count > 0 %]
 <p>Total [% scenarios.count %] scenarios found.</p>
 <table id="scenarios-list">
   <thead>
@@ -25,3 +26,8 @@
     [% END -%]
   </tbody>
 </table>
+[% ELSE %]
+<div class="notice">
+  No scenarios found!
+</div>
+[% END %]
