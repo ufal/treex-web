@@ -1,0 +1,10 @@
+<div id="flash-messages">
+  [%- IF status_msg || c.flash.status_msg -%]
+  <p class="success">[% status_msg || c.flash.status_msg %]</p>
+  [%- END -%]
+  [%- IF error_msg || c.flash.error_msg -%]
+  <p class="error">[% error_msg || c.flash.error_msg %]</p>
+  [%- END -%]
+  [% c.flash.status_msg = undef %]
+  [% c.flash.error_msg = undef %]
+</div>
