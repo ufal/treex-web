@@ -16,6 +16,13 @@
   <tbody>
     [% FOREACH item IN scenarios.all -%]
     <tr>
+      <td class="actions">
+        <div class="show-actions">
+          <ul>
+            <li><a href="#" class="icon arrow" title="Run">Run</a></li>
+          </ul>
+        </div>
+      </td>
       <td class="scenarios-list-name">[% item.name | html %]</td>
       <td class="scenarios-list-comment">[% item.comment | html %]</td>
       <td class="scenarios-list-user">[% item.user.name | html %]</td>
@@ -26,12 +33,11 @@
         <span class="icon shield" title="Private">&nbsp;</span>
         [% END %]
       </td>
-      <td class="actions">
-        <div class="show-actions">
-          <ul>
-            <li><a href="#" class="icon arrow" title="Run">Run</a></li>
-          </ul>
-        </div>
+      <td class="controls">
+        <ul>
+          <li><a href="[% c.uri_for(c.controller('Scenario').action_for('delete'), [item.id]) %]">Delete</a></li>
+          <li></li>
+        </ul>
       </td>
     </tr>
     [% END -%]
