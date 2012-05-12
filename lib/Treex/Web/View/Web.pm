@@ -20,7 +20,7 @@ __PACKAGE__->config(
     ERROR              => 'error.tt2',
     TIMER              => 0,
     VARIABLES          => {
-        process_attrs => &process_attrs
+        process_attrs => \&process_attrs, # basic html attributes processing
     },
     render_die         => 1,
 );
