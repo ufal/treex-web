@@ -1,5 +1,5 @@
 [% META sidebar="result/sidebar.tt2" %]
-[% META title="My Results" %]
+[% META title="Results" %]
 
 Result: [% current_result.result_hash %]
 <h3>You have total [% result_rs.count %] results</h3>

@@ -1,7 +1,7 @@
 [%
    site.menu = [
      { name = 'home', title = 'Home', url = site.url.home, active = (c.namespace == '') },
-     { name = 'result', title = 'My Results', url = site.url.my_results, active = (c.namespace == 'result') },
+     { name = 'result', title = 'Results', url = site.url.my_results, active = (c.namespace == 'result') },
      { name = 'scenario', title = 'Scenarios', url = site.url.scenarios, active = (c.namespace == 'scenario') },
    ];
 
