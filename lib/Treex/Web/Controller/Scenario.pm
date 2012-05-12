@@ -25,8 +25,11 @@ Catalyst Controller.
 
 sub base :Chained('/') :PathPart('') :CaptureArgs(0)  {
     my ( $self, $c ) = @_;
-    
-    $c->stash->{public_scenarios} = $c->model('WebDB::Scenario')->search({public => 1});
+
+    $c->stash->{scenarios} = $c->model('WebDB::Scenario')->search(undef, {
+        prefetch => 'user'
+    });
+    $c->stash->{public_scenarios} = $c->model('WebDB::Scenario')->search({public => 1}, {prefetch => 'user'});
     $c->stash(
         scenarioForm => Treex::Web::Forms::ScenarioForm->new(
             action => $c->uri_for($self->action_for('add')),
@@ -51,25 +54,18 @@ sub object :Chained('base') :PathPart('scenario') :CaptureArgs(1) {
 
 sub index :Chained('base') :PathPart('scenarios') :Args(0) {
     my ( $self, $c ) = @_;
-    
-    my $scenarios = $c->model('WebDB::Scenario')->search(undef, {
-        prefetch => 'user'
-    });
-    
-    $c->stash( scenarios => $scenarios );
-    $c->forward('list_all');
 }
 
-sub list_all :Private {
+sub my_scenarios :Chained('base') :PathPart('my/scenarios') :Args(0) {
     my ( $self, $c ) = @_;
-    
-    my $scenarios = $c->stash->{scenarios};
-    my @cond = ();
-    push @cond, {public => 1};
-    push @cond, {user => $c->user->id} if $c->user_exists;
-    
-    $scenarios = $scenarios->search(\@cond);
-}
+
+    unless ( $c->user_exists ) {
+        $c->response->redirect($c->uri_for($self->action_for('index')));
+        $c->detach;
+    }
+
+    $c->stash(template => 'scenario/my.tt2');
+}    
 
 sub not_found :Private {
     my ( $self, $c ) = @_;

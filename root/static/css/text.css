@@ -38,6 +38,7 @@ h1 img, h2 img, h3 img,
 .icon { text-indent: 22px; display: block; background: url(../images/icon-16/application.png) no-repeat center left;  }
 
 .magnifier { background-image: url(../images/icon-16/magnifier.png);  }
+.script { background-image: url(../images/icon-16/script.png); }
 .script--plus { background-image: url(../images/icon-16/script--plus.png); }
 .script--minus { background-image: url(../images/icon-16/script--minus.png); }
 .script--pencil { background-image: url(../images/icon-16/script--pencil.png); }

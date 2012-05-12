@@ -1,0 +1,6 @@
+[% META sidebar="scenario/sidebar.tt2" %]
+[% META title="Scenario Not Found" %]
+
+<div class="error">
+  This is not the scenario you are looking for.
+</div>
