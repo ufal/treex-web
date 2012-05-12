@@ -6,5 +6,5 @@
 </p>
 <p>
   Here's the error message, on the off-chance that it means something
-  to you: <span class="error">[% error %]</span>
+  to you: <div class="error">[% error %]</div>
 </p>
