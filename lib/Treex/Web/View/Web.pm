@@ -2,8 +2,10 @@ package Treex::Web::View::Web;
 
 use strict;
 use warnings;
+use HTML::FormHandler::Render::Util ('process_attrs');
 
 use base 'Catalyst::View::TT';
+
 
 __PACKAGE__->config(
     INCLUDE_PATH => [
@@ -17,6 +19,9 @@ __PACKAGE__->config(
     WRAPPER            => 'site/wrapper',
     ERROR              => 'error.tt2',
     TIMER              => 0,
+    VARIABLES          => {
+        process_attrs => &process_attrs
+    },
     render_die         => 1,
 );
 
