@@ -357,3 +357,15 @@ table tr:hover div.show-actions {
 .scenarios-list-public {
    width: 32px;
 }
+
+#scenario-select {
+   width: 840px;
+}
+
+#scenario-select-panes {
+   width: 840px;
+   height: 300px;
+}
+#scenario-select-panes .tab-view {
+   width: 800px;
+}
