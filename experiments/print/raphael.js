@@ -1297,7 +1297,7 @@
     var pathDimensions = R.pathBBox = function (path) {
         var pth = paths(path);
         if (pth.bbox) {
-            return pth.bbox;
+            return clone(pth.bbox);
         }
         if (!path) {
             return {x: 0, y: 0, width: 0, height: 0, x2: 0, y2: 0};
@@ -1781,6 +1781,8 @@
                 if (dot.color.error) {
                     return null;
                 }
+				//dot.opacity = dot.color.opacity; // added ARIZZO
+				dot.color.hasOwnProperty('opacity') && (dot.opacity = dot.color.opacity); // added ARIZZO
                 dot.color = dot.color.hex;
                 par[2] && (dot.offset = par[2] + "%");
                 dots.push(dot);
@@ -2608,7 +2610,15 @@
     }
     
     elproto.isPointInside = function (x, y) {
-        var rp = this.realPath = this.realPath || getPath[this.type](this);
+        var rp;
+
+		rp = this.realPath = this.realPath || getPath[this.type](this);
+
+		if ( this.attr('transform') != null && this.attr('transform').length > 0 )	// modified by ARIZZO
+		{																			//
+			rp = R.transformPath( rp, this.attr('transform') );						//
+		}																			//
+		
         return R.isPointInsidePath(rp, x, y);
     };
     
@@ -3852,8 +3862,10 @@ window.Raphael.svg && function (R) {
                 el = $(type + "Gradient", {id: id});
                 element.gradient = el;
                 $(el, type == "radial" ? {
-                    fx: fx,
-                    fy: fy
+                    /*fx: fx,
+                    fy: fy*/	// modified by ARIZZO
+					cx: fx,
+					cy: fy
                 } : {
                     x1: vector[0],
                     y1: vector[1],
@@ -3865,7 +3877,8 @@ window.Raphael.svg && function (R) {
                 for (var i = 0, ii = dots.length; i < ii; i++) {
                     el.appendChild($("stop", {
                         offset: dots[i].offset ? dots[i].offset : i ? "100%" : "0%",
-                        "stop-color": dots[i].color || "#fff"
+                        "stop-color": dots[i].color || "#fff",
+						"stop-opacity":	dots[i].hasOwnProperty('opacity') ? dots[i].opacity : 1  // added ARIZZO
                     }));
                 }
             }
@@ -4243,7 +4256,7 @@ window.Raphael.svg && function (R) {
                             !R.is(attrs["fill-opacity"], "undefined") &&
                                 R.is(params["fill-opacity"], "undefined") &&
                                 $(node, {"fill-opacity": attrs["fill-opacity"]});
-                        } else if ((o.type == "circle" || o.type == "ellipse" || Str(value).charAt() != "r") && addGradientFill(o, value)) {
+                        } else if (/*(o.type == "circle" || o.type == "ellipse" || Str(value).charAt() != "r") && */ addGradientFill(o, value)) {
                             if ("opacity" in attrs || "fill-opacity" in attrs) {
                                 var gradient = R._g.doc.getElementById(node.getAttribute("fill").replace(/^url\(#|\)$/g, E));
                                 if (gradient) {

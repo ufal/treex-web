@@ -60,6 +60,41 @@ EdgeFactory.prototype = {
  * Simple implementation of tree drawing class
  */
 var TreexDraw = function() {
+    var trees = {};
+};
+
+TreexDraw.prototype = {
+    /*
+     * Tree placement layout
+     */
+    calculateTreesLayout: function() {
+        if (this.trees.length <= 1)
+            return;
+        
+        if (this.layoutsConfig) {
+            // TODO: make layouts configurable
+        }
+        
+        var counter = 0,
+            offsetX = 0,
+            offsetY = 0;
+        for (var i in this.trees) {
+            var tree = this.trees[i];
+            tree.width = 40*tree.nodes.length;
+            tree.OffsetX = offsetX;
+            tree.OffsetY = 0; // offsetY;
+            
+            offsetX += tree.width;
+            offsetY += tree.height;
+        }
+    }
+};
+
+
+/*
+ * Tree class, holds single tree
+ */
+TreexDraw.Tree = function() { 
     this.root = {};
     this.nodes = {};
     this.edges = [];
@@ -67,11 +102,14 @@ var TreexDraw = function() {
     this.Node = new NodeFactory();
     this.Edge = new EdgeFactory();
     
+    // size of the tree in pixels
     this.width = 200;
     this.height = 400;
+    
+    this.radius = 40; /* max dimension of a node */
 };
 
-TreexDraw.prototype = {
+TreexDraw.Tree.prototype = {
     addNode: function(id, content) {
         if(this.nodes[id] == undefined) {
             this.nodes[id] = this.Node.build(id, content);
@@ -90,6 +128,7 @@ TreexDraw.prototype = {
     }
 };
 
+
 /*
  * Renderer class
  */
@@ -100,31 +139,31 @@ TreexDraw.Renderer = {};
 TreexDraw.Renderer.defaultRenderFunc = function(r, node) {
     /* the default node drawing */
     var color = Raphael.getColor();
+    var bg_rect = r.rect(0, 7, 0, 0).attr({fill: '#FFF',"stroke-width": "0", stroke: '#FFF'});
     var circle = r.circle(0, 0, 7).attr({fill: color, stroke: color, "stroke-width": 2});
+    var text = r.text(0, 15, node.label || node.id);
+    var box = text.getBBox();
+    bg_rect.attr({x: box.x, y: box.y, width: box.width, height: box.height });
+    //var bg_rect = r.rect(-box.width/2, 15-box.height/2, box.width, box.height).attr({fill: '#FFF'});
     /* set DOM node ID */
     circle.node.id = node.label || node.id;
     var shape = r.set().
         push(circle).
-        push(r.text(0, 15, node.label || node.id));
+        push(text).
+        push(bg_rect);
     return shape;
 };
 
 
-TreexDraw.Renderer.Raphael = function(tree, raphael) {
+TreexDraw.Renderer.Raphael = function(element, trees, width, height) {
     this.width = width || 400;
     this.height = height || 400;
     var selfRef = this;
     this.r = Raphael(element, this.width, this.height);
-    this.radius = 40; /* max dimension of a node */
-    this.tree = tree;
+    this.trees = trees;
     this.mouse_in = false;
     
-    /* TODO default node rendering function */
-    if(!this.tree.render) {
-        this.tree.render = function() {
-            return;
-        };
-    }
+    this.calculateTreesLayout();
     
     /*
      * Dragging
@@ -161,7 +200,7 @@ TreexDraw.Renderer.Raphael = function(tree, raphael) {
         }
     };
     d.onmouseup = function () {
-        selfRef.isDrag && selfRef.isDrag.set.animate({"fill-opacity": .6}, 500);
+        selfRef.isDrag && selfRef.isDrag.set.animate({"fill-opacity": 1}, 500);
         selfRef.isDrag = false;
     };
     this.draw();
@@ -172,10 +211,39 @@ TreexDraw.Renderer.Raphael.prototype = {
         console.log(this);
     },
     
+    /*
+     * Tree placement layout
+     */
+    calculateTreesLayout: function() {
+        if (this.trees.length <= 1)
+            return;
+        
+        if (this.layoutsConfig) {
+            // TODO: make layouts configurable
+        }
+        
+        var counter = 0,
+            offsetX = 0,
+            offsetY = 0;
+        for (var i in this.trees) {
+            var tree = this.trees[i];
+            var c = 0;
+            for(var j in tree.nodes) {
+                c++;
+            }
+            tree.width = 30*c;
+            tree.OffsetX = offsetX;
+            tree.OffsetY = 0; // offsetY;
+            
+            offsetX += tree.width;
+            offsetY += tree.height;
+        }
+    },
+    
     translate: function(point) {
         return [
-            (point[0] - this.tree.layoutMinX) * this.factorX + this.radius,
-            (point[1] - this.tree.layoutMinY) * this.factorY + this.radius
+            (point[0] - this.tree.layoutMinX) * this.factorX + this.tree.radius + this.tree.OffsetX,
+            (point[1] - this.tree.layoutMinY) * this.factorY + this.tree.radius + this.tree.OffsetY
         ];
     },
     
@@ -186,13 +254,16 @@ TreexDraw.Renderer.Raphael.prototype = {
     },
     
     draw: function() {
-        this.factorX = (this.width - 2 * this.radius) / (this.tree.layoutMaxX - this.tree.layoutMinX);
-        this.factorY = (this.height - 2 * this.radius) / (this.tree.layoutMaxY - this.tree.layoutMinY);
-        for (var i in this.tree.nodes) {
-            this.drawNode(this.tree.nodes[i]);
-        }
-        for (i = 0; i < this.tree.edges.length; i++) {
-            this.drawEdge(this.tree.edges[i]);
+        for (var i in this.trees) {
+            this.tree = this.trees[i];
+            this.factorX = (this.tree.width - 2 * this.tree.radius) / (this.tree.layoutMaxX - this.tree.layoutMinX);
+            this.factorY = (this.tree.height - 2 * this.tree.radius) / (this.tree.layoutMaxY - this.tree.layoutMinY);
+            for (var j in this.tree.nodes) {
+                this.drawNode(this.tree.nodes[j]);
+            }
+            for (j = 0; j < this.tree.edges.length; j++) {
+                this.drawEdge(this.tree.edges[j]);
+            }
         }
     },
     
@@ -218,12 +289,11 @@ TreexDraw.Renderer.Raphael.prototype = {
         
         shape = node.render(this.r, node).hide();
         
-        shape.attr({"fill-opacity": .6});
         /* re-reference to the node an element belongs to, needed for dragging all elements of a node */
         shape.items.forEach(function(item){ item.set = shape; item.node.style.cursor = "move"; });
         shape.mousedown(this.dragger);
         
-        var box = shape.getBBox();
+        var box = shape.getBBox(true);
         shape.transform(['t'+Math.round(point[0] + box.width/2), Math.round(point[1] + box.height/2)].join(','));
         node.hidden || shape.show();
         node.shape = shape;
@@ -250,15 +320,18 @@ TreexDraw.Renderer.Raphael.prototype = {
     }
 };
 
-TreexDraw.Layout = {};
+TreexDraw.TreeLayout = {};
 
-TreexDraw.Layout.Tred = function(tree, order) {
+/*
+ * Tred like tree layout
+ */
+TreexDraw.TreeLayout.Tred = function(tree, order) {
     this.tree = tree;
     this.order = order;
     this.layout();
 };
 
-TreexDraw.Layout.Tred.prototype = {
+TreexDraw.TreeLayout.Tred.prototype = {
     layout: function() {
         this.layoutPrepare();
         this.layoutCalcBounds();

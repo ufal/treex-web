@@ -82,7 +82,7 @@ Raphael.fn.connection = function Connection(obj1, obj2, style) {
             x2 = bb2.x + bb2.width/2,
             y2 = bb2.y + bb2.height/2;
             
-            console.log(bb1);
+            //console.log(bb1);
             
             /* get bounding boxes of target and source */
             /* assemble path and arrow */
