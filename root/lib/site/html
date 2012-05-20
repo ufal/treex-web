@@ -8,6 +8,7 @@
   <link rel="stylesheet" href="[% c.uri_for('/static/css/layout.css') %]" type="text/css" media="screen" />
   <link rel="stylesheet" href="[% c.uri_for('/static/css/formalize.css') %]" type="text/css" media="screen" />
   <link rel="stylesheet" href="[% c.uri_for('/static/css/slidingtabs.css') %]" type="text/css" media="screen" />
+  <script src="[% c.uri_for('/static/js/underscore.js') %]"></script>
   <script src="[% c.uri_for('/static/js/jquery.js') %]"></script>
   <script src="[% c.uri_for('/static/js/jquery.formalize.js') %]"></script>
   <script src="[% c.uri_for('/static/js/jquery.tools.min.js') %]"></script>
