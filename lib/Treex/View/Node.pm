@@ -85,9 +85,9 @@ sub traverse_data {
             };
         }
     } elsif ($decl_is == PML_CHOICE_DECL || $decl_is == PML_CONSTANT_DECL || $decl_is == PML_CDATA_DECL) {
-        confess("traversing atomic type\n");
+        confess("Traversing atomic type");
     } else {
-        die "unhandled data type: $decl\n";
+        die "Unhandled data type: $decl";
     }
     
     return $data;
@@ -100,7 +100,7 @@ sub TO_JSON {
     my $data = {
         id => $n->id,
         level => $n->level,
-        ($n->does('Treex::Core::Node::Ordered') ? (ord =>$n->ord) : ()),
+        ($n->does('Treex::Core::Node::Ordered') ? (ord =>int($n->ord)) : ()), # force ord to be integer
         data => $self->traverse_data($n->type, $n),
     };
     my @children = $n->is_leaf ? () : (map {__PACKAGE__->new(node=>$_)} $n->children);
@@ -108,6 +108,8 @@ sub TO_JSON {
     
     return $data;
 }
+
+__PACKAGE__->meta->make_immutable();
 
 1;
 __END__
