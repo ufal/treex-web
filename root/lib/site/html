@@ -15,6 +15,9 @@
   <script src="[% c.uri_for('/static/js/jquery.easing.js') %]"></script>
   <script src="[% c.uri_for('/static/js/jquery.mousewheel.min.js') %]"></script>
   <script src="[% c.uri_for('/static/js/jquery.slidingtabs.js') %]"></script>
+  <script src="[% c.uri_for('/static/js/raphael.js') %]"></script>
+  <script src="[% c.uri_for('/static/js/raphael.graffle.js') %]"></script>
+  <script src="[% c.uri_for('/static/js/treex.draw.js') %]"></script>
   <script src="[% c.uri_for('/static/js/application.js') %]"></script>
   <link rel="shortcut icon" href="[% c.uri_for('/favicon.ico')%]" />
  </head>
