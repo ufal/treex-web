@@ -1,7 +1,7 @@
 [% META title='Try out Treex now!' %]
 
-<div id="canvas">
-  
+<div style="overflow: scroll; width: 100%; height: 500px;">
+  <div id="canvas"></div>
 </div>
 
 <script type="text/javascript">
@@ -29,7 +29,7 @@ jQuery.getJSON('[% c.uri_for(c.controller('Print').action_for('index')) %]', fun
         trees[tree_label] = t;
     });
 
-    var renderer = new TreexDraw.Renderer.Raphael('canvas', { 'cs-a' : trees['cs-a'] }, 800, 800);
+    var renderer = new TreexDraw.Renderer.Raphael('canvas', trees, 800, 800);
     console.log(trees);
 });
 </script>

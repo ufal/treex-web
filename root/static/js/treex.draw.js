@@ -1,210 +1,52 @@
 /*
  * Michal Sedlak 2012
- */
-
-/*
- * Factories
- */
-var AbstractNode = function(id) {
-    this.id = id;
-    this.edges = [];
-};
-
-AbstractNode.prototype = {
-    hide: function() {
-        this.hidden = true;
-        this.shape && this.shape.hide(); /* FIXME this is representation specific code and should be elsewhere */
-        for(var i in this.edges)
-            (this.edges[i].source.id == this.id || this.edges[i].target == this.id) && this.edges[i].hide && this.edges[i].hide();
-    },
-    show : function() {
-        this.hidden = false;
-        this.shape && this.shape.show();
-        for(var i in this.edges)
-            (this.edges[i].source.id == this.id || this.edges[i].target == this.id) && this.edges[i].show && this.edges[i].show();
-    }
-};
-
-var NodeFactory = function() {};
-NodeFactory.prototype = {
-    build: function(id, content) {
-        var n = new AbstractNode(id);
-        jQuery.extend(true, n, content);
-        return n;
-    }
-};
-
-var AbstractEdge = function() { };
-AbstractEdge.prototype = {
-    hide: function() {
-        this.connection.fg.hide();
-        this.connection.bg && this.bg.connection.hide();
-    }
-};
-var EdgeFactory = function() {
-    this.template = new AbstractEdge();
-};
-EdgeFactory.prototype = {
-    build: function(source, target) {
-        var e = jQuery.extend(true, {}, this.template);
-        e.source = source;
-        e.target = target;
-        return e;
-    }
-};
-
-
-/*
- * TreexDraw
  *
- * Simple implementation of tree drawing class
+ * Drawing extension for Treex Core
+ * 
  */
-var TreexDraw = function() {
-    var trees = {};
-};
 
-TreexDraw.prototype = {
-    /*
-     * Tree placement layout
-     */
-    calculateTreesLayout: function() {
-        if (this.trees.length <= 1)
-            return;
+(function(treex) {
+    
+    var _ = treex._;
+    
+    // new items in the namespace
+    var Renderer = {}, Style = {}, Layout = {};
+    
+    // rendered using Raphael lib
+    Renderer.Raphael = function(canvas, doc, width, height) {
+        this.width = width || 400;
+        this.height = height || 400; // this is minimum
+        var selfRef = this;
+        this.doc = doc;
         
-        if (this.layoutsConfig) {
-            // TODO: make layouts configurable
-        }
-        
-        var counter = 0,
-            offsetX = 0,
-            offsetY = 0;
-        for (var i in this.trees) {
-            var tree = this.trees[i];
-            tree.width = 40*tree.nodes.length;
-            tree.OffsetX = offsetX;
-            tree.OffsetY = 0; // offsetY;
-            
-            offsetX += tree.width;
-            offsetY += tree.height;
-        }
-    }
-};
-
-
-/*
- * Tree class, holds single tree
- */
-TreexDraw.Tree = function() { 
-    this.root = {};
-    this.nodes = {};
-    this.edges = [];
-    
-    this.Node = new NodeFactory();
-    this.Edge = new EdgeFactory();
-    
-    // size of the tree in pixels
-    this.width = 200;
-    this.height = 400;
-    
-    this.radius = 40; /* max dimension of a node */
-};
-
-TreexDraw.Tree.prototype = {
-    addNode: function(id, content) {
-        if(this.nodes[id] == undefined) {
-            this.nodes[id] = this.Node.build(id, content);
-        }
-        return this.nodes[id];
-    },
-    
-    addEdge : function(from, to) {
-        var f = this.addNode(from);
-        var t = this.addNode(to);
-        
-        var e = this.Edge.build(f, t);
-        this.edges.push(e);
-        f.edges.push(e);
-        t.edges.push(e);
-    }
-};
-
-
-/*
- * Renderer class
- */
-TreexDraw.Renderer = {};
-
-/* Moved this default node renderer function out of the main prototype code
- * so it can be override by default */
-TreexDraw.Renderer.defaultRenderFunc = function(r, node) {
-    /* the default node drawing */
-    var color = Raphael.getColor();
-    var bg_rect = r.rect(0, 7, 0, 0).attr({fill: '#FFF',"stroke-width": "0", stroke: '#FFF'});
-    var circle = r.circle(0, 0, 7).attr({fill: color, stroke: color, "stroke-width": 2});
-    var text = r.text(0, 15, node.label || node.id);
-    var box = text.getBBox();
-    bg_rect.attr({x: box.x, y: box.y, width: box.width, height: box.height });
-    //var bg_rect = r.rect(-box.width/2, 15-box.height/2, box.width, box.height).attr({fill: '#FFF'});
-    /* set DOM node ID */
-    circle.node.id = node.label || node.id;
-    var shape = r.set().
-        push(circle).
-        push(text).
-        push(bg_rect);
-    return shape;
-};
-
-
-TreexDraw.Renderer.Raphael = function(element, trees, width, height) {
-    this.width = width || 400;
-    this.height = height || 400;
-    var selfRef = this;
-    this.r = Raphael(element, this.width, this.height);
-    this.trees = trees;
-    this.mouse_in = false;
-    
-    this.calculateTreesLayout();
-    
-    /*
-     * Dragging
-     */
-    this.isDrag = false;
-    this.dragger = function (e) {
-        this.dx = e.clientX;
-        this.dy = e.clientY;
-        selfRef.isDrag = this;
-        this.set && this.set.animate({"fill-opacity": .1}, 200);
-        e.preventDefault && e.preventDefault();
+        this.r = Raphael(canvas, this.width, this.height);
     };
     
-    var d = document.getElementById(element);
-    d.onmousemove = function (e) {
-        e = e || window.event;
-        if (selfRef.isDrag) {
-            var bBox = selfRef.isDrag.set.getBBox();
-            // TODO round the coordinates here (eg. for proper image representation)
-            var newX = e.clientX - selfRef.isDrag.dx + (bBox.x + bBox.width / 2);
-            var newY = e.clientY - selfRef.isDrag.dy + (bBox.y + bBox.height / 2);
-            /* prevent shapes from being dragged out of the canvas */
-            var clientX = e.clientX - (newX < 20 ? newX - 20 : newX > selfRef.width - 20 ? newX - selfRef.width + 20 : 0);
-            var clientY = e.clientY - (newY < 20 ? newY - 20 : newY > selfRef.height - 20 ? newY - selfRef.height + 20 : 0);
-            selfRef.isDrag.set.translate(clientX - Math.round(selfRef.isDrag.dx), clientY - Math.round(selfRef.isDrag.dy));
-            //            console.log(clientX - Math.round(selfRef.isDrag.dx), clientY - Math.round(selfRef.isDrag.dy));
-            for (var i in selfRef.tree.edges) {
-                selfRef.tree.edges[i] &&
-                    selfRef.tree.edges[i].connection && selfRef.tree.edges[i].connection.draw();
-            }
-            //selfRef.r.safari();
-            selfRef.isDrag.dx = clientX;
-            selfRef.isDrag.dy = clientY;
-        }
+    Renderer.Raphael.defaultRenderNode = function(r, node) {
+        var color = Raphael.getColor();
+        var bg_rect = r.rect(0, 3, 0, 0).attr({fill: '#FFF',"stroke-width": "0", stroke: '#FFF'});
+        var circle = r.circle(0, 0, 3).attr({fill: color, stroke: color, "stroke-width": 2});
+        var text = r.text(0, 11, node.label || node.id);
+        var box = text.getBBox();
+        bg_rect.attr({x: box.x, y: box.y, width: box.width, height: box.height });
+        /* set DOM node ID */
+        circle.node.id = node.id;
+        var shape = r.set().
+            push(circle).
+            push(text).
+            push(bg_rect);
+        return shape;
     };
-    d.onmouseup = function () {
-        selfRef.isDrag && selfRef.isDrag.set.animate({"fill-opacity": 1}, 500);
-        selfRef.isDrag = false;
+    
+    // default options
+    var opts = {
+        renderNode: Renderer.Raphael.defaultRenderNode,
+        renderer: treex.Raphael
     };
-    this.draw();
-};
+    _.extend(treex.opts, opts);
+    
+})(this.Treex); // possibility of using different version
+
 
 TreexDraw.Renderer.Raphael.prototype = {
     dump: function() {
@@ -238,6 +80,18 @@ TreexDraw.Renderer.Raphael.prototype = {
             offsetX += tree.width;
             offsetY += tree.height;
         }
+    },
+    
+    adjustCanvasSize: function() {
+        var width = 0, height = 0;
+        _.each(this.trees, function(tree) {
+            width += tree.width;
+            height = Math.max(height, tree.height);
+        });
+        
+        this.width = width;
+        this.height = height;
+        this.r.setSize(width, height);
     },
     
     translate: function(point) {
@@ -275,7 +129,7 @@ TreexDraw.Renderer.Raphael.prototype = {
             var oBBox = node.shape.getBBox();
             var opoint = { x: oBBox.x + oBBox.width / 2, y: oBBox.y + oBBox.height / 2};
             node.shape.transform(['t'+Math.round(point[0] - opoint.x), Math.round(point[1] - opoint.y)].join(','));
-            this.r.safari();
+            this.r.safari(); // fix safari bugs
             return node;
         }/* else, draw new nodes */
         
@@ -288,10 +142,6 @@ TreexDraw.Renderer.Raphael.prototype = {
         }
         
         shape = node.render(this.r, node).hide();
-        
-        /* re-reference to the node an element belongs to, needed for dragging all elements of a node */
-        shape.items.forEach(function(item){ item.set = shape; item.node.style.cursor = "move"; });
-        shape.mousedown(this.dragger);
         
         var box = shape.getBBox(true);
         shape.transform(['t'+Math.round(point[0] + box.width/2), Math.round(point[1] + box.height/2)].join(','));
