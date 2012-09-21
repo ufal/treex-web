@@ -33,6 +33,7 @@ requires 'SQL::Translator';
 requires 'Email::Valid'; # used to check user mails
 requires 'Data::Uniqid'; # used to generate UUID Columns
 requires 'Crypt::Eksblowfish::Bcrypt'; # used for encrypting password
+requires 'Data::TUID';
 
 # Auth stuff
 requires 'Catalyst::Plugin::Authentication';
