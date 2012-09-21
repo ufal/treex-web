@@ -32,6 +32,7 @@ requires 'DBIx::Class::InflateColumn::Boolean';
 requires 'SQL::Translator';
 requires 'Email::Valid'; # used to check user mails
 requires 'Data::Uniqid'; # used to generate UUID Columns
+requires 'Data::TUID';
 requires 'Crypt::Eksblowfish::Bcrypt'; # used for encrypting password
 requires 'Data::TUID';
 

@@ -1,3 +1,37 @@
 [% META title='Try out Treex now!' %]
 
+<div style="overflow: scroll; width: 100%; height: 500px;">
+  <div id="canvas"></div>
+</div>
+
+<script type="text/javascript">
+jQuery.getJSON('[% c.uri_for(c.controller('Print').action_for('index')) %]', function(bundles) {
+    // lets just display one bundle
+    var trees = { }; // trees to display
+    _.each(bundles[0], function(tree, tree_label){
+        
+        var t = new TreexDraw.Tree();
+        console.log(tree);
+        function traverse_tree(node) {
+            var n = t.addNode(node.id, node.data);
+            n.level = node.level;
+            n.ord = node.ord ? node.ord : 0;
+            if (_.isArray(node.children)) {
+                _.each(node.children, function(child) {
+                    traverse_tree(child);
+                    t.addEdge(node.id, child.id);
+                });
+            }
+        }
+        traverse_tree(tree);
+        var layout = new TreexDraw.TreeLayout.Tred(t, _.sortBy(t.nodes, function(n){ return n.ord; }));
+
+        trees[tree_label] = t;
+    });
+
+    var renderer = new TreexDraw.Renderer.Raphael('canvas', trees, 800, 800);
+    console.log(trees);
+});
+</script>
+
 [% PROCESS query/form.tt2 form=queryForm %]

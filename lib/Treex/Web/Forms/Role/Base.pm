@@ -4,7 +4,7 @@ use HTML::FormHandler::Moose::Role;
 
 before 'before_build' => sub {
     my $class = shift;
-    $class->set_update_field_list( 'all', { tags => { wrapper_tag => 'p' } } );
+    $class->widget_tags({wrapper_tag => 'p'});
 };
 
 has 'is_html5'  => ( isa => 'Bool', is => 'ro', default => 1 );

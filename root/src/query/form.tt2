@@ -1,2 +1,47 @@
+<form[% process_attrs(form.attributes) %]>
+  <fieldset>
+    <div class="form_messages">
+      [% FOREACH err IN form.form_errors -%]
+      <span class="error-message">[% err %]</span>
+      [% END -%]
+    </div>
+    [% form.field('result_hash').render %]
+    <div id="scenario-select" class="sliding-tabs">
+      <div class="tabs-container">
+        <a href="#prev" id="prev"></a>
+        <ul class="tabs">
+          <li><a href="#select-existing" class="tab active">Select</a></li>
+          <li><a href="#scenario-input" class="tab">Input</a></li>
+        </ul>
+        <a href="#next" id="next"></a>
+      </div>
+      <div class="tabs-content" id="scenario-select-panes">
+        <div class="tabs-view-container">
+          <div class="tab-view" id="select-existing">
+            <p>Select existing scenario</p>
+          </div>
+          <div class="tab-view" id="scenario-input">
+            [% form.field('scenario').render %]
+          </div>
+        </div>
+      </div>
+    </div>
+    <div id="input-select">
+      [% form.field('input').render %]
+    </div>
+    [% form.field('submit').render %]
+  </fieldset>
+</form>
+<script type="text/javascript">
+  $(function() {
+      $("#scenario-select").slideTabs({
+          orientation: 'horizontal',
+          slideWidth: 800,
+          contentAnim: 'slideLeft',
+          contentEasing: 'easeInOutExpo',
+  			  tabsAnimTime: 300,
+  			  contentAnimTime: 'fast'
+      });
+  });
+</script>
 
-[% form.render %]

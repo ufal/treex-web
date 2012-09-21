@@ -1,7 +1,13 @@
 [% META sidebar="result/sidebar.tt2" %]
-[% META title="My Results" %]
+[% META title="Results" %]
 
+[% IF  result_rs.count > 0 %]
 Result: [% current_result.result_hash %]
 <h3>You have total [% result_rs.count %] results</h3>
 [% PROCESS query/form.tt2 form=queryForm %]
 [% PROCESS result/tabs.tt2 %]
+[% ELSE %]
+<div class="notice">
+  You have no results.
+</div>
+[% END %]
