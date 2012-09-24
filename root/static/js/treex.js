@@ -28,6 +28,7 @@
     treex.loadDoc = function(file, callback) {
         // TODO: use ajax with error callback
         $.getJSON(this.opts.print_api, { file: file }, function(data) {
+            console.log(data);
             var doc = Document.fromJSON(data);
             treex.documents[file] = doc;
             _.isFunction(callback) && callback(doc);
@@ -54,6 +55,17 @@
         this.document = null;
     };
     treex.Bundle = function() { return new Bundle(); };
+
+    Bundle.prototype = {
+        allTrees : function() {
+            var trees = [];
+            _.each(this.zones, function(zone) {
+                trees.push(_.toArray(zone.trees));
+            });
+            
+            return _.flatten(trees);
+        },
+    };
     
     Bundle.fromJSON = function(json) {
         var bundle = new Bundle();
@@ -91,7 +103,7 @@
     };
     // mask constructor
     treex.Tree = function(root) { return new Tree(root); };
-    
+
     Tree.fromJSON = function(json) {
         var root = new Node(json.id, json.data);
         root.order = _.isFinite(json.ord) ? json.ord : 0;
@@ -122,18 +134,37 @@
     
     // Try to match function names with Treex::PML::Node
     Node.prototype = {
-        is_leaf: function() { return _.isEmpty(this.children); },
+        is_leaf: function() { return this.firstson == null; },
         is_root: function() { return this.parent == null; },
         root: function() {
             var node = this;
-            while(node && node.parent != null) node = node.parent;
+            while (node && node.parent != null) node = node.parent;
             return node;
+        },
+        following : function(top) {
+            if (this.firstson) return this.firstson;
+            var node = this;
+            top = top || 0;
+            do {
+                if (node === top || !node.parent) return;
+                if (node.rbrother) return node.rbrother;
+                node = node.parent;
+            } while (node);
+        },
+        descendants : function() {
+            var kin = [];
+            var desc = this.following(this);
+            while (desc) {
+                kin.push(desc);
+                desc = desc.following(this);
+            }
+            return kin;
         },
         // depth of the node
         level: function() {
             var level = -1;
             var node = this;
-            while(node != null) {
+            while (node != null) {
                 node = node.parent;
                 level++;
             }
@@ -142,15 +173,16 @@
         children: function() {
             var children = [];
             var node = this.firstson;
-            while(node != null) {
+            while (node != null) {
                 children.push(node);
                 node = node.rbrother;
             }
+            return children;
         },
         // attach node to new parent
         paste_on: function(parent) {
             var node = parent.firstson;
-            if (this.order > node.order) {
+            if (node && this.order > node.order) {
                 while(node.rbrother!=null && this.order > node.rbrother.order)
                     node = node.rbrother;
                 var rbrother = node.rbrother;

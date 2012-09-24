@@ -28,15 +28,15 @@ sub run {
   $input_ref = $opts->{input_ref};
   $scenario = $opts->{scenario} ? $opts->{scenario} : 'scenario.scen';
   $lang = $opts->{lang} ? $opts->{lang} : 'en';
-
+  
   push @cmd, "-L$lang";
   push @cmd, "Read::Text";
   push @cmd, "$scenario";
   push @cmd, "Write::Treex to=-";
   if ($$input_ref ne '') {
-    $ret = IPC::Run::run \@cmd, $input_ref, \$out, \$err;
+      $ret = IPC::Run::run \@cmd, $input_ref, \$out, \$err;
   }
-
+  
   # map in/out/err to file handles
   my $in_handle = IO::Scalar->new($input_ref);
   my $out_handle = IO::Scalar->new(\$out);
@@ -49,7 +49,7 @@ sub run {
            err => $err_handle,
            cmd => join(' ', @cmd),
            ret => $ret
-          };
+       };
   
   return $opts;
 }

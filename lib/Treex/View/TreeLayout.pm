@@ -24,6 +24,11 @@ sub get_layout_label {
     return join ',', @label;
 }
 
+sub get_zone_label {
+    my ( $self, $zone ) = @_;
+    return $zone->language . ($zone->selector ? '-'.$zone->selector:'')
+}
+
 1;
 __END__
 

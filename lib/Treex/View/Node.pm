@@ -14,7 +14,6 @@ sub traverse_data {
     my ($self, $decl, $value) = @_;
     my $data;
     my $decl_is = $decl->get_decl_type;
-    pp($decl_is);
     
     if ( $decl_is == PML_STRUCTURE_DECL ) {
         my @members = grep {
