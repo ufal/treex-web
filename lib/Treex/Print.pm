@@ -19,7 +19,7 @@ use namespace::clean -except => 'meta';
   package TredMacro;
   use List::Util qw(first);
   use vars qw($this $root $grp @EXPORT);
-  @EXPORT=qw($this $root $grp FS first GetStyles AddStyle, ListV);
+  @EXPORT=qw($this $root $grp FS first GetStyles AddStyle ListV);
   use Exporter 'import';
   sub FS { $grp->{FSFile}->FS } # used by TectoMT_TredMacros.mak
   sub GetStyles {               # used by TectoMT_TredMacros.mak

@@ -43,7 +43,7 @@ sub index :Path :Args(0) {
     
     my $doc = Treex::Core::Document->new({filename => $testfile});
     
-    # #    my $doc = Treex::PML::Factory->createDocumentFromFile($testfile);
+    #    my $doc = Treex::PML::Factory->createDocumentFromFile($testfile);
     my @bundles;
     foreach my $bundle ($doc->get_bundles) {
         my %bundle;
@@ -59,7 +59,7 @@ sub index :Path :Args(0) {
                 sentence => $zone->sentence,
             };            
         }
-        push @bundles, \%bundle;
+        push @bundles, { zones => \%zones };
     }
     
     my $json = JSON->new->allow_nonref

@@ -13,85 +13,64 @@
     var Renderer = {}, Style = {}, Layout = {};
     
     // rendered using Raphael lib
-    Renderer.Raphael = function(canvas, doc, width, height) {
+    Renderer.Raphael = function(canvas, width, height) {
         this.width = width || 400;
         this.height = height || 400; // this is minimum
-        var selfRef = this;
-        this.doc = doc;
         
-        this.trees = doc.bundles[0].allTrees();
-        this.r = Raphael(canvas, this.width, this.height);
-        
-        _.each(this.trees, Layout.Tred);
-        
-        this.calculateTreesLayout();
-        this.adjustCanvasSize();
+        this.r = Raphael(canvas, this.width, this.height);        
+    };
+
+    treex.Renderer = function(canvas, width, height) { return new Renderer.Raphael(canvas, width, height); };
+
+    Renderer.Raphael.defaultRenderNode = function(r, style, pos) {
+        var node = style.node;
+        var color = style.color || Raphael.getColor();
+        var bg_rect = r.rect(0, 3, 0, 0).attr({fill: '#FFF',"stroke-width": "0", stroke: '#FFF'});
+        var circle = r.circle(0, 0, 3).attr({fill: color, stroke: color, "stroke-width": 2});
+        //var text = r.text(0, 11, node.label || node.id);
+        var text = r.text(0, 11, pos[0] + "x" + pos[1]);
+        var box = text.getBBox();
+        bg_rect.attr({x: box.x, y: box.y, width: box.width, height: box.height })
+        /* set DOM node ID */
+        circle.node.id = node.id;
+        var shape = r.set().
+            push(circle).
+            push(text).
+            push(bg_rect);
+        return shape;
     };
     
-    treex.Raphael = function(canvas, doc, width, height) { return new Renderer.Raphael(canvas, doc, width, height); }
-    
     Renderer.Raphael.prototype = {
+        
         dump: function() {
             console.log(this);
-        },
-        
-        defaultRenderNode : function(r, node) {
-            var color = Raphael.getColor();
-            var bg_rect = r.rect(0, 3, 0, 0).attr({fill: '#FFF',"stroke-width": "0", stroke: '#FFF'});
-            var circle = r.circle(0, 0, 3).attr({fill: color, stroke: color, "stroke-width": 2});
-            //var text = r.text(0, 11, node.label || node.id);
-            var text = r.text(0, 11, node.point[0] + "x" + node.point[1]);
-            var box = text.getBBox();
-            bg_rect.attr({x: box.x, y: box.y, width: box.width, height: box.height });
-            /* set DOM node ID */
-            circle.node.id = node.id;
-            var shape = r.set().
-                push(circle).
-                push(text).
-                push(bg_rect);
-            return shape;
         },
         
         /*
          * Tree placement layout
          */
-        calculateTreesLayout: function() {
+        calcTreesPlacement: function() {
             if (this.trees.length <= 1)
                 return;
-            
-            if (this.layoutsConfig) {
-                // TODO: make layouts configurable
-            }
             
             var counter = 0,
             offsetX = 0,
             offsetY = 0;
-            for (var i in this.trees) {
-                var tree = this.trees[i];
-                var c = 0;
-                var depth = 1;
-                for (var j in tree.nodes) {
-                    var n = tree.nodes[j];
-                    // TODO: rewrite this
-                    if (n.level() > depth) depth = n.level();
-                    c++;
-                }
-                tree.width = 30*(c-1);
-                tree.height = 35*depth;
-                tree.OffsetX = offsetX;
-                tree.OffsetY = 0; // offsetY;
+            for (var i in this.styles) {
+                var layout = this.styles[i].layout;
+                layout.offsetX = offsetX;
+                layout.offsetY = 0; // offsetY; ignore for now
                 
-                offsetX += tree.width;
-                offsetY += tree.height;
-                tree.radius = 40;
+                offsetX += layout.width;
+                offsetY += layout.height;
             }
         },
         
         adjustCanvasSize: function() {
             var width = 0, height = 0;
-            _.each(this.trees, function(tree) {
-                width += tree.width;
-                height = Math.max(height, tree.height);
+            _.each(this.styles, function(style) {
+                width += style.layout.width;
+                height = Math.max(height, style.layout.height);
             });
             
             this.width = width;
@@ -99,54 +78,63 @@
             this.r.setSize(width, height);
         },
         
-        translate: function(point) {
-            return [
-                (point[0] - this.tree.layoutMinX) * this.factorX + this.tree.OffsetX,
-                (point[1] - this.tree.layoutMinY) * this.factorY + this.tree.OffsetY
-            ];
+        // first draw
+        render: function(trees) {
+            var self = this;
+            this.trees = [];
+            // styles are actually wrapped trees
+            this.styles = _.map(trees, function(tree) {
+                self.trees.push(tree);
+                var style = treex.Style(tree); // initialize style for each tree
+                style.layout.initialize();
+                return style;
+            });
+            this.calcTreesPlacement();
+            this.adjustCanvasSize();
+            
+            this.redraw();
         },
         
-        rotate: function(point, length, angle) {
-            var dx = length * Math.cos(angle);
-            var dy = length * Math.sin(angle);
-            return [point[0]+dx, point[1]+dy];
+        redraw: function() {
+            var self = this;
+            _.each(this.trees, function(tree, index){
+                var style = self.styles[index];
+                // use styled nodes
+                // each node is wrapped, so are the edges
+                _.each(style.nodes, function(n){
+                    self.drawNode(n, style);
+                });
+                _.each(style.edges, function(e){
+                    self.drawEdge(e, style);
+                });
+            });
         },
         
-        draw: function() {
-            for (var i in this.trees) {
-                this.tree = this.trees[i];
-                this.factorX = (this.tree.width) / (this.tree.layoutMaxX - this.tree.layoutMinX);
-                this.factorY = (this.tree.height) / (this.tree.layoutMaxY - this.tree.layoutMinY);
-                for (var j in this.tree.nodes) {
-                    this.drawNode(this.tree.nodes[j]);
-                }
-                for (j = 0; j < this.tree.edges.length; j++) {
-                    this.drawEdge(this.tree.edges[j]);
-                }
-            }
-        },
-        
-        drawNode: function(node) {
-            var point = this.translate([node.layoutPosX, node.layoutPosY]);
-            node.point = point;
-            /* if node has already been drawn, move the nodes */
+        // node passed is a wrapped node object from Style
+        // Access underlying node as node.node
+        drawNode: function(node, style) {
+            var layout = style.layout;
+            
+            var point = layout.translate(node.node);            
+            
+            // node has already been drawn, move the nodes
             if(node.shape) {
                 var oBBox = node.shape.getBBox();
                 var opoint = { x: oBBox.x + oBBox.width / 2, y: oBBox.y + oBBox.height / 2};
                 node.shape.transform(['t'+Math.round(point[0] - opoint.x), Math.round(point[1] - opoint.y)].join(','));
                 this.r.safari(); // fix safari bugs
                 return node;
-            }/* else, draw new nodes */
+            }
             
             var shape;
             
-            /* if a node renderer function is provided by the user, then use it
+            /* if a node renderer function is provided by the style, then use it
                or the default render function instead */
             if(!node.render) {
-                node.render = this.defaultRenderNode;
+                node.render = Renderer.Raphael.defaultRenderNode;
             }
             
-            shape = node.render(this.r, node).hide();
+            shape = node.render(this.r, node, point).hide();
             
             var box = shape.getBBox(true);
             shape.transform(['t'+Math.round(point[0] + box.width/2), Math.round(point[1] + box.height/2)].join(','));
@@ -156,7 +144,7 @@
             return node;
         },
         
-        drawEdge: function(edge) {
+        drawEdge: function(edge, style) {
             if(edge.source.hidden || edge.target.hidden) {
                 edge.connection && edge.connection.fg.hide();
                 edge.connection.bg && edge.connection.bg.hide();
@@ -164,8 +152,10 @@
             }
             /* if edge already has been drawn, only refresh the edge */
             if(!edge.connection) {
-                edge.style && edge.style.callback && edge.style.callback(edge); // TODO move this somewhere else
-                edge.connection = this.r.connection(edge.source.shape, edge.target.shape, edge.style);
+                // get shapes
+                var sourceNode = style.getNodeStyle(edge.source);
+                var targetNode = style.getNodeStyle(edge.target);
+                edge.connection = this.r.connection(sourceNode.shape, targetNode.shape, style);
                 return;
             }
             //FIXME showing doesn't work well
@@ -174,86 +164,173 @@
             edge.connection.draw();
         }
     };
-
-    Layout.prepareTree = function(tree) {
-        tree.nodes = _.flatten([tree.root, tree.root.descendants()]);
-        tree.edges = [];
-        function compute_edges(node) {
+    
+    Style = function(tree) {
+        this.tree = tree;
+        this.nodes = { };
+        this.edges = [];
+        
+        this.selectStyle(tree);
+        
+        this.layout = new this.style.layout(tree);
+        
+        var self = this;
+        _.each(tree.allNodes(), function(node) {
+            var style = node.is_root() ?
+                self.style.root : self.style.node;
+            
+            style = self.applyStyles(node, style);
+            style.node = node;
+            //style.layout = this.layout; // for easier access pass reference of the layout
+            self.nodes[node.uid] = style;
+        });
+        
+        function add_edges(node) {
             _.each(node.children(), function(child) {
-                tree.edges.push({
-                    source: node,
-                    target: child
-                });
-                if (!child.is_leaf())
-                    compute_edges(child);
+                var edge = {
+                    source : node,
+                    target : child
+                };
+                var style = self.applyStyles(edge, self.style.edge);
+                console.log(edge);
+                _.extend(edge, style);
+                self.edges.push(edge);
+                if (child.firstson)
+                    add_edges(child);
             });
         }
-        compute_edges(tree.root);
+        add_edges(tree.root);
     };
     
-    /*
-     * Tred like tree layout
-     */
-    Layout.TredClass = function(tree) {
-        Layout.prepareTree(tree);
-        this.tree = tree;
-        this.order = _.sortBy(tree.nodes, function(n) { return n.order; });
-        this.layout();
+    treex.Style = function(tree) { return new Style(tree); };
+    
+    Style.styles = { };
+    
+    Style.prototype = {
+        selectStyle: function(tree) {
+            // choose style
+            this.style = { };
+            if(Style.styles[tree]) {
+                this.style = Style.styles[tree];
+            } else if (Style.styles[tree.layer]) {
+                this.style = Style.styles[tree.layer];
+            }
+            
+            _.defaults(this.style, Style.default);
+            console.log(this);
+        },
+        
+        applyStyles: function(obj, style) {
+            var s = { };
+            _.each(style, function(val, key) {
+                s[key] = _.isFunction(val) ? val(obj) : val;
+            });
+            
+            return s;
+        },
+        getNodeStyle: function(node) {
+            if (this.nodes[node.uid])
+                return this.nodes[node.uid];
+            return { };
+        },
+        
+        getEdgeStyle: function(source, target) {
+            return  _.find(this.edges, function(edge) {
+                return edge.source.uid == source.uid &&
+                    edge.target.uid == target.uid;
+            });
+        }
+    }
+    
+    
+    treex.Layout = Layout;
+    
+    Layout.Tred = function(tree) {
+        this.tree = tree; // the tree
+        this.radius = 15; // node radius
+        
+        this.nodes = { }; // hash of all nodes
+        
+        this.width = 400;
+        this.height = 400;
+        
+        this.offsetX = 0;
+        this.offsetY = 0;
     };
     
-    Layout.Tred = function(tree) { return new Layout.TredClass(tree); };
-    
-    Layout.TredClass.prototype = {
-        layout: function() {
+    Layout.Tred.prototype = {
+        initialize: function() {
+            // sort nodes
+            this.order = _.sortBy(this.tree.allNodes(), function(node){ return node.order; });
             this.layoutPrepare();
-            this.layoutCalcBounds();
+            this.calcBounds();
+            this.calcFactor();
         },
         
         layoutPrepare: function() {
-            var node, i;
-            for (i in this.tree.nodes) {
-                node = this.tree.nodes[i];
-                node.layoutPosX = 0;
-                node.layoutPosY = 0;
-            }
-            var counter = 0;
-            for (i in this.order) {
-                node = this.order[i];
-                node.layoutPosX = counter;
-                node.layoutPosY = node.level();
-                counter++;
-            }
-            
-            console.log(this.tree.nodes);
-            console.log(this.tree.edges);
+            var i = 0;
+            var self = this;
+            this.nodes = { }; // clear nodes first
+            _.each(this.order, function(n) {
+                self.nodes[n.uid] = {
+                    layoutPosX : i++,
+                    layoutPosY : n.level(),
+                    width: 0,
+                    height: 0
+                };
+            });
         },
-            
-        layoutCalcBounds: function() {
+        
+        calcBounds: function() {
             var minx = Infinity, maxx = -Infinity, miny = Infinity, maxy = -Infinity;
             
-            for (var i in this.tree.nodes) {
-                var x = this.tree.nodes[i].layoutPosX;
-                var y = this.tree.nodes[i].layoutPosY;
+            _.each(this.nodes, function(node){
+                var x = node.layoutPosX;
+                var y = node.layoutPosY;
                 
                 if(x > maxx) maxx = x;
                 if(x < minx) minx = x;
                 if(y > maxy) maxy = y;
                 if(y < miny) miny = y;
-            }
+            });
             
-            this.tree.layoutMinX = minx;
-            this.tree.layoutMaxX = maxx;
+            this.layoutMinX = minx;
+            this.layoutMaxX = maxx;
             
-            this.tree.layoutMinY = miny;
-            this.tree.layoutMaxY = maxy;
+            this.layoutMinY = miny;
+            this.layoutMaxY = maxy;
+            
+            this.width = (maxx-minx) * 2 * this.radius;
+            this.height = (maxy-miny) * 2 * this.radius;
+        },
+        
+        calcFactor: function() {
+            this.factorX = (this.width - 2 * this.radius) / (this.layoutMaxX - this.layoutMinX);
+            this.factorY = (this.height - 2 * this.radius) / (this.layoutMaxY - this.layoutMinY);
+        },
+        
+        translate: function(node) {
+            if(!this.nodes[node.uid]) return [0, 0];
+            node = this.nodes[node.uid];
+            return [
+                (node.layoutPosX - this.layoutMinX) * this.factorX + this.radius + this.offsetX,
+                (node.layoutPosY - this.layoutMinY) * this.factorY + this.radius + this.offsetY
+            ];
         }
     };
-    
+
     // default options
     var opts = {
         renderNode: Renderer.Raphael.defaultRenderNode,
         renderer: treex.Raphael
     };
-    _.extend(treex.opts, opts);
+    _.extend(treex.opts, opts);    
+    
+    Style.default = {
+        node: { color : '#C80000', hidden : false },
+        root: { color : '#000', hidden : false },
+        edge: { color : '#000', hidden : false },
+        layout : Layout.Tred
+    };
     
 })(this.Treex); // possibility of using different version

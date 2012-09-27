@@ -5,38 +5,11 @@
 </div>
 
 <script type="text/javascript">
-/*jQuery.getJSON('[% c.uri_for(c.controller('Print').action_for('index')) %]', function(bundles) {
-    // lets just display one bundle
-    var trees = { }; // trees to display
-    _.each(bundles[0], function(tree, tree_label){
-        
-        var t = new Treex.Tree();
-        console.log(tree);
-        function traverse_tree(node) {
-            var n = t.addNode(node.id, node.data);
-            n.level = node.level;
-            n.ord = node.ord ? node.ord : 0;
-            if (_.isArray(node.children)) {
-                _.each(node.children, function(child) {
-                    traverse_tree(child);
-                    t.addEdge(node.id, child.id);
-                });
-            }
-        }
-        traverse_tree(tree);
-        var layout = new TreexDraw.TreeLayout.Tred(t, _.sortBy(t.nodes, function(n){ return n.ord; }));
-
-        trees[tree_label] = t;
-    });
-
-    var renderer = new TreexDraw.Renderer.Raphael('canvas', trees, 800, 800);
-    console.log(trees);
-});
-*/
-Treex.loadDoc("test", function(doc){
-    var renderer = Treex.opts.renderer('canvas', doc, 800, 800);
-    renderer.draw();
+// [% c.uri_for(c.controller('Print').action_for('index')) %]
+Treex.loadDoc('[% c.uri_for(c.controller('Print').action_for('index')) %]',  function(doc) {
+    console.log(doc);
+    var r = Treex.Renderer('canvas', 400, 400);
+    r.render(doc.bundles[0].zones['cs'].trees);    
 });
 </script>
-
 [% PROCESS query/form.tt2 form=queryForm %]

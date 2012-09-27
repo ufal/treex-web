@@ -41,7 +41,7 @@
     treex.Document = function() { return new Document(); };
     
     Document.fromJSON = function(json) {
-        var doc = new Document();
+        var doc = new Document();        
         _.each(json.bundles, function(bundle) {
             var b = Bundle.fromJSON(bundle);
             b.document = doc;
@@ -108,17 +108,24 @@
         var root = new Node(json.id, json.data);
         root.order = _.isFinite(json.ord) ? json.ord : 0;
         var tree = new Tree(root);
-        
         function traverse(jsnode, parent) {
             !_.isEmpty(jsnode.children) && _.each(jsnode.children, function(child) {
                 var node = new Node(child.id, child.data);
                 node.order = _.isFinite(child.ord) ? child.ord : 0;
-                node.paste_on(parent);
+                node.paste_on(parent);                
                 traverse(child, node);
             });
         }
         traverse(json, root);
         return tree;
+    };
+
+    Tree.prototype = {
+        allNodes : function() {
+            var all = this.root.descendants();
+            all.push(this.root);
+            return all;
+        }
     };
     
     Node = function(id, data) {
@@ -129,6 +136,7 @@
         this.rbrother = null;
         this.firstson = null; // leftmost son
         this.order = 0;
+        this.uid = _.uniqueId('node_'); // globaly unique id
     };
     treex.Node = function(id, data) { return new Node(id, data); };
     
@@ -141,30 +149,52 @@
             while (node && node.parent != null) node = node.parent;
             return node;
         },
-        following : function(top) {
-            if (this.firstson) return this.firstson;
-            var node = this;
-            top = top || 0;
-            do {
-                if (node === top || !node.parent) return;
-                if (node.rbrother) return node.rbrother;
-                node = node.parent;
-            } while (node);
-        },
-        descendants : function() {
-            var kin = [];
-            var desc = this.following(this);
-            while (desc) {
-                kin.push(desc);
-                desc = desc.following(this);
+        // from left to right
+        following: function(top) {
+            if (this.firstson) {
+                return this.firstson;
             }
-            return kin;
+            var node = this;
+            while (node) {
+                if (node.uid == top.uid || !node.parent)
+                    return null;
+                if (node.rbrother)
+                    return node.rbrother;
+                node = node.parent;
+            }
+            return null;
+        },
+        descendants: function() {
+            var desc = [];
+            var node = this.following(this);
+            while (node) {
+                desc.push(node);
+                node = node.following(this);
+            }
+            return desc;
+        },
+        leftmost_descendant: function() {
+            var node = this;
+            while(node.firstson) {
+                node = node.firstson;
+            }
+            return node;
+        },
+        rightmost_descendant: function() {
+            var node = this;
+            while (node.firstson) {
+                node = node.firstson;
+                while (node.rbrother) {
+                    node = node.rbrother;
+                }
+            }
+            return node;
         },
         // depth of the node
         level: function() {
             var level = -1;
             var node = this;
-            while (node != null) {
+            while (node) {
                 node = node.parent;
                 level++;
             }
@@ -173,7 +203,7 @@
         children: function() {
             var children = [];
             var node = this.firstson;
-            while (node != null) {
+            while (node) {
                 children.push(node);
                 node = node.rbrother;
             }
@@ -183,11 +213,11 @@
         paste_on: function(parent) {
             var node = parent.firstson;
             if (node && this.order > node.order) {
-                while(node.rbrother!=null && this.order > node.rbrother.order)
+                while(node.rbrother && this.order > node.rbrother.order)
                     node = node.rbrother;
                 var rbrother = node.rbrother;
                 this.rbrother = rbrother;
-                if (rbrother != null) rbrother.lbrother = this;
+                if (rbrother) rbrother.lbrother = this;
                 node.rbrother = this;
                 this.lbrother = node;
                 this.parent = parent;
@@ -195,7 +225,7 @@
                 this.rbrother = node;
                 parent.firstson = this;
                 this.lbrother = null;
-                if (node != null) node.lbrother = this;
+                if (node) node.lbrother = this;
                 this.parent = parent;
             }
         }
