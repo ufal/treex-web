@@ -19,16 +19,16 @@
         
         this.r = Raphael(canvas, this.width, this.height);        
     };
-
+    
     treex.Renderer = function(canvas, width, height) { return new Renderer.Raphael(canvas, width, height); };
-
-    Renderer.Raphael.defaultRenderNode = function(r, style, pos) {
+    
+    Renderer.Raphael.defaultRenderNode = function(r, style, layout) {
         var node = style.node;
         var color = style.color || Raphael.getColor();
         var bg_rect = r.rect(0, 3, 0, 0).attr({fill: '#FFF',"stroke-width": "0", stroke: '#FFF'});
         var circle = r.circle(0, 0, 3).attr({fill: color, stroke: color, "stroke-width": 2});
         //var text = r.text(0, 11, node.label || node.id);
-        var text = r.text(0, 11, pos[0] + "x" + pos[1]);
+        var text = r.text(0, 11, layout.layoutPosX + "x" + layout.layoutPosY);
         var box = text.getBBox();
         bg_rect.attr({x: box.x, y: box.y, width: box.width, height: box.height })
         /* set DOM node ID */
@@ -76,6 +76,14 @@
             this.width = width;
             this.height = height;
             this.r.setSize(width, height);
+            this.drawGrid();
+        },
+        
+        drawGrid: function() {
+            if (this.grid)
+                this.grid.show();
+            
+            this.grid = this.r.rect(0, 0, this.width, this.height).attr({fill: "url('static/images/grid.png')"}).toBack();
         },
         
         // first draw
@@ -87,6 +95,15 @@
                 self.trees.push(tree);
                 var style = treex.Style(tree); // initialize style for each tree
                 style.layout.initialize();
+                // initialize node height and width
+                _.each(style.nodes, function(node) {
+                    var node = node.node;
+                    var nodeLayout = style.layout.getNodeLayout(node);
+                    var bbox = self.nodeBBox(node, style);
+                    nodeLayout.width = bbox.width;
+                    nodeLayout.height = bbox.height;
+                });
+                style.layout.calculate();
                 return style;
             });
             this.calcTreesPlacement();
@@ -110,12 +127,28 @@
             });
         },
         
+        nodeShape: function(node, style) {
+            var nodeStyle = style.getNodeStyle(node);
+            if (!nodeStyle.shape) {
+                if (!nodeStyle.render)
+                    nodeStyle.render = Renderer.Raphael.defaultRenderNode;
+                var nodeLayout = style.layout.getNodeLayout(node);
+                nodeStyle.shape = nodeStyle.render(this.r, nodeStyle, nodeLayout);
+            }
+            
+            return nodeStyle.shape;
+        },
+        
+        nodeBBox: function(node, style) {
+            var shape = this.nodeShape(node, style);
+            
+            return shape.getBBox(true);
+        },
+        
         // node passed is a wrapped node object from Style
         // Access underlying node as node.node
         drawNode: function(node, style) {
-            var layout = style.layout;
-            
-            var point = layout.translate(node.node);            
+            var point = style.layout.translate(node.node);
             
             // node has already been drawn, move the nodes
             if(node.shape) {
@@ -126,6 +159,8 @@
                 return node;
             }
             
+            return;
+            
             var shape;
             
             /* if a node renderer function is provided by the style, then use it
@@ -135,7 +170,6 @@
             }
             
             shape = node.render(this.r, node, point).hide();
-            
             var box = shape.getBBox(true);
             shape.transform(['t'+Math.round(point[0] + box.width/2), Math.round(point[1] + box.height/2)].join(','));
             node.hidden || shape.show();
@@ -245,9 +279,22 @@
     
     treex.Layout = Layout;
     
+    NodeLayout = function(node) {
+        this.node = node;
+        
+        this.layoutPosX = 
+            this.layoutPosY =
+            this.realPosX =
+            this.realPosY =
+            this.width =
+            this.height = 0;
+    };
+    
     Layout.Tred = function(tree) {
         this.tree = tree; // the tree
         this.radius = 15; // node radius
+        this.diameter = 2*this.radius;
+        this.margin = 5; // node margin
         
         this.nodes = { }; // hash of all nodes
         
@@ -263,6 +310,9 @@
             // sort nodes
             this.order = _.sortBy(this.tree.allNodes(), function(node){ return node.order; });
             this.layoutPrepare();
+        },
+        
+        calculate: function() {
             this.calcBounds();
         },
         
@@ -271,12 +321,10 @@
             var self = this;
             this.nodes = { }; // clear nodes first
             _.each(this.order, function(n) {
-                self.nodes[n.uid] = {
-                    layoutPosX : i++,
-                    layoutPosY : n.level(),
-                    width: 0,
-                    height: 0
-                };
+                var node = new NodeLayout(n);
+                node.layoutPosX = i++;
+                node.layoutPosY = n.level();
+                self.nodes[n.uid] = node;
             });
         },
         
@@ -291,6 +339,9 @@
                 if(x < minx) minx = x;
                 if(y > maxy) maxy = y;
                 if(y < miny) miny = y;
+                
+                this.width += node.width;
+                this.height += node.height;
             });
             
             this.layoutMinX = minx;
@@ -299,8 +350,8 @@
             this.layoutMinY = miny;
             this.layoutMaxY = maxy;
             
-            this.width = (maxx-minx) * 2 * this.radius + 2*this.radius+30;
-            this.height = (maxy-miny) * 2 * this.radius + 2*this.radius+30;
+            this.width += this.diameter; // add two times radius as a margin
+            this.height += this.diameter;
         },
         
         translate: function(node) {
@@ -310,6 +361,12 @@
                 (node.layoutPosX - this.layoutMinX)*2*this.radius + this.radius + this.offsetX,
                 (node.layoutPosY - this.layoutMinY)*2*this.radius + this.radius + this.offsetY
             ];
+        },
+        
+        getNodeLayout: function(node) {
+            if (this.nodes[node.uid])
+                return this.nodes[node.uid];
+            return { };
         }
     };
     
