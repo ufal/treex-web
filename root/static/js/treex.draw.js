@@ -264,7 +264,6 @@
             this.order = _.sortBy(this.tree.allNodes(), function(node){ return node.order; });
             this.layoutPrepare();
             this.calcBounds();
-            this.calcFactor();
         },
         
         layoutPrepare: function() {
@@ -300,25 +299,20 @@
             this.layoutMinY = miny;
             this.layoutMaxY = maxy;
             
-            this.width = (maxx-minx) * 2 * this.radius;
-            this.height = (maxy-miny) * 2 * this.radius;
-        },
-        
-        calcFactor: function() {
-            this.factorX = (this.width - 2 * this.radius) / (this.layoutMaxX - this.layoutMinX);
-            this.factorY = (this.height - 2 * this.radius) / (this.layoutMaxY - this.layoutMinY);
+            this.width = (maxx-minx) * 2 * this.radius + 2*this.radius+30;
+            this.height = (maxy-miny) * 2 * this.radius + 2*this.radius+30;
         },
         
         translate: function(node) {
             if(!this.nodes[node.uid]) return [0, 0];
             node = this.nodes[node.uid];
             return [
-                (node.layoutPosX - this.layoutMinX) * this.factorX + this.radius + this.offsetX,
-                (node.layoutPosY - this.layoutMinY) * this.factorY + this.radius + this.offsetY
+                (node.layoutPosX - this.layoutMinX)*2*this.radius + this.radius + this.offsetX,
+                (node.layoutPosY - this.layoutMinY)*2*this.radius + this.radius + this.offsetY
             ];
         }
     };
-
+    
     // default options
     var opts = {
         renderNode: Renderer.Raphael.defaultRenderNode,
