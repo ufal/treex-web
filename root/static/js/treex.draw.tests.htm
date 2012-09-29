@@ -155,7 +155,7 @@
           test_universe_consistency(layout, 'removeNode');
       });
 
-      test("test universe on 100 nodes", function() {
+      test("test universe on 100 nodes (random)", function() {
           var layout = new Treex.Layout.Tred(randomTree(100));
           layout.initialize();
           equal(layout.order.length, 100, 'we have 100 nodes');
@@ -166,6 +166,16 @@
           test_universe_consistency(layout, 'last removeNode');
       });
       
+      test("test universe on 500 nodes (random)", function() {
+          var layout = new Treex.Layout.Tred(randomTree(500));
+          layout.initialize();
+          equal(layout.order.length, 500, 'we have 500 nodes');
+          test_universe_consistency(layout, 'initialize');
+          layout.removeNode(layout.order[_.random(499)]); // some node
+          test_universe_consistency(layout, 'some removeNode');
+          layout.removeNode(_.last(layout.order)); //last node
+          test_universe_consistency(layout, 'last removeNode');
+      });
       // ]]>
     </script>
   </body>
