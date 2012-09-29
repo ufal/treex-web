@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+    <title>Treex Tests</title>
+    <meta name="author" content="Michal Sedlak" />
+    <script type="text/javascript" src="jquery.js"></script>
+    <script type="text/javascript" src="http://code.jquery.com/qunit/qunit-1.10.0.js"></script>
+    <script type="text/javascript" src="https://raw.github.com/appendto/jquery-mockjax/master/jquery.mockjax.js"></script>
+    <script type="text/javascript" src="underscore.js"></script>
+    <script type="text/javascript" src="raphael.js"></script>
+    <script type="text/javascript" src="raphael.graffle.js"></script>
+    <script type="text/javascript" src="treex.js"></script>
+    <script type="text/javascript" src="treex.draw.js"></script>
+    <link rel="Stylesheet" type="text/css" href="http://code.jquery.com/qunit/qunit-1.10.0.css" media="all" />
+  </head>
+  <body>
+    <div id="qunit"></div>
+    <div id="qunit-fixture"></div>
+    <script type="text/javascript">
+      // <![CDATA[
+      $.mockjax({
+          url: Treex.opts.print_api,
+          proxy: 'test_print.json'
+      });
+
+      asyncTest("document load", function() {
+          expect(3);
+          Treex.loadDoc("test_file", function(doc) {
+              ok(doc.bundles, "document has bundles");
+              equal(doc.bundles.length, 2, "number of bundles is ok");
+              equal(_.size(Treex.documents), 1, "document loaded");
+              start();
+          });
+      });
+
+      module("Treex Draw", {
+          setup: function() {
+              stop();
+              Treex.loadDoc("test_file", function(doc) {
+                  ok(doc.bundles, "document has bundles");
+                  equal(doc.bundles.length, 2, "number of bundles is ok");
+                  start();
+              });
+          }
+      });
+      test("retrive document", function(){
+          equal(_.size(Treex.documents), 1, "document loaded");
+          var doc = Treex.documents['test_file'];
+          var r = Treex.Renderer('qunit-fixture', 400, 400);
+          r.render(doc.bundles[0].zones['cs'].trees);
+      });
+      // ]]>
+    </script>
+  </body>
+</html>
