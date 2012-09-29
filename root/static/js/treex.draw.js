@@ -334,6 +334,7 @@
         
         calcBounds: function() {
             var maxx = 0, maxy = 0;
+            var self = this;
             
             _.each(this.nodes, function(node){
                 var x = node.layoutPosX;
@@ -342,8 +343,8 @@
                 if(x > maxx) maxx = x;
                 if(y > maxy) maxy = y;
                 
-                this.width += node.width;
-                this.height += node.height;
+                self.width += node.width;
+                self.height += node.height;
             });
             
             this.layoutMaxX = maxx;
