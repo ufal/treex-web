@@ -297,9 +297,13 @@
         this.margin = 5; // node margin
         
         this.nodes = { }; // hash of all nodes
+        this.universe = [ ]; // sparse matrix of the layout
         
         this.width = 400;
         this.height = 400;
+        
+        this.layoutMaxX =
+            this.layoutMaxY = 0;
         
         this.offsetX = 0;
         this.offsetY = 0;
@@ -329,25 +333,20 @@
         },
         
         calcBounds: function() {
-            var minx = Infinity, maxx = -Infinity, miny = Infinity, maxy = -Infinity;
+            var maxx = 0, maxy = 0;
             
             _.each(this.nodes, function(node){
                 var x = node.layoutPosX;
                 var y = node.layoutPosY;
                 
                 if(x > maxx) maxx = x;
-                if(x < minx) minx = x;
                 if(y > maxy) maxy = y;
-                if(y < miny) miny = y;
                 
                 this.width += node.width;
                 this.height += node.height;
             });
             
-            this.layoutMinX = minx;
             this.layoutMaxX = maxx;
-            
-            this.layoutMinY = miny;
             this.layoutMaxY = maxy;
             
             this.width += this.diameter; // add two times radius as a margin
@@ -363,20 +362,51 @@
             ];
         },
         
+        getNode: function(x, y) {
+            if (x < 0 || y < 0  // indexes can't be negative
+                || this.universe.length < x // no indexes greater than array length
+                || !this.universe[x] || !this.universe[x][y]) {
+                return null;
+            }
+            // NOTE: do not refactor to return ?: 
+            return this.universe[x][y];
+        },
+        
+        setNode: function(x, y, node) {
+            if (!this.universe[x])
+                this.universe[x] = [];
+            this.universe[x][y] = node;
+            
+            node.layoutPosX = x;
+            node.layoutPosY = y;
+            
+            (x > this.layoutMaxX) && (this.layoutMaxX = x);
+            (y > this.layoutMaxY) && (this.layoutMaxY = y);
+        },
+        
+        removeNode: function(node) {
+            var layout = this.nodes[node.uid];
+            delete this.nodes[node.uid];
+            if (layout) {
+                // remove layout from the universe
+                delete this.universe[layout.layoutPosX][layoutPosY];
+            }
+        },
+        
         getNodeLayout: function(node) {
             if (this.nodes[node.uid])
                 return this.nodes[node.uid];
             return { };
         }
     };
-    
+
     // default options
     var opts = {
         renderNode: Renderer.Raphael.defaultRenderNode,
         renderer: treex.Raphael
     };
-    _.extend(treex.opts, opts);    
-    
+    _.extend(treex.opts, opts);
+
     Style.default = {
         node: { color : '#C80000', hidden : false },
         root: { color : '#000', hidden : false },

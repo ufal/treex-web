@@ -28,15 +28,16 @@
     treex.loadDoc = function(file, callback) {
         // TODO: use ajax with error callback
         $.getJSON(this.opts.print_api, { file: file }, function(data) {
-            console.log(data);
             var doc = Document.fromJSON(data);
-            treex.documents[file] = doc;
+            doc.file = file;
+            treex.documents[file] = (doc);
             _.isFunction(callback) && callback(doc);
         });
     };
     
     Document = function() {
         this.bundles = [ ]; // an array, because order matters
+        this.file = "";
     };
     treex.Document = function() { return new Document(); };
     
