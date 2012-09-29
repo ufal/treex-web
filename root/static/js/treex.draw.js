@@ -8,6 +8,11 @@
 (function(treex) {
     
     var _ = treex._;
+
+    _.mixin({
+        // the middle function simply forces keys to ints
+        topkey : _.compose(_.max, function(arr) { for(var i=0; i < arr.length; i++) arr[i] = +arr[i]; return arr; }, _.keys)
+    });
     
     // new items in the namespace
     var Renderer = {}, Style = {}, Layout = {};
@@ -297,7 +302,7 @@
         this.margin = 5; // node margin
         
         this.nodes = { }; // hash of all nodes
-        this.universe = [ ]; // sparse matrix of the layout
+        this.universe = { }; // sparse matrix of the layout, actualy now represented as hash
         
         this.width = 400;
         this.height = 400;
@@ -326,9 +331,7 @@
             this.nodes = { }; // clear nodes first
             _.each(this.order, function(n) {
                 var node = new NodeLayout(n);
-                node.layoutPosX = i++;
-                node.layoutPosY = n.level();
-                self.nodes[n.uid] = node;
+                self.setNode(i++, n.level(), node);
             });
         },
         
@@ -365,24 +368,26 @@
         
         getNode: function(x, y) {
             if (x < 0 || y < 0  // indexes can't be negative
-                || this.universe.length < x // no indexes greater than array length
-                || !this.universe[x] || !this.universe[x][y]) {
+                || !this.universe[y] || !this.universe[y][x]) {
                 return null;
             }
             // NOTE: do not refactor to return ?: 
-            return this.universe[x][y];
+            return this.universe[y][x];
         },
         
         setNode: function(x, y, node) {
-            if (!this.universe[x])
-                this.universe[x] = [];
-            this.universe[x][y] = node;
+            if (!this.universe[y])
+                this.universe[y] = { };
+            this.universe[y][x] = node;
             
             node.layoutPosX = x;
             node.layoutPosY = y;
             
-            (x > this.layoutMaxX) && (this.layoutMaxX = x);
-            (y > this.layoutMaxY) && (this.layoutMaxY = y);
+            // also index the node
+            this.nodes[node.node.uid] = node;
+            
+            if (x > this.layoutMaxX) this.layoutMaxX = x;
+            if (y > this.layoutMaxY) this.layoutMaxY = y;
         },
         
         removeNode: function(node) {
@@ -390,24 +395,50 @@
             delete this.nodes[node.uid];
             if (layout) {
                 // remove layout from the universe
-                delete this.universe[layout.layoutPosX][layoutPosY];
+                delete this.universe[layout.layoutPosY][layout.layoutPosX];
+                if (_.isEmpty(this.universe[layout.layoutPosY]))
+                    delete this.universe[layout.layoutPosY];
+                
+                if (!_.isEmpty(this.universe)) {
+                    var maxLayout = this.maxLayoutX();
+                    this.layoutMaxX = maxLayout.layoutPosX || 0;
+                    maxLayout = this.maxLayoutY();
+                    this.layoutMaxY = maxLayout.layoutPosY || 0;
+                } else { // we've deleted the last item from the universe
+                    this.layoutMaxX = this.layoutMaxY = 0;
+                }
             }
+        },
+        
+        // returns bottom right corner item of the matrix
+        maxLayoutX: function() {
+            if (_.isEmpty(this.universe))
+                return null;
+            var row = _.max(this.universe, _.topkey);
+            return row[_.topkey(row)];
+        },
+        
+        maxLayoutY: function() {
+            if (_.isEmpty(this.universe))
+                return null;
+            var row = this.universe[_.topkey(this.universe)];
+            return row[_.topkey(row)];
         },
         
         getNodeLayout: function(node) {
             if (this.nodes[node.uid])
                 return this.nodes[node.uid];
-            return { };
+            return null;
         }
     };
-
+    
     // default options
     var opts = {
         renderNode: Renderer.Raphael.defaultRenderNode,
         renderer: treex.Raphael
     };
     _.extend(treex.opts, opts);
-
+    
     Style.default = {
         node: { color : '#C80000', hidden : false },
         root: { color : '#000', hidden : false },

@@ -131,7 +131,7 @@
     
     Node = function(id, data) {
         this.id = id;
-        this.data = data;
+        this.data = data || { };
         this.parent = null;
         this.lbrother = null;
         this.rbrother = null;
