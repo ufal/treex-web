@@ -5,26 +5,26 @@
 (function() {
     // Establish the top namespace object, `window` in the browser, or `global` on the server.
     var namespace = this;
-    
+
     // Underscore.js library is required
     var _ = namespace._;
     // jQuery library for ajax requests
     var $ = namespace.jQuery;
-    
+
     var treex = { '_' : _, '$' : $ }; // just a namespace with no constructor
-    
+
     // define all `classes` here
     var Document, Bundle, Zone, Tree, Node;
-    
+
     namespace['Treex'] = treex; // export treex as Treex
-    
+
     treex.documents = { }; // hash of loaded documents
-    
+
     // hardcoded options for now
     treex.opts = {
         print_api : 'http://localhost:3000/print' // url of printing api
     };
-    
+
     treex.loadDoc = function(file, callback) {
         // TODO: use ajax with error callback
         $.getJSON(this.opts.print_api, { file: file }, function(data) {
@@ -34,15 +34,15 @@
             _.isFunction(callback) && callback(doc);
         });
     };
-    
+
     Document = function() {
         this.bundles = [ ]; // an array, because order matters
         this.file = "";
     };
     treex.Document = function() { return new Document(); };
-    
+
     Document.fromJSON = function(json) {
-        var doc = new Document();        
+        var doc = new Document();
         _.each(json.bundles, function(bundle) {
             var b = Bundle.fromJSON(bundle);
             b.document = doc;
@@ -50,7 +50,7 @@
         });
         return doc;
     };
-    
+
     Bundle = function() {
         this.zones = { }; // indexed by `language`-`selector`
         this.document = null;
@@ -63,11 +63,11 @@
             _.each(this.zones, function(zone) {
                 trees.push(_.toArray(zone.trees));
             });
-            
+
             return _.flatten(trees);
         },
     };
-    
+
     Bundle.fromJSON = function(json) {
         var bundle = new Bundle();
         _.each(json.zones, function(zone, label) {
@@ -77,23 +77,24 @@
         });
         return bundle;
     };
-    
+
     Zone = function() {
         this.trees = { };
         this.sentence = '';
         this.bundle = null;
     };
     treex.Zone = function() { return new Zone(); };
-    
+
     Zone.fromJSON = function(json) {
         var zone = new Zone();
         _.each(json.trees, function(tree, layer) {
             zone.trees[layer] = Tree.fromJSON(tree);
+            zone.trees[layer].layer = layer;
         });
         zone.sentence = json.sentence;
         return zone;
     };
-    
+
     /*
      * Trees related functions
      */
@@ -113,7 +114,7 @@
             !_.isEmpty(jsnode.children) && _.each(jsnode.children, function(child) {
                 var node = new Node(child.id, child.data);
                 node.order = _.isFinite(child.ord) ? child.ord : 0;
-                node.paste_on(parent);                
+                node.paste_on(parent);
                 traverse(child, node);
             });
         }
@@ -128,7 +129,7 @@
             return all;
         }
     };
-    
+
     Node = function(id, data) {
         this.id = id;
         this.data = data || { };
@@ -140,7 +141,7 @@
         this.uid = _.uniqueId('node_'); // globaly unique id
     };
     treex.Node = function(id, data) { return new Node(id, data); };
-    
+
     // Try to match function names with Treex::PML::Node
     Node.prototype = {
         is_leaf: function() { return this.firstson == null; },
@@ -231,5 +232,5 @@
             }
         }
     };
-    
+
 }).call(this);

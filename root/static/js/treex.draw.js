@@ -29,19 +29,19 @@
 
     treex.Renderer = function(canvas, width, height) { return new Renderer.Raphael(canvas, width, height); };
 
-    Renderer.Raphael.defaultRenderNode = function(r, style, layout) {
+    Renderer.Raphael.renderNode = function(r, style, layout) {
         var node = style.node;
         var color = style.color || Raphael.getColor();
-        var bg_rect = r.rect(0, 3, 0, 0).attr({fill: '#FFF',"stroke-width": "0", stroke: '#FFF'});
-        var circle = r.circle(0, 0, 3).attr({fill: color, stroke: color, "stroke-width": 2});
-        var text = r.text(0, 11, node.label || node.id);
-        var box = text.getBBox();
+        var bg_rect = r.rect(0, 3.5, 0, 0).attr({ fill: '#FFF', 'stroke-width': "0", stroke: '#FFF', opacity: 0.9 });
+        var circle = r.circle(0, 0, 3.5).attr({ fill: color, stroke: '#000', 'stroke-width': 1, title: style.title });
+        var label = r.text(-5, 11, style.label).attr({'text-anchor' : 'start'});
+        var box = label.getBBox();
         bg_rect.attr(box);
         /* set DOM node ID */
         circle.node.id = node.id;
         var shape = r.set().
             push(circle).
-            push(text).
+            push(label).
             push(bg_rect);
         return shape;
     };
@@ -108,6 +108,10 @@
                     var bbox = self.nodeBBox(node, style);
                     nodeLayout.width = bbox.width;
                     nodeLayout.height = bbox.height;
+                    nodeLayout.topX = bbox.x;
+                    nodeLayout.topY = bbox.y;
+                    nodeLayout.bottomX = bbox.x2;
+                    nodeLayout.bottomY = bbox.y2;
                 });
                 style.layout.calculate();
                 return style;
@@ -137,7 +141,7 @@
             var nodeStyle = style.getNodeStyle(node);
             if (!nodeStyle.shape) {
                 if (!nodeStyle.render)
-                    nodeStyle.render = Renderer.Raphael.defaultRenderNode;
+                    nodeStyle.render = Renderer.Raphael.renderNode;
                 var nodeLayout = style.layout.getNodeLayout(node);
                 nodeStyle.shape = nodeStyle.render(this.r, nodeStyle, nodeLayout);
             }
@@ -158,7 +162,7 @@
                 var rnode = node.node;
                 var oBBox = this.nodeBBox(rnode, style);
                 var point = style.layout.translate(rnode);
-                var opoint = { x: oBBox.x + oBBox.width / 2, y: oBBox.y + oBBox.height / 2};
+                var opoint = { x: oBBox.x, y: oBBox.y };
                 node.shape.transform(['t'+Math.round(point[0] - opoint.x), Math.round(point[1] - opoint.y)].join(','));
             }
         },
@@ -229,9 +233,7 @@
         selectStyle: function(tree) {
             // choose style
             this.style = { };
-            if(Style.styles[tree]) {
-                this.style = Style.styles[tree];
-            } else if (Style.styles[tree.layer]) {
+            if (Style.styles[tree.layer]) {
                 this.style = Style.styles[tree.layer];
             }
 
@@ -329,10 +331,10 @@
                 if(x > maxx) maxx = x;
                 if(y > maxy) maxy = y;
 
-                var width = node.realPosX + node.width/2;
+                var width = node.realPosX + node.bottomX;
                 if (width > self.width) self.width = width;
 
-                var height = node.realPosY + node.height/2;
+                var height = node.realPosY + node.bottomY;
                 if (height > self.height) self.height = height;
             });
 
@@ -354,12 +356,12 @@
                 for (var i=layout.layoutPosX-1; i >= 0; i--) {
                     var n = self.getNode(i, layout.layoutPosY);
                     if (!n) continue;
-                    leftWidth = n.realPosX + n.width/2;
+                    leftWidth = n.realPosX + n.bottomX;
                     break;
                 }
-                if (leftWidth >= left-layout.width/2) {
-                    layout.realPosX = leftWidth + layout.width/2 + self.radiusX;
-                    left = layout.realPosX + layout.width/2;
+                if (leftWidth >= left-Math.abs(layout.topX)) {
+                    layout.realPosX = leftWidth + Math.abs(layout.topX) + self.radiusX;
+                    left = layout.realPosX + Math.abs(layout.topX);
                 } else {
                     layout.realPosX = left + self.radiusX;
                     left += self.radiusX*2;
@@ -448,14 +450,14 @@
 
     // default options
     var opts = {
-        renderNode: Renderer.Raphael.defaultRenderNode,
+        renderNode: Renderer.Raphael.renderNode,
         renderer: treex.Raphael
     };
     _.extend(treex.opts, opts);
 
     Style.default = {
-        node: { color : '#C80000', hidden : false },
-        root: { color : '#000', hidden : false },
+        node: { color : '#C80000', hidden : false, title : '', label : function(node) { return node.id; } },
+        root: { color : '#000', hidden : false, title : '', label : function(root) { return root.id; } },
         edge: { color : '#000', hidden : false },
         layout : Layout.Tred
     };
