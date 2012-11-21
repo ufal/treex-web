@@ -34,8 +34,7 @@
         var color = style.color || Raphael.getColor();
         var bg_rect = r.rect(0, 3, 0, 0).attr({fill: '#FFF',"stroke-width": "0", stroke: '#FFF'});
         var circle = r.circle(0, 0, 3).attr({fill: color, stroke: color, "stroke-width": 2});
-        //var text = r.text(0, 11, node.label || node.id);
-        var text = r.text(0, 11, layout.layoutPosX + "x" + layout.layoutPosY);
+        var text = r.text(0, 11, node.label || node.id);
         var box = text.getBBox();
         bg_rect.attr(box);
         /* set DOM node ID */
@@ -304,6 +303,7 @@
         },
 
         calculate: function() {
+            this.calcNodesPosition();
             this.calcBounds();
         },
 
@@ -320,6 +320,7 @@
         calcBounds: function() {
             var maxx = 0, maxy = 0;
             var self = this;
+            this.width = this.height = 0;
 
             _.each(this.nodes, function(node){
                 var x = node.layoutPosX;
@@ -328,23 +329,54 @@
                 if(x > maxx) maxx = x;
                 if(y > maxy) maxy = y;
 
-                self.width += node.width;
-                self.height += node.height;
+                var width = node.realPosX + node.width/2;
+                if (width > self.width) self.width = width;
+
+                var height = node.realPosY + node.height/2;
+                if (height > self.height) self.height = height;
             });
 
             this.layoutMaxX = maxx;
             this.layoutMaxY = maxy;
 
-            this.width += this.diameter; // add two times radius as a margin
-            this.height += this.diameter;
+            this.width += this.radiusX;
+            this.height += this.radiusX;
+        },
+
+        calcNodesPosition: function() {
+            var self = this;
+            // X pos
+            var left = this.radiusX;
+            _.each(this.order, function(node) {
+                var layout = self.getNodeLayout(node);
+                if (!layout) return;
+                var leftWidth = 0;
+                for (var i=layout.layoutPosX-1; i >= 0; i--) {
+                    var n = self.getNode(i, layout.layoutPosY);
+                    if (!n) continue;
+                    leftWidth = n.realPosX + n.width/2;
+                    break;
+                }
+                if (leftWidth >= left-layout.width/2) {
+                    layout.realPosX = leftWidth + layout.width/2 + self.radiusX;
+                    left = layout.realPosX + layout.width/2;
+                } else {
+                    layout.realPosX = left + self.radiusX;
+                    left += self.radiusX*2;
+                }
+            });
+
+            _.each(this.nodes, function(node) {
+                node.realPosY = (node.layoutPosY)*2*self.radiusY + node.height/2 + self.radiusX;
+            });
         },
 
         translate: function(node) {
             if(!this.nodes[node.uid]) return [20, 20];
             node = this.nodes[node.uid];
             return [
-                (node.layoutPosX)*2*this.radiusX + this.radiusX + this.offsetX,
-                (node.layoutPosY)*2*this.radiusY + this.radiusY + this.offsetY
+                node.realPosX + this.offsetX,
+                node.realPosY + this.offsetY
             ];
         },
 
