@@ -14,7 +14,7 @@ sub traverse_data {
     my ($self, $decl, $value) = @_;
     my $data;
     my $decl_is = $decl->get_decl_type;
-    
+
     if ( $decl_is == PML_STRUCTURE_DECL ) {
         my @members = grep {
             (!defined($_->get_role) or $_->get_role ne '#CHILDNODES')
@@ -59,7 +59,7 @@ sub traverse_data {
             my $v = $_->value;
             my $e = $decl->get_element_by_name($n);
             my $p = $pos{$n}; # position
-            
+
             push @{$data->[$p]}, $self->traverse_data($e, $v);
         }
     } elsif ($decl_is == PML_ELEMENT_DECL) {
@@ -88,13 +88,13 @@ sub traverse_data {
     } else {
         die "Unhandled data type: $decl";
     }
-    
+
     return $data;
 }
 
 sub TO_JSON {
     my $self = shift;
-    
+
     my $n = $self->node;
     my $data = {
         id => $n->id,
@@ -104,7 +104,7 @@ sub TO_JSON {
     };
     my @children = $n->is_leaf ? () : (map {__PACKAGE__->new(node=>$_)} $n->children);
     $data->{children} = \@children if @children;
-    
+
     return $data;
 }
 
@@ -124,7 +124,7 @@ Treex::View::Node - This is Treex::Core::Node wrapper
 
 =head1 DESCRIPTION
 
-Stub documentation for Treex::View::Node, 
+Stub documentation for Treex::View::Node,
 
 Blah blah blah.
 
