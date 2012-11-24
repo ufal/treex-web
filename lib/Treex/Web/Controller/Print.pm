@@ -32,23 +32,23 @@ has 'treeLayout' => (
 
 sub index :Path :Args(0) {
     my ( $self, $c ) = @_;
-    
+
     $c->response->body('Matched Treex::Web::Controller::Print in Print.');
-    
+
     use Treex::Print;
     use Treex::Core::Document;
     use Treex::PML::Factory;
-    
+
     my $testfile = "test.treex.gz";
-    
+
     my $doc = Treex::Core::Document->new({filename => $testfile});
-    
+
     #    my $doc = Treex::PML::Factory->createDocumentFromFile($testfile);
     my @bundles;
     foreach my $bundle ($doc->get_bundles) {
         my %bundle;
         my %zones;
-        $bundle{zones}=\%zones;        
+        $bundle{zones}=\%zones;
         foreach my $zone ( $bundle->get_all_zones ) {
             my %trees;
             foreach my $tree ( $zone->get_all_trees ) {
@@ -57,14 +57,14 @@ sub index :Path :Args(0) {
             $zones{$self->treeLayout->get_zone_label($zone)} = {
                 trees => \%trees,
                 sentence => $zone->sentence,
-            };            
+            };
         }
         push @bundles, { zones => \%zones };
     }
-    
+
     my $json = JSON->new->allow_nonref
         ->allow_blessed->convert_blessed;
-    
+
     #    my $svg = Treex::Print->svg($doc);
     $c->response->body($json->pretty->encode({bundles => \@bundles}));
 }
@@ -84,4 +84,3 @@ it under the same terms as Perl itself.
 __PACKAGE__->meta->make_immutable;
 
 1;
- 
