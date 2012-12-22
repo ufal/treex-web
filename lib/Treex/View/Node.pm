@@ -9,6 +9,16 @@ use Data::Dump qw(pp);
 
 has 'node' => (is => 'ro', isa => 'Treex::Core::Node', required => 1);
 
+has 'labels' => (
+    is     => 'ro',
+    isa    => 'Treex::Core::TredView::Labels',
+);
+
+has 'styles' => (
+    is     => 'ro',
+    isa    => 'Treex::Core::TredView::Styles',
+);
+
 # will traverse data and dumps structures to hashes and arrays
 sub traverse_data {
     my ($self, $decl, $value) = @_;
@@ -102,7 +112,25 @@ sub TO_JSON {
         ($n->does('Treex::Core::Node::Ordered') ? (ord =>int($n->ord)) : ()), # force ord to be integer
         data => $self->traverse_data($n->type, $n),
     };
-    my @children = $n->is_leaf ? () : (map {__PACKAGE__->new(node=>$_)} $n->children);
+
+    ## some fake values to stop warnings
+    $n->{'_shift_down'} = 0;
+    $n->{'_shift_right'} = 0;
+    $n->{_tree_depth} = 0;
+    $n->{_depth} = 0;
+
+    if ($n->is_root) {
+        $n->{_precomputed_labels}     = $self->labels->root_labels($n);
+        $n->{_precomputed_node_style} = $self->styles->node_style($n);
+        $n->{_precomputed_hint}       = '';
+    } else {
+        $n->{_precomputed_node_style} = $self->styles->node_style($n);
+        $n->{_precomputed_buffer}     = $self->labels->node_labels( $n, $n->get_layer );
+        $self->labels->set_labels($n);
+    }
+    $data->{labels} = $n->{_precomputed_labels};
+    $data->{style} = $n->{_precomputed_node_style};
+    my @children = $n->is_leaf ? () : (map {__PACKAGE__->new(node=>$_, labels=>$self->labels, styles=>$self->styles)} $n->children);
     $data->{children} = \@children if @children;
 
     return $data;

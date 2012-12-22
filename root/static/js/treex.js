@@ -25,9 +25,33 @@
         print_api : 'http://localhost:3000/print' // url of printing api
     };
 
+    treex.parseStyles = function(styles) {
+        var style = { };
+        if (!styles) return style;
+        // #{name:value}
+        var n = styles.match(/#\{[\w-:\.#]+\}/g);
+        if (!n) return style;
+        for (var i = 0; i < n.length; i++) {
+            var val = n[i].slice(2, -1); // kill brackets
+            val = val.split(':');
+
+            var name = val[0];
+            val = val[1];
+
+            name = name.split('-');
+            var cat = name.length > 1 ? name.shift() : "Node";
+            name = name.shift();
+
+            if (!style[cat]) style[cat] = { };
+            style[cat][name] = val;
+        }
+        return style;
+    };
+
     treex.loadDoc = function(file, callback) {
         // TODO: use ajax with error callback
         $.getJSON(this.opts.print_api, { file: file }, function(data) {
+            console.log(data);
             var doc = Document.fromJSON(data);
             doc.file = file;
             treex.documents[file] = (doc);
@@ -65,11 +89,12 @@
             });
 
             return _.flatten(trees);
-        },
+        }
     };
 
     Bundle.fromJSON = function(json) {
         var bundle = new Bundle();
+        bundle.style = treex.parseStyles(json.style);
         _.each(json.zones, function(zone, label) {
             var z = Zone.fromJSON(zone);
             z.bundle = bundle;
@@ -107,13 +132,15 @@
     treex.Tree = function(root) { return new Tree(root); };
 
     Tree.fromJSON = function(json) {
-        var root = new Node(json.id, json.data);
+        var root = new Node(json.id, json.data, json.style);
         root.order = _.isFinite(json.ord) ? json.ord : 0;
+        root.labels = json.labels;
         var tree = new Tree(root);
         function traverse(jsnode, parent) {
             !_.isEmpty(jsnode.children) && _.each(jsnode.children, function(child) {
                 var node = new Node(child.id, child.data);
                 node.order = _.isFinite(child.ord) ? child.ord : 0;
+                node.labels = child.labels;
                 node.paste_on(parent);
                 traverse(child, node);
             });
@@ -130,9 +157,10 @@
         }
     };
 
-    Node = function(id, data) {
+    Node = function(id, data, style) {
         this.id = id;
         this.data = data || { };
+        this.style = treex.parseStyles(style);
         this.parent = null;
         this.lbrother = null;
         this.rbrother = null;

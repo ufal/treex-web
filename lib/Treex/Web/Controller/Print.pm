@@ -43,23 +43,27 @@ sub index :Path :Args(0) {
 
     my $doc = Treex::Core::Document->new({filename => $testfile});
 
+    my $labels = Treex::Core::TredView::Labels->new( _treex_doc => $doc );
+    my $styles = Treex::Core::TredView::Styles->new( _treex_doc => $doc );
+
     #    my $doc = Treex::PML::Factory->createDocumentFromFile($testfile);
     my @bundles;
     foreach my $bundle ($doc->get_bundles) {
         my %bundle;
         my %zones;
         $bundle{zones}=\%zones;
+        $bundle{style}=$styles->bundle_style($bundle);
         foreach my $zone ( $bundle->get_all_zones ) {
             my %trees;
             foreach my $tree ( $zone->get_all_trees ) {
-                $trees{$self->treeLayout->get_tree_label($tree)} = Treex::View::Node->new(node => $tree);
+                $trees{$self->treeLayout->get_tree_label($tree)} = Treex::View::Node->new(node => $tree, labels => $labels, styles => $styles);
             }
             $zones{$self->treeLayout->get_zone_label($zone)} = {
                 trees => \%trees,
                 sentence => $zone->sentence,
             };
         }
-        push @bundles, { zones => \%zones };
+        push @bundles, \%bundle;
     }
 
     my $json = JSON->new->allow_nonref
