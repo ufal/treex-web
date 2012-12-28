@@ -9,7 +9,7 @@
 Treex.loadDoc('[% c.uri_for(c.controller('Print').action_for('index')) %]',  function(doc) {
     console.log(doc);
     var r = Treex.Renderer('canvas', 400, 400);
-    r.render(doc.bundles[0].zones['cs'].trees);    
+    r.render(doc.bundles[0].zones['en-mst'].trees);
 });
 </script>
 [% PROCESS query/form.tt2 form=queryForm %]
