@@ -93,7 +93,7 @@
         },
 
         // first draw
-        render: function(trees) {
+        render: function(trees, styles) {
             var self = this;
             this.trees = [];
             // styles are actually wrapped trees
