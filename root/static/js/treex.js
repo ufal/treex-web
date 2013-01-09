@@ -157,6 +157,8 @@
         }
     };
 
+    var order = 0;
+
     Node = function(id, data, style) {
         this.id = id;
         this.data = data || { };
@@ -165,7 +167,7 @@
         this.lbrother = null;
         this.rbrother = null;
         this.firstson = null; // leftmost son
-        this.order = 0;
+        this.order = order++;
         this.uid = _.uniqueId('node_'); // globaly unique id
     };
     treex.Node = function(id, data) { return new Node(id, data); };

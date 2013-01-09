@@ -8,31 +8,59 @@ class TreeView.Tree extends TreeView.Figure
 
   DEFAULT_STYLESHEET = TreeView.Style.TreexStylesheet
 
-  constructor: (@layer) ->
+  constructor: (@layer, @tree) ->
     @nodes = new ArrayList()
     @figures = {}
     @layout = new DEFAULT_LAYOUT(@)
     @style = new DEFAULT_STYLESHEET(@)
 
+    for node, i in @tree.allNodes()
+      @addNode(node)
+
+    # Recalculate node placement
+    # @layout.calculate(@style)
+
   addNode: (node) ->
+    return if @figures[node.uid]? # Prevent node for being added twice
     @nodes.add(node)
     figure = @style.getFigure(node)
     @figures[node.uid] = figure
-    if node.hasParent() and @figures[node.parent.uid]?
-      parentFigure = @figures[node.parent.uid]
-      connection = @style.getConnection(node.parent, node)
-      if connection?
-        connection.setSource(parentFigure)
-        connection.setTarget(figure)
-
     @addFigure(figure, @layout.locator(node))
+
+    if node.hasParent() and @figures[node.parent.uid]?
+      @connectNodes(node.parent, node)
+    for child, i in node.children() when @figures[child.uid]?
+      @connectNodes(node, child)
     return
 
   addNodes: (list) ->
     @addNode node for node in list
     return
 
+  connectNodes: (parent, child) ->
+    parentFigure = @figures[parent.uid]
+    childFigure = @figures[child.uid]
+    return unless parentFigure? and childFigure?
+    connection = @style.getConnection(parent, child)
+    if connection?
+      connection.setSource(parentFigure)
+      connection.setTarget(childFigure)
+
   getNodes: -> @nodes
+
+  getFigure: (node) -> @figures[node.uid]
+
+  getWidth: ->
+    @width = 0
+    for uid, figure of @figures
+      @width += figure.getWidth()
+    @width
+
+  getHeight: ->
+    @height = 0
+    for uid, figure of @figures
+      @height += figures.getHeight()
+    @height
 
   createShapeElement: ->
     # Create rectangle as a background

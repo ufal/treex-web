@@ -12,6 +12,58 @@ treex = namespace.Treex;
 treex.Renderer = (canvas, width, height) ->
   new Renderer(canvas, width, height)
 
+class Point
+  constructor: (@x, @y) ->
+    return
+
+class Renderer
+  constructor: ->
+
+class TreesLayout
+  constructor: (@bundle) ->
+    @trees = {}
+    for name, zone of @bundle.zones
+      for layer, tree of zone.trees
+        @trees[layer] = tree
+    @buildGrid()
+
+  buildGrid: ->
+    @grid = []
+    @lookup = {}
+    # TODO: some inteligent default sorting
+    x = y = 0
+    for layer, tree of @trees
+      @grid[x] = [] unless @grid[x]
+      @grid[x][y] = tree;
+      @lookup[layer] = new Point(x, y)
+      y++
+    return
+
+  treePlacement: (layer) ->
+    return null unless @lookup[layer]
+
+    loc = @lookup[layer];
+    style = @grid[loc.x][loc.y].style;
+    offsetX = style.baseXPos;
+    offsetY = style.baseYPos;
+    for i in [0..loc.x] by 1
+      tree = @grid[i][loc.y]
+      continue unless tree
+      offsetY += tree.height
+    for i in [0..loc.y] by 1
+      tree = @grid[loc.x][i]
+      continue unless tree
+      offsetX += tree.width
+    return new Point(offsetX, offsetY)
+
+class DrawNode
+  constructor: (@node) ->
+    return
+
+class DrawTree
+  constructor: (@tree) ->
+    return
+
 class Style
   @default =
     Tree:
@@ -33,42 +85,3 @@ class Style
     Line:
       color: 'gray'
       width: 2
-
-class Renderer
-  @treesLayout
-
-class TreesLayout
-  constructor: (@bundle) ->
-    @trees = {}
-    for name, zone of @bundle.zones
-      for layer, tree of zone.trees
-        @trees[layer] = tree
-    @calcPlacement()
-
-  buildGrid: ->
-    @grid = []
-    # TODO: some inteligent sorting
-    x = y = 0
-    for layer, tree of @trees
-      @grid[x] = [] unless @grid[x]
-
-  calcPlacement: ->
-    return if @trees.length <= 1
-
-    counter =
-    offsetX =
-    offsetY = 0
-    for layer, tree of @trees
-      style = tree.style
-      offsetX += style.baseXPos
-      offsetY += style.baseYPos
-
-      tree.offsetX = offsetX
-      tree.offsetY = 0 # ignore offsetY for now
-
-      offsetX += tree.width
-      offsetY += tree.height
-    return
-
-class DrawNode
-  constructor: (@node) ->

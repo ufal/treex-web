@@ -18,7 +18,7 @@
   <script src="[% c.uri_for('/static/js/raphael.js') %]"></script>
   <script src="[% c.uri_for('/static/js/raphael.graffle.js') %]"></script>
   <script src="[% c.uri_for('/static/js/treex.js') %]"></script>
-  <script src="[% c.uri_for('/static/js/treex.draw.js') %]"></script>
+  <script src="[% c.uri_for('/static/js/client.js') %]"></script>
   <script src="[% c.uri_for('/static/js/application.js') %]"></script>
   <link rel="shortcut icon" href="[% c.uri_for('/favicon.ico')%]" />
  </head>

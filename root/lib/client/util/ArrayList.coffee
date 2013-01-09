@@ -94,14 +94,14 @@ class ArrayList
       return true if @data[i] == obj
     return false
 
-  resize = ->
+  resize: ->
     newData = new Array(@data.length + @increment)
     for i in @data
       newData[i] = @data[i]
     @data = newData
-    return @p
+    return @
 
-  trimToSize = ->
+  trimToSize: ->
     return if @data.length == @size
     trim = new Array(@getSize())
     for i in [0...@getSize()] by 1

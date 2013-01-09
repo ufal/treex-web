@@ -8,8 +8,8 @@
 // [% c.uri_for(c.controller('Print').action_for('index')) %]
 Treex.loadDoc('[% c.uri_for(c.controller('Print').action_for('index')) %]',  function(doc) {
     console.log(doc);
-    var r = Treex.Renderer('canvas', 400, 400);
-    r.render(doc.bundles[0].zones['en-mst'].trees);
+    view = Treex.TreeView('canvas');
+    view.renderBundle(doc.bundles[0]);
 });
 </script>
 [% PROCESS query/form.tt2 form=queryForm %]
