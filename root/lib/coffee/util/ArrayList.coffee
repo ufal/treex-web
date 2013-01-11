@@ -96,8 +96,8 @@ class ArrayList
 
   resize: ->
     newData = new Array(@data.length + @increment)
-    for i in @data
-      newData[i] = @data[i]
+    for item, i in @data
+      newData[i] = item
     @data = newData
     return @
 
@@ -116,7 +116,7 @@ class ArrayList
     return newList
 
   each: (func) ->
-    throw "Parameter must be type of function"  unless typeof func isnt 'function'
+    throw "Parameter must be type of function"  unless typeof func is 'function'
     for i in [0...@getSize()] by 1
       break if func(i, @data[i]) is false
 

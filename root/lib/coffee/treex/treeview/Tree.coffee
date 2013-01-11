@@ -9,6 +9,7 @@ class TreeView.Tree extends TreeView.Figure
   DEFAULT_STYLESHEET = TreeView.Style.TreexStylesheet
 
   constructor: (@layer, @tree) ->
+    super
     @nodes = new ArrayList()
     @figures = {}
     @layout = new DEFAULT_LAYOUT(@)
@@ -17,8 +18,12 @@ class TreeView.Tree extends TreeView.Figure
     for node, i in @tree.allNodes()
       @addNode(node)
 
+  setCanvas: (canvas) ->
+    super canvas
     # Recalculate node placement
-    # @layout.calculate(@style)
+    @layout.update()
+    @repaint()
+    return
 
   addNode: (node) ->
     return if @figures[node.uid]? # Prevent node for being added twice
@@ -27,7 +32,7 @@ class TreeView.Tree extends TreeView.Figure
     @figures[node.uid] = figure
     @addFigure(figure, @layout.locator(node))
 
-    if node.hasParent() and @figures[node.parent.uid]?
+    if !node.is_root() and @figures[node.parent.uid]?
       @connectNodes(node.parent, node)
     for child, i in node.children() when @figures[child.uid]?
       @connectNodes(node, child)
@@ -45,6 +50,7 @@ class TreeView.Tree extends TreeView.Figure
     if connection?
       connection.setSource(parentFigure)
       connection.setTarget(childFigure)
+    return
 
   getNodes: -> @nodes
 
@@ -53,13 +59,15 @@ class TreeView.Tree extends TreeView.Figure
   getWidth: ->
     @width = 0
     for uid, figure of @figures
-      @width += figure.getWidth()
+      w = figure.getX() + figure.getWidth() + @layout.marginX
+      @width = w if w > @width
     @width
 
   getHeight: ->
     @height = 0
     for uid, figure of @figures
-      @height += figures.getHeight()
+      h = figure.getY() + figure.getHeight() + @layout.marginY
+      @height = h if h > @height
     @height
 
   createShapeElement: ->
@@ -67,7 +75,7 @@ class TreeView.Tree extends TreeView.Figure
     @canvas.paper.rect(@getX(), @getY(), @getWidth(), @getHeight())
 
   repaint: (attrs) ->
-    return id @repaintBlocked is on or @shape is null
+    return if @repaintBlocked is on or @shape is null
 
     attrs ||= {}
     attrs.x = @getAbsoluteX()

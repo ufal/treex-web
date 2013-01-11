@@ -13,7 +13,7 @@ class TreeView.Canvas
 
     # Drawing stuff based on Raphael library
     # http://raphaeljs.com/
-    @paper = Raphael(@canvasId, @getWidth, @getHeight)
+    @paper = Raphael(@canvasId, @getWidth(), @getHeight())
 
     @figures = new ArrayList()
     @lines = new ArrayList()
@@ -21,6 +21,9 @@ class TreeView.Canvas
     # TODO see below
     @currentSelection = null
     @zoomFactor = 1.0
+
+  setLayout: (@layout) ->
+  getLayout: -> @layout
 
   addFigure: (figure) ->
     return if figure.getCanvas() is @
@@ -30,9 +33,14 @@ class TreeView.Canvas
       @lines.add(figure)
     else
       @figures.add(figure)
+      @layout.add(figure) if @layout?
 
     figure.repaint()
 
   removeFigure: (figure) ->
     @figures.remove(figure)
     figure.setCanvas(null)
+
+  getWidth: -> @html.width()
+
+  getHeight: -> @html.height()

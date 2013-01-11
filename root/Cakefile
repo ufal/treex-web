@@ -11,27 +11,50 @@ treexFiles = [
 
   'treex/TreeView.coffee',
 
+  'treex/treeview/style/TreexStylesheet.coffee',
+
+  'treex/treeview/layout/GridLayout.coffee',
+  'treex/treeview/layout/SimpleTreeLayout.coffee',
+  'treex/treeview/layout/TreeNodeLocator.coffee',
+
   'treex/treeview/Canvas.coffee',
   'treex/treeview/Figure.coffee',
   'treex/treeview/NodeFigure.coffee',
   'treex/treeview/VectorFigure.coffee',
   'treex/treeview/SetFigure.coffee',
   'treex/treeview/Tree.coffee',
-  'treex/treeview/Connection.coffee',
-  'treex/treeview/ConnectionAnchor.coffee',
 
   'treex/treeview/shape/Line.coffee',
   'treex/treeview/shape/PolyLine.coffee',
   'treex/treeview/shape/Rectangle.coffee',
+  'treex/treeview/shape/Oval.coffee',
+  'treex/treeview/shape/Circle.coffee',
+  'treex/treeview/shape/TreeNode.coffee',
 
-  'treex/treeview/layout/SimpleTreeLayout.coffee',
-  'treex/treeview/layout/TreeNodeLocator.coffee'
+  'treex/treeview/connection/DirectRouter.coffee',
+
+  'treex/treeview/ConnectionAnchor.coffee',
+  'treex/treeview/Connection.coffee',
 ]
 
 task 'build:coffee', ->
-  files = (srcDir+file for file in treexFiles)
-  exec 'coffee -j static/js/treeview.js -c ' + files.join(' ')
+  params = ['-j', 'static/js/treeview.js', '-c']
+  params.push srcDir+file for file in treexFiles
+  coffee = spawn 'coffee', params
+  coffee.stdout.on 'data', (data) ->
+    console.log "stdout: #{data}"
+  coffee.stderr.on 'data', (data) ->
+    console.log "stderr: #{data}"
+  coffee.on 'exit', (code) ->
+    console.log "exited with code #{code}"
 
 task 'watch', ->
-  files = srcDir+file for file in treexFiles
-  exec 'coffee -j static/js/treeview.js -cw ' + files.join(' ')
+  params = ['-j', 'static/js/treeview.js', '-cw']
+  params.push srcDir+file for file in treexFiles
+  coffee = spawn 'coffee', params
+  coffee.stdout.on 'data', (data) ->
+    console.log "stdout: #{data}"
+  coffee.stderr.on 'data', (data) ->
+    console.log "stderr: #{data}"
+  coffee.on 'exit', (code) ->
+    console.log "exited with code #{code}"

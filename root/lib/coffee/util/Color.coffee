@@ -16,7 +16,7 @@ class Color
       @blue = blue
 
   getHTMLStyle: -> "rbg(#{@red}, #{@green}, #{@blue})"
-  getHashStyle: -> "##{hex()}"
+  getHashStyle: -> "##{@hex()}"
 
   getRed: -> @red
   getGreen: -> @green

@@ -2,16 +2,17 @@
 
 class TreeView.Layout.SimpleTreeLayout
 
-  @nodeXSkip = 10
-  @nodeYSkip = 5
+  nodeXSkip: 10
+  nodeYSkip: 5
 
-  @marginX = 2
-  @marginY = 2
+  marginX: 2
+  marginY: 2
 
   constructor: (@tree) ->
     @grid = {}
     @order = []
     @levelHeights = {}
+    @orderWidths = {}
 
   update: ->
     @grid = {}
@@ -23,6 +24,7 @@ class TreeView.Layout.SimpleTreeLayout
       @grid[level] = {} unless @grid[level]?
       @grid[level][i] = node
     @computeLevelHeights()
+    @computeOrderWidths()
     return
 
   computeLevelHeights: ->
@@ -34,12 +36,37 @@ class TreeView.Layout.SimpleTreeLayout
 
     for level in [0..maxLevel] by 1
       @levelHeights[level] = 0
-      for node, x of @grid[level]
+      for x, node of @grid[level]
         figure = @tree.getFigure(node)
-        continue if figure is null
+        continue unless figure?
         height = figure.getHeight()
         @levelHeights[level] = height if height > @levelHeights[level]
       @levelHeights[level] += @nodeYSkip
+    return
+
+  computeOrderWidths: ->
+    @orderWidths = {}
+    left = 0
+    for node, index in @order
+      if index == 0
+        @orderWidths[index] = left
+        continue
+      fig = @tree.getFigure(node)
+      continue unless fig?
+      level = node.level()
+      leftWidth = 0
+      for i in [index-1..0] by -1
+        n = @grid[level][i]
+        continue unless n?
+        f = @tree.getFigure(n)
+        continue unless f?
+        leftWidth = @orderWidths[i] + f.getWidth()
+        break
+      if leftWidth >= left
+        left = leftWidth + @nodeXSkip
+      else
+        left += @nodeXSkip
+      @orderWidths[index] = left
     return
 
   locator: (node) ->
@@ -51,16 +78,7 @@ class TreeView.Layout.SimpleTreeLayout
     for lvl in [0...level] by 1
       posY += @levelHeights[lvl] + @marginY
 
-    line = @grid[level]
-    index = 0
-    for i, n of line
-      if n is node
-        index = i
-        break
-    posX = @marginX
-    for x in [0...index] by 1 when line[x]?
-      n = line[x];
-      fig = @tree.getFigure(node)
-      continue if fig is null
-      posX += fig.getWidth() + @nodeXSkip + @marginX
+    orderPos = _.indexOf(@order, node)
+    posX = @marginX + orderPos*@marginX + @orderWidths[orderPos]
+
     new Point(posX, posY)

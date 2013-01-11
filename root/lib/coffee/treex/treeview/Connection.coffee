@@ -47,3 +47,10 @@ class TreeView.Connection extends TreeView.Shape.PolyLine
     @repaint()
     return
   getTargetDecorator: -> @targetDecorator
+
+  setSource: (node) ->
+
+  getSource: -> @sourceNode
+
+  setTarget: (@targetNode) ->
+  getTarget: -> @targetNode

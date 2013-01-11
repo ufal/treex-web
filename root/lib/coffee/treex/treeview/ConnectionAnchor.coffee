@@ -2,7 +2,7 @@
 An object to which a TreeView.Connection will be anchored.
 ###
 
-class ConnectionAnchor
+class TreeView.ConnectionAnchor
   constructor: (@owner) ->
     unless @owner?
       throw "Missing owner for ConnectionAnchor"

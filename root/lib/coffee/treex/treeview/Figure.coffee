@@ -9,6 +9,7 @@ class TreeView.Figure
     @x = @y = 0
     @width = @height = 5
     @children = new ArrayList()
+    @moveListener = new ArrayList()
 
   setCanvas: (canvas) ->
     if canvas is null and @shape isnt null
@@ -18,7 +19,7 @@ class TreeView.Figure
     @canvas = canvas
     @getShapeElement() if @canvas isnt null
 
-    for i in [i...@children.getSize()] by 1
+    for i in [0...@children.getSize()] by 1
       child = @children.get(i)
       child.figure.setCanvas(canvas)
     return
@@ -78,15 +79,18 @@ class TreeView.Figure
   getY: -> @y
 
   getAbsoluteX: ->
-    return if @parent is null then @x else @x+@parent.getAbsoluteX()
+    return unless @parent? then @x else @x+@parent.getAbsoluteX()
   getAbsoluteY: ->
-    return if @parent is null then @y else @y+@parent.getAbsoluteY()
+    return unless @parent? then @y else @y+@parent.getAbsoluteY()
 
   getAbsolutePosition: ->
     new Point(@getAbsoluteX(), @getAbsoluteY())
 
-  setPosition: (@x, @y) ->
-    @repaint()
+  setPosition: (x, y) ->
+    if x != @x or y != @y
+      @x = x
+      @y = y
+      @repaint()
     return
 
   getBoundingBox: ->
@@ -94,3 +98,18 @@ class TreeView.Figure
 
   setParent: (@parent) ->
   getParent: -> @parent
+
+  attachMoveListener: (listener) ->
+    return if listener is null
+    @moveListener.add(listener)
+    return
+
+  detachMoveListener: (listener) ->
+    return if listener is null
+    @moveListener.remove(listener)
+    return
+
+  fireMoveEvent: ->
+    @moveListener.each (i, item) =>
+      item.onOtherFigureIsMoving(@)
+    return
