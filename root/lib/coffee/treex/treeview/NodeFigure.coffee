@@ -8,6 +8,16 @@ class TreeView.NodeFigure extends TreeView.Figure
     @connections = new ArrayList()
     super
 
+  addConnection: (conn) ->
+    @connections.add(conn)
+    @attachMoveListener(conn)
+    return
+
+  removeConnection: (conn) ->
+    @connections.remove(conn)
+    @detachMoveListener(conn)
+    return
+
   getConnections: -> @connections
 
   setCanvas: (canvas) ->
@@ -16,3 +26,10 @@ class TreeView.NodeFigure extends TreeView.Figure
       connection.setCanvas(canvas)
       return
     return
+
+  # Point where to anchor all connection
+  getAnchorPoint: ->
+    p = @getAbsolutePosition()
+    p.x += @getWidth() / 2
+    p.y += @getHeight() / 2
+    return p

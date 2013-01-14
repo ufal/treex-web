@@ -7,11 +7,14 @@ class TreeView.ConnectionAnchor
     unless @owner?
       throw "Missing owner for ConnectionAnchor"
 
-  getLocation: (reference) -> @getReferencePoint()
+  getX: -> @getLocation().x
+  getY: -> @getLocation().y
+
+  getLocation: -> @owner.getAnchorPoint()
 
   setOwner: (@owner) ->
   getOwner: -> @owner
 
-  getBox: -> @getOwner.getAbsoluteBounds()
+  getBox: -> @getOwner().getAbsoluteBounds()
 
-  getReferencePoint: -> @getOwner.getAbsolutePosition()
+  getReferencePoint: -> @getOwner().getAbsolutePosition()

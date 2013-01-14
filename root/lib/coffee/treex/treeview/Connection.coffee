@@ -38,6 +38,30 @@ class TreeView.Connection extends TreeView.Shape.PolyLine
     super child, locator
     return
 
+  getStartX: -> @sourceAnchor.getX()
+  getStartY: -> @sourceAnchor.getY()
+
+  getEndX: -> @targetAnchor.getX()
+  getEndY: -> @targetAnchor.getY()
+
+  calculatePath: ->
+    return if @shape is null
+
+    @svgPathString = @router.route(@)
+    return
+
+  repaint: (attrs) ->
+    return if (@repaintBlocked is on or
+               @shape is null or
+               !@sourceNode? or !@targetNode?)
+
+    # send connection element always to the back
+    @shape.toBack()
+    super attrs
+    # TODO: fix repainting and path recalc
+    @svgPathString = null
+    return
+
   setSourceDecorator: (@sourceDecorator) ->
     @repaint()
     return
@@ -49,8 +73,37 @@ class TreeView.Connection extends TreeView.Shape.PolyLine
   getTargetDecorator: -> @targetDecorator
 
   setSource: (node) ->
+    # detach from previous node
+    if @sourceNode?
+      @sourceNode.removeConnection(@)
+      @sourceAnchor.setOwner(@)
+      @setCanvas(null)
+
+    @sourceNode = node
+    node.addConnection(@)
+    @sourceAnchor.setOwner(node)
+    @setCanvas(node.getCanvas())
+    @repaint()
+    return
 
   getSource: -> @sourceNode
 
-  setTarget: (@targetNode) ->
+  setTarget: (node) ->
+    if @targetNode?
+      @targetNode.removeConnection(@)
+      @targetAnchor.setOwner(@)
+      @setCanvas(null)
+
+    @targetNode = node
+    node.addConnection(@)
+    @targetAnchor.setOwner(node)
+    @setCanvas(node.getCanvas())
+    @repaint()
+    return
+
   getTarget: -> @targetNode
+
+  onOtherFigureIsMoving: (other) ->
+    if other is @sourceNode or other is @targetNode
+      @repaint()
+    return

@@ -73,6 +73,7 @@ class TreeView.Figure
 
   setDimension: (@width, @height) ->
     @repaint()
+    @fireMoveEvent()
     return
 
   getX: -> @x
@@ -91,6 +92,7 @@ class TreeView.Figure
       @x = x
       @y = y
       @repaint()
+      @fireMoveEvent()
     return
 
   getBoundingBox: ->
@@ -113,3 +115,5 @@ class TreeView.Figure
     @moveListener.each (i, item) =>
       item.onOtherFigureIsMoving(@)
     return
+
+  onOtherFigureIsMoving: (other) ->

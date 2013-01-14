@@ -10,9 +10,7 @@ class TreeView.Shape.PolyLine extends TreeView.Shape.Line
     @lineSegments = new ArrayList()
     @basePoints = new ArrayList()
     @lastPoint = null
-
     super
-
     @setStroke(1)
 
   setStartPoint: (x, y) ->
@@ -37,14 +35,17 @@ class TreeView.Shape.PolyLine extends TreeView.Shape.Line
     @lastPoint = p
     return
 
+  getPathString: ->
+    @calculatePath() unless @svgPathString?
+    @svgPathString
+
   calculatePath: ->
     return if @shape is null
 
-    @svgPathString = null
-    @lineSegments.removeAllElements()
-    @basePoints.removeAllElements()
-
-    @router.route(@)
+    @svgPathString = "M#{@getStartX()} #{@getStartY()}"
+    @basePoints.each (i, p) =>
+      @svgPathString += "L#{p.x} #{p.y}"
+    @svgPathString += "L#{@getEndX()} #{@getEndY()}"
     return
 
   repaint: ->

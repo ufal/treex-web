@@ -17,8 +17,8 @@ class TreeView.Shape.Line extends TreeView.Figure
   getEndX: -> @endX
   getEndY: -> @endY
 
-  getStartPoint: -> new Point(@startX, @startY)
-  getEndPoint: -> new Point(@endX, @endY)
+  getStartPoint: -> new Point(@getStartX(), @getStartY())
+  getEndPoint: -> new Point(@getEndX(), @getEndY())
 
   setStartPoint: (x, y) ->
     return if @startX == x and @startY == y
@@ -53,7 +53,7 @@ class TreeView.Shape.Line extends TreeView.Figure
     "M#{@getStartX()} #{@getStartY()}L#{@getEndX()} #{@getEndY()}"
 
   createShapeElement: ->
-    @cavas.paper.path(@getPathString())
+    @canvas.paper.path(@getPathString())
 
   repaint: (attrs) ->
     return if @repaintBlocked is on or @shape is null

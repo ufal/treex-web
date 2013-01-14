@@ -1,6 +1,6 @@
 
 
 class TreeView.Connection.DirectRouter
-  constructor: ->
 
-  route: (shape) ->
+  route: (conn) ->
+    "M#{conn.getStartX()} #{conn.getStartY()}L#{conn.getEndX()} #{conn.getEndY()}"

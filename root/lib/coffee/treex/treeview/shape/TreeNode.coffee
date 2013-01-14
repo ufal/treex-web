@@ -4,4 +4,5 @@ class TreeView.Shape.TreeNode extends TreeView.Shape.Circle
     super 7 # radius set to 7
 
   setLabel: (@label) ->
+
   getLable: -> @label
