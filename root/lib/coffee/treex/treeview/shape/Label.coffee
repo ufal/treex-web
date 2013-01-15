@@ -2,20 +2,24 @@
 class TreeView.Shape.Label extends TreeView.SetFigure
 
   constructor: (@text) ->
+    super
     @text = '' unless @text? and typeof @text is 'string'
     @fontSize = 12
     @fontColor = new Color(0, 0, 0)
+    @padding = 1
+    @setStroke(0)
 
   createSet: ->
     @canvas.paper.text(0, 0, @text)
 
   repaint: (attrs) ->
-    return if @repaintBlocked is on or @shape is null
-    attrs ||= {}
+    return if @repaintBlocked is on or not @shape?
 
+    attrs ||= {}
+    attrs['fill-opacity'] = 0.9
     lattrs =
       text: @getText()
-      x: 2 # just some padding
+      x: @padding # just some padding
       y: @getHeight()/2
       'text-anchor': 'start'
       'font-size': @getFontSize()
@@ -26,7 +30,7 @@ class TreeView.Shape.Label extends TreeView.SetFigure
     return
 
   setText: (@text) ->
-  getText: @text
+  getText: -> @text
 
   setFontSize: (@fontSize) ->
   getFontSize: -> @fontSize
@@ -38,8 +42,8 @@ class TreeView.Shape.Label extends TreeView.SetFigure
 
   getWidth: ->
     return 0 if @shape is null
-    @svgNodes.getBBox().width+2+2
+    @svgNodes.getBBox().width
 
   getHeight: ->
     return 0 if @shape is null
-    @svgNodes.getBBox().height+2+2
+    @svgNodes.getBBox().height

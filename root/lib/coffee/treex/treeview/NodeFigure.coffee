@@ -44,8 +44,8 @@ class TreeView.NodeFigure extends TreeView.Figure
       fig = entry.figure
       fx = fig.getAbsoluteX()
       fy = fig.getAbsoluteY()
-      fx2 = fx + fig.getWidth()
-      fy2 = fy + fig.getHeight()
+      fx2 = fx + fig.getBoundingBox().width
+      fy2 = fy + fig.getBoundingBox().height
       x = fx if fx < x
       y = fy if fy < y
       x2 = fx2 if fx2 > x2

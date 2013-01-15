@@ -34,8 +34,8 @@ class Color
   hex2rgb = (hexcolor) ->
     hexcolor = hexcolor.replace('#', '')
     0 : parseInt(hexcolor.substr(0, 2), 16)
-    1 : parseInt(hexcolor.substr(2, 4), 16)
-    2 : parseInt(hexcolor.substr(4, 6), 16)
+    1 : parseInt(hexcolor.substr(2, 2), 16)
+    2 : parseInt(hexcolor.substr(4, 2), 16)
 
   hex: -> int2hex(@red)+int2hex(@green)+int2hex(@blue)
 

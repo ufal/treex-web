@@ -21,6 +21,10 @@ class TreeView.Tree extends TreeView.Figure
   setCanvas: (canvas) ->
     super canvas
     # Recalculate node placement
+
+    # TODO: fix this by popagating move events
+    @layout.update()
+    @repaint()
     @layout.update()
     @repaint()
     return
@@ -59,14 +63,16 @@ class TreeView.Tree extends TreeView.Figure
   getWidth: ->
     @width = 0
     for uid, figure of @figures
-      w = figure.getX() + figure.getWidth() + @layout.marginX
+      bbox = figure.getBoundingBox()
+      w = bbox.x + bbox.width + @layout.marginX
       @width = w if w > @width
     @width
 
   getHeight: ->
     @height = 0
     for uid, figure of @figures
-      h = figure.getY() + figure.getHeight() + @layout.marginY
+      bbox = figure.getBoundingBox()
+      h = bbox.y + bbox.height + @layout.marginY
       @height = h if h > @height
     @height
 

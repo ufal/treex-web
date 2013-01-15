@@ -88,11 +88,10 @@ class TreeView.Figure
     new Point(@getAbsoluteX(), @getAbsoluteY())
 
   setPosition: (x, y) ->
-    if x != @x or y != @y
-      @x = x
-      @y = y
-      @repaint()
-      @fireMoveEvent()
+    @x = x
+    @y = y
+    @repaint()
+    @fireMoveEvent()
     return
 
   getBoundingBox: ->

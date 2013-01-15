@@ -7,5 +7,5 @@ class TreeView.Layout.BottomLocator
     h = @parent.getHeight()
 
     bbox = figure.getBoundingBox()
-    figure.setPosition(w/2 - bbox.width/2, h)
+    figure.setPosition(0, h)
     return

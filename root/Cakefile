@@ -17,6 +17,7 @@ treexFiles = [
   'treex/treeview/layout/GridLayout.coffee',
   'treex/treeview/layout/SimpleTreeLayout.coffee',
   'treex/treeview/layout/TreeNodeLocator.coffee',
+  'treex/treeview/layout/BottomLocator.coffee',
 
   'treex/treeview/Canvas.coffee',
   'treex/treeview/Figure.coffee',

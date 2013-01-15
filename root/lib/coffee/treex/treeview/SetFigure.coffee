@@ -2,9 +2,10 @@
 A SetFigure is a composition of different SVG elements.
 ###
 
-class TreeView.SetFigure extends TreeView.NodeFigure
+class TreeView.SetFigure extends TreeView.VectorFigure
 
   constructor: (width, height) ->
+    super
     @svgNodes = null
 
     @originalWidth = null
@@ -32,8 +33,12 @@ class TreeView.SetFigure extends TreeView.NodeFigure
   repaint: (attrs) ->
     return if @repaintBlocked is on or @shape is null
 
+    attrs ||= {}
+    attrs.width = @getWidth()
+    attrs.height = @getHeight()
+
     if @originalWidth? and @originalHeight?
-      @svgNodes.transform("t#{@getAbsoluteX()-@offsetX},#{@getAbsoluteY()-@offsetY}")
+      @svgNodes.transform("t#{@getAbsoluteX()},#{@getAbsoluteY()}")
 
     super attrs
     return
@@ -43,11 +48,11 @@ class TreeView.SetFigure extends TreeView.NodeFigure
     @svgNodes = @createSet()
 
     bb = @svgNodes.getBBox()
-    @originalWidth  = bb.width()
-    @originalHeight = bb.height()
+    @originalWidth  = bb.width
+    @originalHeight = bb.height
 
-    @offsetX = bb.x
-    @offsetY = bb.y
+    @offsetX = Math.abs(bb.x)
+    @offsetY = Math.abs(bb.y)
 
     return shape
 
