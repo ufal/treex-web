@@ -39,7 +39,7 @@ class TreeView.Layout.SimpleTreeLayout
       for x, node of @grid[level]
         figure = @tree.getFigure(node)
         continue unless figure?
-        height = figure.getHeight()
+        height = figure.getBoundingBox().height
         @levelHeights[level] = height if height > @levelHeights[level]
       @levelHeights[level] += @nodeYSkip
     return
@@ -60,7 +60,7 @@ class TreeView.Layout.SimpleTreeLayout
         continue unless n?
         f = @tree.getFigure(n)
         continue unless f?
-        leftWidth = @orderWidths[i] + f.getWidth()
+        leftWidth = @orderWidths[i] + f.getBoundingBox().width
         break
       if leftWidth >= left
         left = leftWidth + @nodeXSkip

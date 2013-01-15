@@ -5,6 +5,8 @@
 ** TODO Anchors                                                     :Stopper:
    Rethink anchors and other stuff; still have to place anchors in the
    center and to the lowest layer possible
+** TODO Complete stubs
+   Rectangle, Point class
 
 * Releases
 ** pre-aplpha DEADLINE: <2013-01-25 Fri>

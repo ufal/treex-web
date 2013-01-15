@@ -8,6 +8,7 @@ treexFiles = [
   'util/ArrayList.coffee',
   'util/Color.coffee',
   'util/Point.coffee',
+  'util/Rectangle.coffee',
 
   'treex/TreeView.coffee',
 
@@ -30,6 +31,7 @@ treexFiles = [
   'treex/treeview/shape/Oval.coffee',
   'treex/treeview/shape/Circle.coffee',
   'treex/treeview/shape/TreeNode.coffee',
+  'treex/treeview/shape/Label.coffee',
 
   'treex/treeview/connection/DirectRouter.coffee',
 
