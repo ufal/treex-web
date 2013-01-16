@@ -4330,8 +4330,8 @@ window.Raphael.svg && function (R) {
                 tspan;
             for (var i = 0, ii = texts.length; i < ii; i++) {
                 // parse colors
-                var n = texts[i].match(/#\{#\w+\}/g),
-                    parts = texts[i].split(/#\{#\w+\}/);
+                var n = texts[i].match(/#\{[\w#]+\}/g),
+                    parts = texts[i].split(/#\{[\w#]+\}/);
                 !parts[0] && parts.length > 1 && parts.shift(); // first element might be empty
                 for (var j = 0, jj = parts.length; j < jj; j++) {
                     var fill = null;
