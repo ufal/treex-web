@@ -36,11 +36,19 @@ class TreeView.Canvas
       @layout.add(figure) if @layout?
 
     figure.repaint()
+    return
 
   removeFigure: (figure) ->
     @figures.remove(figure)
+    @layout.remove(figure) if @layout?
     figure.setCanvas(null)
+    return
 
   getWidth: -> @html.width()
 
   getHeight: -> @html.height()
+
+  adjustSize: ->
+    return unless @layout?
+    @paper.setSize(@layout.getWidth(), @layout.getHeight())
+    return

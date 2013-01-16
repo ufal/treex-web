@@ -13,12 +13,16 @@ class TreeView
 
   # render Treex Bundle
   renderBundle: (bundle) ->
-    @canvas.setLayout(new TreeView.Layout.GridLayout())
+    layout = new TreeView.Layout.GridLayout(@canvas)
+    layout.disableReordering()
+    @canvas.setLayout(layout)
     for label, zone of bundle.zones
       for layer, tree of zone.trees
         @canvas.addFigure(new TreeView.Tree(layer, tree))
-        return # TODO: add only one tree for now
-
+    layout.enableReordering()
+    layout.reorderFigures()
+    @canvas.adjustSize()
+    return
 
 namespace = exports ? this
 

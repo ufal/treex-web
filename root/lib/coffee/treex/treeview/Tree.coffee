@@ -18,17 +18,6 @@ class TreeView.Tree extends TreeView.Figure
     for node, i in @tree.allNodes()
       @addNode(node)
 
-  setCanvas: (canvas) ->
-    super canvas
-    # Recalculate node placement
-
-    # TODO: fix this by popagating move events
-    @layout.update()
-    @repaint()
-    @layout.update()
-    @repaint()
-    return
-
   addNode: (node) ->
     return if @figures[node.uid]? # Prevent node for being added twice
     @nodes.add(node)
@@ -60,21 +49,9 @@ class TreeView.Tree extends TreeView.Figure
 
   getFigure: (node) -> @figures[node.uid]
 
-  getWidth: ->
-    @width = 0
-    for uid, figure of @figures
-      bbox = figure.getBoundingBox()
-      w = bbox.x + bbox.width + @layout.marginX
-      @width = w if w > @width
-    @width
+  getWidth: -> @layout.getTotalWidth()
 
-  getHeight: ->
-    @height = 0
-    for uid, figure of @figures
-      bbox = figure.getBoundingBox()
-      h = bbox.y + bbox.height + @layout.marginY
-      @height = h if h > @height
-    @height
+  getHeight: -> @layout.getTotalHeight()
 
   createShapeElement: ->
     # Create rectangle as a background
@@ -83,10 +60,15 @@ class TreeView.Tree extends TreeView.Figure
   repaint: (attrs) ->
     return if @repaintBlocked is on or @shape is null
 
+    @layout.update()
+    for i in [0...@children.getSize()] by 1
+      entry = @children.get(i)
+      entry.locator.relocate(i, entry.figure)
+
     attrs ||= {}
     attrs.x = @getAbsoluteX()
     attrs.y = @getAbsoluteY()
     attrs.width = @getWidth()
     attrs.height = @getHeight()
-    super attrs
+    @shape.attr(attrs)
     return

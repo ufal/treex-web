@@ -54,9 +54,10 @@ class TreeView.Style.TreexStylesheet
     @layer = @tree.layer.split('-')[1] ? 'a'
     console.log @layer
     switch @layer
-      when 't'
-        @styleNode = @tnodeStyle
-        @styleConnection = @tnodeConnection
+      when 'x'
+#      when 't'
+#        @styleNode = @tnodeStyle
+#        @styleConnection = @tnodeConnection
       else # default is A layer
         @styleNode = @anodeStyle
         @styleConnection = @anodeConnection

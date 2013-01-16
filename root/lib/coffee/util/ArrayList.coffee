@@ -115,6 +115,11 @@ class ArrayList
     newList.addAll(@)
     return newList
 
+  # TODO: optimize here
+  sort: (cmp) ->
+    @trimToSize()
+    @data = _.sortBy(@data, cmp)
+
   each: (func) ->
     throw "Parameter must be type of function"  unless typeof func is 'function'
     for i in [0...@getSize()] by 1

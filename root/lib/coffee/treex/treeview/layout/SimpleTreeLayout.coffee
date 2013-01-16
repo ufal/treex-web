@@ -69,6 +69,21 @@ class TreeView.Layout.SimpleTreeLayout
       @orderWidths[index] = left
     return
 
+  getTotalWidth: ->
+    width = 0
+    for node, index in @order
+      f = @tree.getFigure(node)
+      continue unless f?
+      w = @orderWidths[index] + (index+2)*@marginX + f.getBoundingBox().width
+      width = w if w > width
+    return width
+
+  getTotalHeight: ->
+    height = 0
+    for i, val of @levelHeights
+      height += val + @marginY
+    return height
+
   locator: (node) ->
     new TreeView.Layout.TreeNodeLocator(@, node)
 
