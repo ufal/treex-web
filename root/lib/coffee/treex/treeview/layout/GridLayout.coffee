@@ -44,8 +44,8 @@ class TreeView.Layout.GridLayout
   getHeight: -> @height
 
   enableReordering: ->
-    @reordering = true
+    @reordering = false
     return
   disableReordering: ->
-    @reordering = false
+    @reordering = true
     return
