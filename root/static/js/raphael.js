@@ -4337,7 +4337,7 @@ window.Raphael.svg && function (R) {
                     var fill = null;
                     if (n && j < n.length) fill = n[j].slice(2, -1); // kill brackets
                     tspan = $("tspan");
-                    i && $(tspan, {dy: fontSize * leading});
+                    i && j == 0 && $(tspan, {dy: fontSize * leading});
                     j==0 && $(tspan, {x: a.x});
                     fill && $(tspan, {fill: fill});
                     tspan.appendChild(R._g.doc.createTextNode(parts[j]));
