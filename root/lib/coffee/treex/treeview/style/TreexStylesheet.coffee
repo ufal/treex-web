@@ -49,22 +49,29 @@ class TreeView.Style.TreexStylesheet
     'clause8' : '#8b0000'         #DarkRed
     'clause9' : '#008b8b'         #DarkCyan
 
+  coordPattern = /^(ADVS|APPS|CONFR|CONJ|CONTRA|CSQ|DISJ|GRAD|OPER|REAS)$/
+  isCoord: (node) ->
+    return false unless @layer is 't'
+    node?.data.functor? and coordPattern.test(node.data.functor)
 
   constructor: (@tree) ->
     @layer = @tree.layer.split('-')[1] ? 'a'
     console.log @layer
     switch @layer
-      when 'x'
-#      when 't'
-#        @styleNode = @tnodeStyle
-#        @styleConnection = @tnodeConnection
+      when 't'
+        @styleNode = @tnodeStyle
+        @styleConnection = @tnodeConnection
       else # default is A layer
         @styleNode = @anodeStyle
         @styleConnection = @anodeConnection
 
   getFigure: (node) ->
     labels = node.labels ? []
+    if @layer is 't'
+      for label, i in labels
+        labels[i] = label.replace(' ???', '') # clean up garbage
     fig = new TreeView.Shape.TreeNode(labels.join("\n"))
+    fig.setDimension(7, 7)
     fig.setStroke(1)
     fig.setColor(colors['edge'])
     @styleNode(fig, node)
@@ -74,10 +81,47 @@ class TreeView.Style.TreexStylesheet
     conn = new TreeView.Connection()
     conn.setStroke(2)
     conn.setColor(colors['edge'])
+    @styleConnection(conn, parent, child)
     return conn
 
   anodeStyle: (fig, node) ->
     fig.setBackgroundColor(colors['anode']);
     return
 
-  anodeConnection: (fig, node) ->
+  anodeConnection: (conn, parent, child) ->
+    # use default
+
+  tnodeStyle: (fig, node) ->
+    fig.setBackgroundColor(colors['tnode'])
+    return if node.is_root()
+    fig.setNodeShape('rectangle') if node.data.is_generated
+    fig.setBackgroundColor(colors['tnode_coord']) if @isCoord(node)
+    return
+
+  tnodeConnection: (conn, parent, child) ->
+    color = colors['edge']
+    width = 2
+    dash = null
+
+    if child.data.is_member
+      if not child.is_root() and @isCoord(parent)
+        width = 1
+        color = colors['coord']
+      else
+        color = colors['error']
+    else if not child.is_root() and @isCoord(parent)
+      color = colors['coord_mod']
+    else if @isCoord(child)
+      color = colors['coord']
+      width = 1
+
+    functor = if child.data.functor? then child.data.functor[0]['#value'] else ''
+    if functor.match(/^(PAR|PARTL|VOCAT|RHEM|CM|FPHR|PREC)$/) or (not child.is_root() and parent.is_root())
+      width = 1
+      dash = '. '
+      color = colors['edge']
+
+    conn.setStroke(width)
+    conn.setColor(color)
+    conn.setDashing(dash)
+    return

@@ -9,6 +9,7 @@ class TreeView.Shape.Line extends TreeView.Figure
   constructor: (@startX, @startY, @endX, @endY) ->
     @lineColor = DEFAULT_COLOR
     @stroke = 1
+    @dashing = null
     super
 
   getStartX: -> @startX
@@ -68,11 +69,18 @@ class TreeView.Shape.Line extends TreeView.Figure
       attrs.stroke = @lineColor.getHashStyle()
       attrs['stroke-width'] = @stroke
 
+    attrs['stroke-dasharray'] ?= @dashing if @dashing?
+    attrs['stroke-linecap'] = 'butt'
+    attrs['stroke-linejoin'] = 'round'
+
     super attrs
     return
 
   setStroke: (@stroke) ->
   getStroke: -> @stroke
+
+  setDashing: (@dashing) ->
+  getDashing: -> @dashing
 
   setColor: (color) ->
     if color instanceof Color
