@@ -113,7 +113,7 @@
     Zone.fromJSON = function(json) {
         var zone = new Zone();
         _.each(json.trees, function(tree, layer) {
-            zone.trees[layer] = Tree.fromJSON(tree);
+            zone.trees[layer] = Tree.fromJSON(tree.nodes);
             zone.trees[layer].layer = layer;
         });
         zone.sentence = json.sentence;
@@ -124,36 +124,57 @@
      * Trees related functions
      */
     // tree is defined by root node
-    // We attach additional data to the trees in plugins
     Tree = function(root) {
         this.root = root;
     };
     // mask constructor
     treex.Tree = function(root) { return new Tree(root); };
 
-    Tree.fromJSON = function(json) {
-        var root = new Node(json.id, json.data, json.style);
-        root.order = _.isFinite(json.ord) ? json.ord : 0;
-        root.labels = json.labels;
-        var tree = new Tree(root);
-        function traverse(jsnode, parent) {
-            !_.isEmpty(jsnode.children) && _.each(jsnode.children, function(child) {
-                var node = new Node(child.id, child.data);
-                node.order = _.isFinite(child.ord) ? child.ord : 0;
-                node.labels = child.labels;
-                node.paste_on(parent);
-                traverse(child, node);
-            });
+    Tree.fromJSON = function(nodes) {
+        // index nodes first
+        var nodesIndex = {};
+        var treeNodes = [];
+        var root, node = null;
+        for (var i = 0, ii = nodes.length; i < ii; i++) {
+            node = nodes[i];
+            var treeNode = new Node(node.id, node.data, node.style);
+            treeNode.labels = node.labels;
+            treeNode.order = i;
+            nodesIndex[node.id] = treeNode;
+            treeNodes.push(treeNode);
+            if (node.parent === null) {
+                root = treeNode;
+            }
         }
-        traverse(json, root);
+        if (!root) {
+            // this should never happen
+            throw "Tree has no root!";
+        }
+        var tree = new Tree(root);
+        // manually assign these
+        tree.index = nodesIndex;
+        tree.nodes = treeNodes;
+
+        // reconstruct the tree parent/child relations
+        for (i = 0, ii = treeNodes.length; i < ii; i++) {
+            node = treeNodes[i];
+            var data = node.data; // indexes are stored in the data field
+            if (data.firstson) {
+                node.firstson = nodesIndex[data.firstson];
+            }
+            if (data.parent) {
+                node.parent = nodesIndex[data.parent];
+            }
+            if (data.rbrother) {
+                node.rbrother = nodesIndex[data.rbrother];
+            }
+        }
         return tree;
     };
 
     Tree.prototype = {
         allNodes : function() {
-            var all = this.root.descendants();
-            all.push(this.root);
-            return all;
+            return this.nodes;
         }
     };
 
@@ -240,27 +261,27 @@
                 node = node.rbrother;
             }
             return children;
-        },
+        }//,
         // attach node to new parent
-        paste_on: function(parent) {
-            var node = parent.firstson;
-            if (node && this.order > node.order) {
-                while(node.rbrother && this.order > node.rbrother.order)
-                    node = node.rbrother;
-                var rbrother = node.rbrother;
-                this.rbrother = rbrother;
-                if (rbrother) rbrother.lbrother = this;
-                node.rbrother = this;
-                this.lbrother = node;
-                this.parent = parent;
-            } else {
-                this.rbrother = node;
-                parent.firstson = this;
-                this.lbrother = null;
-                if (node) node.lbrother = this;
-                this.parent = parent;
-            }
-        }
+        // paste_on: function(parent) {
+        //     var node = parent.firstson;
+        //     if (node && this.order > node.order) {
+        //         while(node.rbrother && this.order > node.rbrother.order)
+        //             node = node.rbrother;
+        //         var rbrother = node.rbrother;
+        //         this.rbrother = rbrother;
+        //         if (rbrother) rbrother.lbrother = this;
+        //         node.rbrother = this;
+        //         this.lbrother = node;
+        //         this.parent = parent;
+        //     } else {
+        //         this.rbrother = node;
+        //         parent.firstson = this;
+        //         this.lbrother = null;
+        //         if (node) node.lbrother = this;
+        //         this.parent = parent;
+        //     }
+        // }
     };
 
 }).call(this);

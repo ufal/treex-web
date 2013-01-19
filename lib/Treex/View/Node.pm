@@ -130,8 +130,12 @@ sub TO_JSON {
     }
     $data->{labels} = $n->{_precomputed_labels};
     $data->{style} = $n->{_precomputed_node_style};
-    my @children = $n->is_leaf ? () : (map {__PACKAGE__->new(node=>$_, labels=>$self->labels, styles=>$self->styles)} $n->children);
-    $data->{children} = \@children if @children;
+    $data->{parent} = $n->parent ? $n->parent->id : undef;
+    $data->{firstson} = $n->firstson ? $n->firstson->id : undef;
+    $data->{rbrother} = $n->rbrother ? $n->rbrother->id : undef;
+    $data->{lbrother} = $n->lbrother ? $n->lbrother->id : undef;
+#    my @children = $n->is_leaf ? () : (map {__PACKAGE__->new(node=>$_, labels=>$self->labels, styles=>$self->styles)} $n->children);
+#    $data->{children} = \@children if @children;
 
     return $data;
 }

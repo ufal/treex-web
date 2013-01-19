@@ -56,7 +56,14 @@ sub index :Path :Args(0) {
         foreach my $zone ( $bundle->get_all_zones ) {
             my %trees;
             foreach my $tree ( $zone->get_all_trees ) {
-                $trees{$self->treeLayout->get_tree_label($tree)} = Treex::View::Node->new(node => $tree, labels => $labels, styles => $styles);
+                my $tree_label = $self->treeLayout->get_tree_label($tree);
+                my @nodes = (map { Treex::View::Node->new(node => $_, labels => $labels, styles => $styles) }
+                                 $self->treeLayout->get_nodes($tree));
+                $trees{$tree_label} = {
+                    nodes => \@nodes,
+                    language => $tree->language,
+                    layer => $tree->get_layer,
+                };
             }
             $zones{$self->treeLayout->get_zone_label($zone)} = {
                 trees => \%trees,
