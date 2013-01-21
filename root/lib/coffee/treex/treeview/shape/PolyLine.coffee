@@ -27,6 +27,11 @@ class TreeView.Shape.PolyLine extends TreeView.Shape.Line
 
   getPoints: -> @basePoints
   getSegments: -> @lineSegments
+  clearPoints: ->
+    @basePoints.removeAllElements()
+    @lineSegments.removeAllElements()
+    @lastPoint = null
+    return
 
   addPoint: (point) ->
     p = new Point(point.x, point.y)

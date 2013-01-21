@@ -113,8 +113,9 @@
     Zone.fromJSON = function(json) {
         var zone = new Zone();
         _.each(json.trees, function(tree, layer) {
-            zone.trees[layer] = Tree.fromJSON(tree.nodes);
-            zone.trees[layer].layer = layer;
+            var t = zone.trees[layer] = Tree.fromJSON(tree.nodes);
+            t.layer = tree.layer;
+            t.language = tree.language;
         });
         zone.sentence = json.sentence;
         return zone;
@@ -134,10 +135,10 @@
         // index nodes first
         var nodesIndex = {};
         var treeNodes = [];
-        var root, node = null;
+        var root, node, treeNode = null;
         for (var i = 0, ii = nodes.length; i < ii; i++) {
             node = nodes[i];
-            var treeNode = new Node(node.id, node.data, node.style);
+            treeNode = new Node(node.id, node.data, node.style);
             treeNode.labels = node.labels;
             treeNode.order = i;
             nodesIndex[node.id] = treeNode;
@@ -156,17 +157,17 @@
         tree.nodes = treeNodes;
 
         // reconstruct the tree parent/child relations
-        for (i = 0, ii = treeNodes.length; i < ii; i++) {
-            node = treeNodes[i];
-            var data = node.data; // indexes are stored in the data field
-            if (data.firstson) {
-                node.firstson = nodesIndex[data.firstson];
+        for (i = 0, ii = nodes.length; i < ii; i++) {
+            treeNode = treeNodes[i];
+            node = nodes[i];
+            if (node.firstson) {
+                treeNode.firstson = nodesIndex[node.firstson];
             }
-            if (data.parent) {
-                node.parent = nodesIndex[data.parent];
+            if (node.parent) {
+                treeNode.parent = nodesIndex[node.parent];
             }
-            if (data.rbrother) {
-                node.rbrother = nodesIndex[data.rbrother];
+            if (node.rbrother) {
+                treeNode.rbrother = nodesIndex[node.rbrother];
             }
         }
         return tree;

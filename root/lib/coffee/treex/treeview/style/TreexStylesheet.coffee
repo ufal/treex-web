@@ -58,6 +58,9 @@ class TreeView.Style.TreexStylesheet
     @layer = @tree.layer.split('-')[1] ? 'a'
     console.log @layer
     switch @layer
+      when 'p'
+        @styleNode = @pnodeStyle
+        @styleConnection = @pnodeConnection
       when 't'
         @styleNode = @tnodeStyle
         @styleConnection = @tnodeConnection
@@ -65,17 +68,20 @@ class TreeView.Style.TreexStylesheet
         @styleNode = @anodeStyle
         @styleConnection = @anodeConnection
 
+  defaultNode = (label) ->
+    fig = new TreeView.Shape.TreeNode(label)
+    fig.setDimension(7, 7)
+    fig.setStroke(1)
+    fig.setColor(colors['edge'])
+    return fig
+
   getFigure: (node) ->
     labels = node.labels ? []
     if @layer is 't'
       for label, i in labels
         labels[i] = label.replace(' ???', '') # clean up garbage
-    fig = new TreeView.Shape.TreeNode(labels.join("\n"))
-    fig.setDimension(7, 7)
-    fig.setStroke(1)
-    fig.setColor(colors['edge'])
-    @styleNode(fig, node)
-    return fig
+                                              # TODO: find of why there is the garbage
+    return @styleNode(node, labels.join("\n"))
 
   getConnection: (parent, child) ->
     conn = new TreeView.Connection()
@@ -84,19 +90,21 @@ class TreeView.Style.TreexStylesheet
     @styleConnection(conn, parent, child)
     return conn
 
-  anodeStyle: (fig, node) ->
+  anodeStyle: (node, label) ->
+    fig = defaultNode(label)
     fig.setBackgroundColor(colors['anode']);
-    return
+    return fig
 
   anodeConnection: (conn, parent, child) ->
     # use default
 
-  tnodeStyle: (fig, node) ->
+  tnodeStyle: (node, label) ->
+    fig = defaultNode(label)
     fig.setBackgroundColor(colors['tnode'])
-    return if node.is_root()
+    return fig if node.is_root()
     fig.setNodeShape('rectangle') if node.data.is_generated
     fig.setBackgroundColor(colors['tnode_coord']) if @isCoord(node)
-    return
+    return fig
 
   tnodeConnection: (conn, parent, child) ->
     color = colors['edge']
@@ -124,4 +132,28 @@ class TreeView.Style.TreexStylesheet
     conn.setStroke(width)
     conn.setColor(color)
     conn.setDashing(dash)
+    return
+
+  pnodeStyle: (node, label) ->
+    data = node.data
+    terminal = node.is_leaf()
+
+    # For nonterminal we use just Labels as nodes
+    fig = if terminal then defaultNode(label) else new TreeView.Shape.Label(label)
+    if terminal
+      ctype = if data.tag is '-NONE-' then 'trace' else if data.is_head then 'terminal_head' else 'terminal'
+      fig.setLabelAlign('middle')
+    else
+      ctype = if data.is_head then 'nonterminal_head' else 'nonterminal'
+      fig.setOpacity(1.0)
+      fig.setPadding(2)
+      fig.setStroke(1)
+      fig.setAnchor('middle')
+    fig.setBackgroundColor(colors[ctype])
+    return fig
+
+  ptbRouter = new TreeView.Connection.ManhattanRouter()
+  pnodeConnection: (conn, parent, child) ->
+    conn.setRouter(ptbRouter)
+    conn.setStroke(1)
     return

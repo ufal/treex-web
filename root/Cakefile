@@ -12,10 +12,15 @@ treexFiles = [
 
   'treex/TreeView.coffee',
 
+  'treex/treeview/connection/Router.coffee',
+  'treex/treeview/connection/DirectRouter.coffee',
+  'treex/treeview/connection/ManhattanRouter.coffee',
+
   'treex/treeview/style/TreexStylesheet.coffee',
 
   'treex/treeview/layout/GridLayout.coffee',
   'treex/treeview/layout/SimpleTreeLayout.coffee',
+  'treex/treeview/layout/ConstituencyTreeLayout.coffee',
   'treex/treeview/layout/TreeNodeLocator.coffee',
   'treex/treeview/layout/BottomLocator.coffee',
 
@@ -33,8 +38,6 @@ treexFiles = [
   'treex/treeview/shape/Circle.coffee',
   'treex/treeview/shape/TreeNode.coffee',
   'treex/treeview/shape/Label.coffee',
-
-  'treex/treeview/connection/DirectRouter.coffee',
 
   'treex/treeview/ConnectionAnchor.coffee',
   'treex/treeview/Connection.coffee',

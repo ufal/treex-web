@@ -5,7 +5,8 @@ class TreeView.Shape.TreeNode extends TreeView.VectorFigure
     @shapeName = 'circle'
     # add label
     @labelFigure = new TreeView.Shape.Label(@label)
-    @addFigure(@labelFigure, new TreeView.Layout.BottomLocator(@))
+    @labelLocator = new TreeView.Layout.BottomLocator(@)
+    @addFigure(@labelFigure, @labelLocator)
 
   repaint: (attrs) ->
     return if @repaintBlocked is on or @shape is null
@@ -47,8 +48,13 @@ class TreeView.Shape.TreeNode extends TreeView.VectorFigure
   setLabel: (@label) ->
     @labelFigure.setText(@label)
     return
+  getLabel: -> @labelFigure
 
-  getLable: -> @label
+  setLabelAlign: (anchor) ->
+    @labelFigure.setAnchor(anchor)
+    @labelLocator.setAnchor(anchor)
+    return
+  getLabelAlign: -> @labelFigure.getAnchor()
 
   setNodeShape: (@shapeName) ->
   getNodeShape: -> @shapeName

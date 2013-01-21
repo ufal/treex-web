@@ -12,7 +12,10 @@ class TreeView.Tree extends TreeView.Figure
     super
     @nodes = new ArrayList()
     @figures = {}
-    @layout = new DEFAULT_LAYOUT(@)
+    if @tree.layer is 'p'
+      @layout = new TreeView.Layout.ConstituencyTreeLayout(@)
+    else
+      @layout = new DEFAULT_LAYOUT(@)
     @style = new DEFAULT_STYLESHEET(@)
 
     for node, i in @tree.allNodes()

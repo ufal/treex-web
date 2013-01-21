@@ -80,9 +80,9 @@ class TreeView.Figure
   getY: -> @y
 
   getAbsoluteX: ->
-    return unless @parent? then @x else @x+@parent.getAbsoluteX()
+    return unless @parent? then @getX() else @getX()+@parent.getAbsoluteX()
   getAbsoluteY: ->
-    return unless @parent? then @y else @y+@parent.getAbsoluteY()
+    return unless @parent? then @getY() else @getY()+@parent.getAbsoluteY()
 
   getAbsolutePosition: ->
     new Point(@getAbsoluteX(), @getAbsoluteY())

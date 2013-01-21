@@ -34,6 +34,9 @@ class TreeView.NodeFigure extends TreeView.Figure
     p.y += @getHeight() / 2
     return p
 
+  getOriginalBBox: ->
+    new Rectangle(@getAbsoluteX(), @getAbsoluteY(), @getWidth(), @getHeight())
+
   getBoundingBox: ->
     x = @getAbsoluteX()
     y = @getAbsoluteY()

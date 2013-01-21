@@ -14,15 +14,18 @@ class TreeView.Layout.SimpleTreeLayout
     @levelHeights = {}
     @orderWidths = {}
 
-  update: ->
+  populateGrid: ->
     @grid = {}
     @order = @tree.getNodes().asArray()
-    @order.sort (a, b) -> a.order - b.order
     # populate grid
     for node, i in @order
       level = node.level()
       @grid[level] = {} unless @grid[level]?
       @grid[level][i] = node
+    return
+
+  update: ->
+    @populateGrid()
     @computeLevelHeights()
     @computeOrderWidths()
     return
@@ -68,6 +71,10 @@ class TreeView.Layout.SimpleTreeLayout
         left += @nodeXSkip
       @orderWidths[index] = left
     return
+
+  shiftWidths: ->
+    return unless @orderWidths.length > 0
+    shift = @orderWidths[0]
 
   getTotalWidth: ->
     width = 0

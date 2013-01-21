@@ -31,6 +31,9 @@ class TreeView.Connection extends TreeView.Shape.PolyLine
     @repaint()
     return
 
+  setRouter: (@router) ->
+  getRouter: -> @router
+
   addFigure: (child, locator) ->
     unless locator instanceof TreeView.Layout.ConnectionLocator
       throw "Locator must implement TreeView.Layout.ConnectionLocator"
