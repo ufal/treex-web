@@ -24,11 +24,12 @@ class TreeView.Layout.ConstituencyTreeLayout extends TreeView.Layout.SimpleTreeL
     @orderWidths = {}
     left = 0
     for node, index in @order
-      if index == 0
-        @orderWidths[index] = left
-        continue
       fig = @tree.getFigure(node)
       continue unless fig?
+      left += fig.getBoundingBox().width/2
+      if index is 0
+        @orderWidths[0] = left
+        continue
       level = if node.is_leaf() then @maxLevel else node.level()
       leftWidth = 0
       for i in [index-1..0] by -1

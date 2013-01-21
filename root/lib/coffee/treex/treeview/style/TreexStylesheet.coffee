@@ -156,4 +156,6 @@ class TreeView.Style.TreexStylesheet
   pnodeConnection: (conn, parent, child) ->
     conn.setRouter(ptbRouter)
     conn.setStroke(1)
+    if child.is_leaf()
+      conn.setDashing('- ')
     return
