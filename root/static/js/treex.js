@@ -203,6 +203,7 @@
             while (node && node.parent != null) node = node.parent;
             return node;
         },
+        attr: function(attr) { return this.data[attr]; },
         // from left to right
         following: function(top) {
             if (this.firstson) {

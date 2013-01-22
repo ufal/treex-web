@@ -12,6 +12,7 @@ class TreeView.Tree extends TreeView.Figure
     super
     @nodes = new ArrayList()
     @figures = {}
+    @nodesIndex = {}
     if @tree.layer is 'p'
       @layout = new TreeView.Layout.ConstituencyTreeLayout(@)
     else
@@ -24,6 +25,7 @@ class TreeView.Tree extends TreeView.Figure
   addNode: (node) ->
     return if @figures[node.uid]? # Prevent node for being added twice
     @nodes.add(node)
+    @nodesIndex[node.uid] = node
     figure = @style.getFigure(node)
     @figures[node.uid] = figure
     @addFigure(figure, @layout.locator(node))
@@ -32,11 +34,18 @@ class TreeView.Tree extends TreeView.Figure
       @connectNodes(node.parent, node)
     for child, i in node.children() when @figures[child.uid]?
       @connectNodes(node, child)
+    @style.drawArrows(node)
     return
 
   addNodes: (list) ->
     @addNode node for node in list
     return
+
+  getNodeById: (id) ->
+    @tree.index[id]
+
+  getNodeByUid: (uid) ->
+    @nodesIndex[uid]
 
   connectNodes: (parent, child) ->
     parentFigure = @figures[parent.uid]

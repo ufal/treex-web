@@ -13,7 +13,10 @@ class TreeView.Connection extends TreeView.Shape.PolyLine
     @targetNode = null
 
     @sourceDecorator = null
+    @startDecoratorSet = null
+
     @targetDecorator = null
+    @endDecoratorSet = null
 
     @sourceAnchor = new TreeView.ConnectionAnchor(@)
     @targetAnchor = new TreeView.ConnectionAnchor(@)
@@ -63,6 +66,35 @@ class TreeView.Connection extends TreeView.Shape.PolyLine
     super attrs
     # TODO: fix repainting and path recalc
     @svgPathString = null
+    if @targetDecorator? and @endDecoratorSet is null
+      @endDecoratorSet = @targetDecorator.paint(@getCanvas().paper)
+      @endDecoratorSet.insertAfter(@shape)
+    if @sourceDecorator? and @startDecoratorSet is null
+      @startDecoratorSet = @sourceDecorator.paint(@getCanvas().paper)
+      @startDecoratorSet.insertAfter(@shape)
+
+    if @startDecoratorSet? or @endDecoratorSet?
+      sx = @getStartX()
+      sy = @getStartY()
+      ex = @getEndX()
+      ey = @getEndY()
+      if @startDecoratorSet?
+        if @basePoints.getSize() > 0 # auto assume its bezier curve
+          c = @basePoints.getFirstElement()
+          p = Raphael.findDotsAtSegment(sx, sy, c.x, c.y, c.x, c.y, ex, ey, 0.05)
+          angle = Raphael.angle(sx, sy, p.x, p.y)
+        else
+          angle = Raphael.angle(sx, sy, ex, ey)
+        @startDecoratorSet.transform("r#{angle},#{sx},#{sy} t#{sx} #{sy}")
+      if @endDecoratorSet?
+        if @basePoints.getSize() > 0
+          c = @basePoints.getLastElement()
+          p = Raphael.findDotsAtSegment(sx, sy, c.x, c.y, c.x, c.y, ex, ey, 0.95)
+          angle = Raphael.angle(ex, ey, p.x, p.y)
+        else
+          angle = Raphael.angle(ex, ey, sx, sy)
+        @endDecoratorSet.transform("r#{angle},#{ex},#{ey} t#{ex} #{ey}")
+
     return
 
   setSourceDecorator: (@sourceDecorator) ->

@@ -18,12 +18,15 @@ class TreeView
     @canvas.setLayout(layout)
     for label, zone of bundle.zones
       for layer, tree of zone.trees
-        continue if tree.layer isnt 'p'
         @canvas.addFigure(new TreeView.Tree(layer, tree))
     layout.enableReordering()
     layout.reorderFigures()
+    @showAlignment()
     @canvas.adjustSize()
     return
+
+  showAlignment: ->
+
 
 namespace = exports ? this
 

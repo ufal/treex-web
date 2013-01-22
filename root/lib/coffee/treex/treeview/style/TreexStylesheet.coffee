@@ -56,6 +56,7 @@ class TreeView.Style.TreexStylesheet
 
   constructor: (@tree) ->
     @layer = @tree.layer.split('-')[1] ? 'a'
+    @arrows = new ArrayList()
     console.log @layer
     switch @layer
       when 'p'
@@ -89,6 +90,48 @@ class TreeView.Style.TreexStylesheet
     conn.setColor(colors['edge'])
     @styleConnection(conn, parent, child)
     return conn
+
+  drawArrows: (node) ->
+    # collect new potential arrows
+    for ref_attr in ['coref_gram', 'coref_text', 'compl']
+      if node.attr("#{ref_attr}.rf")?
+        targets = node.attr("#{ref_attr}.rf")
+        targets = [targets] unless _.isArray(targets)
+        for target in targets
+          targetId = if _.isObject(target) then target['#value'] else target
+          @arrows.add(
+            source_uid: node.uid
+            target_id: targetId
+            type: ref_attr
+          )
+    forRemove = []
+    @arrows.each (i, arrow) =>
+      source = @tree.getNodeByUid(arrow.source_uid)
+      forRemove.push arrow unless source? # non-existent source
+      target = @tree.getNodeById(arrow.target_id)
+      return unless source? and target?
+      sourceFig = @tree.getFigure(source)
+      targetFig = @tree.getFigure(target)
+      return unless sourceFig? and targetFig?
+      @drawArrow(sourceFig, targetFig, arrow.type)
+      forRemove.push arrow
+      return
+    for arrow in forRemove
+      @arrows.remove(arrow)
+    return
+
+  arrowRouter = new TreeView.Connection.CurveRouter()
+  drawArrow: (sourceFig, targetFig, type) ->
+    conn = new TreeView.Connection()
+    conn.setSource(sourceFig)
+    conn.setTarget(targetFig)
+    conn.setColor(colors[type])
+    conn.setStroke(2)
+    conn.setRouter(arrowRouter)
+    arrow= new TreeView.Connection.ArrowDecorator(15, 30)
+    arrow.bgColor = conn.getColor();
+    conn.setTargetDecorator(arrow)
+    return
 
   anodeStyle: (node, label) ->
     fig = defaultNode(label)

@@ -73,17 +73,13 @@ class TreeView.Layout.SimpleTreeLayout
     return
 
   getTotalWidth: ->
-    start = 0
-    end = 0
+    width = 0
     for node, index in @order
       f = @tree.getFigure(node)
       continue unless f?
-      bb = f.getBoundingBox()
-      e = bb.getRight()
-      s = bb.x
-      end = e if e > end
-      start = s if s < start
-    return end - start
+      w = @orderWidths[index] + (index+2)*@marginX + f.getBoundingBox().width
+      width = w if w > width
+    return width
 
   getTotalHeight: ->
     height = 0
