@@ -82,5 +82,6 @@ class TreeView.Tree extends TreeView.Figure
     attrs.y = @getAbsoluteY()
     attrs.width = @getWidth()
     attrs.height = @getHeight()
+    attrs.stroke = 'none'
     @shape.attr(attrs)
     return
