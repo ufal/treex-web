@@ -128,6 +128,9 @@ class TreeView.Style.TreexStylesheet
     conn.setColor(colors[type])
     conn.setStroke(2)
     conn.setRouter(arrowRouter)
+    if type is 'alignment'
+      conn.setStroke(1)
+      conn.setDashing('- ')
     arrow= new TreeView.Connection.ArrowDecorator(15, 30)
     arrow.bgColor = conn.getColor();
     conn.setTargetDecorator(arrow)
