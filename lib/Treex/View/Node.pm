@@ -14,11 +14,6 @@ has 'labels' => (
     isa    => 'Treex::Core::TredView::Labels',
 );
 
-has 'styles' => (
-    is     => 'ro',
-    isa    => 'Treex::Core::TredView::Styles',
-);
-
 # will traverse data and dumps structures to hashes and arrays
 sub traverse_data {
     my ($self, $decl, $value) = @_;
@@ -121,15 +116,12 @@ sub TO_JSON {
 
     if ($n->is_root) {
         $n->{_precomputed_labels}     = $self->labels->root_labels($n);
-        $n->{_precomputed_node_style} = $self->styles->node_style($n);
         $n->{_precomputed_hint}       = '';
     } else {
-        $n->{_precomputed_node_style} = $self->styles->node_style($n);
         $n->{_precomputed_buffer}     = $self->labels->node_labels( $n, $n->get_layer );
         $self->labels->set_labels($n);
     }
     $data->{labels} = $n->{_precomputed_labels};
-    $data->{style} = $n->{_precomputed_node_style};
     $data->{parent} = $n->parent ? $n->parent->id : undef;
     $data->{firstson} = $n->firstson ? $n->firstson->id : undef;
     $data->{rbrother} = $n->rbrother ? $n->rbrother->id : undef;
