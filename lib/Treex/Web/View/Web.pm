@@ -9,8 +9,8 @@ use base 'Catalyst::View::TT';
 
 __PACKAGE__->config(
     INCLUDE_PATH => [
-        Treex::Web->path_to( 'root', 'src' ),
-        Treex::Web->path_to( 'root', 'lib' )
+        Treex::Web->path_to( 'root', 'src', 'tt2' ),
+        Treex::Web->path_to( 'root', 'lib', 'tt2' )
         ],
     TEMPLATE_EXTENSION => '.tt2',
     ENCODING           => 'utf-8',

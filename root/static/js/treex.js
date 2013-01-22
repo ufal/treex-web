@@ -5,43 +5,68 @@
 (function() {
     // Establish the top namespace object, `window` in the browser, or `global` on the server.
     var namespace = this;
-    
+
     // Underscore.js library is required
     var _ = namespace._;
     // jQuery library for ajax requests
     var $ = namespace.jQuery;
-    
+
     var treex = { '_' : _, '$' : $ }; // just a namespace with no constructor
-    
+
     // define all `classes` here
     var Document, Bundle, Zone, Tree, Node;
-    
+
     namespace['Treex'] = treex; // export treex as Treex
-    
+
     treex.documents = { }; // hash of loaded documents
-    
+
     // hardcoded options for now
     treex.opts = {
         print_api : 'http://localhost:3000/print' // url of printing api
     };
-    
+
+    treex.parseStyles = function(styles) {
+        var style = { };
+        if (!styles) return style;
+        // #{name:value}
+        var n = styles.match(/#\{[\w-:\.#]+\}/g);
+        if (!n) return style;
+        for (var i = 0; i < n.length; i++) {
+            var val = n[i].slice(2, -1); // kill brackets
+            val = val.split(':');
+
+            var name = val[0];
+            val = val[1];
+
+            name = name.split('-');
+            var cat = name.length > 1 ? name.shift() : "Node";
+            name = name.shift();
+
+            if (!style[cat]) style[cat] = { };
+            style[cat][name] = val;
+        }
+        return style;
+    };
+
     treex.loadDoc = function(file, callback) {
         // TODO: use ajax with error callback
         $.getJSON(this.opts.print_api, { file: file }, function(data) {
             console.log(data);
             var doc = Document.fromJSON(data);
-            treex.documents[file] = doc;
+            doc.file = file;
+            treex.documents[file] = (doc);
             _.isFunction(callback) && callback(doc);
         });
     };
-    
+
     Document = function() {
         this.bundles = [ ]; // an array, because order matters
+        this.file = "";
     };
     treex.Document = function() { return new Document(); };
-    
+
     Document.fromJSON = function(json) {
-        var doc = new Document();        
+        var doc = new Document();
         _.each(json.bundles, function(bundle) {
             var b = Bundle.fromJSON(bundle);
             b.document = doc;
@@ -49,7 +74,7 @@
         });
         return doc;
     };
-    
+
     Bundle = function() {
         this.zones = { }; // indexed by `language`-`selector`
         this.document = null;
@@ -62,13 +87,14 @@
             _.each(this.zones, function(zone) {
                 trees.push(_.toArray(zone.trees));
             });
-            
+
             return _.flatten(trees);
-        },
+        }
     };
-    
+
     Bundle.fromJSON = function(json) {
         var bundle = new Bundle();
+        bundle.style = treex.parseStyles(json.style);
         _.each(json.zones, function(zone, label) {
             var z = Zone.fromJSON(zone);
             z.bundle = bundle;
@@ -76,70 +102,98 @@
         });
         return bundle;
     };
-    
+
     Zone = function() {
         this.trees = { };
         this.sentence = '';
         this.bundle = null;
     };
     treex.Zone = function() { return new Zone(); };
-    
+
     Zone.fromJSON = function(json) {
         var zone = new Zone();
         _.each(json.trees, function(tree, layer) {
-            zone.trees[layer] = Tree.fromJSON(tree);
+            var t = zone.trees[layer] = Tree.fromJSON(tree.nodes);
+            t.layer = tree.layer;
+            t.language = tree.language;
         });
         zone.sentence = json.sentence;
         return zone;
     };
-    
+
     /*
      * Trees related functions
      */
     // tree is defined by root node
-    // We attach additional data to the trees in plugins
     Tree = function(root) {
         this.root = root;
     };
     // mask constructor
     treex.Tree = function(root) { return new Tree(root); };
 
-    Tree.fromJSON = function(json) {
-        var root = new Node(json.id, json.data);
-        root.order = _.isFinite(json.ord) ? json.ord : 0;
-        var tree = new Tree(root);
-        function traverse(jsnode, parent) {
-            !_.isEmpty(jsnode.children) && _.each(jsnode.children, function(child) {
-                var node = new Node(child.id, child.data);
-                node.order = _.isFinite(child.ord) ? child.ord : 0;
-                node.paste_on(parent);                
-                traverse(child, node);
-            });
+    Tree.fromJSON = function(nodes) {
+        // index nodes first
+        var nodesIndex = {};
+        var treeNodes = [];
+        var root, node, treeNode = null;
+        for (var i = 0, ii = nodes.length; i < ii; i++) {
+            node = nodes[i];
+            treeNode = new Node(node.id, node.data, node.style);
+            treeNode.labels = node.labels;
+            treeNode.order = i;
+            nodesIndex[node.id] = treeNode;
+            treeNodes.push(treeNode);
+            if (node.parent === null) {
+                root = treeNode;
+            }
         }
-        traverse(json, root);
+        if (!root) {
+            // this should never happen
+            throw "Tree has no root!";
+        }
+        var tree = new Tree(root);
+        // manually assign these
+        tree.index = nodesIndex;
+        tree.nodes = treeNodes;
+
+        // reconstruct the tree parent/child relations
+        for (i = 0, ii = nodes.length; i < ii; i++) {
+            treeNode = treeNodes[i];
+            node = nodes[i];
+            if (node.firstson) {
+                treeNode.firstson = nodesIndex[node.firstson];
+            }
+            if (node.parent) {
+                treeNode.parent = nodesIndex[node.parent];
+            }
+            if (node.rbrother) {
+                treeNode.rbrother = nodesIndex[node.rbrother];
+            }
+        }
         return tree;
     };
 
     Tree.prototype = {
         allNodes : function() {
-            var all = this.root.descendants();
-            all.push(this.root);
-            return all;
+            return this.nodes;
         }
     };
-    
-    Node = function(id, data) {
+
+    var order = 0;
+
+    Node = function(id, data, style) {
         this.id = id;
-        this.data = data;
+        this.data = data || { };
+        this.style = treex.parseStyles(style);
         this.parent = null;
         this.lbrother = null;
         this.rbrother = null;
         this.firstson = null; // leftmost son
-        this.order = 0;
+        this.order = order++;
         this.uid = _.uniqueId('node_'); // globaly unique id
     };
     treex.Node = function(id, data) { return new Node(id, data); };
-    
+
     // Try to match function names with Treex::PML::Node
     Node.prototype = {
         is_leaf: function() { return this.firstson == null; },
@@ -149,6 +203,7 @@
             while (node && node.parent != null) node = node.parent;
             return node;
         },
+        attr: function(attr) { return this.data[attr]; },
         // from left to right
         following: function(top) {
             if (this.firstson) {
@@ -208,27 +263,27 @@
                 node = node.rbrother;
             }
             return children;
-        },
+        }//,
         // attach node to new parent
-        paste_on: function(parent) {
-            var node = parent.firstson;
-            if (node && this.order > node.order) {
-                while(node.rbrother && this.order > node.rbrother.order)
-                    node = node.rbrother;
-                var rbrother = node.rbrother;
-                this.rbrother = rbrother;
-                if (rbrother) rbrother.lbrother = this;
-                node.rbrother = this;
-                this.lbrother = node;
-                this.parent = parent;
-            } else {
-                this.rbrother = node;
-                parent.firstson = this;
-                this.lbrother = null;
-                if (node) node.lbrother = this;
-                this.parent = parent;
-            }
-        }
+        // paste_on: function(parent) {
+        //     var node = parent.firstson;
+        //     if (node && this.order > node.order) {
+        //         while(node.rbrother && this.order > node.rbrother.order)
+        //             node = node.rbrother;
+        //         var rbrother = node.rbrother;
+        //         this.rbrother = rbrother;
+        //         if (rbrother) rbrother.lbrother = this;
+        //         node.rbrother = this;
+        //         this.lbrother = node;
+        //         this.parent = parent;
+        //     } else {
+        //         this.rbrother = node;
+        //         parent.firstson = this;
+        //         this.lbrother = null;
+        //         if (node) node.lbrother = this;
+        //         this.parent = parent;
+        //     }
+        // }
     };
-    
+
 }).call(this);

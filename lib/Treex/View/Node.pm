@@ -9,12 +9,17 @@ use Data::Dump qw(pp);
 
 has 'node' => (is => 'ro', isa => 'Treex::Core::Node', required => 1);
 
+has 'labels' => (
+    is     => 'ro',
+    isa    => 'Treex::Core::TredView::Labels',
+);
+
 # will traverse data and dumps structures to hashes and arrays
 sub traverse_data {
     my ($self, $decl, $value) = @_;
     my $data;
     my $decl_is = $decl->get_decl_type;
-    
+
     if ( $decl_is == PML_STRUCTURE_DECL ) {
         my @members = grep {
             (!defined($_->get_role) or $_->get_role ne '#CHILDNODES')
@@ -59,7 +64,7 @@ sub traverse_data {
             my $v = $_->value;
             my $e = $decl->get_element_by_name($n);
             my $p = $pos{$n}; # position
-            
+
             push @{$data->[$p]}, $self->traverse_data($e, $v);
         }
     } elsif ($decl_is == PML_ELEMENT_DECL) {
@@ -88,13 +93,13 @@ sub traverse_data {
     } else {
         die "Unhandled data type: $decl";
     }
-    
+
     return $data;
 }
 
 sub TO_JSON {
     my $self = shift;
-    
+
     my $n = $self->node;
     my $data = {
         id => $n->id,
@@ -102,9 +107,28 @@ sub TO_JSON {
         ($n->does('Treex::Core::Node::Ordered') ? (ord =>int($n->ord)) : ()), # force ord to be integer
         data => $self->traverse_data($n->type, $n),
     };
-    my @children = $n->is_leaf ? () : (map {__PACKAGE__->new(node=>$_)} $n->children);
-    $data->{children} = \@children if @children;
-    
+
+    ## some fake values to stop warnings
+    $n->{'_shift_down'} = 0;
+    $n->{'_shift_right'} = 0;
+    $n->{_tree_depth} = 0;
+    $n->{_depth} = 0;
+
+    if ($n->is_root) {
+        $n->{_precomputed_labels}     = $self->labels->root_labels($n);
+        $n->{_precomputed_hint}       = '';
+    } else {
+        $n->{_precomputed_buffer}     = $self->labels->node_labels( $n, $n->get_layer );
+        $self->labels->set_labels($n);
+    }
+    $data->{labels} = $n->{_precomputed_labels};
+    $data->{parent} = $n->parent ? $n->parent->id : undef;
+    $data->{firstson} = $n->firstson ? $n->firstson->id : undef;
+    $data->{rbrother} = $n->rbrother ? $n->rbrother->id : undef;
+    $data->{lbrother} = $n->lbrother ? $n->lbrother->id : undef;
+#    my @children = $n->is_leaf ? () : (map {__PACKAGE__->new(node=>$_, labels=>$self->labels, styles=>$self->styles)} $n->children);
+#    $data->{children} = \@children if @children;
+
     return $data;
 }
 
@@ -124,7 +148,7 @@ Treex::View::Node - This is Treex::Core::Node wrapper
 
 =head1 DESCRIPTION
 
-Stub documentation for Treex::View::Node, 
+Stub documentation for Treex::View::Node,
 
 Blah blah blah.
 

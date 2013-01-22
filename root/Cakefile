@@ -1,0 +1,68 @@
+fs            = require 'fs'
+path          = require 'path'
+{spawn, exec} = require 'child_process'
+
+srcDir = 'lib/coffee/'
+
+treexFiles = [
+  'util/ArrayList.coffee',
+  'util/Color.coffee',
+  'util/Point.coffee',
+  'util/Rectangle.coffee',
+
+  'treex/TreeView.coffee',
+
+  'treex/treeview/connection/Router.coffee',
+  'treex/treeview/connection/DirectRouter.coffee',
+  'treex/treeview/connection/ManhattanRouter.coffee',
+  'treex/treeview/connection/CurveRouter.coffee',
+
+  'treex/treeview/style/TreexStylesheet.coffee',
+
+  'treex/treeview/layout/GridLayout.coffee',
+  'treex/treeview/layout/SimpleTreeLayout.coffee',
+  'treex/treeview/layout/ConstituencyTreeLayout.coffee',
+  'treex/treeview/layout/TreeNodeLocator.coffee',
+  'treex/treeview/layout/BottomLocator.coffee',
+
+  'treex/treeview/Canvas.coffee',
+  'treex/treeview/Figure.coffee',
+  'treex/treeview/NodeFigure.coffee',
+  'treex/treeview/VectorFigure.coffee',
+  'treex/treeview/SetFigure.coffee',
+  'treex/treeview/Tree.coffee',
+
+  'treex/treeview/shape/Line.coffee',
+  'treex/treeview/shape/PolyLine.coffee',
+  'treex/treeview/shape/Rectangle.coffee',
+  'treex/treeview/shape/Oval.coffee',
+  'treex/treeview/shape/Circle.coffee',
+  'treex/treeview/shape/TreeNode.coffee',
+  'treex/treeview/shape/Label.coffee',
+
+  'treex/treeview/ConnectionAnchor.coffee',
+  'treex/treeview/Connection.coffee',
+  'treex/treeview/connection/ArrowDecorator.coffee',
+]
+
+task 'build:coffee', ->
+  params = ['-j', 'static/js/treeview.js', '-c']
+  params.push srcDir+file for file in treexFiles
+  coffee = spawn 'coffee', params
+  coffee.stdout.on 'data', (data) ->
+    console.log "stdout: #{data}"
+  coffee.stderr.on 'data', (data) ->
+    console.log "stderr: #{data}"
+  coffee.on 'exit', (code) ->
+    console.log "exited with code #{code}"
+
+task 'watch', ->
+  params = ['-j', 'static/js/treeview.js', '-cw']
+  params.push srcDir+file for file in treexFiles
+  coffee = spawn 'coffee', params
+  coffee.stdout.on 'data', (data) ->
+    console.log "stdout: #{data}"
+  coffee.stderr.on 'data', (data) ->
+    console.log "stderr: #{data}"
+  coffee.on 'exit', (code) ->
+    console.log "exited with code #{code}"

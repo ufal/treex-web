@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+    <title>Treex Tests</title>
+    <meta name="author" content="Michal Sedlak" />
+    <script type="text/javascript" src="jquery.js"></script>
+    <script type="text/javascript" src="http://code.jquery.com/qunit/qunit-1.10.0.js"></script>
+    <script type="text/javascript" src="https://raw.github.com/appendto/jquery-mockjax/master/jquery.mockjax.js"></script>
+    <script type="text/javascript" src="underscore.js"></script>
+    <script type="text/javascript" src="raphael.js"></script>
+    <script type="text/javascript" src="raphael.graffle.js"></script>
+    <script type="text/javascript" src="treex.js"></script>
+    <script type="text/javascript" src="treex.draw.js"></script>
+    <link rel="Stylesheet" type="text/css" href="http://code.jquery.com/qunit/qunit-1.10.0.css" media="all" />
+  </head>
+  <body>
+    <div id="qunit"></div>
+    <div id="qunit-fixture"></div>
+    <script type="text/javascript">
+      // <![CDATA[
+      $.mockjax({
+          url: Treex.opts.print_api,
+          proxy: 'test_print.json'
+      });
+
+      /*
+                  root
+                /     -----\
+              /              ------\
+            /                        ------\
+         node1                            node3
+           \                             /
+             \                       /---
+               \                /----
+               node2         node4
+                            /     \
+                           /       \
+                        node5     node6
+       */
+      function testTree() {
+          var root = Treex.Node('test_root', { });
+          var node1 = Treex.Node('node1', { }),
+          node2 = Treex.Node('node2', { }),
+          node3 = Treex.Node('node3', { }),
+          node4 = Treex.Node('node4', { }),
+          node5 = Treex.Node('node5', { }),
+          node6 = Treex.Node('node6', { });
+
+          root.order = 2;
+          node1.order = 0;
+          node2.order = 1;
+          node3.order = 6;
+          node4.order = 4;
+          node5.order = 3;
+          node6.order = 5;
+
+          node1.paste_on(root);
+          node3.paste_on(root);
+          node2.paste_on(node1);
+          node4.paste_on(node3);
+          node5.paste_on(node4);
+          node6.paste_on(node4);
+
+          return Treex.Tree(root);
+      }
+
+      function randomTree(nodesCount) {
+          nodesCount || (nodesCount = 20);
+          var root = Treex.Node(_.uniqueId('root'), { });
+          var o = _.shuffle(_.range(nodesCount));
+
+          root.order = o.pop();
+          
+          var parent = root;
+          for (var i = 1; i < nodesCount; i++) {
+              var node = Treex.Node(_.uniqueId('randomNode'), { });
+              node.order = o.pop();
+              node.paste_on(parent);
+              var roll = _.random(0, 100);
+              if (roll < 50) { // 50% do nothing
+                  continue;
+              }
+              if (roll < 75 && !parent.is_root()) {
+                  parent = parent.parent;
+              } else {
+                  parent = node;
+              }
+          }
+
+          return Treex.Tree(root);
+      }
+
+      asyncTest("document load", function() {
+          expect(3);
+          Treex.loadDoc("test_file", function(doc) {
+              ok(doc.bundles, "document has bundles");
+              equal(doc.bundles.length, 2, "number of bundles is ok");
+              equal(_.size(Treex.documents), 1, "document loaded");
+              start();
+          });
+      });
+
+      module("Treex Draw", {
+          setup: function() {
+              stop();
+              Treex.loadDoc("test_file", function(doc) {
+                  ok(doc.bundles, "document has bundles");
+                  equal(doc.bundles.length, 2, "number of bundles is ok");
+                  start();
+              });
+          }
+      });
+      test("retrive document", function() {
+          equal(_.size(Treex.documents), 1, "document loaded");
+          var doc = Treex.documents['test_file'];
+          var r = Treex.Renderer('qunit-fixture', 400, 400);
+          r.render(doc.bundles[0].zones['cs'].trees);
+          ok(r, "rendering went ok");
+      });
+
+      module("Treex Layouts");
+      test("test ordering", function() {
+          var layout = new Treex.Layout.Tred(testTree());
+          equal(_.size(layout.nodes), 0, 'there should be no nodes before initialize');
+          layout.initialize();
+          equal(_.size(layout.nodes), 7, 'now we should have 7 nodes');
+          var root = layout.order[2];
+          ok(root.is_root(), 'root should be third in the order');
+          ok(layout.order[1].is_leaf, 'second node is leaf');
+      });
+
+      test("sparse arrays imitation", function() {
+          var arr = {1: 2, 2: 4};
+          equal(_.size(arr), 2, 'array length is 2');
+          arr[30] = 123;
+          equal(_.size(arr), 3, 'array length is 3');
+          delete arr[1];
+          equal(_.size(arr), 2, 'array length is back on 2');
+          equal(_.max(_.keys(arr)), 30, 'max key is 123');
+      });
+
+      function test_universe_consistency(layout, op) {
+          var maxX = layout.maxLayoutX();
+          equal(maxX.layoutPosX, layout.layoutMaxX, 'universe consistent on x-axis' + (op ? ' after '+op:''));
+          var maxY = layout.maxLayoutY();
+          equal(maxY.layoutPosY, layout.layoutMaxY, 'universe consistent on y-axis' + (op ? ' after '+op:''));          
+      }
+      
+      test("test universe", function() {
+          var layout = new Treex.Layout.Tred(testTree());
+          layout.initialize();
+          test_universe_consistency(layout, 'initialize');
+          layout.removeNode(layout.order[6]); // remove last node
+          test_universe_consistency(layout, 'removeNode');
+      });
+
+      test("test universe on 100 nodes (random)", function() {
+          var layout = new Treex.Layout.Tred(randomTree(100));
+          layout.initialize();
+          equal(layout.order.length, 100, 'we have 100 nodes');
+          test_universe_consistency(layout, 'initialize');
+          layout.removeNode(layout.order[10]); // some node
+          test_universe_consistency(layout, 'some removeNode');
+          layout.removeNode(_.last(layout.order)); //last node
+          test_universe_consistency(layout, 'last removeNode');
+      });
+      
+      test("test universe on 500 nodes (random)", function() {
+          var layout = new Treex.Layout.Tred(randomTree(500));
+          layout.initialize();
+          equal(layout.order.length, 500, 'we have 500 nodes');
+          test_universe_consistency(layout, 'initialize');
+          layout.removeNode(layout.order[_.random(499)]); // some node
+          test_universe_consistency(layout, 'some removeNode');
+          layout.removeNode(_.last(layout.order)); //last node
+          test_universe_consistency(layout, 'last removeNode');
+      });
+      // ]]>
+    </script>
+  </body>
+</html>
