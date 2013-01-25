@@ -1,15 +1,3 @@
 [% META title='Try out Treex now!' %]
 
-<div style="overflow: scroll; width: 100%; height: 500px;">
-  <div id="canvas"></div>
-</div>
-
-<script type="text/javascript">
-// [% c.uri_for(c.controller('Print').action_for('index')) %]
-Treex.loadDoc('[% c.uri_for(c.controller('Print').action_for('index')) %]',  function(doc) {
-    console.log(doc);
-    view = Treex.TreeView('canvas');
-    view.renderBundle(doc.bundles[0]);
-});
-</script>
 [% PROCESS query/form.tt2 form=queryForm %]

@@ -25,7 +25,7 @@ sub begin :Private {
     );
 
     $c->stash( queryForm => $form,
-               template => 'query.tt');
+               template => 'query.tt2');
 }
 
 =head2 index
@@ -33,10 +33,10 @@ sub begin :Private {
 Process the scenario and create the new result
 
 =cut
-    
+
 sub index :Path :Args(0) {
     my ( $self, $c ) = @_;
-    
+
     # we have a post form
     if ( lc $c->req->method eq 'post' ) {
         $c->forward('process_form');
@@ -55,13 +55,15 @@ sub index :Path :Args(0) {
 
 sub process_form :Private {
     my ( $self, $c ) = @_;
-    
+
     my $form = $c->stash->{queryForm};
     if ( $form->process( params => $c->req->parameters ) ) {
         my ($scenario, $input) = ($form->value->{scenario}, $form->value->{input});
-                
+
         try {
             my $result = $c->model('Treex')->run({ scenario => $scenario, input_ref => \$input });
+            use Data::Dumper;
+            $c->log->info(Dumper($result));
 
             my $rs = $c->model('WebDB::Result')->new({
                 scenario => $result->{scenario},
@@ -71,7 +73,7 @@ sub process_form :Private {
                 stderr => $result->{err},
                 ret => $result->{ret},
             });
-            
+
             $rs->insert;
             $c->stash( result => $rs );
         } catch {
@@ -90,7 +92,7 @@ This library is free software. You can redistribute it and/or modify
 it under the same terms as Perl itself.
 
 =cut
-    
+
 __PACKAGE__->meta->make_immutable;
 
 1;

@@ -103,7 +103,7 @@ __PACKAGE__->add_columns(
         is_nullable => 0,
         size => 200,
         is_fs_column => 1,
-        fs_column_path => Treex::Web->path_to('data', 'results'),        
+        fs_column_path => Treex::Web->path_to('data', 'results'),
     },
     "cmd",
     { data_type => "text", is_nullable => 0 },
@@ -113,7 +113,7 @@ __PACKAGE__->add_columns(
         is_nullable => 0,
         size => 200,
         is_fs_column => 1,
-        fs_column_path => Treex::Web->path_to('data', 'results'),        
+        fs_column_path => Treex::Web->path_to('data', 'results'),
     },
     "stderr",
     {
@@ -188,12 +188,12 @@ __PACKAGE__->belongs_to(
 
 sub new {
     my ( $self, $attrs ) = @_;
-    
+
     for my $column (@{$self->uuid_columns}) {
         $attrs->{$column} = $self->get_uuid
             unless defined $attrs->{$column};
     }
-    
+
     return $self->next::method( $attrs );
 }
 
@@ -204,7 +204,7 @@ sub fs_file_name {
 
 sub _fs_column_dirs {
     my $self = shift;
-    
+
     my $hash = $self->result_hash;
     return File::Spec->catfile( substr($hash, 0, 2), $hash );
 }
