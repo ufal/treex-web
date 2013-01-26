@@ -1,41 +1,75 @@
-<div class="front-splash">
+<div class="hero-unit">
   <div class="center">
-    <img src="images/treex_center2.png" />
+    <img src="img/treex_hero.png" />
   </div>
   <div class="center"><h1>Highly Modular NLP Framework Online</h1></div>
   <div class="center">
-    <a class="btn" href="#">Try Now!</a>
+    <a class="btn btn-primary btn-large" href="#try-now">Try Now!</a>
     <span class="spacer"></span>
-    <a class="btn" href="#">Learn More...</a>
+    <a class="btn btn-info btn-large" href="http://ufal.mff.cuni.cz/treex/">Learn More &raquo;</a>
   </div>
 </div>
+<div class="row-fluid first">
+  <div class="span4">
+    <h3>What is Treex?</h3>
+    <p>Treex (formerly TectoMT) is a highly modular NLP software
+    system implemented in Perl programming language under Linux.</p>
+    <p>It is primarily aimed at Machine Translation, making use of the
+    ideas and technology created during the Prague Dependency Treebank
+    project. At the same time, it is also hoped to significantly
+    facilitate and accelerate development of software solutions of
+    many other NLP tasks, especially due to re-usability of the
+    numerous integrated processing modules (called blocks), which are
+    equipped with uniform object-oriented interfaces.
+    </p>
+  </div>
+  <div class="span4">
+    <h3>Why Online?</h3>
+    <p>Donec id elit non mi porta gravida at eget metus. Fusce
+    dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh,
+    ut fermentum massa justo sit amet risus. Etiam porta sem malesuada
+    magna mollis euismod. Donec sed odio dui.
+    </p>
+  </div>
+  <div class="span4">
+    <h3>Get Started</h3>
+    <p>Donec id elit non mi porta gravida at eget metus. Fusce
+    dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh,
+    ut fermentum massa justo sit amet risus. Etiam porta sem malesuada
+    magna mollis euismod. Donec sed odio dui.
+    </p>
+    <p>
+      <a class="btn" href="#">Sign Up &raquo;</a>
+    </p>
+  </div>
+</div>
+<hr />
+
+<h2 id="try-now">Try Treex::Web Now</h2>
+<div class="row-fluid">
 [% form = queryForm %]
-<form[% process_attrs(form.attributes) %]>
-<h2>1. Choose scenario</h2>
-<p>
-  <select name="language" id="select-lang">
-    <option value="">Select language...</option>
-    <option value="en">English</option>
-    <option value="cs">Czech</option>
-  </select>
-  <select name="scenario">
-    <option>Czech analysis</option>
-    <option>CS2EN translation</option>
-  </select>
-</p>
-<p>or <a href="#">write your own.</a></p>
-<h2>2. Select input</h2>
-<p id="input-select">
-  <input type="radio" id="radio1" name="radio" checked="checked" /><label for="radio1">Plain text</label>
-  <input type="radio" id="radio2" name="radio" /><label for="radio2">URL</label>
-  <input type="radio" id="radio3" name="radio" /><label for="radio3">Example file</label>
-</p>
+  <form[% process_attrs(form.attributes) %]>
+    <h3>1. Choose scenario</h3>
+    <p>
+      <select name="language" id="select-lang">
+        <option value="">Select language...</option>
+        <option value="en">English</option>
+        <option value="cs">Czech</option>
+      </select>
+      <select name="scenario">
+        <option>Czech analysis</option>
+        <option>CS2EN translation</option>
+      </select>
+    </p>
+    <p>or <a href="#">write your own.</a></p>
+    <h3>2. Select input</h3>
+    <p id="input-select">
+      <input type="radio" id="radio1" name="radio" checked="checked" /><label for="radio1">Plain text</label>
+      <input type="radio" id="radio2" name="radio" /><label for="radio2">URL</label>
+      <input type="radio" id="radio3" name="radio" /><label for="radio3">Example file</label>
+    </p>
 [% form.field('input').render %]
-<h2>3. Run</h2>
-<p>[% form.field('submit').render %]</p>
-</form>
-<script>
-$(function() {
-  $('#input-select').buttonset();
-});
-</script>
+    <h3>3. Run</h3>
+    <p>[% form.field('submit').render %]</p>
+  </form>
+</div>

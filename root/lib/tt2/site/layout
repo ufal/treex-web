@@ -1,11 +1,16 @@
-<header>[% PROCESS site/header %]</header>
+<header class="navbar navbar-fixed-top">
+  <div class="navbar-inner">
+    [% PROCESS site/header %]
+  </div>
+</header>
+
 [% BLOCK page_title %]
   [% IF title or template.pagetitle or template.title %]
 <h1>[% title or template.pagetitle or template.title %]</h1>
   [% END %]
 [% END %]
-<article>
-  <div id="content-container">
+<div class="container-fluid">
+  <article class="row-fluid">
     [% IF sidebar or template.sidebar %]
     <div id="sidebar" class="clearfix">
     [% IF sidebar; PROCESS "$sidebar"; ELSE; PROCESS "$template.sidebar"; END; %]
@@ -23,6 +28,7 @@
       [% content %]
     </div>
     [% END %]
-  </div>
-</article>
-<footer>[% PROCESS site/footer %]</footer>
+  </article>
+  <hr />
+  <footer>[% PROCESS site/footer %]</footer>
+</div>

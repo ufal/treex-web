@@ -22,8 +22,3 @@
     [% form.field('submit').render %]
 
 </form>
-<script type="text/javascript">
-  $(function() {
-      $("#scenario-select").accordion({ animate: false });
-  });
-</script>

@@ -1,18 +1,15 @@
-<!-- BEGIN site/header
-<h1 id="logo"><a href="[% site.url.home %]" title="Treex Web Interface">Treex::Web <span>Interface</span></a></h1>
- -->
-<nav>
-  <ul>
+<!-- BEGIN site/header -->
+<nav class="container-fluid">
+  <a class="brand" href="[% site.url.home %]" title="Treex Web Interface">Treex::Web</a>
+  <p class="navbar-text pull-right">
+    Logged in as <a href="#" class="navbar-link">Username</a>
+  </p>
+  <ul class="nav">
     [%- FOREACH item IN site.menu  -%]
     <li[% IF item.active %] class="active"[% END %]>
       <a href="[% item.url %]">[% item.title | html %]</a>
     </li>
     [%- END -%]
-    [% FOREACH item IN site.right_menu %]
-    <li class="to-right[% IF item.active %] active[% END %]">
-      <a href="[% item.url %]">[% item.title | html %]</a>
-    </li>
-    [% END %]
 </ul>
 </nav>
 <!-- END site/header -->
