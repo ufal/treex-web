@@ -2,7 +2,11 @@
 <nav class="container-fluid">
   <a class="brand" href="[% site.url.home %]" title="Treex Web Interface">Treex::Web</a>
   <p class="navbar-text pull-right">
+    [% IF c.user_exists %]
     Logged in as <a href="#" class="navbar-link">Username</a>
+    [% ELSE %]
+    <a href="[% site.url.signup %]" class="navbar-link">Sign Up</a> or <a href="[% site.url.login %]" class="navbar-link">Login</a>
+    [% END %]
   </p>
   <ul class="nav">
     [%- FOREACH item IN site.menu  -%]
@@ -10,6 +14,6 @@
       <a href="[% item.url %]">[% item.title | html %]</a>
     </li>
     [%- END -%]
-</ul>
+  </ul>
 </nav>
 <!-- END site/header -->
