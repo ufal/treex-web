@@ -27,7 +27,7 @@ nav {
 nav ul {
    height: 37px;
    padding: 0; margin: 0;
-   background-color: #f6f6f6s;
+   background-color: #f6f6f6;
    border: 1px solid #DDD;
 }
 
@@ -369,4 +369,16 @@ table tr:hover div.show-actions {
 }
 #scenario-select-panes .tab-view {
    width: 800px;
+}
+
+.front-splash {
+    padding: 20px;
+    margin: 20px 0;
+    background-color: #EEE;
+    -webkit-border-radius: 6px;
+    -moz-border-radius: 6px;
+    border-radius: 6px;
+}
+.front-splash h1 {
+    border: none
 }

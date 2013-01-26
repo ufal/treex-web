@@ -1,3 +1,41 @@
-[% META title='Try out Treex now!' %]
-
-[% PROCESS query/form.tt2 form=queryForm %]
+<div class="front-splash">
+  <div class="center">
+    <img src="images/treex_center2.png" />
+  </div>
+  <div class="center"><h1>Highly Modular NLP Framework Online</h1></div>
+  <div class="center">
+    <a class="btn" href="#">Try Now!</a>
+    <span class="spacer"></span>
+    <a class="btn" href="#">Learn More...</a>
+  </div>
+</div>
+[% form = queryForm %]
+<form[% process_attrs(form.attributes) %]>
+<h2>1. Choose scenario</h2>
+<p>
+  <select name="language" id="select-lang">
+    <option value="">Select language...</option>
+    <option value="en">English</option>
+    <option value="cs">Czech</option>
+  </select>
+  <select name="scenario">
+    <option>Czech analysis</option>
+    <option>CS2EN translation</option>
+  </select>
+</p>
+<p>or <a href="#">write your own.</a></p>
+<h2>2. Select input</h2>
+<p id="input-select">
+  <input type="radio" id="radio1" name="radio" checked="checked" /><label for="radio1">Plain text</label>
+  <input type="radio" id="radio2" name="radio" /><label for="radio2">URL</label>
+  <input type="radio" id="radio3" name="radio" /><label for="radio3">Example file</label>
+</p>
+[% form.field('input').render %]
+<h2>3. Run</h2>
+<p>[% form.field('submit').render %]</p>
+</form>
+<script>
+$(function() {
+  $('#input-select').buttonset();
+});
+</script>

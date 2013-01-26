@@ -1,5 +1,6 @@
-<!-- BEGIN site/header -->
+<!-- BEGIN site/header
 <h1 id="logo"><a href="[% site.url.home %]" title="Treex Web Interface">Treex::Web <span>Interface</span></a></h1>
+ -->
 <nav>
   <ul>
     [%- FOREACH item IN site.menu  -%]
@@ -10,7 +11,7 @@
     [% FOREACH item IN site.right_menu %]
     <li class="to-right[% IF item.active %] active[% END %]">
       <a href="[% item.url %]">[% item.title | html %]</a>
-    </li>    
+    </li>
     [% END %]
 </ul>
 </nav>

@@ -52,9 +52,9 @@ h1 img, h2 img, h3 img,
 -------------------------------------------------------------- */
 
 p           { margin: 0 0 1.5em; }
-/* 
-  These can be used to pull an image at the start of a paragraph, so 
-  that the text flows around it (usage: <p><img class="left">Text</p>) 
+/*
+  These can be used to pull an image at the start of a paragraph, so
+  that the text flows around it (usage: <p><img class="left">Text</p>)
  */
 .left       { float: left !important; }
 p .left     { margin: 1.5em 1.5em 1.5em 0; padding: 0; }
@@ -97,22 +97,22 @@ dd          { margin-left: 1.5em;}
 /* Tables
 -------------------------------------------------------------- */
 
-/* 
-  Because of the need for padding on TH and TD, the vertical rhythm 
-  on table cells has to be 27px, instead of the standard 18px or 36px 
-  of other elements. 
- */ 
+/*
+  Because of the need for padding on TH and TD, the vertical rhythm
+  on table cells has to be 27px, instead of the standard 18px or 36px
+  of other elements.
+ */
 table       { margin-bottom: 1.4em; width:100%; }
 th          { font-weight: bold; }
 thead th    { background: #c3d9ff; }
 th,td,caption { padding: 0.85em 0.5em 0.65em 0.5em; border: 1px solid transparent; border-bottom: 0; }
 /*
-  You can zebra-stripe your tables in outdated browsers by adding 
-  the class "even" to every other table row. 
+  You can zebra-stripe your tables in outdated browsers by adding
+  the class "even" to every other table row.
  */
-tbody tr:nth-child(odd) td, 
-   tbody tr.odd td  { 
-      background: #F8F8F8; 
+tbody tr:nth-child(odd) td,
+   tbody tr.odd td  {
+      background: #F8F8F8;
    }
 tbody tr:hover td { background: #fdfcf6; border-top: 1px solid #DDD; border-bottom: 1px solid #DDD; }
 tbody tr:hover td:first-child { border-left-color: #DDD;  }
@@ -138,14 +138,15 @@ caption     { background: #eee; }
 .last       { margin-right:0; padding-right:0; }
 .top        { margin-top:0; padding-top:0; }
 .bottom     { margin-bottom:0; padding-bottom:0; }
+.center     { text-align: center; }
 
 /* Success, info, notice and error/alert boxes
 -------------------------------------------------------------- */
 
 .error,
-   .alert, 
+   .alert,
    .notice,
-   .success, 
+   .success,
    .info      { padding: 0.8em; margin-bottom: 1em; border: 2px solid #ddd; }
 
 .error, .alert { background: #fbe3e4; color: #8a1f11; border-color: #fbc2c4; }
@@ -156,4 +157,3 @@ caption     { background: #eee; }
 .notice a   { color: #514721; }
 .success a  { color: #264409; }
 .info a     { color: #205791; }
-

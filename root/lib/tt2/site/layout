@@ -1,4 +1,9 @@
 <header>[% PROCESS site/header %]</header>
+[% BLOCK page_title %]
+  [% IF title or template.pagetitle or template.title %]
+<h1>[% title or template.pagetitle or template.title %]</h1>
+  [% END %]
+[% END %]
 <article>
   <div id="content-container">
     [% IF sidebar or template.sidebar %]
@@ -7,14 +12,14 @@
     </div>
     <div id="main-content">
       [% PROCESS site/flash_message %]
-      <h1>[% title or template.title %]</h1>
+      [% PROCESS page_title %]
       [% content %]
     </div>
     <hr class="clear" />
     [% ELSE %]
     <div id="content">
       [% PROCESS site/flash_message %]
-      <h1>[% title or template.title %]</h1>
+      [% PROCESS page_title %]
       [% content %]
     </div>
     [% END %]
