@@ -11,6 +11,7 @@
   <script src="[% c.uri_for('/js/raphael.js') %]"></script>
   <script src="[% c.uri_for('/js/treex.js') %]"></script>
   <script src="[% c.uri_for('/js/treeview.js') %]"></script>
+  <script src="[% c.uri_for('/js/ace/ace.js') %]" type="text/javascript" charset="utf-8"></script>
   <script src="[% c.uri_for('/js/application.js') %]"></script>
   <link rel="shortcut icon" href="[% c.uri_for('/favicon.ico')%]" />
  </head>

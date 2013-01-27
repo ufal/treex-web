@@ -16,3 +16,7 @@ body {
     display: inline-block;
     width: 6em;
 }
+
+#scenario-editor {
+    height: 300px;
+}

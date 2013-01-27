@@ -10,7 +10,7 @@ has '+name' => (default => 'query_form');
 
 has_field 'language' => (type => 'Select', widget => 'Select');
 has_field 'result_hash' => (type => 'Hidden');
-has_field 'scenario' => (type => 'TextArea', required => 1, rows => 12, element_attr => { class => 'editor editor-scenario' });
+has_field 'scenario' => (type => 'Hidden', required => 1);
 has_field 'input' => (type => 'TextArea', required => 1, rows => 10, element_attr => { class => 'input-block-level' });
 has_field 'submit' => (type => 'Submit', value => 'Run this Treex scenario', element_attr => { class => 'btn btn-primary btn-large'});
 
