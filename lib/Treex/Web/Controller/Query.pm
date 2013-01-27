@@ -1,6 +1,9 @@
 package Treex::Web::Controller::Query;
 use Moose;
 use Try::Tiny;
+use HTML::FormatText;
+use LWP::UserAgent;
+use Regexp::Common qw /URI/;
 use namespace::autoclean;
 
 BEGIN {extends 'Treex::Web::Controller::Base'; }
@@ -80,6 +83,25 @@ sub process_form :Private {
             $c->log->error("$_");
         }
     }
+}
+
+sub extract_text_from_url :Local :Args(0) {
+    my ( $self, $c ) = @_;
+
+    return unless ( lc $c->req->method eq 'post' );
+
+    my $url = $c->req->param('url');
+    unless ($url =~ /$RE{URI}{HTTP}/) {
+        $c->res->body("Bad url: $url");
+        $c->res->status(400);
+        return
+    }
+
+    my $browser = LWP::UserAgent->new();
+    my $res = $browser->get($url);
+
+    $c->res->body(HTML::FormatText->format_string($res->content));
+    $c->res->content_type('plain/text');
 }
 
 =head1 AUTHOR
