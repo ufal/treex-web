@@ -1,6 +1,7 @@
 [%
    site.menu = [
      { name = 'home', title = 'Home', url = site.url.home, active = (c.namespace == '') },
+     { name = 'query', title = 'Run Treex', url = site.url.query, active = (c.namespace == 'query') },
      { name = 'result', title = 'Results', url = site.url.my_results, active = (c.namespace == 'result') },
      { name = 'scenario', title = 'Scenarios', url = site.url.scenarios, active = (c.namespace == 'scenario') },
    ];

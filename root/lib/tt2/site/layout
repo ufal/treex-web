@@ -6,28 +6,16 @@
 
 [% BLOCK page_title %]
   [% IF title or template.pagetitle or template.title %]
-<h1>[% title or template.pagetitle or template.title %]</h1>
+<div class="page-header">
+  <h1>[% title or template.pagetitle or template.title %]</h1>
+</div>
   [% END %]
 [% END %]
 <div class="container-fluid">
   <article class="row-fluid">
-    [% IF sidebar or template.sidebar %]
-    <div id="sidebar" class="clearfix">
-    [% IF sidebar; PROCESS "$sidebar"; ELSE; PROCESS "$template.sidebar"; END; %]
-    </div>
-    <div id="main-content">
       [% PROCESS site/flash_message %]
       [% PROCESS page_title %]
       [% content %]
-    </div>
-    <hr class="clear" />
-    [% ELSE %]
-    <div id="content">
-      [% PROCESS site/flash_message %]
-      [% PROCESS page_title %]
-      [% content %]
-    </div>
-    [% END %]
   </article>
   <hr />
   <footer>[% PROCESS site/footer %]</footer>
