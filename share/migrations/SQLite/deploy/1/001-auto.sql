@@ -1,6 +1,6 @@
 -- 
 -- Created by SQL::Translator::Producer::SQLite
--- Created on Fri Mar 30 15:27:28 2012
+-- Created on Mon Jan 28 23:50:03 2013
 -- 
 
 ;
@@ -10,20 +10,15 @@ BEGIN TRANSACTION;
 --
 CREATE TABLE result (
   id INTEGER PRIMARY KEY NOT NULL,
-  result_hash varchar(60) NOT NULL,
+  job_uid varchar(60) NOT NULL,
+  session varchar(100) NOT NULL,
   user integer DEFAULT null,
   name varchar(120),
-  scenario text NOT NULL,
-  stdin varchar(200) NOT NULL,
-  cmd text NOT NULL,
-  stdout varchar(200) NOT NULL,
-  stderr varchar(200) NOT NULL,
-  ret integer NOT NULL DEFAULT 1,
   last_modified datetime NOT NULL,
-  FOREIGN KEY(user) REFERENCES user(id)
+  FOREIGN KEY (user) REFERENCES user(id) ON DELETE CASCADE
 );
 CREATE INDEX result_idx_user ON result (user);
-CREATE UNIQUE INDEX hash_unique ON result (result_hash);
+CREATE UNIQUE INDEX hash_unique ON result (job_uid);
 --
 -- Table: scenario
 --
@@ -35,7 +30,7 @@ CREATE TABLE scenario (
   public boolean NOT NULL,
   user integer NOT NULL DEFAULT 0,
   last_modified datetime NOT NULL,
-  FOREIGN KEY(user) REFERENCES user(id)
+  FOREIGN KEY (user) REFERENCES user(id) ON DELETE CASCADE
 );
 CREATE INDEX scenario_idx_user ON scenario (user);
 CREATE UNIQUE INDEX name_user_unique ON scenario (name, user);

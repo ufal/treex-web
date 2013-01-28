@@ -25,7 +25,7 @@ GetOptions(
 pod2usage(1) if $help;
 
 
-my %web_config = ParseConfig("$FindBin::Bin/../treex_web.conf");
+my %web_config = ParseConfig("$FindBin::Bin/../shared/etc/treex_web.pl");
 
 my $schema = Treex::Web::DB->connect(
     $web_config{dsn}, $web_config{db_user}, $web_config{db_pwd}
@@ -46,7 +46,7 @@ map {
     #my $dbname = $_;
     my $sql_dir = File::Spec->catdir($FindBin::Bin, '..', 'sql', $_);
     make_path($sql_dir) unless -d $sql_dir;
-    
+
     $schema->create_ddl_dir( $_, $version, $sql_dir, $preversion );
 } @supported_databases;
 
@@ -64,7 +64,7 @@ treex_web_gen_schema.pl [options] args
 
 =head1 DESCRIPTION
 
-Stub documentation for treex_web_gen_schema.pl, 
+Stub documentation for treex_web_gen_schema.pl,
 
 =head1 AUTHOR
 

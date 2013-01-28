@@ -25,7 +25,7 @@ Puts Treex::Web::DB::Result result set to stash
 
 sub base :Chained('/') :PathPart('') :CaptureArgs(0)  {
     my ($self, $c) = @_;
-    
+
     my $rs = $c->model('WebDB::Result');
     $c->stash(template => 'result.tt2',
               result_rs => $rs);
@@ -33,7 +33,7 @@ sub base :Chained('/') :PathPart('') :CaptureArgs(0)  {
 
 sub index :Chained('base') :PathPart('results') :Args(0) {
     my ($self, $c) = @_;
-    
+
     my $rs = $c->stash->{result_rs};
     $c->stash(current_result => $rs->first);
 }
@@ -44,9 +44,9 @@ sub index :Chained('base') :PathPart('results') :Args(0) {
 
 sub show :Chained('base') :PathPart('result') :Args(1) {
     my ($self, $c, $result_hash) = @_;
-    
+
     my $rs = $c->stash->{result_rs};
-    
+
     try {
         my $result = $rs->find({ result_hash => $result_hash },
                                { key => 'hash_unique' });
@@ -68,7 +68,7 @@ sub delete :Chained('result') :PathPart('delete') :Args(0) {
 
 sub end : ActionClass('RenderView') {
     my ( $self, $c ) = @_;
-    
+
     my $form = Treex::Web::Forms::QueryForm->new(
         item => $c->stash->{current_result},
         action => $c->uri_for($c->controller('Query')->action_for('index')),

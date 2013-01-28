@@ -50,11 +50,17 @@ __PACKAGE__->table("result");
   is_auto_increment: 1
   is_nullable: 0
 
-=head2 result_hash
+=head2 job_uid
 
   data_type: 'varchar'
   is_nullable: 0
   size: 60
+
+=head2 session
+
+  data_type: 'varchar'
+  is_nullable: 0
+  size: 100
 
 =head2 user
 
@@ -69,11 +75,6 @@ __PACKAGE__->table("result");
   is_nullable: 0
   size: 120
 
-=head2 scenario
-
-  data_type: 'text'
-  is_nullable: 0
-
 =head2 last_modified
 
   data_type: 'datetime'
@@ -84,8 +85,10 @@ __PACKAGE__->table("result");
 __PACKAGE__->add_columns(
     "id",
     { data_type => "integer", is_auto_increment => 1, is_nullable => 0 },
-    "result_hash",
+    "job_uid",
     { data_type => "varchar", is_nullable => 0, size => 60 },
+    "session",
+    { data_type => "varchar", is_nullable => 0, size => 100},
     "user",
     {
         data_type      => "integer",
@@ -95,36 +98,6 @@ __PACKAGE__->add_columns(
     },
     "name",
     { data_type => "varchar", is_nullable => 1, size => 120 },
-    "scenario",
-    { data_type => "text", is_nullable => 0 },
-    "stdin",
-    {
-        data_type => "varchar",
-        is_nullable => 0,
-        size => 200,
-        is_fs_column => 1,
-        fs_column_path => Treex::Web->path_to('data', 'results'),
-    },
-    "cmd",
-    { data_type => "text", is_nullable => 0 },
-    "stdout",
-    {
-        data_type => "varchar",
-        is_nullable => 0,
-        size => 200,
-        is_fs_column => 1,
-        fs_column_path => Treex::Web->path_to('data', 'results'),
-    },
-    "stderr",
-    {
-        data_type => "varchar",
-        is_nullable => 0,
-        size => 200,
-        is_fs_column => 1,
-        fs_column_path => Treex::Web->path_to('data', 'results'),
-    },
-    "ret",
-    { data_type => "integer", is_nullable => 0, default_value => 1 },
     "last_modified",
     {
         data_type => "datetime",
@@ -158,8 +131,8 @@ __PACKAGE__->set_primary_key("id");
 
 =cut
 
-__PACKAGE__->add_unique_constraint("hash_unique", ["result_hash"]);
-__PACKAGE__->uuid_columns( 'result_hash' );
+__PACKAGE__->add_unique_constraint("hash_unique", ["job_uid"]);
+__PACKAGE__->uuid_columns( 'job_uid' );
 __PACKAGE__->uuid_class('::Data::Uniqid');
 
 =head1 RELATIONS
@@ -205,7 +178,7 @@ sub fs_file_name {
 sub _fs_column_dirs {
     my $self = shift;
 
-    my $hash = $self->result_hash;
+    my $hash = $self->job_uid;
     return File::Spec->catfile( substr($hash, 0, 2), $hash );
 }
 

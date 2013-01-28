@@ -93,13 +93,14 @@ translator:
       source_registrations:
         Result: !!perl/hash:DBIx::Class::ResultSource::Table
           _columns:
-            cmd:
-              data_type: text
-              is_nullable: 0
             id:
               data_type: integer
               is_auto_increment: 1
               is_nullable: 0
+            job_uid:
+              data_type: varchar
+              is_nullable: 0
+              size: 60
             last_modified:
               _ic_dt_method: datetime
               _inflate_info:
@@ -113,74 +114,10 @@ translator:
               data_type: varchar
               is_nullable: 1
               size: 120
-            result_hash:
+            session:
               data_type: varchar
               is_nullable: 0
-              size: 60
-            ret:
-              data_type: integer
-              default_value: 1
-              is_nullable: 0
-            scenario:
-              data_type: text
-              is_nullable: 0
-            stderr:
-              _inflate_info:
-                deflate: !!perl/code '{ "DUMMY" }'
-                inflate: !!perl/code '{ "DUMMY" }'
-              data_type: varchar
-              fs_column_path: !!perl/hash:Path::Class::Dir
-                dirs:
-                  - ''
-                  - home
-                  - thc
-                  - src
-                  - Treex-Web
-                  - data
-                  - results
-                file_spec_class: ~
-                volume: ''
-              is_fs_column: 1
-              is_nullable: 0
-              size: 200
-            stdin:
-              _inflate_info:
-                deflate: !!perl/code '{ "DUMMY" }'
-                inflate: !!perl/code '{ "DUMMY" }'
-              data_type: varchar
-              fs_column_path: !!perl/hash:Path::Class::Dir
-                dirs:
-                  - ''
-                  - home
-                  - thc
-                  - src
-                  - Treex-Web
-                  - data
-                  - results
-                file_spec_class: ~
-                volume: ''
-              is_fs_column: 1
-              is_nullable: 0
-              size: 200
-            stdout:
-              _inflate_info:
-                deflate: !!perl/code '{ "DUMMY" }'
-                inflate: !!perl/code '{ "DUMMY" }'
-              data_type: varchar
-              fs_column_path: !!perl/hash:Path::Class::Dir
-                dirs:
-                  - ''
-                  - home
-                  - thc
-                  - src
-                  - Treex-Web
-                  - data
-                  - results
-                file_spec_class: ~
-                volume: ''
-              is_fs_column: 1
-              is_nullable: 0
-              size: 200
+              size: 100
             user:
               _inflate_info:
                 deflate: !!perl/code '{ "DUMMY" }'
@@ -193,15 +130,10 @@ translator:
           _columns_info_loaded: 0
           _ordered_columns:
             - id
-            - result_hash
+            - job_uid
+            - session
             - user
             - name
-            - scenario
-            - stdin
-            - cmd
-            - stdout
-            - stderr
-            - ret
             - last_modified
           _primaries: &2
             - id
@@ -219,7 +151,7 @@ translator:
               source: Treex::Web::DB::Result::User
           _unique_constraints:
             hash_unique:
-              - result_hash
+              - job_uid
             primary: *2
           name: result
           result_class: Treex::Web::Model::WebDB::Result
@@ -410,8 +342,7 @@ translator:
           resultset_class: DBIx::Class::DeploymentHandler::VersionStorage::Standard::VersionResultSet
           schema: *1
           source_name: __VERSION
-      storage: !!perl/hash:DBIx::Class::Storage::DBI::SQLite
-        _conn_pid: 5674
+      storage: !!perl/hash:DBIx::Class::Storage::DBI
         _connect_info:
           - auto_savepoint: 1
             cursor_class: DBIx::Class::Cursor::Cached
@@ -420,8 +351,6 @@ translator:
             password: ''
             quote_names: 1
             user: ''
-        _dbh: !!perl/hash:DBI::db {}
-        _dbh_autocommit: 1
         _dbh_details: {}
         _dbh_gen: 0
         _dbi_connect_info:
@@ -431,7 +360,6 @@ translator:
           PrintError: 0
           RaiseError: 1
           ShowErrorStatement: 1
-        _driver_determined: 1
         _in_do_block: 0
         _sql_maker: ~
         _sql_maker_opts:
@@ -448,4 +376,4 @@ translator:
   producer_type: SQL::Translator::Producer::YAML
   show_warnings: 0
   trace: 0
-  version: 0.11010
+  version: 0.11011
