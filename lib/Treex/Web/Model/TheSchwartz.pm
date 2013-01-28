@@ -1,13 +1,13 @@
 package Treex::Web::Model::TheSchwartz;
-#use Moose;
-#use namespace::autoclean;
+use Moose;
+use namespace::autoclean;
 
-use base 'Catalyst::Model::Adaptor';
+extends 'Catalyst::Model::Adaptor';
 
 __PACKAGE__->config( class => 'TheSchwartz' );
 
 sub prepare_arguments {
-    my ($self, $c) = @_; # $app sometimes written as $c
+    my ($self, $c) = @_; # app
     return $self->{args} || {}
 }
 
@@ -35,6 +35,6 @@ it under the same terms as Perl itself.
 
 =cut
 
-#__PACKAGE__->meta->make_immutable;
+__PACKAGE__->meta->make_immutable;
 
 1;
