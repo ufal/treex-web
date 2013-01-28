@@ -2,6 +2,7 @@
    site.url = {
      base        = Catalyst.req.base
      home        = c.uri_for(c.controller('Root').action_for('index'))
+     query       = c.uri_for(c.controller('Query').action_for('index'))
      my_results  = c.uri_for(c.controller('Result').action_for('index'))
      my_scenarios = c.uri_for(c.controller('Scenario').action_for('my_scenarios'))
      scenarios   = c.uri_for(c.controller('Scenario').action_for('index'))

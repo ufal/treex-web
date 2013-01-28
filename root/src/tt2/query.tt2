@@ -1,6 +1,3 @@
-[% META title='Run new query' %]
-
-<h1>Run new query</h1>
+[% META title='Run Treex Query' %]
 
 [% PROCESS query/form.tt2 form=queryForm %]
-

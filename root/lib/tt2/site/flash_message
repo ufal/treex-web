@@ -1,10 +1,15 @@
-<div id="flash-messages">
+[% IF status_msg || c.flash.status_msg || error_msg || c.flash.error_msg  %]
+<div class="alert[% IF status_msg || c.flash.status_msg %] alert-success [% END %][% IF error_msg || c.flash.error_msg %] alert-error[% END %]">
+  <button type="button" class="close" rel="tooltip" title="Close" data-dismiss="alert">&times;</button>
   [%- IF status_msg || c.flash.status_msg -%]
-  <p class="success">[% status_msg || c.flash.status_msg %]</p>
+  <h4>Well done!</h4>
+  [% status_msg || c.flash.status_msg %]
   [%- END -%]
   [%- IF error_msg || c.flash.error_msg -%]
-  <p class="error">[% error_msg || c.flash.error_msg %]</p>
+  <h4>Oh snap!</h4>
+  [% error_msg || c.flash.error_msg %]
   [%- END -%]
   [% c.flash.status_msg = undef %]
   [% c.flash.error_msg = undef %]
 </div>
+[% END %]

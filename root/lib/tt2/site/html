@@ -3,24 +3,19 @@
  <head>
   <title>[% template.title or site.title %] &ndash; [% c.config.name %]</title>
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-  <link rel="stylesheet" href="[% c.uri_for('/css/reset.css') %]" type="text/css" media="screen" />
-  <link rel="stylesheet" href="[% c.uri_for('/css/text.css') %]" type="text/css" media="screen" />
-  <link rel="stylesheet" href="[% c.uri_for('/css/layout.css') %]" type="text/css" media="screen" />
-  <link rel="stylesheet" href="[% c.uri_for('/css/jqueryui.css') %]" type="text/css" media="screen" />
-  <link rel="stylesheet" href="[% c.uri_for('/css/formalize.css') %]" type="text/css" media="screen" />
+  <link rel="stylesheet" href="[% c.uri_for('/css/bootstrap.min.css') %]" type="text/css" media="screen" />
+  <link rel="stylesheet" href="[% c.uri_for('/css/application.css') %]" type="text/css" media="screen" />
   <script src="[% c.uri_for('/js/underscore.js') %]"></script>
   <script src="[% c.uri_for('/js/jquery.js') %]"></script>
-  <script src="[% c.uri_for('/js/jquery.ui.js') %]"></script>
-  <script src="[% c.uri_for('/js/jquery.formalize.js') %]"></script>
+  <script src="[% c.uri_for('/js/bootstrap.min.js') %]"></script>
   <script src="[% c.uri_for('/js/raphael.js') %]"></script>
   <script src="[% c.uri_for('/js/treex.js') %]"></script>
   <script src="[% c.uri_for('/js/treeview.js') %]"></script>
+  <script src="[% c.uri_for('/js/ace/ace.js') %]" type="text/javascript" charset="utf-8"></script>
   <script src="[% c.uri_for('/js/application.js') %]"></script>
   <link rel="shortcut icon" href="[% c.uri_for('/favicon.ico')%]" />
  </head>
  <body>
-   <div id="site-wrapper">
-     [% content %]
-   </div>
+   [% content %]
  </body>
 </html>

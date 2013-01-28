@@ -4,25 +4,24 @@
    # any other page, by virtue of it being defined as a PRE_PROCESS
    # template.  This is the place to define any extra template variables,
    # macros, load plugins, and perform any other template setup.
-     
+
    IF Catalyst.debug;
      # define a debug() macro directed to Catalyst's log
      MACRO debug(message) CALL Catalyst.log.debug(message);
    END;
- 
+
    # define a data structure to hold sitewide data
    site = {
        title     => 'Treex Web Frontend',
-       copyright => '2012 Institute of Formal and Applied Linguistics. All Rights Reserved.',
+       copyright => '2012-2013 Institute of Formal and Applied Linguistics. All Rights Reserved.',
    };
- 
+
    # load up any other configuration items
    PROCESS config/urls;
    PROCESS config/menu;
- 
+
    # set defaults for variables, etc.
    DEFAULT
        message = 'There is no message';
-       
+
 -%]
-    
