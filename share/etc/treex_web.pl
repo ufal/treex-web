@@ -10,4 +10,12 @@ my $config = {
             quote_names => 1,
         },
     },
+    'Model::TheSchwartz' => {
+        args => {
+            verbose => 1,
+            databases => [{
+                dsn => 'dbi:SQLite:__path_to(share/theschwartz.db)__'
+            }]
+        }
+    }
 };
