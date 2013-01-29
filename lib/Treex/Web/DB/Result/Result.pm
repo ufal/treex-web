@@ -10,6 +10,7 @@ Treex::Web::DB::Result::Result
 use strict;
 use warnings;
 use DBIx::Class::UUIDColumns;
+use File::Path ();
 use File::Spec ();
 use Treex::Web;
 
@@ -85,7 +86,9 @@ __PACKAGE__->table("result");
 __PACKAGE__->add_columns(
     "id",
     { data_type => "integer", is_auto_increment => 1, is_nullable => 0 },
-    "job_uid",
+    "job_id",
+    { data_type => "integer", is_nullable => 1 },
+    "unique_token",
     { data_type => "varchar", is_nullable => 0, size => 60 },
     "session",
     { data_type => "varchar", is_nullable => 0, size => 100},
@@ -131,8 +134,8 @@ __PACKAGE__->set_primary_key("id");
 
 =cut
 
-__PACKAGE__->add_unique_constraint("hash_unique", ["job_uid"]);
-__PACKAGE__->uuid_columns( 'job_uid' );
+__PACKAGE__->add_unique_constraint("unique_token", ["unique_token"]);
+__PACKAGE__->uuid_columns( 'unique_token' );
 __PACKAGE__->uuid_class('::Data::Uniqid');
 
 =head1 RELATIONS
@@ -170,16 +173,34 @@ sub new {
     return $self->next::method( $attrs );
 }
 
-sub fs_file_name {
-    my ($self, $column, $column_info) = @_;
-    return $column;
+sub insert {
+    my ( $self, $scenario_ref, $input_ref ) = @_;
+
+    my $path = $self->files_path;
+    File::Path::make_path("$path/") or die "Path: $path, Error: $!";
+
+    # write down scenario file
+    if (defined $scenario_ref and $$scenario_ref ne '') {
+        my $file = File::Spec->catfile($path, 'scenario.scen');
+        open my $fh, '>', $file or die $!;
+        print $fh $$scenario_ref;
+    }
+
+    # write input file
+    if (defined $input_ref and $$input_ref ne '') {
+        my $file = File::Spec->catfile($path, 'input.txt');
+        open my $fh, '>', $file or die $!;
+        print $fh $$input_ref;
+    }
+
+    return $self->next::method();
 }
 
-sub _fs_column_dirs {
+sub files_path {
     my $self = shift;
 
-    my $hash = $self->job_uid;
-    return File::Spec->catfile( substr($hash, 0, 2), $hash );
+    my $hash = $self->unique_token;
+    return Treex::Web->path_to('data', 'results', substr($hash, 0, 2), $hash);
 }
 
 __PACKAGE__->meta->make_immutable(inline_constructor => 0);

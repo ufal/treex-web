@@ -19,9 +19,9 @@ schema:
         - deferrable: 1
           expression: ''
           fields:
-            - job_uid
+            - unique_token
           match_type: ''
-          name: hash_unique
+          name: unique_token
           on_delete: ''
           on_update: ''
           options: []
@@ -53,16 +53,16 @@ schema:
           order: 1
           size:
             - 0
-        job_uid:
-          data_type: varchar
+        job_id:
+          data_type: integer
           default_value: ~
-          is_nullable: 0
+          is_nullable: 1
           is_primary_key: 0
-          is_unique: 1
-          name: job_uid
+          is_unique: 0
+          name: job_id
           order: 2
           size:
-            - 60
+            - 0
         last_modified:
           data_type: datetime
           default_value: ~
@@ -70,7 +70,7 @@ schema:
           is_primary_key: 0
           is_unique: 0
           name: last_modified
-          order: 6
+          order: 7
           size:
             - 0
         name:
@@ -80,7 +80,7 @@ schema:
           is_primary_key: 0
           is_unique: 0
           name: name
-          order: 5
+          order: 6
           size:
             - 120
         session:
@@ -90,9 +90,19 @@ schema:
           is_primary_key: 0
           is_unique: 0
           name: session
-          order: 3
+          order: 4
           size:
             - 100
+        unique_token:
+          data_type: varchar
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 0
+          is_unique: 1
+          name: unique_token
+          order: 3
+          size:
+            - 60
         user:
           data_type: integer
           default_value: &1 !!perl/ref
@@ -101,7 +111,7 @@ schema:
           is_primary_key: 0
           is_unique: 0
           name: user
-          order: 4
+          order: 5
           size:
             - 0
       indices:
@@ -349,10 +359,9 @@ translator:
               data_type: integer
               is_auto_increment: 1
               is_nullable: 0
-            job_uid:
-              data_type: varchar
-              is_nullable: 0
-              size: 60
+            job_id:
+              data_type: integer
+              is_nullable: 1
             last_modified:
               _ic_dt_method: datetime
               _inflate_info:
@@ -370,6 +379,10 @@ translator:
               data_type: varchar
               is_nullable: 0
               size: 100
+            unique_token:
+              data_type: varchar
+              is_nullable: 0
+              size: 60
             user:
               _inflate_info:
                 deflate: !!perl/code '{ "DUMMY" }'
@@ -381,7 +394,8 @@ translator:
           _columns_info_loaded: 0
           _ordered_columns:
             - id
-            - job_uid
+            - job_id
+            - unique_token
             - session
             - user
             - name
@@ -401,9 +415,9 @@ translator:
                 foreign.id: self.user
               source: Treex::Web::DB::Result::User
           _unique_constraints:
-            hash_unique:
-              - job_uid
             primary: *3
+            unique_token:
+              - unique_token
           name: result
           result_class: Treex::Web::Model::WebDB::Result
           resultset_attributes: {}

@@ -1,6 +1,6 @@
 -- 
 -- Created by SQL::Translator::Producer::MySQL
--- Created on Mon Jan 28 23:50:03 2013
+-- Created on Tue Jan 29 15:38:35 2013
 -- 
 ;
 SET foreign_key_checks=0;
@@ -9,14 +9,15 @@ SET foreign_key_checks=0;
 --
 CREATE TABLE `result` (
   `id` integer NOT NULL auto_increment,
-  `job_uid` varchar(60) NOT NULL,
+  `job_id` integer,
+  `unique_token` varchar(60) NOT NULL,
   `session` varchar(100) NOT NULL,
   `user` integer DEFAULT null,
   `name` varchar(120),
   `last_modified` datetime NOT NULL,
   INDEX `result_idx_user` (`user`),
   PRIMARY KEY (`id`),
-  UNIQUE `hash_unique` (`job_uid`),
+  UNIQUE `unique_token` (`unique_token`),
   CONSTRAINT `result_fk_user` FOREIGN KEY (`user`) REFERENCES `user` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB;
 --

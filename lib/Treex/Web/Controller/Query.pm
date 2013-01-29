@@ -2,6 +2,7 @@ package Treex::Web::Controller::Query;
 use Moose;
 use Try::Tiny;
 use HTML::FormatText;
+use TheSchwartz::Job;
 use LWP::UserAgent;
 use Regexp::Common qw /URI/;
 use namespace::autoclean;
@@ -20,14 +21,19 @@ Catalyst Controller.
 
 =cut
 
+has 'query_form' => (
+    isa     => 'Treex::Web::Forms::QueryForm',
+    is      => 'rw',
+    lazy    => 1,
+    default => sub { Treex::Web::Forms::QueryForm->new() },
+);
+
 sub begin :Private {
     my ( $self, $c ) = @_;
 
-    my $form = Treex::Web::Forms::QueryForm->new(
-        action => $c->uri_for($self->action_for('index')),
-    );
-
-    $c->stash( queryForm => $form,
+    my $form = $self->query_form;
+    $form->action($c->uri_for($self->action_for('index')));
+    $c->stash( query_form => $form,
                template => 'query.tt2');
 }
 
@@ -42,46 +48,39 @@ sub index :Path :Args(0) {
 
     # we have a post form
     if ( lc $c->req->method eq 'post' ) {
-        $c->forward('process_form');
-        if ( my $result = $c->stash->{result} ) {
-            my $uri = $c->uri_for(
-                $c->controller('Result')->action_for('show'),
-                [ $result->result_hash ],
-            );
-            $c->flash->{status_msg} = "Treex result successully created";
-            $c->response->redirect($uri);
-        } else {
-            $c->stash->{error_msg} = "Something went wrong... Treex did not returned any results";
+        # get form from stash
+        my $form = $c->stash->{query_form};
+        $form->process( params => $c->req->parameters );
+        return unless $form->is_valid;
+
+        # form is valid, lets create new Result
+        my ($scenario, $input, $lang) = ($form->value->{scenario},
+                                         $form->value->{input},
+                                         $form->value->{language});
+        my $rs = $c->model('WebDB::Result')->new({
+            session => $c->create_session_id_if_needed,
+            ($c->user_exists ? (user => $c->user->id) : ())
+        });
+        $rs->insert(\$scenario, \$input);
+        $c->log->debug("Creating new result: " . $rs->unique_token);
+
+        # post job
+        my $job = TheSchwartz::Job->new(
+            funcname => "Treex::Web::Job::Treex",
+            uniqkey  => $rs->unique_token,
+            arg      => { lang => $lang }
+        );
+        my $job_handle = $c->model("TheSchwartz")->insert($job);
+        if ($job_handle) {
+            $rs->job_id($job_handle->jobid);
+            $rs->update;
         }
-    }
-}
 
-sub process_form :Private {
-    my ( $self, $c ) = @_;
-
-    my $form = $c->stash->{queryForm};
-    if ( $form->process( params => $c->req->parameters ) ) {
-        my ($scenario, $input) = ($form->value->{scenario}, $form->value->{input});
-
-        try {
-            my $result = $c->model('Treex')->run({ scenario => $scenario, input_ref => \$input });
-            use Data::Dumper;
-            $c->log->info(Dumper($result));
-
-            my $rs = $c->model('WebDB::Result')->new({
-                scenario => $result->{scenario},
-                stdin => $result->{input},
-                cmd => $result->{cmd},
-                stdout => $result->{out},
-                stderr => $result->{err},
-                ret => $result->{ret},
-            });
-
-            $rs->insert;
-            $c->stash( result => $rs );
-        } catch {
-            $c->log->error("$_");
-        }
+        my $uri = $c->uri_for(
+            $c->controller('Result')->action_for('show'),
+            [ $rs->unique_token ],
+        );
+        $c->response->redirect($uri);
     }
 }
 

@@ -26,15 +26,16 @@ Puts Treex::Web::DB::Result result set to stash
 sub base :Chained('/') :PathPart('') :CaptureArgs(0)  {
     my ($self, $c) = @_;
 
-    my $rs = $c->model('WebDB::Result');
+    my $rs = $c->model('WebDB::Result')
+        ->search_rs({session => $c->create_session_id_if_needed, ($c->user_exists ? (user => $c->user->id) : (user => undef))});
     $c->stash(template => 'result.tt2',
-              result_rs => $rs);
+              rs => $rs);
 }
 
 sub index :Chained('base') :PathPart('results') :Args(0) {
     my ($self, $c) = @_;
 
-    my $rs = $c->stash->{result_rs};
+    my $rs = $c->stash->{rs};
     $c->stash(current_result => $rs->first);
 }
 
@@ -43,18 +44,17 @@ sub index :Chained('base') :PathPart('results') :Args(0) {
 =cut
 
 sub show :Chained('base') :PathPart('result') :Args(1) {
-    my ($self, $c, $result_hash) = @_;
+    my ($self, $c, $unique_token) = @_;
 
-    my $rs = $c->stash->{result_rs};
+    my $rs = $c->stash->{rs};
 
     try {
-        my $result = $rs->find({ result_hash => $result_hash },
-                               { key => 'hash_unique' });
-        die "Result not found!" unless $result;
+        my $result = $rs->find({ unique_token => $unique_token },
+                               { key => 'unique_token' });
+        $c->stash(problem => "Result not found!") unless $result;
         $c->stash(current_result => $result);
     } catch {
         $c->log->error("$_");
-        $c->stash(error_msg => "Result not found");
     }
 }
 
@@ -75,7 +75,7 @@ sub end : ActionClass('RenderView') {
     );
 
     $c->stash(
-        queryForm => $form
+        query_form => $form
     )
 }
 

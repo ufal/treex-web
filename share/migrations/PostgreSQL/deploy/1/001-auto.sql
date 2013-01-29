@@ -1,6 +1,6 @@
 -- 
 -- Created by SQL::Translator::Producer::PostgreSQL
--- Created on Mon Jan 28 23:50:03 2013
+-- Created on Tue Jan 29 15:38:35 2013
 -- 
 ;
 --
@@ -8,13 +8,14 @@
 --
 CREATE TABLE "result" (
   "id" serial NOT NULL,
-  "job_uid" character varying(60) NOT NULL,
+  "job_id" integer,
+  "unique_token" character varying(60) NOT NULL,
   "session" character varying(100) NOT NULL,
   "user" integer DEFAULT null,
   "name" character varying(120),
   "last_modified" timestamp NOT NULL,
   PRIMARY KEY ("id"),
-  CONSTRAINT "hash_unique" UNIQUE ("job_uid")
+  CONSTRAINT "unique_token" UNIQUE ("unique_token")
 );
 CREATE INDEX "result_idx_user" on "result" ("user");
 

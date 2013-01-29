@@ -97,10 +97,9 @@ translator:
               data_type: integer
               is_auto_increment: 1
               is_nullable: 0
-            job_uid:
-              data_type: varchar
-              is_nullable: 0
-              size: 60
+            job_id:
+              data_type: integer
+              is_nullable: 1
             last_modified:
               _ic_dt_method: datetime
               _inflate_info:
@@ -118,6 +117,10 @@ translator:
               data_type: varchar
               is_nullable: 0
               size: 100
+            unique_token:
+              data_type: varchar
+              is_nullable: 0
+              size: 60
             user:
               _inflate_info:
                 deflate: !!perl/code '{ "DUMMY" }'
@@ -130,7 +133,8 @@ translator:
           _columns_info_loaded: 0
           _ordered_columns:
             - id
-            - job_uid
+            - job_id
+            - unique_token
             - session
             - user
             - name
@@ -150,9 +154,9 @@ translator:
                 foreign.id: self.user
               source: Treex::Web::DB::Result::User
           _unique_constraints:
-            hash_unique:
-              - job_uid
             primary: *2
+            unique_token:
+              - unique_token
           name: result
           result_class: Treex::Web::Model::WebDB::Result
           resultset_attributes: {}

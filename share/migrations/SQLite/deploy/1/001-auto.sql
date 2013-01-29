@@ -1,6 +1,6 @@
 -- 
 -- Created by SQL::Translator::Producer::SQLite
--- Created on Mon Jan 28 23:50:03 2013
+-- Created on Tue Jan 29 15:38:35 2013
 -- 
 
 ;
@@ -10,7 +10,8 @@ BEGIN TRANSACTION;
 --
 CREATE TABLE result (
   id INTEGER PRIMARY KEY NOT NULL,
-  job_uid varchar(60) NOT NULL,
+  job_id integer,
+  unique_token varchar(60) NOT NULL,
   session varchar(100) NOT NULL,
   user integer DEFAULT null,
   name varchar(120),
@@ -18,7 +19,7 @@ CREATE TABLE result (
   FOREIGN KEY (user) REFERENCES user(id) ON DELETE CASCADE
 );
 CREATE INDEX result_idx_user ON result (user);
-CREATE UNIQUE INDEX hash_unique ON result (job_uid);
+CREATE UNIQUE INDEX unique_token ON result (unique_token);
 --
 -- Table: scenario
 --
