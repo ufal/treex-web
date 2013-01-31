@@ -52,7 +52,13 @@ $(function(){ poll_treex_result('[% r.unique_token %]'); });
       <pre class="pre-scrollable">[% r.input | html %]</pre>
     </div>
     <div class="tab-pane" id="stderr">
+      [% IF r.error_log %]
       <pre class="pre-scrollable">[% r.error_log | html %]</pre>
+      [% ELSE %]
+      <div class="alert alert-info">
+        Error log doesn't exist.
+      </div>
+      [% END %]
     </div>
   </div>
   [% END %]
