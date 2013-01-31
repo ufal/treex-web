@@ -1,6 +1,8 @@
 /share/treex-web-db.db
+/share/theschwartz.db
 /data/results/*
 /data/users/*
+/tmp/*
 /.settings
 /.project
 /blib

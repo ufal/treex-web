@@ -18,6 +18,11 @@ Catalyst Model.
 
 =cut
 
+sub runjob {
+    my ( $self, $opts ) = @_;
+
+}
+
 sub run {
   my ( $self, $opts ) = @_;
   $opts||={};

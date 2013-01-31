@@ -69,7 +69,7 @@ __PACKAGE__->config(
         file => __PACKAGE__->path_to('share', 'etc'),
     },
     'Plugin::Session' => {
-        expires => 3600,
+        expires => 3600 * 24,
         storage => '/tmp/session',
     },
     'Model::WebDB' => {

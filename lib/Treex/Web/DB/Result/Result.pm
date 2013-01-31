@@ -10,7 +10,9 @@ Treex::Web::DB::Result::Result
 use strict;
 use warnings;
 use DBIx::Class::UUIDColumns;
+use File::Path ();
 use File::Spec ();
+use TheSchwartz::JobHandle;
 use Treex::Web;
 
 use Moose;
@@ -50,11 +52,17 @@ __PACKAGE__->table("result");
   is_auto_increment: 1
   is_nullable: 0
 
-=head2 result_hash
+=head2 job_uid
 
   data_type: 'varchar'
   is_nullable: 0
   size: 60
+
+=head2 session
+
+  data_type: 'varchar'
+  is_nullable: 0
+  size: 100
 
 =head2 user
 
@@ -69,11 +77,6 @@ __PACKAGE__->table("result");
   is_nullable: 0
   size: 120
 
-=head2 scenario
-
-  data_type: 'text'
-  is_nullable: 0
-
 =head2 last_modified
 
   data_type: 'datetime'
@@ -84,7 +87,9 @@ __PACKAGE__->table("result");
 __PACKAGE__->add_columns(
     "id",
     { data_type => "integer", is_auto_increment => 1, is_nullable => 0 },
-    "result_hash",
+    "job_handle",
+    { data_type => "varchar", is_nullable => 1, size => 255 },
+    "unique_token",
     { data_type => "varchar", is_nullable => 0, size => 60 },
     "user",
     {
@@ -95,36 +100,6 @@ __PACKAGE__->add_columns(
     },
     "name",
     { data_type => "varchar", is_nullable => 1, size => 120 },
-    "scenario",
-    { data_type => "text", is_nullable => 0 },
-    "stdin",
-    {
-        data_type => "varchar",
-        is_nullable => 0,
-        size => 200,
-        is_fs_column => 1,
-        fs_column_path => Treex::Web->path_to('data', 'results'),
-    },
-    "cmd",
-    { data_type => "text", is_nullable => 0 },
-    "stdout",
-    {
-        data_type => "varchar",
-        is_nullable => 0,
-        size => 200,
-        is_fs_column => 1,
-        fs_column_path => Treex::Web->path_to('data', 'results'),
-    },
-    "stderr",
-    {
-        data_type => "varchar",
-        is_nullable => 0,
-        size => 200,
-        is_fs_column => 1,
-        fs_column_path => Treex::Web->path_to('data', 'results'),
-    },
-    "ret",
-    { data_type => "integer", is_nullable => 0, default_value => 1 },
     "last_modified",
     {
         data_type => "datetime",
@@ -158,8 +133,8 @@ __PACKAGE__->set_primary_key("id");
 
 =cut
 
-__PACKAGE__->add_unique_constraint("hash_unique", ["result_hash"]);
-__PACKAGE__->uuid_columns( 'result_hash' );
+__PACKAGE__->add_unique_constraint("unique_token", ["unique_token"]);
+__PACKAGE__->uuid_columns( 'unique_token' );
 __PACKAGE__->uuid_class('::Data::Uniqid');
 
 =head1 RELATIONS
@@ -197,16 +172,88 @@ sub new {
     return $self->next::method( $attrs );
 }
 
-sub fs_file_name {
-    my ($self, $column, $column_info) = @_;
-    return $column;
+sub insert {
+    my ( $self, $scenario_ref, $input_ref ) = @_;
+
+    my $path = $self->files_path;
+    File::Path::make_path("$path/") or die "Path: $path, Error: $!";
+
+    # write down scenario file
+    $self->scenario($scenario_ref);
+
+    # write input file
+    $self->input($input_ref);
+
+    return $self->next::method();
 }
 
-sub _fs_column_dirs {
+sub status {
+    my ( $self, $c ) = @_;
+
+    return 'unknown' unless $self->job_handle;
+
+    my $job_handle = $c->model('TheSchwartz')->handle_from_string($self->job_handle);
+    return 'pending' if $job_handle->is_pending;
+
+    my $exit_status = $job_handle->exit_status;
+    return 'failed' if defined $exit_status and $exit_status != 0;
+
+    # We don't have many options here... The job is done or has failed
+    # horribly somehow. Either way we are done.
+    return 'done';
+}
+
+sub input {
+    my ( $self, $input_ref ) = @_;
+
+    # write down input file
+    return $self->_file_rw('input.txt', $input_ref);
+}
+
+sub failure_log {
+    my ( $self, $c ) = @_;
+
+    return unless $self->job_handle;
+
+    my $job_handle = $c->model('TheSchwartz')->handle_from_string($self->job_handle);
+    return $job_handle->failure_log;
+}
+
+sub scenario {
+    my ( $self, $scenario_ref ) = @_;
+
+    # write down scenario file
+    return $self->_file_rw('scenario.scen', $scenario_ref);
+}
+
+sub error_log {
+    shift->_file_rw('error.log');
+}
+
+sub _file_rw {
+    my ( $self, $filename, $ref ) = @_;
+
+    my $path = $self->files_path;
+    my $file = File::Spec->catfile($path, $filename);
+
+    if (defined $ref and $$ref ne '') {
+        open my $fh, '>', $file or die $!;
+        print $fh $$ref;
+        close $fh;
+        return $$ref;
+    } else {
+        open my $fh, '<', $file or return "";
+        my $file_contents = do { local $/; <$fh> };
+        close $fh;
+        return $file_contents;
+    }
+}
+
+sub files_path {
     my $self = shift;
 
-    my $hash = $self->result_hash;
-    return File::Spec->catfile( substr($hash, 0, 2), $hash );
+    my $hash = $self->unique_token;
+    return Treex::Web->path_to('data', 'results', substr($hash, 0, 2), $hash);
 }
 
 __PACKAGE__->meta->make_immutable(inline_constructor => 0);

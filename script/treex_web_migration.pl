@@ -1,4 +1,4 @@
-#!/usr/bin/perl -w
+#!/usr/bin/perl
 # treex_web_migration.pl --- Tool to create and manage your migrations for Treex::Web
 # Author: Michal Sedlak <sedlakmichal@gmail.com>
 # Created: 02 Mar 2012
@@ -28,7 +28,7 @@ treex_web_migration.pl [options] args
 
 =head1 DESCRIPTION
 
-Stub documentation for treex_web_migration.pl, 
+Stub documentation for treex_web_migration.pl,
 
 =head1 AUTHOR
 
