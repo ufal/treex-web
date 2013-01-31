@@ -58,7 +58,7 @@ sub index :Path :Args(0) {
                                          $form->value->{input},
                                          $form->value->{language});
         my $rs = $c->model('WebDB::Result')->new({
-            session => $c->create_session_id_if_needed,
+#            session => $c->create_session_id_if_needed,
             ($c->user_exists ? (user => $c->user->id) : ())
         });
         $rs->insert(\$scenario, \$input);
@@ -72,7 +72,7 @@ sub index :Path :Args(0) {
         );
         my $job_handle = $c->model("TheSchwartz")->insert($job);
         if ($job_handle) {
-            $rs->job_id($job_handle->jobid);
+            $rs->job_handle($job_handle->as_string);
             $rs->update;
         }
 

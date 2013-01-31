@@ -1,6 +1,6 @@
 -- 
 -- Created by SQL::Translator::Producer::MySQL
--- Created on Tue Jan 29 15:38:35 2013
+-- Created on Wed Jan 30 12:30:19 2013
 -- 
 ;
 SET foreign_key_checks=0;
@@ -9,9 +9,8 @@ SET foreign_key_checks=0;
 --
 CREATE TABLE `result` (
   `id` integer NOT NULL auto_increment,
-  `job_id` integer,
+  `job_handle` varchar(255),
   `unique_token` varchar(60) NOT NULL,
-  `session` varchar(100) NOT NULL,
   `user` integer DEFAULT null,
   `name` varchar(120),
   `last_modified` datetime NOT NULL,

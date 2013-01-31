@@ -29,13 +29,13 @@ The root page (/)
 
 sub index :Path :Args(0) {
     my ( $self, $c ) = @_;
-    
+
     my $form = Treex::Web::Forms::QueryForm->new(
         action => $c->uri_for($c->controller('Query')->action_for('index')),
     );
-    
+
     $c->stash(
-        queryForm => $form
+        query_form => $form
     );
 }
 
@@ -45,6 +45,10 @@ sub index :Path :Args(0) {
 
 sub auto :Path {
     my ( $self, $c ) = @_;
+
+    my $results_rs = $c->model('WebDB::Result')
+        ->search_rs({($c->user_exists ? (user => $c->user->id) : (user => undef))});
+    $c->stash(results_rs => $results_rs);
 }
 
 =head2 default
@@ -52,7 +56,7 @@ sub auto :Path {
 Standard 404 error page
 
 =cut
-    
+
 sub default :Path {
     my ( $self, $c ) = @_;
     $c->response->body( 'Page not found' );
@@ -64,7 +68,7 @@ sub default :Path {
 Attempt to render a view, if needed.
 
 =cut
-    
+
 sub end : ActionClass('RenderView') {}
 
 =head1 AUTHOR

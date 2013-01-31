@@ -53,16 +53,16 @@ schema:
           order: 1
           size:
             - 0
-        job_id:
-          data_type: integer
+        job_handle:
+          data_type: varchar
           default_value: ~
           is_nullable: 1
           is_primary_key: 0
           is_unique: 0
-          name: job_id
+          name: job_handle
           order: 2
           size:
-            - 0
+            - 255
         last_modified:
           data_type: datetime
           default_value: ~
@@ -70,7 +70,7 @@ schema:
           is_primary_key: 0
           is_unique: 0
           name: last_modified
-          order: 7
+          order: 6
           size:
             - 0
         name:
@@ -80,19 +80,9 @@ schema:
           is_primary_key: 0
           is_unique: 0
           name: name
-          order: 6
+          order: 5
           size:
             - 120
-        session:
-          data_type: varchar
-          default_value: ~
-          is_nullable: 0
-          is_primary_key: 0
-          is_unique: 0
-          name: session
-          order: 4
-          size:
-            - 100
         unique_token:
           data_type: varchar
           default_value: ~
@@ -111,7 +101,7 @@ schema:
           is_primary_key: 0
           is_unique: 0
           name: user
-          order: 5
+          order: 4
           size:
             - 0
       indices:
@@ -359,9 +349,10 @@ translator:
               data_type: integer
               is_auto_increment: 1
               is_nullable: 0
-            job_id:
-              data_type: integer
+            job_handle:
+              data_type: varchar
               is_nullable: 1
+              size: 255
             last_modified:
               _ic_dt_method: datetime
               _inflate_info:
@@ -375,10 +366,6 @@ translator:
               data_type: varchar
               is_nullable: 1
               size: 120
-            session:
-              data_type: varchar
-              is_nullable: 0
-              size: 100
             unique_token:
               data_type: varchar
               is_nullable: 0
@@ -394,9 +381,8 @@ translator:
           _columns_info_loaded: 0
           _ordered_columns:
             - id
-            - job_id
+            - job_handle
             - unique_token
-            - session
             - user
             - name
             - last_modified

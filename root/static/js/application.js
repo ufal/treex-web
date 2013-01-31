@@ -70,3 +70,26 @@ function extract_text_from_url(url, success, error) {
              }
            });
 }
+
+function poll_treex_result(token) {
+    var p = window.location.protocol || 'http:';
+    var base = p  + "//" + window.location.host + '/result/' + token;
+    var stop = false;
+
+    (function poll(){
+        if (stop) return;
+        $.ajax({ url: base + '/status', success: function(data){
+            console.log("Status: " + data.status);
+            if (data.status != 'pending') {
+                stop = true;
+                load_tree_result(token);
+            }
+        }, dataType: "json", timeout: 4000 });
+        setTimeout(poll, 4000);
+    })();
+}
+
+function load_tree_result(token) {
+    $('.loading').hide();
+
+}

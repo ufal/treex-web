@@ -1,6 +1,7 @@
 package Treex::Web::Controller::Result;
 use Moose;
 use Try::Tiny;
+use JSON;
 use namespace::autoclean;
 
 BEGIN {extends 'Treex::Web::Controller::Base'; }
@@ -26,36 +27,47 @@ Puts Treex::Web::DB::Result result set to stash
 sub base :Chained('/') :PathPart('') :CaptureArgs(0)  {
     my ($self, $c) = @_;
 
-    my $rs = $c->model('WebDB::Result')
-        ->search_rs({session => $c->create_session_id_if_needed, ($c->user_exists ? (user => $c->user->id) : (user => undef))});
-    $c->stash(template => 'result.tt2',
-              rs => $rs);
+    $c->stash(template => 'results.tt2');
 }
 
 sub index :Chained('base') :PathPart('results') :Args(0) {
     my ($self, $c) = @_;
 
-    my $rs = $c->stash->{rs};
+    my $rs = $c->stash->{results_rs};
     $c->stash(current_result => $rs->first);
+}
+
+sub object :Chained('base') :PathPart('result') :CaptureArgs(1) {
+    my ($self, $c, $unique_token) = @_;
+
+    my $rs = $c->stash->{results_rs};
+
+    try {
+        my $result = $rs->find({ unique_token => $unique_token },
+                               { key => 'unique_token' });
+        $c->stash(current_result => $result);
+    } catch {
+        $c->log->error("$_");
+    };
+    $c->stash(template => 'result.tt2');
 }
 
 =head2 show
 
 =cut
 
-sub show :Chained('base') :PathPart('result') :Args(1) {
+sub show :Chained('object') :PathPart('') :Args(0) {
     my ($self, $c, $unique_token) = @_;
 
-    my $rs = $c->stash->{rs};
+}
 
-    try {
-        my $result = $rs->find({ unique_token => $unique_token },
-                               { key => 'unique_token' });
-        $c->stash(problem => "Result not found!") unless $result;
-        $c->stash(current_result => $result);
-    } catch {
-        $c->log->error("$_");
-    }
+sub status :Chained('object') :Pathpart('status') :Args(0) {
+    my ( $self, $c ) = @_;
+
+    my $curr = $c->stash->{current_result};
+    my $status = $curr ? $curr->status($c) : 'unknown';
+    $c->res->content_type('application/json');
+    $c->res->body(to_json({status => $status}));
 }
 
 =head2 delete
@@ -66,7 +78,7 @@ sub delete :Chained('result') :PathPart('delete') :Args(0) {
   #TODO
 }
 
-sub end : ActionClass('RenderView') {
+sub end :ActionClass('RenderView') {
     my ( $self, $c ) = @_;
 
     my $form = Treex::Web::Forms::QueryForm->new(
@@ -76,7 +88,7 @@ sub end : ActionClass('RenderView') {
 
     $c->stash(
         query_form => $form
-    )
+    );
 }
 
 =head1 AUTHOR

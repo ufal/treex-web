@@ -97,9 +97,10 @@ translator:
               data_type: integer
               is_auto_increment: 1
               is_nullable: 0
-            job_id:
-              data_type: integer
+            job_handle:
+              data_type: varchar
               is_nullable: 1
+              size: 255
             last_modified:
               _ic_dt_method: datetime
               _inflate_info:
@@ -113,10 +114,6 @@ translator:
               data_type: varchar
               is_nullable: 1
               size: 120
-            session:
-              data_type: varchar
-              is_nullable: 0
-              size: 100
             unique_token:
               data_type: varchar
               is_nullable: 0
@@ -133,9 +130,8 @@ translator:
           _columns_info_loaded: 0
           _ordered_columns:
             - id
-            - job_id
+            - job_handle
             - unique_token
-            - session
             - user
             - name
             - last_modified

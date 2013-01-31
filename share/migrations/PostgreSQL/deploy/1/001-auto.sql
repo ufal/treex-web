@@ -1,6 +1,6 @@
 -- 
 -- Created by SQL::Translator::Producer::PostgreSQL
--- Created on Tue Jan 29 15:38:35 2013
+-- Created on Wed Jan 30 12:30:20 2013
 -- 
 ;
 --
@@ -8,9 +8,8 @@
 --
 CREATE TABLE "result" (
   "id" serial NOT NULL,
-  "job_id" integer,
+  "job_handle" character varying(255),
   "unique_token" character varying(60) NOT NULL,
-  "session" character varying(100) NOT NULL,
   "user" integer DEFAULT null,
   "name" character varying(120),
   "last_modified" timestamp NOT NULL,

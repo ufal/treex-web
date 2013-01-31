@@ -11,7 +11,7 @@ extends 'TheSchwartz::Worker';
 sub keep_exit_status_for { 7 * 24 * 60 * 60 } # 7 days
 
 sub work {
-    my $class = shift;
+    my $self = shift;
     my TheSchwartz::Job $job = shift;
 
     my $lang = $job->arg->{lang};
@@ -27,6 +27,8 @@ sub work {
     print "Resul dir: $result_dir\n";
     chdir $result_dir  or die "Switch to result_dir has failed.";
     print getcwd;
+
+    $self->start_stats($job);
 
     # Form a command
     my @cmd = qw(treex);# -Len Read::Text scenario.scen Write::Treex to=-);
@@ -46,11 +48,23 @@ sub work {
         $job->completed;
     }
 
-    # Write jobid and wall time to the file
-    open my $jid, ">stats" or die $!;
-    print $jid $job->jobid;
-    close $jid;
+    $self->end_stats($job);
+}
 
+sub start_stats {
+    my ( $self, $job ) = @_;
+
+    open my $stats, ">stats" or die $!;
+    print $stats join("\n", ($job->handle->as_string, time)), "\n";
+    close $stats;
+}
+
+sub end_stats {
+    my ( $self, $job ) = @_;
+
+    open my $stats, ">>stats" or die $!;
+    print $stats time, "\n";
+    close $stats;
 }
 
 __PACKAGE__->meta->make_immutable;

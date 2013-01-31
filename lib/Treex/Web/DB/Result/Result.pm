@@ -12,6 +12,7 @@ use warnings;
 use DBIx::Class::UUIDColumns;
 use File::Path ();
 use File::Spec ();
+use TheSchwartz::JobHandle;
 use Treex::Web;
 
 use Moose;
@@ -86,12 +87,10 @@ __PACKAGE__->table("result");
 __PACKAGE__->add_columns(
     "id",
     { data_type => "integer", is_auto_increment => 1, is_nullable => 0 },
-    "job_id",
-    { data_type => "integer", is_nullable => 1 },
+    "job_handle",
+    { data_type => "varchar", is_nullable => 1, size => 255 },
     "unique_token",
     { data_type => "varchar", is_nullable => 0, size => 60 },
-    "session",
-    { data_type => "varchar", is_nullable => 0, size => 100},
     "user",
     {
         data_type      => "integer",
@@ -180,20 +179,61 @@ sub insert {
     File::Path::make_path("$path/") or die "Path: $path, Error: $!";
 
     # write down scenario file
-    if (defined $scenario_ref and $$scenario_ref ne '') {
-        my $file = File::Spec->catfile($path, 'scenario.scen');
-        open my $fh, '>', $file or die $!;
-        print $fh $$scenario_ref;
-    }
+    $self->scenario($scenario_ref);
 
     # write input file
-    if (defined $input_ref and $$input_ref ne '') {
-        my $file = File::Spec->catfile($path, 'input.txt');
-        open my $fh, '>', $file or die $!;
-        print $fh $$input_ref;
-    }
+    $self->input($input_ref);
 
     return $self->next::method();
+}
+
+sub status {
+    my ( $self, $c ) = @_;
+
+    return 'unknown' unless $self->job_handle;
+
+    my $job_handle = $c->model('TheSchwartz')->handle_from_string($self->job_handle);
+    return 'pending' if $job_handle->is_pending;
+
+    my $exit_status = $job_handle->exit_status;
+    return 'failed' if defined $exit_status and $exit_status != 0;
+
+    # We don't have many options here... The job is done or has failed
+    # horribly somehow. Either way we are done.
+    return 'done';
+}
+
+sub input {
+    my ( $self, $input_ref ) = @_;
+
+    # write down input file
+    return $self->_file_rw('input.txt', $input_ref);
+}
+
+sub scenario {
+    my ( $self, $scenario_ref ) = @_;
+
+    # write down scenario file
+    return $self->_file_rw('scenario.scen', $scenario_ref);
+}
+
+sub _file_rw {
+    my ( $self, $filename, $ref ) = @_;
+
+    my $path = $self->files_path;
+    my $file = File::Spec->catfile($path, $filename);
+
+    if (defined $ref and $$ref ne '') {
+        open my $fh, '>', $file or die $!;
+        print $fh $$ref;
+        close $fh;
+        return $$ref;
+    } else {
+        open my $fh, '<', $file or die $!;
+        my $file_contents = do { local $/; <$fh> };
+        close $fh;
+        return $file_contents;
+    }
 }
 
 sub files_path {
