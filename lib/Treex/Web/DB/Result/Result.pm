@@ -210,11 +210,24 @@ sub input {
     return $self->_file_rw('input.txt', $input_ref);
 }
 
+sub failure_log {
+    my ( $self, $c ) = @_;
+
+    return unless $self->job_handle;
+
+    my $job_handle = $c->model('TheSchwartz')->handle_from_string($self->job_handle);
+    return $job_handle->failure_log;
+}
+
 sub scenario {
     my ( $self, $scenario_ref ) = @_;
 
     # write down scenario file
     return $self->_file_rw('scenario.scen', $scenario_ref);
+}
+
+sub error_log {
+    shift->_file_rw('error.log');
 }
 
 sub _file_rw {
@@ -229,7 +242,7 @@ sub _file_rw {
         close $fh;
         return $$ref;
     } else {
-        open my $fh, '<', $file or die $!;
+        open my $fh, '<', $file or return "";
         my $file_contents = do { local $/; <$fh> };
         close $fh;
         return $file_contents;

@@ -7,7 +7,7 @@
 [% IF current_result %]
 [% r = current_result %]
 
-[% IF r.status(c) == 'pending' %]
+  [% IF r.status(c) == 'pending' %]
   <div class="treex-pending">
     <div class="center"><img title="Treex is running..." src="[% c.uri_for('/img/treex-loading.gif') %]" /></div>
     <h2 class="center">Treex is running...</h2>
@@ -16,15 +16,23 @@
 <script>
 $(function(){ poll_treex_result('[% r.unique_token %]'); });
 </script>
-[% END %]
+  [% ELSE %]
 
-  <div class="treex-failed">
-
+  [% IF r.status(c) == 'failed' %]
+  <div class="treex-failed alert alert-error">
+    <h4>Oh Snap!</h4>
+    <p>An error has occurred. We're terribly sorry about that, but it's one of those things that happens from time to time.</p>
+    [% fails = r.failure_log(c) %]
+    [% IF fails %]
+    <p>Here's the error message, on the off-chance that it means something to you:</p>
+    <ul>
+    [% FOREACH fail IN fails %]
+      <li>[% fail %]</li>
+    [% END %]
+    </ul>
+    [% END %]
   </div>
-
-  <div class="treex-unknown">
-
-  </div>
+  [% END %]
 
   <div id="treexview">
     <p class="sentence"></p>
@@ -32,7 +40,7 @@ $(function(){ poll_treex_result('[% r.unique_token %]'); });
   </div>
 
   <ul class="nav nav-tabs">
-    <li><a href="#scenario" data-toggle="tab">Scenario</a></li>
+    <li class="active"><a href="#scenario" data-toggle="tab">Scenario</a></li>
     <li><a href="#input" data-toggle="tab">Input</a></li>
     <li><a href="#stderr" data-toggle="tab">Error Log</a></li>
   </ul>
@@ -43,8 +51,11 @@ $(function(){ poll_treex_result('[% r.unique_token %]'); });
     <div class="tab-pane" id="input">
       <pre class="pre-scrollable">[% r.input | html %]</pre>
     </div>
-    <div class="tab-pane" id="stderr"></div>
+    <div class="tab-pane" id="stderr">
+      <pre class="pre-scrollable">[% r.error_log | html %]</pre>
+    </div>
   </div>
+  [% END %]
 [% ELSE %]
   <div class="alert alert-error">
     Result not found!
