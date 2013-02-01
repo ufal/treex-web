@@ -48,13 +48,13 @@
         return style;
     };
 
-    treex.loadDoc = function(file, callback) {
+    treex.loadDoc = function(url, callback) {
         // TODO: use ajax with error callback
-        $.getJSON(this.opts.print_api, { file: file }, function(data) {
+        $.getJSON(url, {  }, function(data) {
             console.log(data);
             var doc = Document.fromJSON(data);
-            doc.file = file;
-            treex.documents[file] = (doc);
+            doc.file = url;
+            treex.documents[url] = (doc);
             _.isFunction(callback) && callback(doc);
         });
     };

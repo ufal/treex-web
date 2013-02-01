@@ -226,6 +226,11 @@ sub scenario {
     return $self->_file_rw('scenario.scen', $scenario_ref);
 }
 
+sub result_filename {
+    my $self = shift;
+    return File::Spec->catfile($self->files_path, 'result.treex');
+}
+
 sub error_log {
     shift->_file_rw('error.log');
 }

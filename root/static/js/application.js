@@ -51,6 +51,24 @@ $(document).ready(function() {
             editor.focus();
         });
     });
+
+    $('#treex-pending').each(function(){
+        var $this = $(this);
+        var token = $this.data('token');
+        token && poll_treex_result(token);
+    });
+
+    $('#treexview').each(function(){
+        var $this = $(this);
+        var token = $this.data('token');
+        var p = window.location.protocol || 'http:';
+        var url = p  + "//" + window.location.host + '/result/' + token + '/print';
+
+        Treex.loadDoc(url, function(data) {
+            var view = Treex.TreeView('gfx-holder');
+            view.renderBundle(data.bundles[0]);
+        });
+    });
 });
 
 function extract_text_from_url(url, success, error) {
@@ -91,5 +109,4 @@ function poll_treex_result(token) {
 
 function load_tree_result(token) {
     $('.loading').hide();
-
 }

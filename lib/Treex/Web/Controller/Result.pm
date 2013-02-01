@@ -48,6 +48,7 @@ sub object :Chained('base') :PathPart('result') :CaptureArgs(1) {
         $c->stash(current_result => $result);
     } catch {
         $c->log->error("$_");
+        # TODO handle not_found
     };
     $c->stash(template => 'result.tt2');
 }
@@ -61,13 +62,18 @@ sub show :Chained('object') :PathPart('') :Args(0) {
 
 }
 
-sub status :Chained('object') :Pathpart('status') :Args(0) {
+sub status :Chained('object') :PathPart('status') :Args(0) {
     my ( $self, $c ) = @_;
 
     my $curr = $c->stash->{current_result};
     my $status = $curr ? $curr->status($c) : 'unknown';
     $c->res->content_type('application/json');
     $c->res->body(to_json({status => $status}));
+}
+
+sub print_result :Chained('object') :PathPart('print') :Args(0) {
+    my ( $self, $c ) = @_;
+    $c->forward('Model::Print');
 }
 
 =head2 delete

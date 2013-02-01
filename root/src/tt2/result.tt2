@@ -8,14 +8,11 @@
 [% r = current_result %]
 
   [% IF r.status(c) == 'pending' %]
-  <div class="treex-pending">
+  <div id="treex-pending" data-token="[% r.unique_token %]">
     <div class="center"><img title="Treex is running..." src="[% c.uri_for('/img/treex-loading.gif') %]" /></div>
     <h2 class="center">Treex is running...</h2>
     <p class="center muted">Please wait while Treex process your request.</p>
   </div>
-<script>
-$(function(){ poll_treex_result('[% r.unique_token %]'); });
-</script>
   [% ELSE %]
 
   [% IF r.status(c) == 'failed' %]
@@ -34,7 +31,14 @@ $(function(){ poll_treex_result('[% r.unique_token %]'); });
   </div>
   [% END %]
 
-  <div id="treexview">
+  <div id="treexview" data-token="[% r.unique_token %]">
+    <div class="print-placeholder">
+
+    </div>
+    <ul class="pager" style="text-align:left">
+      <li><a href="#prev">Previous</a></li>
+      <li><a href="#next">Next</a></li>
+    </ul>
     <p class="sentence"></p>
     <div id="gfx-holder"></div>
   </div>

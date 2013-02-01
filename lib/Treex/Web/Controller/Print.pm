@@ -1,5 +1,8 @@
 package Treex::Web::Controller::Print;
 use Moose;
+use Treex::Print;
+use Treex::Core::Document;
+use Treex::PML::Factory;
 use Treex::View::TreeLayout;
 use Treex::View::Node;
 use JSON;
@@ -19,12 +22,20 @@ Catalyst Controller.
 
 =cut
 
-has 'treeLayout' => (
+has 'tree_layout' => (
     is => 'ro',
     isa => 'Treex::View::TreeLayout',
     default => sub { Treex::View::TreeLayout->new },
 );
 
+=head2 index
+
+=cut
+
+sub print_result :Private {
+    my ( $self, $c ) = @_;
+
+}
 
 =head2 index
 
@@ -32,12 +43,6 @@ has 'treeLayout' => (
 
 sub index :Path :Args(0) {
     my ( $self, $c ) = @_;
-
-    $c->response->body('Matched Treex::Web::Controller::Print in Print.');
-
-    use Treex::Print;
-    use Treex::Core::Document;
-    use Treex::PML::Factory;
 
     my $testfile = "test.treex.gz";
 
@@ -56,16 +61,16 @@ sub index :Path :Args(0) {
         foreach my $zone ( $bundle->get_all_zones ) {
             my %trees;
             foreach my $tree ( $zone->get_all_trees ) {
-                my $tree_label = $self->treeLayout->get_tree_label($tree);
+                my $tree_label = $self->tree_layout->get_tree_label($tree);
                 my @nodes = (map { Treex::View::Node->new(node => $_, labels => $labels) }
-                                 $self->treeLayout->get_nodes($tree));
+                                 $self->tree_layout->get_nodes($tree));
                 $trees{$tree_label} = {
                     nodes => \@nodes,
                     language => $tree->language,
                     layer => $tree->get_layer,
                 };
             }
-            $zones{$self->treeLayout->get_zone_label($zone)} = {
+            $zones{$self->tree_layout->get_zone_label($zone)} = {
                 trees => \%trees,
                 sentence => $zone->sentence,
             };
