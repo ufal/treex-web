@@ -6,8 +6,9 @@
 
 [% IF current_result %]
 [% r = current_result %]
+[% status = r.status(c) %]
 
-  [% IF r.status(c) == 'pending' %]
+  [% IF status == 'pending' %]
   <div id="treex-pending" data-token="[% r.unique_token %]">
     <div class="center"><img title="Treex is running..." src="[% c.uri_for('/img/treex-loading.gif') %]" /></div>
     <h2 class="center">Treex is running...</h2>
@@ -15,7 +16,25 @@
   </div>
   [% ELSE %]
 
-  [% IF r.status(c) == 'failed' %]
+  <div class="btn-toolbar">
+    <div class="btn-group">
+      <a class="btn" href="[% c.uri_for(c.controller('Result::Download').action_for('all'), [r.unique_token]) %]"><i class="icon-download-alt"></i> Download all</a>
+      <button class="btn dropdown-toggle" data-toggle="dropdown">
+        <span class="caret"></span>
+      </button>
+      <ul class="dropdown-menu">
+        <li><a href="">Result file</a></li>
+        <li><a href="">Scenario</a></li>
+        <li><a href="">Input</a></li>
+        <li><a href="">Error log</a></li>
+      </ul>
+    </div>
+    <div class="btn-group">
+      <button class="btn"><i class="icon-repeat"></i> Run again</button>
+    </div>
+  </div>
+
+  [% IF status == 'failed' %]
   <div class="treex-failed alert alert-error">
     <h4>Oh Snap!</h4>
     <p>An error has occurred. We're terribly sorry about that, but it's one of those things that happens from time to time.</p>
@@ -29,8 +48,7 @@
     </ul>
     [% END %]
   </div>
-  [% END %]
-
+  [% ELSE %]
   <div id="treexview" data-token="[% r.unique_token %]">
     <ul class="pager hide" style="text-align:left">
       <li class="prev-bundle"><a href="#prev">Previous</a></li>
@@ -42,6 +60,7 @@
     <p class="sentence"></p>
     <div id="gfx-holder"></div>
   </div>
+  [% END %]
 
   <ul id="result-tabs" class="nav nav-tabs">
     <li><a href="#scenario" data-toggle="tab">Scenario</a></li>

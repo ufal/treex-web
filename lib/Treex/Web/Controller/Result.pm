@@ -37,7 +37,7 @@ sub index :Chained('base') :PathPart('results') :Args(0) {
     $c->stash(current_result => $rs->first);
 }
 
-sub object :Chained('base') :PathPart('result') :CaptureArgs(1) {
+sub result :Chained('base') :PathPart('result') :CaptureArgs(1) {
     my ($self, $c, $unique_token) = @_;
 
     my $rs = $c->stash->{results_rs};
@@ -57,12 +57,12 @@ sub object :Chained('base') :PathPart('result') :CaptureArgs(1) {
 
 =cut
 
-sub show :Chained('object') :PathPart('') :Args(0) {
+sub show :Chained('result') :PathPart('') :Args(0) {
     my ($self, $c, $unique_token) = @_;
 
 }
 
-sub status :Chained('object') :PathPart('status') :Args(0) {
+sub status :Chained('result') :PathPart('status') :Args(0) {
     my ( $self, $c ) = @_;
 
     my $curr = $c->stash->{current_result};
@@ -71,9 +71,12 @@ sub status :Chained('object') :PathPart('status') :Args(0) {
     $c->res->body(to_json({status => $status}));
 }
 
-sub print_result :Chained('object') :PathPart('print') :Args(0) {
+sub print_result :Chained('result') :PathPart('print') :Args(0) {
     my ( $self, $c ) = @_;
     $c->forward('Model::Print');
+}
+
+sub download :Chained('result') :CaptureArgs(0) {
 }
 
 =head2 delete
