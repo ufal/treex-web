@@ -24,3 +24,11 @@ body {
 .nav {
     margin-bottom: 0px;
 }
+
+#gfx-holder {
+    overflow: auto;
+}
+
+#treexview {
+    margin-bottom: 10px;
+}

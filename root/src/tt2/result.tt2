@@ -43,13 +43,13 @@
     <div id="gfx-holder"></div>
   </div>
 
-  <ul class="nav nav-tabs">
-    <li class="active"><a href="#scenario" data-toggle="tab">Scenario</a></li>
+  <ul id="result-tabs" class="nav nav-tabs">
+    <li><a href="#scenario" data-toggle="tab">Scenario</a></li>
     <li><a href="#input" data-toggle="tab">Input</a></li>
     <li><a href="#stderr" data-toggle="tab">Error Log</a></li>
   </ul>
   <div class="tab-content">
-    <div class="tab-pane active" id="scenario">
+    <div class="tab-pane" id="scenario">
       <pre class="pre-scrollable">[% r.scenario | html %]</pre>
     </div>
     <div class="tab-pane" id="input">

@@ -111,6 +111,22 @@ $(document).ready(function() {
             }
         });
     });
+
+    $('#result-tabs a[data-toggle="tab"]').on('show', function (e) {
+        var $target = $(e.target),
+            $related = $(e.relatedTarget),
+            $curr = $($target.attr('href')),
+            $prev = $($related.attr('href')),
+            $tab_content = $curr.parent();
+
+        if ($tab_content.height() < $curr.height()) {
+            var h = $tab_content.height() - $prev.height();
+            if ( (h + $curr.height()) > $tab_content.height() ) {
+                $tab_content.css('height', h + $curr.height());
+            }
+        }
+    });
+    $('#result-tabs a[data-toggle="tab"]:first').tab('show');
 });
 
 function extract_text_from_url(url, success, error) {
