@@ -1,15 +1,15 @@
 [% META title="Login" %]
 
-<div id="login-form-container">
-  [% loginForm.render %]
+<div class="row-fluid">
+  <div class="span6">
+  [% render_login_form %]
+  </div>
+  <div class="span6">
+    <h2>Why should I login?</h2>
+    <p>Todo: list some cool advantages</p>
+    <ul>
+      <li><a href="signup">Sign up!</a></li>
+      <li><a href="forgotten">Forgot your password?</a></li>
+    </ul>
+  </div>
 </div>
-<div id="login-sidebox">
-  <h2>Why should I login?</h2>
-  <p>Todo: list some cool advantages</p>
-  <ul>
-    <li><a href="signup">Sign up!</a></li>
-    <li><a href="forgotten">Forgot your password?</a></li>
-  </ul>
-</div>
-
-<hr class="clear" />

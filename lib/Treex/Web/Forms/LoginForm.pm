@@ -4,19 +4,26 @@ use HTML::FormHandler::Moose;
 BEGIN {extends 'CatalystX::SimpleLogin::Form::Login';}
 with 'Treex::Web::Forms::Role::Base';
 
-has '+name' => (default => 'login_form');
+has '+name' => (default => 'login-form');
 
 sub after_build {
     my $self = shift;
-    
+
     my $remember_field = $self->field('remember');
     $remember_field->label('Keep me logged in');
     $remember_field->do_label(0);
+
+    my $password_field = $self->field('password');
+    $password_field->required(1);
 
     my $username_field = $self->field('username');
     $username_field->type('Email');
     $username_field->accessor('email');
     $username_field->label('Email');
+    $username_field->required(1);
+
+    my $submit_field = $self->field('submit');
+    $submit_field->element_attr({class => 'btn btn-primary'});
 }
 
 no HTML::FormHandler::Moose;

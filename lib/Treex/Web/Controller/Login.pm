@@ -30,49 +30,33 @@ has '+login_form_class' => (
 
 =cut
 
-sub login2 {
+after 'login' => sub {
     my ( $self, $c ) = @_;
-    
-    my $form = Treex::Web::Forms::LoginForm->new(
-        action => $c->uri_for($self->action_for('login')),
-    );
-    
-    if ( $c->req->method eq 'POST' && $form->process(params => $c->req->parameters) ) {
-        my $params = $form->value;
-        if ($c->authenticate({
-            password => $params->{password},
-            email => $params->{email},
-        })) {
-            $c->flash->{status_msg} = "You have beed successfully logged in.";
-            $c->response->redirect($c->uri_for($c->controller('Root')->action_for('index')));
-        } else {
-            $c->flash->{error_msg} = "Login has failed! Check your username and password";
-        }
-    }
-    
-    $c->stash( loginForm => $form, template => 'auth/login.tt2' );
-}
+
+    $c->stash( template => 'auth/login.tt2' );
+};
+
 
 sub signup :Local :Args(0) {
     my ( $self, $c ) = @_;
-    
+
     my $form = Treex::Web::Forms::SignupForm->new(
         action => $c->uri_for($self->action_for('signup')),
         schema => $c->model('WebDB')->schema,
     );
-    
+
     if ( $c->req->method eq 'POST' && $form->process(params => $c->req->parameters)) {
         my $user = $form->item;
         $c->flash->{status_msg} = "Your account has been successully created. Check your mailbox for the activation email.";
         $c->stash( user => $user );
     }
-    
+
     $c->stash( signupForm => $form, template => 'auth/signup.tt2' );
 }
 
 sub logout :Local :Args(0) {
     my ( $self, $c ) = @_;
-    
+
     $c->flash->{status_msg} = "You have been successfully logged out."
         if $c->user_exists && $c->logout;
     $c->response->redirect($c->uri_for($c->controller('Root')->action_for('index')));

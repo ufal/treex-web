@@ -79,6 +79,12 @@ __PACKAGE__->config(
             default_fixture_sets => ['all_tables'],
         },
     },
+    'Controller::Login' => {
+        traits => [
+            'WithRedirect', # Optional, enables redirect-back feature
+            '-RenderAsTTTemplate', # Optional, allows you to use your own template
+        ],
+    },
 );
 
 # Start the application
