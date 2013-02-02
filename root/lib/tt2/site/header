@@ -10,8 +10,24 @@
   </p>
   <ul class="nav">
     [%- FOREACH item IN site.menu  -%]
-    <li[% IF item.active %] class="active"[% END %]>
+    [%- cls = [];
+      cls.push('active') IF item.active;
+      cls.push('dropdown') IF item.children;
+    -%]
+    <li[% IF cls %] class="[% cls.join(' ') %]"[% END %]>
+      [% IF item.children %]
+      <a class="dropdown-toggle" href="[% item.url %]" id="[% item.name %]-label" role="button" data-toggle="dropdown" data-target="#">
+        [% item.title | html %]
+        <b class="caret"></b>
+      </a>
+      <ul class="dropdown-menu" role="menu" aria-labelledby="[% item.name %]-label">
+        [% FOREACH child IN item.children %]
+        <li[% IF child.active %] class="active"[% END %]><a href="[% child.url %]">[% child.title | html %]</a></li>
+        [% END %]
+      </ul>
+      [% ELSE %]
       <a href="[% item.url %]">[% item.title | html %]</a>
+      [%- END -%]
     </li>
     [%- END -%]
   </ul>

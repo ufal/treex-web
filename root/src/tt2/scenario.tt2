@@ -1,5 +1,11 @@
-[% META sidebar="scenario/sidebar.tt2" %]
 [% META title="Browse Scenarios" %]
+
+<div class="btn-toolbar">
+  <div class="btn-group">
+    <a class="btn btn-inverse" href="[% c.uri_for(c.controller('Scenario').action_for('add')) %]"><i class="icon-white icon-pencil"></i> Compose new scenario</a>
+  </div>
+</div>
+
 
 [% IF scenarios.count > 0 %]
 <p>Total [% scenarios.count %] scenarios found.</p>
@@ -44,7 +50,7 @@
   </tbody>
 </table>
 [% ELSE %]
-<div class="notice">
+<div class="alert alert-info">
   No scenarios found!
 </div>
 [% END %]

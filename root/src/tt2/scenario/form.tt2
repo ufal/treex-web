@@ -1,7 +1,5 @@
 [% IF c.user_exists %]
 [% scenarioForm.render %]
 [% ELSE %]
-<div class="notice">
-  You have to login first! <a href="[% site.url.login %]">Go to login page...</a>
-</div>
+  [% PROCESS login_notice.tt2 %]
 [% END %]

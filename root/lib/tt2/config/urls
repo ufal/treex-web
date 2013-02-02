@@ -6,7 +6,7 @@
      my_results  = c.uri_for(c.controller('Result').action_for('index'))
      my_scenarios = c.uri_for(c.controller('Scenario').action_for('my_scenarios'))
      scenarios   = c.uri_for(c.controller('Scenario').action_for('index'))
-     add_scenario = c.uri_for(c.controller('Scenario').action_for('add'))
+     new_scenario = c.uri_for(c.controller('Scenario').action_for('add'))
      login       = c.uri_for(c.controller('Login').action_for('login'))
      logout      = c.uri_for(c.controller('Login').action_for('logout'))
      signup      = c.uri_for(c.controller('Login').action_for('signup'))

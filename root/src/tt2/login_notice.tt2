@@ -1,0 +1,5 @@
+<div class="alert alert-warning">
+  <h4>Please Log In</h4>
+  <p>To access this page you have to login first!</p>
+  <a class="btn btn-warning" href="[% site.url.login %]"><i class="icon-white icon-user"></i> Go to login page &raquo;</a>
+</div>
