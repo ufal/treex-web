@@ -50,7 +50,6 @@ sub process {
             };
         }
         push @bundles, \%bundle;
-        last;
     }
 
     $c->res->content_type('application/json');

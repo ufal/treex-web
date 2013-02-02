@@ -32,13 +32,13 @@
   [% END %]
 
   <div id="treexview" data-token="[% r.unique_token %]">
-    <div class="print-placeholder">
-
-    </div>
-    <ul class="pager" style="text-align:left">
-      <li><a href="#prev">Previous</a></li>
-      <li><a href="#next">Next</a></li>
+    <ul class="pager hide" style="text-align:left">
+      <li class="prev-bundle"><a href="#prev">Previous</a></li>
+      <li class="next-bundle"><a href="#next">Next</a></li>
     </ul>
+    <div class="print-placeholder">
+      <img title="Printing result..." src="[% c.uri_for('/img/treex-printing.gif') %]" />
+    </div>
     <p class="sentence"></p>
     <div id="gfx-holder"></div>
   </div>

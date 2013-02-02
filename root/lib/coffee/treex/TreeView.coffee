@@ -13,12 +13,45 @@ class TreeView
     @trees = []
     @displayedNodes = {}
     @displayedFigures = {}
+    @currentBundle = 0
+
+  hasNextBundle: -> (@currentBundle+1) < @document.bundles.length
+
+  nextBundle: ->
+    @currentBundle++;
+    @renderCurrentBundle()
+    return
+
+  hasPreviousBundle: -> (@currentBundle-1) >= 0
+
+  previousBundle: ->
+    @currentBundle--;
+    @renderCurrentBundle()
+    return
+
+  getSentences: ->
+    bundle = @document.bundles[@currentBundle];
+    return [] unless bundle?
+    sentences = ("[#{label}] #{zone.sentence}" for label, zone of bundle.zones)
+
+  renderCurrentBundle: ->
+    bundle = @document.bundles[@currentBundle];
+    bundle && @renderBundle(bundle);
+    return
+
+  renderDocument: (@document) ->
+    @currentBundle = 0;
+    @renderCurrentBundle()
+    return
 
   # render Treex Bundle
   renderBundle: (bundle) ->
     layout = new TreeView.Layout.GridLayout(@canvas)
     @trees = []
     layout.disableReordering()
+    @canvas.clear();
+    @displayedNodes = {};
+    @displayedFigures = {};
     @canvas.setLayout(layout)
     for label, zone of bundle.zones
       for layer, tree of zone.trees

@@ -356,13 +356,65 @@ an array of objects when using many elements.
       this.trees = [];
       this.displayedNodes = {};
       this.displayedFigures = {};
+      this.currentBundle = 0;
     }
+
+    TreeView.prototype.hasNextBundle = function() {
+      return (this.currentBundle + 1) < this.document.bundles.length;
+    };
+
+    TreeView.prototype.nextBundle = function() {
+      this.currentBundle++;
+      this.renderCurrentBundle();
+    };
+
+    TreeView.prototype.hasPreviousBundle = function() {
+      return (this.currentBundle - 1) >= 0;
+    };
+
+    TreeView.prototype.previousBundle = function() {
+      this.currentBundle--;
+      this.renderCurrentBundle();
+    };
+
+    TreeView.prototype.getSentences = function() {
+      var bundle, label, sentences, zone;
+      bundle = this.document.bundles[this.currentBundle];
+      if (bundle == null) {
+        return [];
+      }
+      return sentences = (function() {
+        var _ref, _results;
+        _ref = bundle.zones;
+        _results = [];
+        for (label in _ref) {
+          zone = _ref[label];
+          _results.push("[" + label + "] " + zone.sentence);
+        }
+        return _results;
+      })();
+    };
+
+    TreeView.prototype.renderCurrentBundle = function() {
+      var bundle;
+      bundle = this.document.bundles[this.currentBundle];
+      bundle && this.renderBundle(bundle);
+    };
+
+    TreeView.prototype.renderDocument = function(document) {
+      this.document = document;
+      this.currentBundle = 0;
+      this.renderCurrentBundle();
+    };
 
     TreeView.prototype.renderBundle = function(bundle) {
       var T, label, layer, layout, tree, zone, _ref, _ref1;
       layout = new TreeView.Layout.GridLayout(this.canvas);
       this.trees = [];
       layout.disableReordering();
+      this.canvas.clear();
+      this.displayedNodes = {};
+      this.displayedFigures = {};
       this.canvas.setLayout(layout);
       _ref = bundle.zones;
       for (label in _ref) {
@@ -1335,6 +1387,12 @@ an array of objects when using many elements.
         return;
       }
       this.paper.setSize(this.layout.getWidth(), this.layout.getHeight());
+    };
+
+    Canvas.prototype.clear = function() {
+      this.figures.removeAllElements();
+      this.lines.removeAllElements();
+      this.paper.clear();
     };
 
     return Canvas;

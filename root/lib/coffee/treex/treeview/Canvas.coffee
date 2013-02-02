@@ -52,3 +52,9 @@ class TreeView.Canvas
     return unless @layout?
     @paper.setSize(@layout.getWidth(), @layout.getHeight())
     return
+
+  clear: ->
+    @figures.removeAllElements()
+    @lines.removeAllElements()
+    @paper.clear();
+    return

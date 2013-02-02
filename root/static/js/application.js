@@ -53,20 +53,62 @@ $(document).ready(function() {
     });
 
     $('#treex-pending').each(function(){
-        var $this = $(this);
-        var token = $this.data('token');
+        var $this = $(this),
+            token = $this.data('token');
         token && poll_treex_result(token);
     });
 
-    $('#treexview').each(function(){
-        var $this = $(this);
-        var token = $this.data('token');
-        var p = window.location.protocol || 'http:';
-        var url = p  + "//" + window.location.host + '/result/' + token + '/print';
+    function setup_pager(pager, sentence, view) {
+        var next = $('.next-bundle', pager),
+            prev = $('.prev-bundle', pager);
+        prev.addClass('disabled');
+        $('a', next).click(function(e){
+            e.preventDefault();
+            if (view.hasNextBundle()) {
+                view.nextBundle();
+                set_sentence(sentence, view);
+            }
+            if (!view.hasNextBundle())
+                next.addClass('disabled');
+            if (view.hasPreviousBundle())
+                prev.removeClass('disabled');
+        });
+        $('a', prev).click(function(e){
+            e.preventDefault();
+            if (view.hasPreviousBundle()) {
+                view.previousBundle();
+                set_sentence(sentence, view);
+            }
+            if (!view.hasPreviousBundle())
+                prev.addClass('disabled');
+            if (view.hasNextBundle())
+                next.removeClass('disabled');
+        });
+    }
 
-        Treex.loadDoc(url, function(data) {
+    function set_sentence(holder, view) {
+        var sentence = view.getSentences().join("\n");
+        holder.text(sentence);
+        holder.html(holder.html().replace(/\n/g, '<br>'));
+    }
+
+    $('#treexview').each(function(){
+        var $this = $(this),
+            $pager = $('.pager', $this),
+            $sentence = $('.sentence', $this),
+            token = $this.data('token'),
+            p = window.location.protocol || 'http:',
+            url = p  + "//" + window.location.host + '/result/' + token + '/print';
+
+        Treex.loadDoc(url, function(doc) {
             var view = Treex.TreeView('gfx-holder');
-            view.renderBundle(data.bundles[0]);
+            view.renderDocument(doc);
+            set_sentence($sentence, view);
+            $('.print-placeholder', $this).hide();
+            if (doc.bundles.length > 1) {
+                setup_pager($pager, $sentence, view);
+                $pager.show();
+            }
         });
     });
 });
