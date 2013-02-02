@@ -1,4 +1,7 @@
 $(document).ready(function() {
+
+    $("time.timeago").timeago();
+
     $('#extract-url-form').submit(function(e){
         e.preventDefault();
         var url = $('#input-url').val();

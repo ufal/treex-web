@@ -7,6 +7,7 @@
   <link rel="stylesheet" href="[% c.uri_for('/css/application.css') %]" type="text/css" media="screen" />
   <script src="[% c.uri_for('/js/underscore.js') %]"></script>
   <script src="[% c.uri_for('/js/jquery.js') %]"></script>
+  <script src="[% c.uri_for('/js/jquery.plugins.js') %]"></script>
   <script src="[% c.uri_for('/js/bootstrap.min.js') %]"></script>
   <script src="[% c.uri_for('/js/raphael.js') %]"></script>
   <script src="[% c.uri_for('/js/treex.js') %]"></script>

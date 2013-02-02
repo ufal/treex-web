@@ -1,3 +1,6 @@
+[% META title="Recent Treex Results" %]
+[%- format = '%Y-%m-%dT%H:%M:%S%z' -%]
+
 [% IF results_rs.count > 0 %]
 <table data-provides="rowlink" class="table table-striped">
   <thead>
@@ -11,7 +14,7 @@
     [% FOREACH res IN results_rs.all %]
     <tr>
       <td><a class="rowlink" href="[% c.uri_for(c.controller('Result').action_for('show'), [res.unique_token]) %]">[% res.unique_token %]</a></td>
-      <td>[% res.last_modified.strftime('%d/%m/%y') %]</td>
+      <td><time class="timeago" datetime="[% res.last_modified.strftime(format) %]">[% res.last_modified.strftime('%a %d %b %Y %H:%M') %]</time></td>
       [% SWITCH res.status(c) %]
       [%   CASE 'pending' %]
       [%     class = 'label-warning' %]
