@@ -1,7 +1,32 @@
 -- 
 -- Created by SQL::Translator::Producer::PostgreSQL
--- Created on Wed Jan 30 12:30:20 2013
+-- Created on Sun Feb  3 16:41:20 2013
 -- 
+;
+--
+-- Table: language_groups
+--
+CREATE TABLE "language_groups" (
+  "id" serial NOT NULL,
+  "name" character varying(200) NOT NULL,
+  "position" integer,
+  PRIMARY KEY ("id")
+);
+
+;
+--
+-- Table: languages
+--
+CREATE TABLE "languages" (
+  "id" serial NOT NULL,
+  "language_group" integer NOT NULL,
+  "code" character varying(10) NOT NULL,
+  "name" character varying(120) NOT NULL,
+  "position" integer,
+  PRIMARY KEY ("id")
+);
+CREATE INDEX "languages_idx_language_group" on "languages" ("language_group");
+
 ;
 --
 -- Table: result
@@ -20,12 +45,13 @@ CREATE INDEX "result_idx_user" on "result" ("user");
 
 ;
 --
--- Table: scenario
+-- Table: scenarios
 --
-CREATE TABLE "scenario" (
+CREATE TABLE "scenarios" (
   "id" serial NOT NULL,
   "scenario" text NOT NULL,
   "name" character varying(120) NOT NULL,
+  "description" text,
   "comment" text,
   "public" boolean NOT NULL,
   "user" integer DEFAULT 0 NOT NULL,
@@ -33,7 +59,7 @@ CREATE TABLE "scenario" (
   PRIMARY KEY ("id"),
   CONSTRAINT "name_user_unique" UNIQUE ("name", "user")
 );
-CREATE INDEX "scenario_idx_user" on "scenario" ("user");
+CREATE INDEX "scenarios_idx_user" on "scenarios" ("user");
 
 ;
 --
@@ -52,14 +78,38 @@ CREATE TABLE "user" (
 
 ;
 --
+-- Table: scenario_languages
+--
+CREATE TABLE "scenario_languages" (
+  "scenario" integer NOT NULL,
+  "language" character varying NOT NULL,
+  PRIMARY KEY ("scenario", "language")
+);
+CREATE INDEX "scenario_languages_idx_language" on "scenario_languages" ("language");
+CREATE INDEX "scenario_languages_idx_scenario" on "scenario_languages" ("scenario");
+
+;
+--
 -- Foreign Key Definitions
 --
+
+;
+ALTER TABLE "languages" ADD CONSTRAINT "languages_fk_language_group" FOREIGN KEY ("language_group")
+  REFERENCES "language_groups" ("id") ON DELETE CASCADE ON UPDATE CASCADE DEFERRABLE;
 
 ;
 ALTER TABLE "result" ADD CONSTRAINT "result_fk_user" FOREIGN KEY ("user")
   REFERENCES "user" ("id") ON DELETE CASCADE DEFERRABLE;
 
 ;
-ALTER TABLE "scenario" ADD CONSTRAINT "scenario_fk_user" FOREIGN KEY ("user")
+ALTER TABLE "scenarios" ADD CONSTRAINT "scenarios_fk_user" FOREIGN KEY ("user")
   REFERENCES "user" ("id") ON DELETE CASCADE DEFERRABLE;
+
+;
+ALTER TABLE "scenario_languages" ADD CONSTRAINT "scenario_languages_fk_language" FOREIGN KEY ("language")
+  REFERENCES "languages" ("id") ON DELETE CASCADE ON UPDATE CASCADE DEFERRABLE;
+
+;
+ALTER TABLE "scenario_languages" ADD CONSTRAINT "scenario_languages_fk_scenario" FOREIGN KEY ("scenario")
+  REFERENCES "scenarios" ("id") ON DELETE CASCADE ON UPDATE CASCADE DEFERRABLE;
 

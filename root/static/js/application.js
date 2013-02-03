@@ -55,6 +55,18 @@ $(document).ready(function() {
         });
     });
 
+    $('.editor #scenario-editor').each(function() {
+        var editor = ace.edit("scenario-editor");
+        var textarea = $($(this).data('textarea'));
+        editor.setTheme("ace/theme/dawn");
+        editor.getSession().setMode("ace/mode/perl");
+        editor.getSession().setValue(textarea.val());
+        editor.getSession().on('change', function() {
+            textarea.val(editor.getSession().getValue());
+        });
+        editor.getSession().setUseWrapMode(false);
+    });
+
     $('#treex-pending').each(function(){
         var $this = $(this),
             token = $this.data('token');

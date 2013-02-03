@@ -2,11 +2,23 @@
    "sets" : [
       {
          "quantity" : "all",
+         "class" : "LanguageGroup"
+      },
+      {
+         "quantity" : "all",
          "class" : "Scenario"
       },
       {
          "quantity" : "all",
          "class" : "Result"
+      },
+      {
+         "quantity" : "all",
+         "class" : "ScenarioLanguage"
+      },
+      {
+         "quantity" : "all",
+         "class" : "Language"
       },
       {
          "quantity" : "all",

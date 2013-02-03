@@ -29,11 +29,11 @@ extends 'DBIx::Class::Core';
 
 __PACKAGE__->load_components("InflateColumn::DateTime", "TimeStamp");
 
-=head1 TABLE: C<scenario>
+=head1 TABLE: C<scenarios>
 
 =cut
 
-__PACKAGE__->table("scenario");
+__PACKAGE__->table("scenarios");
 
 =head1 ACCESSORS
 
@@ -78,6 +78,8 @@ __PACKAGE__->add_columns(
     { data_type => "text", is_nullable => 0 },
     "name",
     { data_type => "varchar", is_nullable => 0, size => 120 },
+    "description",
+    { data_type => "text", is_nullable => 1 },
     "comment",
     { data_type => "text", is_nullable => 1 },
     "public",
@@ -152,6 +154,29 @@ __PACKAGE__->belongs_to(
         join_type     => "LEFT",
     },
 );
+
+=head2 scenario_languages
+
+Type: has_many
+
+Related object: L<Treex::Web::DB::Result::ScenarioLanguage>
+
+=cut
+
+__PACKAGE__->has_many(
+    "scenario_languages" => "Treex::Web::DB::Result::ScenarioLanguage",
+    "scenario"
+);
+
+=head2 languages
+
+Type: has_many
+
+Related object: L<Treex::Web::DB::Result::Language>
+
+=cut
+
+__PACKAGE__->many_to_many( "languages" => "scenario_languages", "language" );
 
 __PACKAGE__->meta->make_immutable;
 1;

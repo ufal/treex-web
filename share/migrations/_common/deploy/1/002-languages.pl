@@ -12,209 +12,246 @@ migrate {
     };
     return if $@; # Skip deployment if table doesn't exists
 
-    $lang_group_rs->create(
+    my ($gpos, $lpos) = (0, 0);
+
+    $lang_group_rs->create({
         name => 'Major Languages',
+        position => $gpos++,
         languages => [
-            { code => 'en', name => 'English' },
-            { code => 'de', name => 'German' },
-            { code => 'fr', name => 'French' },
-            { code => 'es', name => 'Spanish' },
-            { code => 'it', name => 'Italian' },
-            { code => 'ru', name => 'Russian' },
-            { code => 'ar', name => 'Arabic' },
-            { code => 'zh', name => 'Chinese' },
+            { code => 'en', name => 'English', position => $lpos++ },
+            { code => 'de', name => 'German', position => $lpos++ },
+            { code => 'fr', name => 'French', position => $lpos++ },
+            { code => 'es', name => 'Spanish', position => $lpos++ },
+            { code => 'it', name => 'Italian', position => $lpos++ },
+            { code => 'ru', name => 'Russian', position => $lpos++ },
+            { code => 'ar', name => 'Arabic', position => $lpos++ },
+            { code => 'zh', name => 'Chinese', position => $lpos++ },
         ]
-    );
-    $lang_group_rs->create(
+    });
+    $lpos = 0;
+    $lang_group_rs->create({
         name => 'Other Slavic languages',
+        position => $gpos++,
         languages => [
-            { code => 'cs', name => 'Czech' },
-            { code => 'sk', name => 'Slovak' },
-            { code => 'pl', name => 'Polish' },
-            { code => 'dsb', name => 'Lower Sorbian' },
-            { code => 'hsb', name => 'Upper Sorbian' },
-            { code => 'be', name => 'Belarusian' },
-            { code => 'uk', name => 'Ukrainian' },
-            { code => 'sl', name => 'Slovene' },
-            { code => 'hr', name => 'Croatian' },
-            { code => 'sr', name => 'Serbian' },
-            { code => 'mk', name => 'Macedonian' },
-            { code => 'bg', name => 'Bulgarian' },
-            { code => 'cu', name => 'Old Church Slavonic' },
+            { code => 'cs', name => 'Czech', position => $lpos++ },
+            { code => 'sk', name => 'Slovak', position => $lpos++ },
+            { code => 'pl', name => 'Polish', position => $lpos++ },
+            { code => 'dsb', name => 'Lower Sorbian', position => $lpos++ },
+            { code => 'hsb', name => 'Upper Sorbian', position => $lpos++ },
+            { code => 'be', name => 'Belarusian', position => $lpos++ },
+            { code => 'uk', name => 'Ukrainian', position => $lpos++ },
+            { code => 'sl', name => 'Slovene', position => $lpos++ },
+            { code => 'hr', name => 'Croatian', position => $lpos++ },
+            { code => 'sr', name => 'Serbian', position => $lpos++ },
+            { code => 'mk', name => 'Macedonian', position => $lpos++ },
+            { code => 'bg', name => 'Bulgarian', position => $lpos++ },
+            { code => 'cu', name => 'Old Church Slavonic', position => $lpos++ },
         ]
-    );
-    $lang_group_rs->create(
+    });
+    $lpos = 0;
+    $lang_group_rs->create({
         name => 'Other Germanic languages',
+        position => $gpos++,
         languages => [
-            { code => 'nl', name => 'Dutch' },
-            { code => 'af', name => 'Afrikaans' },
-            { code => 'fy', name => 'Frisian' },
-            { code => 'lb', name => 'Luxemburgish' },
-            { code => 'yi', name => 'Yiddish' },
-            { code => 'da', name => 'Danish' },
-            { code => 'sv', name => 'Swedish' },
-            { code => 'no', name => 'Norwegian' },
-            { code => 'nn', name => 'Nynorsk (New Norwegian)' },
-            { code => 'fo', name => 'Faroese' },
-            { code => 'is', name => 'Icelandic' },
+            { code => 'nl', name => 'Dutch', position => $lpos++ },
+            { code => 'af', name => 'Afrikaans', position => $lpos++ },
+            { code => 'fy', name => 'Frisian', position => $lpos++ },
+            { code => 'lb', name => 'Luxemburgish', position => $lpos++ },
+            { code => 'yi', name => 'Yiddish', position => $lpos++ },
+            { code => 'da', name => 'Danish', position => $lpos++ },
+            { code => 'sv', name => 'Swedish', position => $lpos++ },
+            { code => 'no', name => 'Norwegian', position => $lpos++ },
+            { code => 'nn', name => 'Nynorsk (New Norwegian)', position => $lpos++ },
+            { code => 'fo', name => 'Faroese', position => $lpos++ },
+            { code => 'is', name => 'Icelandic', position => $lpos++ },
         ]
-    );
-    $lang_group_rs->create(
+    });
+    $lpos = 0;
+    $lang_group_rs->create({
         name => 'Other Romance and Italic languages',
+        position => $gpos++,
         languages => [
-            { code => 'la', name => 'Latin' },
-            { code => 'pt', name => 'Portuguese' },
-            { code => 'gl', name => 'Galician' },
-            { code => 'ca', name => 'Catalan' },
-            { code => 'oc', name => 'Occitan' },
-            { code => 'rm', name => 'Rhaeto-Romance' },
-            { code => 'co', name => 'Corsican' },
-            { code => 'sc', name => 'Sardinian' },
-            { code => 'ro', name => 'Romanian' },
-            { code => 'mo', name => 'Moldovan (deprecated: use Romanian)' },
+            { code => 'la', name => 'Latin', position => $lpos++ },
+            { code => 'pt', name => 'Portuguese', position => $lpos++ },
+            { code => 'gl', name => 'Galician', position => $lpos++ },
+            { code => 'ca', name => 'Catalan', position => $lpos++ },
+            { code => 'oc', name => 'Occitan', position => $lpos++ },
+            { code => 'rm', name => 'Rhaeto-Romance', position => $lpos++ },
+            { code => 'co', name => 'Corsican', position => $lpos++ },
+            { code => 'sc', name => 'Sardinian', position => $lpos++ },
+            { code => 'ro', name => 'Romanian', position => $lpos++ },
+            { code => 'mo', name => 'Moldovan (deprecated: use Romanian)', position => $lpos++ },
         ]
-    );
-    $lang_group_rs->create(
+    });
+    $lpos = 0;
+    $lang_group_rs->create({
         name => 'Celtic languages',
+        position => $gpos++,
         languages => [
-            { code => 'ga', name => 'Irish' },
-            { code => 'gd', name => 'Scottish' },
-            { code => 'cy', name => 'Welsh' },
-            { code => 'br', name => 'Breton' },
+            { code => 'ga', name => 'Irish', position => $lpos++ },
+            { code => 'gd', name => 'Scottish', position => $lpos++ },
+            { code => 'cy', name => 'Welsh', position => $lpos++ },
+            { code => 'br', name => 'Breton', position => $lpos++ },
         ]
-    );
-    $lang_group_rs->create(
+    });
+    $lpos = 0;
+    $lang_group_rs->create({
         name => 'Baltic languages',
+        position => $gpos++,
         languages => [
-            { code => 'lt', name => 'Lithuanian' },
-            { code => 'lv', name => 'Latvian' },
+            { code => 'lt', name => 'Lithuanian', position => $lpos++ },
+            { code => 'lv', name => 'Latvian', position => $lpos++ },
         ]
-    );
-    $lang_group_rs->create(
-        Name => 'Other Indo-European languages in Europe and Caucasus',
+    });
+    $lpos = 0;
+    $lang_group_rs->create({
+        name => 'Other Indo-European languages in Europe and Caucasus',
+        position => $gpos++,
         languages => [
-            { code => 'sq', name => 'Albanian' },
-            { code => 'el', name => 'Greek' },
-            { code => 'grc', name => 'Ancient Greek' },
-            { code => 'hy', name => 'Armenian' },
+            { code => 'sq', name => 'Albanian', position => $lpos++ },
+            { code => 'el', name => 'Greek', position => $lpos++ },
+            { code => 'grc', name => 'Ancient Greek', position => $lpos++ },
+            { code => 'hy', name => 'Armenian', position => $lpos++ },
         ]
-    );
-    $lang_group_rs->create(
+    });
+    $lpos = 0;
+    $lang_group_rs->create({
         name => 'Iranian languages',
+        position => $gpos++,
         languages => [
-            { code => 'fa', name => 'Persian' },
-            { code => 'ku-latn', name => 'Kurdish in Latin script' },
-            { code => 'ku-arab', name => 'Kurdish in Arabic script' },
-            { code => 'ku-cyrl', name => 'Kurdish in Cyrillic script' },
-            { code => 'os', name => 'Ossetic' },
-            { code => 'tg', name => 'Tajiki (in Cyrillic script)' },
-            { code => 'ps', name => 'Pashto' },
+            { code => 'fa', name => 'Persian', position => $lpos++ },
+            { code => 'ku-latn', name => 'Kurdish in Latin script', position => $lpos++ },
+            { code => 'ku-arab', name => 'Kurdish in Arabic script', position => $lpos++ },
+            { code => 'ku-cyrl', name => 'Kurdish in Cyrillic script', position => $lpos++ },
+            { code => 'os', name => 'Ossetic', position => $lpos++ },
+            { code => 'tg', name => 'Tajiki (in Cyrillic script)', position => $lpos++ },
+            { code => 'ps', name => 'Pashto', position => $lpos++ },
         ]
-    );
-    $lang_group_rs->create(
+    });
+    $lpos = 0;
+    $lang_group_rs->create({
         name => 'Indo-Aryan languages',
+        position => $gpos++,
         languages => [
-            { code => 'ks', name => 'Kashmiri (in Arabic script)' },
-            { code => 'sd', name => 'Sindhi' },
-            { code => 'pa', name => 'Punjabi' },
-            { code => 'ur', name => 'Urdu' },
-            { code => 'hi', name => 'Hindi' },
-            { code => 'gu', name => 'Gujarati' },
-            { code => 'mr', name => 'Marathi' },
-            { code => 'ne', name => 'Nepali' },
-            { code => 'or', name => 'Oriya' },
-            { code => 'bn', name => 'Bengali' },
-            { code => 'as', name => 'Assamese' },
-            { code => 'rmy', name => 'Romany' },
+            { code => 'ks', name => 'Kashmiri (in Arabic script)', position => $lpos++ },
+            { code => 'sd', name => 'Sindhi', position => $lpos++ },
+            { code => 'pa', name => 'Punjabi', position => $lpos++ },
+            { code => 'ur', name => 'Urdu', position => $lpos++ },
+            { code => 'hi', name => 'Hindi', position => $lpos++ },
+            { code => 'gu', name => 'Gujarati', position => $lpos++ },
+            { code => 'mr', name => 'Marathi', position => $lpos++ },
+            { code => 'ne', name => 'Nepali', position => $lpos++ },
+            { code => 'or', name => 'Oriya', position => $lpos++ },
+            { code => 'bn', name => 'Bengali', position => $lpos++ },
+            { code => 'as', name => 'Assamese', position => $lpos++ },
+            { code => 'rmy', name => 'Romany', position => $lpos++ },
         ]
-    );
-    $lang_group_rs->create(
+    });
+    $lpos = 0;
+    $lang_group_rs->create({
         name => 'Other Semitic languages',
+        position => $gpos++,
         languages => [
-            { code => 'mt', name => 'Maltese' },
-            { code => 'he', name => 'Hebrew' },
-            { code => 'am', name => 'Amharic' },
+            { code => 'mt', name => 'Maltese', position => $lpos++ },
+            { code => 'he', name => 'Hebrew', position => $lpos++ },
+            { code => 'am', name => 'Amharic', position => $lpos++ },
         ]
-    );
-    $lang_group_rs->create(
+    });
+    $lpos = 0;
+    $lang_group_rs->create({
         name => 'Finno-Ugric languages',
+        position => $gpos++,
         languages => [
-            { code => 'hu', name => 'Hungarian' },
-            { code => 'fi', name => 'Finnish' },
-            { code => 'et', name => 'Estonian' },
+            { code => 'hu', name => 'Hungarian', position => $lpos++ },
+            { code => 'fi', name => 'Finnish', position => $lpos++ },
+            { code => 'et', name => 'Estonian', position => $lpos++ },
         ]
-    );
-    $lang_group_rs->create(
+    });
+    $lpos = 0;
+    $lang_group_rs->create({
         name => 'Other European and Caucasian languages',
+        position => $gpos++,
         languages => [
-            { code => 'eu', name => 'Basque' },
-            { code => 'ka', name => 'Georgian' },
-            { code => 'ab', name => 'Abkhaz' },
-            { code => 'ce', name => 'Chechen' },
+            { code => 'eu', name => 'Basque', position => $lpos++ },
+            { code => 'ka', name => 'Georgian', position => $lpos++ },
+            { code => 'ab', name => 'Abkhaz', position => $lpos++ },
+            { code => 'ce', name => 'Chechen', position => $lpos++ },
         ]
-    );
-    $lang_group_rs->create(
+    });
+    $lpos = 0;
+    $lang_group_rs->create({
         name => 'Turkic languages',
+        position => $gpos++,
         languages => [
-            { code => 'tr', name => 'Turkish' },
-            { code => 'az', name => 'Azeri' },
-            { code => 'cv', name => 'Chuvash' },
-            { code => 'ba', name => 'Bashkir' },
-            { code => 'tt', name => 'Tatar' },
-            { code => 'tk', name => 'Turkmen' },
-            { code => 'uz', name => 'Uzbek' },
-            { code => 'kaa', name => 'Karakalpak' },
-            { code => 'kk', name => 'Kazakh' },
-            { code => 'ky', name => 'Kyrgyz' },
-            { code => 'ug', name => 'Uyghur' },
-            { code => 'sah', name => 'Yakut' },
+            { code => 'tr', name => 'Turkish', position => $lpos++ },
+            { code => 'az', name => 'Azeri', position => $lpos++ },
+            { code => 'cv', name => 'Chuvash', position => $lpos++ },
+            { code => 'ba', name => 'Bashkir', position => $lpos++ },
+            { code => 'tt', name => 'Tatar', position => $lpos++ },
+            { code => 'tk', name => 'Turkmen', position => $lpos++ },
+            { code => 'uz', name => 'Uzbek', position => $lpos++ },
+            { code => 'kaa', name => 'Karakalpak', position => $lpos++ },
+            { code => 'kk', name => 'Kazakh', position => $lpos++ },
+            { code => 'ky', name => 'Kyrgyz', position => $lpos++ },
+            { code => 'ug', name => 'Uyghur', position => $lpos++ },
+            { code => 'sah', name => 'Yakut', position => $lpos++ },
         ]
-    );
-    $lang_group_rs->create(
+    });
+    $lpos = 0;
+    $lang_group_rs->create({
         name => 'Other Altay languages',
+        position => $gpos++,
         languages => [
-            { code => 'xal', name => 'Kalmyk' },
-            { code => 'bxr', name => 'Buryat' },
-            { code => 'mn', name => 'Mongol' },
-            { code => 'ko', name => 'Korean' },
-            { code => 'ja', name => 'Japanese' },
+            { code => 'xal', name => 'Kalmyk', position => $lpos++ },
+            { code => 'bxr', name => 'Buryat', position => $lpos++ },
+            { code => 'mn', name => 'Mongol', position => $lpos++ },
+            { code => 'ko', name => 'Korean', position => $lpos++ },
+            { code => 'ja', name => 'Japanese', position => $lpos++ },
         ]
-    );
-    $lang_group_rs->create(
+    });
+    $lpos = 0;
+    $lang_group_rs->create({
         name => 'Dravidian languages',
+        position => $gpos++,
         languages => [
-            { code => 'te', name => 'Telugu' },
-            { code => 'kn', name => 'Kannada' },
-            { code => 'ml', name => 'Malayalam' },
-            { code => 'ta', name => 'Tamil' },
+            { code => 'te', name => 'Telugu', position => $lpos++ },
+            { code => 'kn', name => 'Kannada', position => $lpos++ },
+            { code => 'ml', name => 'Malayalam', position => $lpos++ },
+            { code => 'ta', name => 'Tamil', position => $lpos++ },
         ]
-    );
-    $lang_group_rs->create(
+    });
+    $lpos = 0;
+    $lang_group_rs->create({
         name => 'Sino-Tibetan languages',
+        position => $gpos++,
         languages => [
-            { code => 'zh', name => 'Mandarin Chinese' },
-            { code => 'hak', name => 'Hakka' },
-            { code => 'nan', name => 'Taiwanese' },
-            { code => 'yue', name => 'Cantonese' },
-            { code => 'lo', name => 'Lao' },
-            { code => 'th', name => 'Thai' },
-            { code => 'my', name => 'Burmese' },
-            { code => 'bo', name => 'Tibetan' },
+            { code => 'zh', name => 'Mandarin Chinese', position => $lpos++ },
+            { code => 'hak', name => 'Hakka', position => $lpos++ },
+            { code => 'nan', name => 'Taiwanese', position => $lpos++ },
+            { code => 'yue', name => 'Cantonese', position => $lpos++ },
+            { code => 'lo', name => 'Lao', position => $lpos++ },
+            { code => 'th', name => 'Thai', position => $lpos++ },
+            { code => 'my', name => 'Burmese', position => $lpos++ },
+            { code => 'bo', name => 'Tibetan', position => $lpos++ },
         ]
-    );
-    $lang_group_rs->create(
+    });
+    $lpos = 0;
+    $lang_group_rs->create({
         name => 'Austro-Asian languages',
+        position => $gpos++,
         languages => [
-            { code => 'vi', name => 'Vietnamese' },
-            { code => 'km', name => 'Khmer' },
+            { code => 'vi', name => 'Vietnamese', position => $lpos++ },
+            { code => 'km', name => 'Khmer', position => $lpos++ },
         ]
-    );
-    $lang_group_rs->create(
+    });
+    $lpos = 0;
+    $lang_group_rs->create({
         name => 'Other languages',
+        position => $gpos++,
         languages => [
-            { code => 'sw', name => 'Swahili' },
-            { code => 'eo', name => 'Esperanto' },
-            { code => 'und', name => 'undetermined/unknown language' },
+            { code => 'sw', name => 'Swahili', position => $lpos++ },
+            { code => 'eo', name => 'Esperanto', position => $lpos++ },
+            { code => 'und', name => 'undetermined/unknown language', position => $lpos++ },
         ]
-    );
+    });
 };

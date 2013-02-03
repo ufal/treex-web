@@ -1,9 +1,31 @@
 -- 
 -- Created by SQL::Translator::Producer::MySQL
--- Created on Wed Jan 30 12:30:19 2013
+-- Created on Sun Feb  3 16:41:20 2013
 -- 
 ;
 SET foreign_key_checks=0;
+--
+-- Table: `language_groups`
+--
+CREATE TABLE `language_groups` (
+  `id` integer NOT NULL auto_increment,
+  `name` varchar(200) NOT NULL,
+  `position` integer,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB;
+--
+-- Table: `languages`
+--
+CREATE TABLE `languages` (
+  `id` integer NOT NULL auto_increment,
+  `language_group` integer NOT NULL,
+  `code` varchar(10) NOT NULL,
+  `name` varchar(120) NOT NULL,
+  `position` integer,
+  INDEX `languages_idx_language_group` (`language_group`),
+  PRIMARY KEY (`id`),
+  CONSTRAINT `languages_fk_language_group` FOREIGN KEY (`language_group`) REFERENCES `language_groups` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB;
 --
 -- Table: `result`
 --
@@ -20,20 +42,21 @@ CREATE TABLE `result` (
   CONSTRAINT `result_fk_user` FOREIGN KEY (`user`) REFERENCES `user` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB;
 --
--- Table: `scenario`
+-- Table: `scenarios`
 --
-CREATE TABLE `scenario` (
+CREATE TABLE `scenarios` (
   `id` integer NOT NULL auto_increment,
   `scenario` text NOT NULL,
   `name` varchar(120) NOT NULL,
+  `description` text,
   `comment` text,
   `public` enum('0','1') NOT NULL,
   `user` integer NOT NULL DEFAULT 0,
   `last_modified` datetime NOT NULL,
-  INDEX `scenario_idx_user` (`user`),
+  INDEX `scenarios_idx_user` (`user`),
   PRIMARY KEY (`id`),
   UNIQUE `name_user_unique` (`name`, `user`),
-  CONSTRAINT `scenario_fk_user` FOREIGN KEY (`user`) REFERENCES `user` (`id`) ON DELETE CASCADE
+  CONSTRAINT `scenarios_fk_user` FOREIGN KEY (`user`) REFERENCES `user` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB;
 --
 -- Table: `user`
@@ -47,5 +70,17 @@ CREATE TABLE `user` (
   `last_modified` datetime NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE `email_unique` (`email`)
+) ENGINE=InnoDB;
+--
+-- Table: `scenario_languages`
+--
+CREATE TABLE `scenario_languages` (
+  `scenario` integer NOT NULL,
+  `language` varchar(255) NOT NULL,
+  INDEX `scenario_languages_idx_language` (`language`),
+  INDEX `scenario_languages_idx_scenario` (`scenario`),
+  PRIMARY KEY (`scenario`, `language`),
+  CONSTRAINT `scenario_languages_fk_language` FOREIGN KEY (`language`) REFERENCES `languages` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `scenario_languages_fk_scenario` FOREIGN KEY (`scenario`) REFERENCES `scenarios` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB;
 SET foreign_key_checks=1

@@ -1,13 +1,6 @@
 <!-- BEGIN site/header -->
 <nav class="container-fluid">
   <a class="brand" href="[% site.url.home %]" title="Treex Web Interface">Treex::Web</a>
-  <p class="navbar-text pull-right">
-    [% IF c.user_exists %]
-    Logged in as <a href="#" class="navbar-link">Username</a>
-    [% ELSE %]
-    <a href="[% site.url.signup %]" class="navbar-link">Sign Up</a> or <a href="[% site.url.login %]" class="navbar-link">Login</a>
-    [% END %]
-  </p>
   <ul class="nav">
     [%- FOREACH item IN site.menu  -%]
     [%- cls = [];
@@ -34,6 +27,22 @@
       [%- END %]
     </li>
     [%- END %]
+  </ul>
+  <ul class="nav pull-right">
+    <li class="dropdown">
+      <a class="dropdown-toggle" id="account-label" data-toggle="dropdown" href="#"><i class="icon-user"></i>
+         [% IF c.user_exists %][% ELSE %]Account[% END %]
+        <b class="caret"></b>
+      </a>
+      <ul class="dropdown-menu" role="menu" aria-labelledby="account-label">
+        [% IF c.user_exists %]
+        <li><a href="[% site.url.logout %]">Logout</a></li>
+        [% ELSE %]
+        <li><a href="[% site.url.login %]">Login</a></li>
+        <li><a href="[% site.url.signup %]">Sign Up</a></li>
+        [% END %]
+      </ul>
+    </li>
   </ul>
 </nav>
 <!-- END site/header -->
