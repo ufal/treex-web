@@ -4,8 +4,13 @@ use DBIx::Class::Migration::RunScript;
 
 
 migrate {
-    my $lang_group_rs = shift
-        ->schema->resultset("LanguageGroup");
+    my $db = shift;
+    my $lang_group_rs;
+    eval {
+        $lang_group_rs = $db
+            ->schema->resultset("LanguageGroup");
+    };
+    return if $@; # Skip deployment if table doesn't exists
 
     $lang_group_rs->create(
         name => 'Major Languages',
