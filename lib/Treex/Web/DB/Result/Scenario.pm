@@ -80,8 +80,6 @@ __PACKAGE__->add_columns(
     { data_type => "varchar", is_nullable => 0, size => 120 },
     "description",
     { data_type => "text", is_nullable => 1 },
-    "comment",
-    { data_type => "text", is_nullable => 1 },
     "public",
     {
         data_type => 'boolean',
@@ -95,6 +93,13 @@ __PACKAGE__->add_columns(
         default_value  => 0,
         is_foreign_key => 1,
         is_nullable    => 0,
+    },
+    "created_at",
+    {
+        data_type => "datetime",
+        is_nullable => 0,
+        set_on_create => 1,
+        set_on_update => 0
     },
     "last_modified",
     {

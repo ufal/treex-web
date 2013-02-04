@@ -368,14 +368,14 @@ schema:
           reference_table: user
           type: FOREIGN KEY
       fields:
-        comment:
-          data_type: text
+        created_at:
+          data_type: datetime
           default_value: ~
-          is_nullable: 1
+          is_nullable: 0
           is_primary_key: 0
           is_unique: 0
-          name: comment
-          order: 5
+          name: created_at
+          order: 7
           size:
             - 0
         description:
@@ -426,7 +426,7 @@ schema:
           is_primary_key: 0
           is_unique: 0
           name: public
-          order: 6
+          order: 5
           size:
             - 0
         scenario:
@@ -446,7 +446,7 @@ schema:
           is_primary_key: 0
           is_unique: 1
           name: user
-          order: 7
+          order: 6
           size:
             - 0
       indices:
@@ -744,9 +744,14 @@ translator:
           source_name: Result
         Scenario: !!perl/hash:DBIx::Class::ResultSource::Table
           _columns:
-            comment:
-              data_type: text
-              is_nullable: 1
+            created_at:
+              _ic_dt_method: datetime
+              _inflate_info:
+                deflate: !!perl/code '{ "DUMMY" }'
+                inflate: !!perl/code '{ "DUMMY" }'
+              data_type: datetime
+              dynamic_default_on_create: get_timestamp
+              is_nullable: 0
             description:
               data_type: text
               is_nullable: 1
@@ -789,9 +794,9 @@ translator:
             - scenario
             - name
             - description
-            - comment
             - public
             - user
+            - created_at
             - last_modified
           _primaries: &6
             - id

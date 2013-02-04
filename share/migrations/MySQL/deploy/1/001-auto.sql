@@ -1,6 +1,6 @@
 -- 
 -- Created by SQL::Translator::Producer::MySQL
--- Created on Sun Feb  3 16:41:20 2013
+-- Created on Mon Feb  4 17:42:42 2013
 -- 
 ;
 SET foreign_key_checks=0;
@@ -49,9 +49,9 @@ CREATE TABLE `scenarios` (
   `scenario` text NOT NULL,
   `name` varchar(120) NOT NULL,
   `description` text,
-  `comment` text,
   `public` enum('0','1') NOT NULL,
   `user` integer NOT NULL DEFAULT 0,
+  `created_at` datetime NOT NULL,
   `last_modified` datetime NOT NULL,
   INDEX `scenarios_idx_user` (`user`),
   PRIMARY KEY (`id`),
