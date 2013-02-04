@@ -1,6 +1,6 @@
 package Treex::Web::Forms::ScenarioForm;
 
-use strict; 
+use strict;
 use warnings;
 
 use HTML::FormHandler::Moose;
@@ -8,7 +8,7 @@ extends 'Treex::Web::Forms::Base';
 with 'HTML::FormHandler::TraitFor::Model::DBIC';
 
 has '+item_class' => ( default => 'Treex::Web::DB::Result::Scenario' );
-has '+name' => ( default => 'scenario_form' );
+has '+name' => ( default => 'scenario-form' );
 
 has '+unique_messages' => (
     default => sub {
@@ -18,6 +18,7 @@ has '+unique_messages' => (
 
 has_field 'name' => (type => 'Text', value => '', maxlength => 120, required => 1);
 has_field 'scenario' => (type => 'TextArea', required => 1);
+has_field 'description' => (type => 'TextArea', required => 1);
 has_field 'comment' => (type => 'TextArea');
 has_field 'public' => (type => 'Boolean', do_label => 0, default => 0);
 has_field 'user' => (type => 'Integer', widget => 'NoRender');
@@ -38,7 +39,7 @@ Treex::Web::Forms::ScenarioForm - Perl extension for blah blah blah
 
 =head1 DESCRIPTION
 
-Stub documentation for Treex::Web::Forms::ScenarioForm, 
+Stub documentation for Treex::Web::Forms::ScenarioForm,
 
 Blah blah blah.
 
