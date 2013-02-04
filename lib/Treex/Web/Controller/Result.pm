@@ -2,6 +2,7 @@ package Treex::Web::Controller::Result;
 use Moose;
 use Try::Tiny;
 use JSON;
+use Treex::Web::Form::QueryForm;
 use namespace::autoclean;
 
 BEGIN {extends 'Treex::Web::Controller::Base'; }
@@ -90,7 +91,7 @@ sub delete :Chained('result') :PathPart('delete') :Args(0) {
 sub end :ActionClass('RenderView') {
     my ( $self, $c ) = @_;
 
-    my $form = Treex::Web::Forms::QueryForm->new(
+    my $form = Treex::Web::Form::QueryForm->new(
         item => $c->stash->{current_result},
         action => $c->uri_for($c->controller('Query')->action_for('index')),
     );

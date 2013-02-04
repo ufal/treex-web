@@ -4,6 +4,7 @@ use Try::Tiny;
 use HTML::FormatText;
 use TheSchwartz::Job;
 use LWP::UserAgent;
+use Treex::Web::Form::QueryForm;
 use Regexp::Common qw /URI/;
 use namespace::autoclean;
 
@@ -24,7 +25,7 @@ Catalyst Controller.
 sub begin :Private {
     my ( $self, $c ) = @_;
 
-    my $form = Treex::Web::Forms::QueryForm->new(
+    my $form = Treex::Web::Form::QueryForm->new(
         schema => $c->model('WebDB')->schema,
         action => $c->uri_for($self->action_for('index')),
     );
