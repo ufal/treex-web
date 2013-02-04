@@ -1,30 +1,13 @@
-package Treex::Web::Forms::LoginForm;
+package Treex::Web::Form::Base;
 
+use Moose;
 use HTML::FormHandler::Moose;
-BEGIN {extends 'CatalystX::SimpleLogin::Form::Login';}
-with 'Treex::Web::Forms::Role::Base';
+extends 'HTML::FormHandler';
 
-has '+name' => (default => 'login-form');
+has '+is_html5' => (default => 1);
+has '+widget_tags' => ( default => sub { { wrapper_tag => 'p' } } );
 
-sub after_build {
-    my $self = shift;
-
-    my $remember_field = $self->field('remember');
-    $remember_field->label('Keep me logged in');
-    $remember_field->do_label(0);
-
-    my $password_field = $self->field('password');
-    $password_field->required(1);
-
-    my $username_field = $self->field('username');
-    $username_field->type('Email');
-    $username_field->accessor('email');
-    $username_field->label('Email');
-    $username_field->required(1);
-
-    my $submit_field = $self->field('submit');
-    $submit_field->element_attr({class => 'btn btn-primary'});
-}
+sub build_do_form_wrapper { 1 }
 
 no HTML::FormHandler::Moose;
 1;
@@ -32,16 +15,16 @@ __END__
 
 =head1 NAME
 
-Treex::Web::Forms::LoginForm - Perl extension for blah blah blah
+Treex::Web::Forms::Base - Perl extension for blah blah blah
 
 =head1 SYNOPSIS
 
-   use Treex::Web::Forms::LoginForm;
+   use Treex::Web::Forms::Base;
    blah blah blah
 
 =head1 DESCRIPTION
 
-Stub documentation for Treex::Web::Forms::LoginForm;
+Stub documentation for Treex::Web::Forms::Base;
 
 Blah blah blah.
 

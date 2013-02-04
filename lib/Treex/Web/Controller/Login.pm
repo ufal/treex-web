@@ -1,7 +1,7 @@
 package Treex::Web::Controller::Login;
 use Moose;
-use Treex::Web::Forms::LoginForm;
-use Treex::Web::Forms::SignupForm;
+use Treex::Web::Form::LoginForm;
+use Treex::Web::Form::SignupForm;
 use namespace::autoclean;
 
 BEGIN {extends 'CatalystX::SimpleLogin::Controller::Login';}
@@ -19,7 +19,7 @@ Catalyst Controller.
 =cut
 
 has '+login_form_class' => (
-    default => 'Treex::Web::Forms::LoginForm',
+    default => 'Treex::Web::Form::LoginForm',
 );
 
 =head1 METHODS
@@ -40,7 +40,7 @@ after 'login' => sub {
 sub signup :Local :Args(0) {
     my ( $self, $c ) = @_;
 
-    my $form = Treex::Web::Forms::SignupForm->new(
+    my $form = Treex::Web::Form::SignupForm->new(
         action => $c->uri_for($self->action_for('signup')),
         schema => $c->model('WebDB')->schema,
     );

@@ -1,26 +1,28 @@
-package Treex::Web::Forms::SignupForm;
+package Treex::Web::Form::ScenarioForm;
 
-use strict; 
+use strict;
 use warnings;
 
-use Moose;
 use HTML::FormHandler::Moose;
-extends 'Treex::Web::Forms::Base';
+extends 'Treex::Web::Form::Base';
 with 'HTML::FormHandler::TraitFor::Model::DBIC';
 
-has '+item_class' => ( default => 'Treex::Web::DB::Result::User' );
-has '+name' => (default => 'signup_form');
+has '+item_class' => ( default => 'Treex::Web::DB::Result::Scenario' );
+has '+name' => ( default => 'scenario-form' );
 
-has_field 'email' => (type => 'Email', value => '', required => 1);
-has_field 'password' => (type => 'Password', required => 1);
-has_field 'password_confirm' => (type => 'Password', label => 'Confirm password', required => 1);
+has '+unique_messages' => (
+    default => sub {
+        { name_user_unique => "Duplicate value for name" };
+    }
+);
+
+has_field 'name' => (type => 'Text', value => '', maxlength => 120, required => 1);
+has_field 'scenario' => (type => 'TextArea', required => 1);
+has_field 'description' => (type => 'TextArea', required => 1);
+has_field 'comment' => (type => 'TextArea');
+has_field 'public' => (type => 'Boolean', do_label => 0, default => 0);
+has_field 'user' => (type => 'Integer', widget => 'NoRender');
 has_field 'submit' => (type => 'Submit', value => 'Submit');
-
-after 'validate' => sub {
-    my $self = shift;
-    $self->field('password_confirm')->add_error('Passwords are not the same.')
-        if $self->field('password')->value ne $self->field('password_confirm')->value;
-};
 
 no HTML::FormHandler::Moose;
 1;
@@ -28,16 +30,16 @@ __END__
 
 =head1 NAME
 
-Treex::Web::Forms::SignupForm - Perl extension for blah blah blah
+Treex::Web::Forms::ScenarioForm - Perl extension for blah blah blah
 
 =head1 SYNOPSIS
 
-   use Treex::Web::Forms::SignupForm;
+   use Treex::Web::Forms::ScenarioForm;
    blah blah blah
 
 =head1 DESCRIPTION
 
-Stub documentation for Treex::Web::Forms::SignupForm;
+Stub documentation for Treex::Web::Forms::ScenarioForm,
 
 Blah blah blah.
 

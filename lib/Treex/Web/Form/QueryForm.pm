@@ -1,9 +1,9 @@
-package Treex::Web::Forms::QueryForm;
+package Treex::Web::Form::QueryForm;
 
 use HTML::FormHandler::Moose;
 BEGIN {extends 'HTML::FormHandler';}
 
-with 'Treex::Web::Forms::Role::Base';
+with 'Treex::Web::Form::Role::Base';
 with 'HTML::FormHandler::TraitFor::Model::DBIC';
 
 has '+widget_wrapper' => ( default => 'None' );

@@ -1,6 +1,6 @@
 package Treex::Web::Controller::Scenario;
 use Moose;
-use Treex::Web::Forms::ScenarioForm;
+use Treex::Web::Form::ScenarioForm;
 use Try::Tiny;
 use namespace::autoclean;
 
@@ -31,7 +31,7 @@ sub base :Chained('/') :PathPart('') :CaptureArgs(0)  {
     });
     $c->stash->{public_scenarios} = $c->model('WebDB::Scenario')->search({public => 1}, {prefetch => 'user'});
     $c->stash(
-        scenarioForm => Treex::Web::Forms::ScenarioForm->new(
+        scenarioForm => Treex::Web::Form::ScenarioForm->new(
             action => $c->uri_for($self->action_for('add')),
             schema => $c->model('WebDB')->schema,
         ),

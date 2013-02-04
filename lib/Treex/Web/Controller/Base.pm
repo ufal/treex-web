@@ -3,7 +3,6 @@ use Moose;
 use namespace::autoclean;
 
 BEGIN {extends 'Catalyst::Controller'; }
-use Treex::Web::Forms::QueryForm;
 
 =head1 NAME
 

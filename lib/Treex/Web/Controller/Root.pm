@@ -1,6 +1,6 @@
 package Treex::Web::Controller::Root;
 use Moose;
-use Treex::Web::Forms::QueryForm;
+use Treex::Web::Form::QueryForm;
 use namespace::autoclean;
 
 BEGIN { extends 'Treex::Web::Controller::Base' }
@@ -30,8 +30,9 @@ The root page (/)
 sub index :Path :Args(0) {
     my ( $self, $c ) = @_;
 
-    my $form = Treex::Web::Forms::QueryForm->new(
+    my $form = Treex::Web::Form::QueryForm->new(
         action => $c->uri_for($c->controller('Query')->action_for('index')),
+        schema => $c->model('WebDB')->schema,
     );
 
     $c->stash(
