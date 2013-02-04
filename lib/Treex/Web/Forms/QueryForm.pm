@@ -28,7 +28,7 @@ sub options_language {
         push @options, {
             group => $group->name,
             options => [
-                map { {value => $_->code, label => $_->name} } $group->languages
+                map { {value => $_->id, label => $_->name} } $group->languages
             ]
         };
     }
