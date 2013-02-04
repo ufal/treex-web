@@ -4,36 +4,17 @@ use HTML::FormHandler::Moose;
 BEGIN {extends 'HTML::FormHandler';}
 
 with 'Treex::Web::Form::Role::Base';
+with 'Treex::Web::Form::Role::LanguageOptions';
 with 'HTML::FormHandler::TraitFor::Model::DBIC';
 
 has '+widget_wrapper' => ( default => 'None' );
 has '+name' => (default => 'query_form');
 
-has_field 'language' => (type => 'Select', widget => 'Select');
+has_field 'language' => (type => 'Select', widget => 'Select', options_method => \&language_options);
 has_field 'result_hash' => (type => 'Hidden');
-has_field 'scenario' => (type => 'Hidden', required => 1);
+has_field 'scenario' => (type => 'TextArea', required => 1);
 has_field 'input' => (type => 'TextArea', required => 1, rows => 10, element_attr => { class => 'input-block-level' });
 has_field 'submit' => (type => 'Submit', value => 'Run this Treex scenario', element_attr => { class => 'btn btn-primary btn-large'});
-
-sub options_language {
-    my $self = shift;
-    return unless $self->schema;
-    my $res = $self->schema->resultset('LanguageGroup')->search(undef, {
-        order_by => { -asc => ['me.position', 'languages.position'] },
-        join => { languages => 'language_group' },
-        prefetch => [ 'languages' ],
-    });
-    my @options;
-    while (my $group = $res->next) {
-        push @options, {
-            group => $group->name,
-            options => [
-                map { {value => $_->id, label => $_->name} } $group->languages
-            ]
-        };
-    }
-    return @options;
-}
 
 no HTML::FormHandler::Moose;
 1;

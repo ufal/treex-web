@@ -5,10 +5,12 @@ use warnings;
 
 use HTML::FormHandler::Moose;
 extends 'Treex::Web::Form::Base';
+with 'Treex::Web::Form::Role::LanguageOptions';
 with 'HTML::FormHandler::TraitFor::Model::DBIC';
 
 has '+item_class' => ( default => 'Treex::Web::DB::Result::Scenario' );
 has '+name' => ( default => 'scenario-form' );
+has '+widget_wrapper' => ( default => 'None' );
 
 has '+unique_messages' => (
     default => sub {
@@ -16,10 +18,16 @@ has '+unique_messages' => (
     }
 );
 
-has_field 'name' => (type => 'Text', value => '', maxlength => 120, required => 1);
+has_field 'name' => (
+    type => 'Text',
+    value => '',
+    maxlength => 120,
+    required => 1,
+    element_attr => { class => 'input-xxlarge', placeholder => 'Scenario name'}
+);
+has_field 'languages' => (type => 'Multiple', options_method => \&language_options, element_attr => { class => 'language-select input-xxlarge' });
 has_field 'scenario' => (type => 'TextArea', required => 1);
-has_field 'description' => (type => 'TextArea', required => 1);
-has_field 'comment' => (type => 'TextArea');
+has_field 'description' => (type => 'TextArea', required => 1, rows => 12, element_attr => { class => 'editor', placeholder => 'Scenario Description' });
 has_field 'public' => (type => 'Boolean', do_label => 0, default => 0);
 has_field 'user' => (type => 'Integer', widget => 'NoRender');
 has_field 'submit' => (type => 'Submit', value => 'Submit');

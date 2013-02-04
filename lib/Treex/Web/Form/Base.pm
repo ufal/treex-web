@@ -5,7 +5,6 @@ use HTML::FormHandler::Moose;
 extends 'HTML::FormHandler';
 
 has '+is_html5' => (default => 1);
-has '+widget_tags' => ( default => sub { { wrapper_tag => 'p' } } );
 
 sub build_do_form_wrapper { 1 }
 

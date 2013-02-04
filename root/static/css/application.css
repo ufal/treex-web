@@ -29,6 +29,10 @@ body {
     overflow: auto;
 }
 
-#treexview {
+#treexview, .chosen, .ace-editor {
     margin-bottom: 10px;
+}
+
+.form-controls {
+    padding-top: 10px;
 }

@@ -18,7 +18,6 @@ Catalyst Controller.
 
 =cut
 
-
 =head2 index
 
 =cut
@@ -31,7 +30,7 @@ sub base :Chained('/') :PathPart('') :CaptureArgs(0)  {
     });
     $c->stash->{public_scenarios} = $c->model('WebDB::Scenario')->search({public => 1}, {prefetch => 'user'});
     $c->stash(
-        scenarioForm => Treex::Web::Form::ScenarioForm->new(
+        scenario_form => Treex::Web::Form::ScenarioForm->new(
             action => $c->uri_for($self->action_for('add')),
             schema => $c->model('WebDB')->schema,
         ),
@@ -76,7 +75,7 @@ sub not_found :Private {
 
 sub add :Chained('base') :PathPart('scenario/add') :Args(0) {
     my ( $self, $c ) = @_;
-    my $form = $c->stash->{'scenarioForm'};
+    my $form = $c->stash->{'scenario_form'};
 
     if ( $c->req->method eq 'POST' && $c->user_exists ) {
         my $new_scenario = $c->model('WebDB::Scenario')->new_result({ user => $c->user->id });

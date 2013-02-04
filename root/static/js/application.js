@@ -1,6 +1,7 @@
 $(document).ready(function() {
 
     $("time.timeago").timeago();
+    $(".language-select").chosen({allow_single_deselect:true,placeholder_text:"Select Some Languages"});
 
     $('#extract-url-form').submit(function(e){
         e.preventDefault();
@@ -44,6 +45,7 @@ $(document).ready(function() {
             $('#scenario-editor-wrap').removeClass('hide');
             var editor = ace.edit("scenario-editor");
             var textarea = $('#scenario');
+            textarea.hide();
             editor.setTheme("ace/theme/dawn");
             editor.getSession().setMode("ace/mode/perl");
             editor.getSession().setValue(textarea.val());
@@ -55,9 +57,10 @@ $(document).ready(function() {
         });
     });
 
-    $('.editor #scenario-editor').each(function() {
+    $('.ace-editor #scenario-editor').each(function() {
+        var textarea = $('#'+$(this).data('textarea'));
+        textarea.hide();
         var editor = ace.edit("scenario-editor");
-        var textarea = $($(this).data('textarea'));
         editor.setTheme("ace/theme/dawn");
         editor.getSession().setMode("ace/mode/perl");
         editor.getSession().setValue(textarea.val());
