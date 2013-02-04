@@ -21,18 +21,13 @@ Catalyst Controller.
 
 =cut
 
-has 'query_form' => (
-    isa     => 'Treex::Web::Forms::QueryForm',
-    is      => 'rw',
-    lazy    => 1,
-    default => sub { Treex::Web::Forms::QueryForm->new() },
-);
-
 sub begin :Private {
     my ( $self, $c ) = @_;
 
-    my $form = $self->query_form;
-    $form->action($c->uri_for($self->action_for('index')));
+    my $form = Treex::Web::Forms::QueryForm->new(
+        schema => $c->model('WebDB')->schema,
+        action => $c->uri_for($self->action_for('index')),
+    );
     $c->stash( query_form => $form,
                template => 'query.tt2');
 }
