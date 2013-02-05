@@ -31,7 +31,7 @@
   <ul class="nav pull-right">
     <li class="dropdown">
       <a class="dropdown-toggle" id="account-label" data-toggle="dropdown" href="#"><i class="icon-user"></i>
-         [% IF c.user_exists %][% ELSE %]Account[% END %]
+         [% IF c.user_exists %][% c.user.name %][% ELSE %]Account[% END %]
         <b class="caret"></b>
       </a>
       <ul class="dropdown-menu" role="menu" aria-labelledby="account-label">
