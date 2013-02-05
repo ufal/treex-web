@@ -77,12 +77,17 @@ sub add :Chained('base') :PathPart('scenario/add') :Args(0) {
     my ( $self, $c ) = @_;
     my $form = $c->stash->{'scenario_form'};
 
-    if ( $c->req->method eq 'POST' && $c->user_exists ) {
+    if ( $c->req->method eq 'POST' and $c->user_exists ) {
+        $c->log->debug('processing post');
         my $new_scenario = $c->model('WebDB::Scenario')->new_result({ user => $c->user->id });
 
         if ($form->process(item => $new_scenario, params => $c->req->parameters)) {
             $c->flash->{status_msg} = 'Scenario successfully created';
+            $c->log->debug('form_ok');
             $c->response->redirect($c->uri_for($self->action_for('index')));
+        } else {
+            $c->log->debug('form_fail');
+            $c->flash->{error_msg} = 'Saving scenario has failed';
         }
     }
 
