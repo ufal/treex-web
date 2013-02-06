@@ -183,5 +183,20 @@ Related object: L<Treex::Web::DB::Result::Language>
 
 __PACKAGE__->many_to_many( "languages" => "scenario_languages", "language" );
 
+sub languages_names {
+    map { $_->name } shift->languages;
+}
+
+sub TO_JSON {
+    my $self = shift;
+    return {
+        id => $self->id,
+        name => $self->name,
+        description => $self->description,
+        scenario => $self->scenario,
+        public => $self->public
+    };
+}
+
 __PACKAGE__->meta->make_immutable;
 1;

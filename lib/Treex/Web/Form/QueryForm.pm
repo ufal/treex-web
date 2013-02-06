@@ -8,7 +8,7 @@ with 'Treex::Web::Form::Role::LanguageOptions';
 with 'HTML::FormHandler::TraitFor::Model::DBIC';
 
 has '+widget_wrapper' => ( default => 'None' );
-has '+name' => (default => 'query_form');
+has '+name' => (default => 'query-form');
 
 has_field 'language' => (type => 'Select', widget => 'Select', options_method => \&language_options);
 has_field 'result_hash' => (type => 'Hidden');

@@ -145,6 +145,46 @@ $(document).ready(function() {
         }
     });
     $('#result-tabs a[data-toggle="tab"]:first').tab('show');
+
+    $('#pick-scenario-modal').on('show', function() {
+        var language = $('#language').val(), // get language value form filter
+            $this = $(this);
+        if ($this.data('language') == language) return;
+        var p = window.location.protocol || 'http:';
+        var base = p  + "//" + window.location.host;
+
+        $.getJSON(base + '/scenarios/pick', { lang : language }, function(data, status) {
+            var $body = $('.modal-body', $this);
+            if (!data || !data.scenarios || data.scenarios.length == 0) {
+                $body.html('<div class="alert alert-info">There are no scenarios available for selected language.</div>');
+                return;
+            }
+            var $table = $('<table/>').addClass('table table-striped');
+            $table.append($('<thead><tr><th>Name</th><th>Description</th></tr></thead>'));
+            var $tbody = $('<tbody/>').appendTo($table);
+            $body.html($table);
+            $.each(data.scenarios, function(i, scenario) {
+                var $row = $('<tr/>').addClass('rowlink'),
+                    name = $('<td/>').text(scenario.name).addClass('span2'),
+                    desc = $('<td/>').text(scenario.description);
+                $row.append(name).append(desc);
+                $row.data('scenario', scenario);
+                $tbody.append($row);
+            });
+            var tr = $tbody.find('tr:has(td)');
+            tr.each(function(){
+                var s = $(this).data('scenario');
+                if (!s) return;
+                $(this).find('td').click(function(){
+                    $('#scenario_id').val(s.id);
+                    $('#scenario-name').text(s.name);
+                    $('#scenario-desc').text(s.description);
+                    $('#scenario-name-wrap').removeClass('hide');
+                    $this.modal('hide');
+                });
+            });
+        });
+    });
 });
 
 function extract_text_from_url(url, success, error) {

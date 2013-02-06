@@ -2,6 +2,7 @@ package Treex::Web::Controller::Scenario;
 use Moose;
 use Treex::Web::Form::ScenarioForm;
 use Try::Tiny;
+use JSON;
 use namespace::autoclean;
 
 BEGIN {extends 'Treex::Web::Controller::Base'; }
@@ -25,8 +26,8 @@ Catalyst Controller.
 sub base :Chained('/') :PathPart('') :CaptureArgs(0)  {
     my ( $self, $c ) = @_;
 
-    $c->stash->{scenarios} = $c->model('WebDB::Scenario')->search(undef, {
-        prefetch => 'user'
+    $c->stash->{scenarios} = $c->model('WebDB::Scenario')->search_rs(undef, {
+        prefetch => ['user', { scenario_languages => 'language' }]
     });
     $c->stash->{public_scenarios} = $c->model('WebDB::Scenario')->search({public => 1}, {prefetch => 'user'});
     $c->stash(
@@ -53,6 +54,22 @@ sub object :Chained('base') :PathPart('scenario') :CaptureArgs(1) {
 
 sub index :Chained('base') :PathPart('scenarios') :Args(0) {
     my ( $self, $c ) = @_;
+}
+
+my $json = JSON->new;
+sub pick :Chained('base') :PathPart('scenarios/pick') :Args(0) {
+    my ( $self, $c ) = @_;
+
+    my $lang = $c->req->param('lang');
+    my @scenarios = defined $lang ? $c->stash->{scenarios}->search({
+        -or => [
+            'scenario_languages.language' => $lang,
+            'scenario_languages.language' => undef,
+        ],
+    }) : $c->stash->{scenarios}->all;
+
+    $c->res->content_type('application/json');
+    $c->res->body($json->convert_blessed->encode({scenarios => \@scenarios}));
 }
 
 sub my_scenarios :Chained('base') :PathPart('my/scenarios') :Args(0) {

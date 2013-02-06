@@ -13,6 +13,7 @@
     <tr>
       <th class="span1"></th>
       <th class="span3">Name</th>
+      <th>Languages</th>
       <th>Description</th>
       <th class="span2">User</th>
       <th class="span2"></th>
@@ -22,17 +23,22 @@
     [% FOREACH item IN scenarios.all -%]
     <tr>
       <td>
+        <a href="#" title="Run" class="btn btn-mini"><i class="icon-forward"></i></a>
+      </td>
+      <td>
+        [% item.name | html %]
         [% IF item.public %]
-        <span class="label label-success">Public</span>
+        <span class="label label-success pull-right">Public</span>
         [% ELSE %]
-        <span class="label label-inverse">Private</span>
+        <span class="label label-inverse pull-right">Private</span>
         [% END %]
       </td>
-      <td>[% item.name | html %]</td>
-      <td>[% item.description | html %]</td>
+      <td>[% item.languages_names.join(', ') | truncate(100, '...') | html  %]</td>
+      <td>[% item.description | truncate(300, '...') | html | html_line_break %]</td>
       <td>[% item.user.name | html %]</td>
       <td>
-        <a href="#" class="btn btn-mini">Delete</a>
+        <a href="#" title="Remove" class="btn btn-mini pull-right"><i class="icon-remove"></i></a>
+        <a href="#" title="Edit" class="btn btn-mini"><i class="icon-edit"></i> Edit</a>
       </td>
     </tr>
     [% END -%]

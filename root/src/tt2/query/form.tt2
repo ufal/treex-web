@@ -7,11 +7,16 @@
   <div class="row-fluid">
     <h3>Scenario</h3>
     <div id="scenario-btns">
-      <a href="#scenario-pick" class="btn btn-primary"><i class="icon-white icon-list-alt"></i> Pick scenario</a><span class="muted"> or </span>
+      <a href="#scenario-pick" data-toggle="modal" data-target="#pick-scenario-modal" class="btn btn-primary"><i class="icon-white icon-list-alt"></i> Pick scenario</a><span class="muted"> or </span>
       <button class="btn btn-inverse" id="compose-scenario"><i class="icon-white icon-pencil"></i> Compose your own</button>
     </div>
-    [% form.field('scenario').render %]
+    <div id="scenario-name-wrap" class="hide">
+      [% form.field('scenario_id').render %]
+      <p><strong id="scenario-name"></strong></p>
+      <p id="scenario-desc"></p>
+    </div>
     <div id="scenario-editor-wrap" class="hide">
+      [% form.field('scenario').render %]
       <div id="scenario-editor"></div>
     </div>
   </div>
@@ -33,6 +38,18 @@
     [% form.field('submit').render %]
   </div>
 </form>
+
+<div id="pick-scenario-modal" class="modal modal-big hide fade" tabindex="-1" role="dialog" aria-labelledby="pick-scenario-modal-label" aria-hidden="true">
+  <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+    <h3 id="pick-scenario-modal-label">Pick Scenario</h3>
+  </div>
+  <div class="modal-body">
+  </div>
+  <div class="modal-footer">
+    <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+  </div>
+</div>
 
 <div id="load-from-url-modal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="load-from-url-modal-label" aria-hidden="true">
   <div class="modal-header">
