@@ -5,16 +5,44 @@ BEGIN {extends 'HTML::FormHandler';}
 
 with 'Treex::Web::Form::Role::Base';
 with 'Treex::Web::Form::Role::LanguageOptions';
-with 'HTML::FormHandler::TraitFor::Model::DBIC';
+
+has 'schema' => (is => 'rw');
+has 'user' => (is => 'rw', isa => 'Maybe[Object]');
 
 has '+widget_wrapper' => ( default => 'None' );
 has '+name' => (default => 'query-form');
 
 has_field 'language' => (type => 'Select', widget => 'Select', options_method => \&language_options);
 has_field 'result_hash' => (type => 'Hidden');
-has_field 'scenario' => (type => 'TextArea', required => 1);
+has_field 'scenario_id' => (type => 'Hidden');
+has_field 'scenario' => (type => 'TextArea');
 has_field 'input' => (type => 'TextArea', required => 1, rows => 10, element_attr => { class => 'input-block-level' });
 has_field 'submit' => (type => 'Submit', value => 'Run this Treex scenario', element_attr => { class => 'btn btn-primary btn-large'});
+
+sub validate {
+    my $self = shift;
+
+    my $id = $self->field('scenario_id')->value;
+    $self->field('scenario')->value($self->fetch_scenario($id))
+        if ($id && $id =~ /\d+/);
+    $self->field('scenario')->add_error('Scenario is empty')
+        unless $self->field('scenario')->value;
+}
+
+sub fetch_scenario {
+    my ( $self, $scenario_id ) = @_;
+    return unless $self->schema;
+
+    my $scenario = $self->schema->resultset('Scenario')->search({
+        id => $scenario_id,
+        -or => [
+            public => 1,
+            ($self->user ? (user => $self->user->id) : (user => undef)),
+        ]
+    }, { columns => [qw/scenario public user/] })->single;
+    return unless $scenario;
+    return $scenario->scenario;
+}
 
 no HTML::FormHandler::Moose;
 1;

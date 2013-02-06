@@ -27,6 +27,7 @@ sub begin :Private {
 
     my $form = Treex::Web::Form::QueryForm->new(
         schema => $c->model('WebDB')->schema,
+        ($c->user_exists ? (user => $c->user) : ()),
         action => $c->uri_for($self->action_for('index')),
     );
     $c->stash( query_form => $form,
@@ -48,11 +49,12 @@ sub index :Path :Args(0) {
         my $form = $c->stash->{query_form};
         $form->process( params => $c->req->parameters );
         return unless $form->is_valid;
-
         # form is valid, lets create new Result
-        my ($scenario, $input, $lang) = ($form->value->{scenario},
-                                         $form->value->{input},
-                                         $form->value->{language});
+        my ($scenario, $scenario_id, $input, $lang)
+            = ($form->value->{scenario},
+               $form->value->{scenario_id},
+               $form->value->{input},
+               $form->value->{language});
         my $rs = $c->model('WebDB::Result')->new({
 #            session => $c->create_session_id_if_needed,
             ($c->user_exists ? (user => $c->user->id) : ())
@@ -80,6 +82,7 @@ sub index :Path :Args(0) {
     }
 }
 
+my $browser = LWP::UserAgent->new();
 sub extract_text_from_url :Local :Args(0) {
     my ( $self, $c ) = @_;
 
@@ -91,13 +94,12 @@ sub extract_text_from_url :Local :Args(0) {
         $c->res->status(400);
         return
     }
-
-    my $browser = LWP::UserAgent->new();
     my $res = $browser->get($url);
 
     $c->res->body(HTML::FormatText->format_string($res->content));
     $c->res->content_type('plain/text');
 }
+
 
 =head1 AUTHOR
 

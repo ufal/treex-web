@@ -6,6 +6,11 @@
   </div>
   <div class="row-fluid">
     <h3>Scenario</h3>
+    [% IF form.field('scenario').errors.length %]
+    <div class="alert alert-error">
+      [% form.field('scenario').errors.join('<br/>') %]
+    </div>
+    [% END %]
     <div id="scenario-btns">
       <a href="#scenario-pick" data-toggle="modal" data-target="#pick-scenario-modal" class="btn btn-primary"><i class="icon-white icon-list-alt"></i> Pick scenario</a><span class="muted"> or </span>
       <button class="btn btn-inverse" id="compose-scenario"><i class="icon-white icon-pencil"></i> Compose your own</button>
