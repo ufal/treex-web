@@ -142,6 +142,16 @@ translator:
               cond:
                 foreign.id: self.language_group
               source: Treex::Web::DB::Result::LanguageGroup
+            results:
+              attrs:
+                accessor: multi
+                cascade_copy: 1
+                cascade_delete: 1
+                join_type: LEFT
+              class: Treex::Web::DB::Result::Result
+              cond:
+                foreign.language: self.id
+              source: Treex::Web::DB::Result::Result
             scenario_languages:
               attrs:
                 accessor: multi
@@ -209,6 +219,12 @@ translator:
               data_type: varchar
               is_nullable: 1
               size: 255
+            language:
+              _inflate_info:
+                deflate: !!perl/code '{ "DUMMY" }'
+                inflate: !!perl/code '{ "DUMMY" }'
+              data_type: integer
+              is_nullable: 1
             last_modified:
               _ic_dt_method: datetime
               _inflate_info:
@@ -242,10 +258,20 @@ translator:
             - unique_token
             - user
             - name
+            - language
             - last_modified
           _primaries: &4
             - id
           _relationships:
+            language:
+              attrs:
+                accessor: filter
+                is_foreign_key_constraint: 1
+                undef_on_null_fk: 1
+              class: Treex::Web::DB::Result::Language
+              cond:
+                foreign.id: self.language
+              source: Treex::Web::DB::Result::Language
             user:
               attrs:
                 accessor: filter

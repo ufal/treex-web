@@ -1,6 +1,6 @@
 -- 
 -- Created by SQL::Translator::Producer::SQLite
--- Created on Mon Feb  4 17:42:42 2013
+-- Created on Thu Feb  7 12:15:26 2013
 -- 
 
 ;
@@ -25,20 +25,6 @@ CREATE TABLE languages (
   FOREIGN KEY (language_group) REFERENCES language_groups(id) ON DELETE CASCADE ON UPDATE CASCADE
 );
 CREATE INDEX languages_idx_language_group ON languages (language_group);
---
--- Table: result
---
-CREATE TABLE result (
-  id INTEGER PRIMARY KEY NOT NULL,
-  job_handle varchar(255),
-  unique_token varchar(60) NOT NULL,
-  user integer DEFAULT null,
-  name varchar(120),
-  last_modified datetime NOT NULL,
-  FOREIGN KEY (user) REFERENCES user(id) ON DELETE CASCADE
-);
-CREATE INDEX result_idx_user ON result (user);
-CREATE UNIQUE INDEX unique_token ON result (unique_token);
 --
 -- Table: scenarios
 --
@@ -67,6 +53,23 @@ CREATE TABLE user (
   last_modified datetime NOT NULL
 );
 CREATE UNIQUE INDEX email_unique ON user (email);
+--
+-- Table: result
+--
+CREATE TABLE result (
+  id INTEGER PRIMARY KEY NOT NULL,
+  job_handle varchar(255),
+  unique_token varchar(60) NOT NULL,
+  user integer DEFAULT null,
+  name varchar(120),
+  language integer,
+  last_modified datetime NOT NULL,
+  FOREIGN KEY (language) REFERENCES languages(id) ON DELETE CASCADE ON UPDATE CASCADE,
+  FOREIGN KEY (user) REFERENCES user(id) ON DELETE CASCADE
+);
+CREATE INDEX result_idx_language ON result (language);
+CREATE INDEX result_idx_user ON result (user);
+CREATE UNIQUE INDEX unique_token ON result (unique_token);
 --
 -- Table: scenario_languages
 --

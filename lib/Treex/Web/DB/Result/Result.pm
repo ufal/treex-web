@@ -100,6 +100,8 @@ __PACKAGE__->add_columns(
     },
     "name",
     { data_type => "varchar", is_nullable => 1, size => 120 },
+    "language",
+    { data_type => "integer", is_nullable => 1 },
     "last_modified",
     {
         data_type => "datetime",
@@ -157,6 +159,10 @@ __PACKAGE__->belongs_to(
     },
 );
 
+__PACKAGE__->belongs_to(
+    "language" => "Treex::Web::DB::Result::Language",
+);
+
 =head1 METHODS
 
 =cut
@@ -173,16 +179,16 @@ sub new {
 }
 
 sub insert {
-    my ( $self, $scenario_ref, $input_ref ) = @_;
+    my ( $self, $scenario, $input ) = @_;
 
     my $path = $self->files_path;
     File::Path::make_path("$path/") or die "Path: $path, Error: $!";
 
     # write down scenario file
-    $self->scenario($scenario_ref);
+    $self->scenario($scenario);
 
     # write input file
-    $self->input($input_ref);
+    $self->input($input);
 
     return $self->next::method();
 }
@@ -204,10 +210,10 @@ sub status {
 }
 
 sub input {
-    my ( $self, $input_ref ) = @_;
+    my ( $self, $input ) = @_;
 
     # write down input file
-    return $self->_file_rw('input.txt', $input_ref);
+    return $self->_file_rw('input.txt', $input);
 }
 
 sub failure_log {
@@ -220,10 +226,10 @@ sub failure_log {
 }
 
 sub scenario {
-    my ( $self, $scenario_ref ) = @_;
+    my ( $self, $scenario ) = @_;
 
     # write down scenario file
-    return $self->_file_rw('scenario.scen', $scenario_ref);
+    return $self->_file_rw('scenario.scen', $scenario);
 }
 
 sub result_filename {
@@ -236,16 +242,16 @@ sub error_log {
 }
 
 sub _file_rw {
-    my ( $self, $filename, $ref ) = @_;
+    my ( $self, $filename, $content ) = @_;
 
     my $path = $self->files_path;
     my $file = File::Spec->catfile($path, $filename);
 
-    if (defined $ref and $$ref ne '') {
+    if (defined $content and $content ne '') {
         open my $fh, '>', $file or die $!;
-        print $fh $$ref;
+        print $fh $content;
         close $fh;
-        return $$ref;
+        return $content;
     } else {
         open my $fh, '<', $file or return "";
         my $file_contents = do { local $/; <$fh> };

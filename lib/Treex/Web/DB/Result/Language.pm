@@ -122,5 +122,15 @@ Related object: L<Treex::Web::DB::Result::Scenario>
 
 __PACKAGE__->many_to_many( "scenarios" => "scenario_languages", "language" );
 
+=head2 results
+
+Type: has_many
+
+Related object: L<Treex::Web::DB::Result::Result>
+
+=cut
+
+__PACKAGE__->has_many( "results" => "Treex::Web::DB::Result::Result", "language" );
+
 __PACKAGE__->meta->make_immutable;
 1;

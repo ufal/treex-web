@@ -57,16 +57,17 @@ sub index :Path :Args(0) {
                $form->value->{language});
         my $rs = $c->model('WebDB::Result')->new({
 #            session => $c->create_session_id_if_needed,
+            language => $lang,
             ($c->user_exists ? (user => $c->user->id) : ())
         });
-        $rs->insert(\$scenario, \$input);
+        $rs->insert($scenario, $input);
         $c->log->debug("Creating new result: " . $rs->unique_token);
 
         # post job
         my $job = TheSchwartz::Job->new(
             funcname => "Treex::Web::Job::Treex",
             uniqkey  => $rs->unique_token,
-            arg      => { lang => $lang }
+            arg      => { lang => $rs->language->code }
         );
         my $job_handle = $c->model("TheSchwartz")->insert($job);
         if ($job_handle) {

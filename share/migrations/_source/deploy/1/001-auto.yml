@@ -169,6 +169,19 @@ schema:
         - deferrable: 1
           expression: ''
           fields:
+            - language
+          match_type: ''
+          name: result_fk_language
+          on_delete: CASCADE
+          on_update: CASCADE
+          options: []
+          reference_fields:
+            - id
+          reference_table: languages
+          type: FOREIGN KEY
+        - deferrable: 1
+          expression: ''
+          fields:
             - user
           match_type: ''
           name: result_fk_user
@@ -201,6 +214,16 @@ schema:
           order: 2
           size:
             - 255
+        language:
+          data_type: integer
+          default_value: ~
+          is_nullable: 1
+          is_primary_key: 0
+          is_unique: 0
+          name: language
+          order: 6
+          size:
+            - 0
         last_modified:
           data_type: datetime
           default_value: ~
@@ -208,7 +231,7 @@ schema:
           is_primary_key: 0
           is_unique: 0
           name: last_modified
-          order: 6
+          order: 7
           size:
             - 0
         name:
@@ -244,13 +267,18 @@ schema:
             - 0
       indices:
         - fields:
+            - language
+          name: result_idx_language
+          options: []
+          type: NORMAL
+        - fields:
             - user
           name: result_idx_user
           options: []
           type: NORMAL
       name: result
       options: []
-      order: 3
+      order: 5
     scenario_languages:
       constraints:
         - deferrable: 1
@@ -457,7 +485,7 @@ schema:
           type: NORMAL
       name: scenarios
       options: []
-      order: 4
+      order: 3
     user:
       constraints:
         - deferrable: 1
@@ -549,7 +577,7 @@ schema:
       indices: []
       name: user
       options: []
-      order: 5
+      order: 4
   triggers: {}
   views: {}
 translator:
@@ -618,6 +646,16 @@ translator:
               cond:
                 foreign.id: self.language_group
               source: Treex::Web::DB::Result::LanguageGroup
+            results:
+              attrs:
+                accessor: multi
+                cascade_copy: 1
+                cascade_delete: 1
+                join_type: LEFT
+              class: Treex::Web::DB::Result::Result
+              cond:
+                foreign.language: self.id
+              source: Treex::Web::DB::Result::Result
             scenario_languages:
               attrs:
                 accessor: multi
@@ -685,6 +723,12 @@ translator:
               data_type: varchar
               is_nullable: 1
               size: 255
+            language:
+              _inflate_info:
+                deflate: !!perl/code '{ "DUMMY" }'
+                inflate: !!perl/code '{ "DUMMY" }'
+              data_type: integer
+              is_nullable: 1
             last_modified:
               _ic_dt_method: datetime
               _inflate_info:
@@ -717,10 +761,20 @@ translator:
             - unique_token
             - user
             - name
+            - language
             - last_modified
           _primaries: &5
             - id
           _relationships:
+            language:
+              attrs:
+                accessor: filter
+                is_foreign_key_constraint: 1
+                undef_on_null_fk: 1
+              class: Treex::Web::DB::Result::Language
+              cond:
+                foreign.id: self.language
+              source: Treex::Web::DB::Result::Language
             user:
               attrs:
                 accessor: filter

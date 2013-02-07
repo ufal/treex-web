@@ -1,6 +1,6 @@
 -- 
 -- Created by SQL::Translator::Producer::MySQL
--- Created on Mon Feb  4 17:42:42 2013
+-- Created on Thu Feb  7 12:15:26 2013
 -- 
 ;
 SET foreign_key_checks=0;
@@ -25,21 +25,6 @@ CREATE TABLE `languages` (
   INDEX `languages_idx_language_group` (`language_group`),
   PRIMARY KEY (`id`),
   CONSTRAINT `languages_fk_language_group` FOREIGN KEY (`language_group`) REFERENCES `language_groups` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB;
---
--- Table: `result`
---
-CREATE TABLE `result` (
-  `id` integer NOT NULL auto_increment,
-  `job_handle` varchar(255),
-  `unique_token` varchar(60) NOT NULL,
-  `user` integer DEFAULT null,
-  `name` varchar(120),
-  `last_modified` datetime NOT NULL,
-  INDEX `result_idx_user` (`user`),
-  PRIMARY KEY (`id`),
-  UNIQUE `unique_token` (`unique_token`),
-  CONSTRAINT `result_fk_user` FOREIGN KEY (`user`) REFERENCES `user` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB;
 --
 -- Table: `scenarios`
@@ -70,6 +55,24 @@ CREATE TABLE `user` (
   `last_modified` datetime NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE `email_unique` (`email`)
+) ENGINE=InnoDB;
+--
+-- Table: `result`
+--
+CREATE TABLE `result` (
+  `id` integer NOT NULL auto_increment,
+  `job_handle` varchar(255),
+  `unique_token` varchar(60) NOT NULL,
+  `user` integer DEFAULT null,
+  `name` varchar(120),
+  `language` integer,
+  `last_modified` datetime NOT NULL,
+  INDEX `result_idx_language` (`language`),
+  INDEX `result_idx_user` (`user`),
+  PRIMARY KEY (`id`),
+  UNIQUE `unique_token` (`unique_token`),
+  CONSTRAINT `result_fk_language` FOREIGN KEY (`language`) REFERENCES `languages` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `result_fk_user` FOREIGN KEY (`user`) REFERENCES `user` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB;
 --
 -- Table: `scenario_languages`
