@@ -1,6 +1,5 @@
 package Treex::Web::Controller::Print;
 use Moose;
-use Treex::Print;
 use Treex::Core::Document;
 use Treex::PML::Factory;
 use Treex::View::TreeLayout;
