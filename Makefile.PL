@@ -13,6 +13,7 @@ requires 'Catalyst::Runtime' => '5.90007';
 requires 'Catalyst::Plugin::ConfigLoader';
 requires 'Catalyst::Plugin::Static::Simple';
 requires 'Catalyst::Action::RenderView';
+requires 'Catalyst::Model::Adaptor';
 requires 'Moose';
 requires 'namespace::autoclean';
 requires 'Config::General'; # This should reflect the config file format you've chosen
@@ -51,6 +52,10 @@ requires 'HTML::FormHandler::Model::DBIC';
 # misc
 requires 'Catalyst::Plugin::Assets';
 requires 'IPC::Run'; # used to run treex command
+requires 'HTML::FormatText';
+requires 'TheSchwartz';
+requires 'Regexp::Common';
+
 
 test_requires 'Test::More' => '0.88';
 test_requires 'DBICx::TestDatabase';
