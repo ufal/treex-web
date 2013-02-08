@@ -5,7 +5,7 @@ use Try::Tiny;
 use JSON;
 use namespace::autoclean;
 
-BEGIN {extends 'Treex::Web::Controller::Base'; }
+BEGIN { extends 'Catalyst::Controller::ActionRole'; }
 
 =head1 NAME
 
@@ -90,7 +90,7 @@ sub not_found :Private {
     $c->stash('template' => 'scenario/not_found.tt2');
 }
 
-sub add :Chained('base') :PathPart('scenario/add') :Args(0) {
+sub add :Chained('base') :PathPart('scenario/add') :Args(0) :Does('NeedsLogin') {
     my ( $self, $c ) = @_;
     my $form = $c->stash->{'scenario_form'};
 
@@ -114,10 +114,12 @@ sub add :Chained('base') :PathPart('scenario/add') :Args(0) {
 sub delete :Chained('object') :PathPart('delete') :Args(0) {
     my ( $self, $c ) = @_;
 
+    return unless $c->req->method eq 'POST';
+
     my $scenario = $c->stash->{scenario};
 
     $c->detach('not_found')
-        unless ( $c->user_exists && $scenario->user->id eq $c->user->id);
+        unless ( $c->user_exists && $scenario->user eq $c->user->id);
 
     if ($scenario->delete) {
         $c->flash->{status_msg} = 'Scenario successfully deleted';
