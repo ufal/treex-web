@@ -35,7 +35,7 @@ sub base :Chained('/') :PathPart('') :CaptureArgs(0)  {
             action => $c->uri_for($self->action_for('add')),
             schema => $c->model('WebDB')->schema,
         ),
-        template => 'scenario.tt2',
+        template => 'scenarios.tt2',
     );
 
     $c->stash( user_scenarios => $c->user->search_related_rs('scenarios') )
@@ -50,6 +50,8 @@ sub object :Chained('base') :PathPart('scenario') :CaptureArgs(1) {
 
     $c->detach($self->action_for('not_found'))
         unless $scenario;
+
+    $c->stash(template => 'scenario.tt2');
 }
 
 sub index :Chained('base') :PathPart('scenarios') :Args(0) {
@@ -72,17 +74,6 @@ sub pick :Chained('base') :PathPart('scenarios/pick') :Args(0) {
     $c->res->body($json->convert_blessed->encode({scenarios => \@scenarios}));
 }
 
-sub my_scenarios :Chained('base') :PathPart('my/scenarios') :Args(0) {
-    my ( $self, $c ) = @_;
-
-    unless ( $c->user_exists ) {
-        $c->response->redirect($c->uri_for($self->action_for('index')));
-        $c->detach;
-    }
-
-    $c->stash(template => 'scenario/my.tt2');
-}
-
 sub not_found :Private {
     my ( $self, $c ) = @_;
 
@@ -90,20 +81,21 @@ sub not_found :Private {
     $c->stash('template' => 'scenario/not_found.tt2');
 }
 
+sub view :Chained('object') :PathPart('') :Args(0) {
+
+}
+
 sub add :Chained('base') :PathPart('scenario/add') :Args(0) :Does('NeedsLogin') {
     my ( $self, $c ) = @_;
     my $form = $c->stash->{'scenario_form'};
 
-    if ( $c->req->method eq 'POST' and $c->user_exists ) {
-        $c->log->debug('processing post');
+    if ( $c->req->method eq 'POST' ) {
         my $new_scenario = $c->model('WebDB::Scenario')->new_result({ user => $c->user->id });
 
         if ($form->process(item => $new_scenario, params => $c->req->parameters)) {
             $c->flash->{status_msg} = 'Scenario successfully created';
-            $c->log->debug('form_ok');
-            $c->response->redirect($c->uri_for($self->action_for('index')));
+            $c->response->redirect($c->uri_for($self->action_for('view'), [$new_scenario->id]));
         } else {
-            $c->log->debug('form_fail');
             $c->flash->{error_msg} = 'Saving scenario has failed';
         }
     }
@@ -111,15 +103,28 @@ sub add :Chained('base') :PathPart('scenario/add') :Args(0) :Does('NeedsLogin') 
     $c->stash(template => 'scenario/new.tt2');
 }
 
-sub delete :Chained('object') :PathPart('delete') :Args(0) {
+sub edit :Chained('object') :PathPart('edit') :Args(0) :Does('NeedsLogin') {
+    my ( $self, $c ) = @_;
+    my $form = $c->stash->{'scenario_form'};
+    my $scenario = $c->stash->{'scenario'};
+
+    if ( $c->req->method eq 'POST' ) {
+        if ($form->process(item => $scenario, params => $c->req->parameters)) {
+            $c->flash->{status_msg} = 'Scenario saved';
+            $c->response->redirect($c->uri_for($self->action_for('view'), [$scenario->id]));
+        } else {
+            $c->flash->{error_msg} = 'Saving scenario has failed';
+        }
+    }
+    $c->stash(template => 'scenario/edit.tt2');
+}
+
+sub delete :Chained('object') :PathPart('delete') :Args(0) :Does('NeedsLogin') {
     my ( $self, $c ) = @_;
 
     return unless $c->req->method eq 'POST';
 
     my $scenario = $c->stash->{scenario};
-
-    $c->detach('not_found')
-        unless ( $c->user_exists && $scenario->user eq $c->user->id);
 
     if ($scenario->delete) {
         $c->flash->{status_msg} = 'Scenario successfully deleted';

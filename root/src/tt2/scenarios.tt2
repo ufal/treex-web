@@ -8,7 +8,7 @@
 
 
 [% IF scenarios.count > 0 %]
-<table class="table table-condensed table-striped">
+<table class="table table-condensed table-striped" data-provides="rowlink" data-target="a.rowlink">
   <thead>
     <tr>
       <th class="span1"></th>
@@ -22,11 +22,11 @@
   <tbody>
     [% FOREACH item IN scenarios.all -%]
     <tr>
-      <td>
+      <td class="nolink">
         <a href="#" title="Run" class="btn btn-mini"><i class="icon-forward"></i></a>
       </td>
       <td>
-        [% item.name | html %]
+        <a class="rowlink" href="[%- site.url.view_scenario(item.id) -%]">[% item.name | html %]</a>
         [% IF item.public %]
         <span class="label label-success pull-right">Public</span>
         [% ELSE %]

@@ -10,5 +10,10 @@
      login       = c.uri_for(c.controller('Login').action_for('login'))
      logout      = c.uri_for(c.controller('Login').action_for('logout'))
      signup      = c.uri_for(c.controller('Login').action_for('signup'))
-   }
+   };
+   MACRO view_scenario_url(id) GET c.uri_for(c.controller('Scenario').action_for('view'), [ id ]);
+   MACRO edit_scenario_url(id) GET c.uri_for(c.controller('Scenario').action_for('edit'), [ id ]);
+
+   site.url.view_scenario = \view_scenario_url;
+   site.url.edit_scenario = \edit_scenario_url;
 -%]
