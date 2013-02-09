@@ -1,6 +1,8 @@
 package Treex::Web::Model::Print;
 use Moose;
+use File::Spec;
 use Treex::Core::Document;
+use Treex::Core::TredView;
 use Treex::PML::Factory;
 use Treex::View::TreeLayout;
 use Treex::View::Node;
@@ -14,6 +16,41 @@ has 'tree_layout' => (
     isa => 'Treex::View::TreeLayout',
     default => sub { Treex::View::TreeLayout->new },
 );
+
+# fake TredMacro package so that TMT TrEd macros can be used directly
+{
+  package TredMacro;
+  use List::Util qw(first);
+  use vars qw($this $root $grp @EXPORT);
+  @EXPORT=qw($this $root $grp FS first GetStyles AddStyle ListV);
+  use Exporter 'import';
+  sub FS { $grp->{FSFile}->FS } # used by TectoMT_TredMacros.mak
+  sub GetStyles {               # used by TectoMT_TredMacros.mak
+      my ($styles,$style,$feature)=@_;
+      my $s = $styles->{$style} || return;
+      if (defined $feature) {
+          return $s->{ $feature };
+      } else {
+          return %$s;
+      }
+  }
+
+  sub AddStyle {
+      my ($styles,$style,%s)=@_;
+      if (exists($styles->{$style})) {
+          $styles->{$style}{$_}=$s{$_} for keys %s;
+      } else {
+          $styles->{$style}=\%s;
+      }
+  }
+
+  sub ListV {
+      UNIVERSAL::DOES::does($_[0], 'Treex::PML::List') ? @{$_[0]} : ()
+  }
+
+
+  # maybe more will be needed for drawing arrows, need example
+}
 
 sub process {
     my ( $self, $c ) = @_;
