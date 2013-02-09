@@ -1,0 +1,2 @@
+web: ./script/treex_web_server.pl -rd
+treex: ./bin/job_runner.pl
