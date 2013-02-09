@@ -1,7 +1,8 @@
 $(document).ready(function() {
 
-    $("time.timeago").timeago();
-    $(".language-select").chosen({allow_single_deselect:true,placeholder_text:"Select Some Languages"});
+    $('time.timeago').timeago();
+    $('.language-select').chosen({allow_single_deselect:true,placeholder_text:"Select Some Languages"});
+    $('a[rel=tooltip]').tooltip({container: 'body'});
 
     $('#extract-url-form').submit(function(e){
         e.preventDefault();

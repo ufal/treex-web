@@ -13,9 +13,10 @@
 <pre class="pre-scrollable">
   [%- scenario.scenario | html -%]
 </pre>
-
 <div class="row-fluid">
-  <a class="btn btn-primary" href="#">Run this scenario</a>
+  <a class="btn btn-primary" href="[%- site.url.run_scenario(scenario.id) -%]">Run this scenario</a>
+  [% IF c.user_exists && c.user.id == scenario.user.id -%]
   <a class="btn" href="#">Edit</a>
   <a class="act act-danger pull-right" href="#">Delete scenario</a>
+  [% END -%]
 </div>

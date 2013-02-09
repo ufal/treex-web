@@ -13,7 +13,13 @@
    };
    MACRO view_scenario_url(id) GET c.uri_for(c.controller('Scenario').action_for('view'), [ id ]);
    MACRO edit_scenario_url(id) GET c.uri_for(c.controller('Scenario').action_for('edit'), [ id ]);
+   MACRO delete_scenario_url(id) GET c.uri_for(c.controller('Scenario').action_for('delete'), [ id ]);
+   MACRO download_scenario_url(id) GET c.uri_for(c.controller('Scenario').action_for('download'), [ id ]);
+   MACRO run_scenario_url(id) GET c.uri_for(c.controller('Scenario').action_for('run'), [ id ]);
 
    site.url.view_scenario = \view_scenario_url;
    site.url.edit_scenario = \edit_scenario_url;
+   site.url.delete_scenario = \delete_scenario_url;
+   site.url.download_scenario = \download_scenario_url;
+   site.url.run_scenario = \run_scenario_url;
 -%]

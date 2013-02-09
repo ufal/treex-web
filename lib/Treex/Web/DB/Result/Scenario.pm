@@ -154,10 +154,6 @@ __PACKAGE__->belongs_to(
     "user",
     "Treex::Web::DB::Result::User",
     { id => "user" },
-    {
-        is_deferrable => 1,
-        join_type     => "LEFT",
-    },
 );
 
 =head2 scenario_languages

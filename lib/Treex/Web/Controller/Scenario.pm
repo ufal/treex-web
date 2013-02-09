@@ -85,6 +85,12 @@ sub view :Chained('object') :PathPart('') :Args(0) {
 
 }
 
+sub run :Chained('object') :PathPart('run') :Args(0) {
+}
+
+sub download :Chained('object') :PathPart('download') :Args(0) {
+}
+
 sub add :Chained('base') :PathPart('scenario/add') :Args(0) :Does('NeedsLogin') {
     my ( $self, $c ) = @_;
     my $form = $c->stash->{'scenario_form'};
