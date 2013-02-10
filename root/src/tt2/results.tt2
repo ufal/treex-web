@@ -22,6 +22,8 @@
       [%     class = 'label-important' %]
       [%   CASE 'done' %]
       [%     class = 'label-success' %]
+      [%   CASE %]
+      [%     class = ''%]
       [% END %]
       <td><span class="label [% class %]">[% res.status(c) | ucfirst %]</span></td>
     </tr>
