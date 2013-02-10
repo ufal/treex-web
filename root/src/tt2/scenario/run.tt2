@@ -1,0 +1,29 @@
+[%- form = query_form -%]
+<h2>[%- scenario.name | html -%]</h2>
+<p class="well">
+  [%- scenario.description | html | html_line_break -%]
+</p>
+
+<form[% process_attrs(form.attributes) %]>
+  <div class="row-fluid">
+    <h3>Language</h3>
+    [% form.field('language').render %]
+  </div>
+  <div class="row-fluid">
+    <h3>Input</h3>
+    <div class="btn-toolbar">
+      <div class="btn-group">
+        <a href="#load-from-url-modal" class="btn" data-toggle="modal"><i class="icon-globe"></i> Load from URL</a>
+      </div>
+      <div class="btn-group">
+        <button class="btn"><i class="icon-file"></i> Insert sample file</button>
+      </div>
+    </div>
+    <div id="input-select">
+      [% form.field('input').render %]
+    </div>
+  </div>
+  <div class="row-fluid">
+    [% form.field('submit').render %]
+  </div>
+</form>

@@ -1,6 +1,7 @@
 package Treex::Web::Controller::Scenario;
 use Moose;
 use Treex::Web::Form::ScenarioForm;
+use Treex::Web::Form::RunScenario;
 use Try::Tiny;
 use JSON;
 use namespace::autoclean;
@@ -86,6 +87,23 @@ sub view :Chained('object') :PathPart('') :Args(0) {
 }
 
 sub run :Chained('object') :PathPart('run') :Args(0) {
+    my ( $self, $c ) = @_;
+
+    my $scenario = $c->stash->{'scenario'};
+    my $form = Treex::Web::Form::RunScenario->new(
+        schema => $c->model('WebDB')->schema,
+        scenario => $scenario,
+        ($c->user_exists ? (user => $c->user) : ()),
+        action => $c->uri_for($self->action_for('run'), [$scenario->id]),
+    );
+    $c->stash( query_form => $form,
+               template => 'scenario/run.tt2');
+
+    if ($c->req->method eq 'POST') {
+        $c->req->parameters->{scenario_id} = undef;
+        $c->req->parameters->{scenario} = $scenario->scenario;
+        $c->forward(qw/Controller::Query index/);
+    }
 }
 
 sub download :Chained('object') :PathPart('download') :Args(0) {

@@ -80,6 +80,7 @@ sub index :Path :Args(0) {
             [ $rs->unique_token ],
         );
         $c->response->redirect($uri);
+        $c->detach;
     }
 }
 
