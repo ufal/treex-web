@@ -56,6 +56,7 @@ my $config = Config::Any->load_files({
 $config = $config->[0]->{$config_file};
 
 my $args = $config->{"Model::TheSchwartz"}->{args};
+$args->{verbose} = 0;
 $args->{databases}->[0]->{dsn} =~ s/__path_to\(([^)]+)\)__/ _path_to($1)  /e;
 
 my $client = TheSchwartz->new(%{$args});
