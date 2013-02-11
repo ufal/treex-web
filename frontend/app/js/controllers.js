@@ -2,11 +2,24 @@
 
 /* Controllers */
 
+var AuthCntl = ['$scope', function($scope) {
 
-function MyCtrl1() {}
-MyCtrl1.$inject = [];
+    $scope.loggedIn = false;
 
+    $scope.$on('auth:loggedIn', function(){
+        $scope.loggedIn = true;
+    });
 
-function MyCtrl2() {
+    $scope.$on('auth:loggedOut', function(){
+        $scope.loggedIn = false;
+    });
+}];
+
+function HomePageCntl() {
 }
-MyCtrl2.$inject = [];
+
+function ResultListCntl() {
+}
+
+function ResultDetailCntl() {
+}
