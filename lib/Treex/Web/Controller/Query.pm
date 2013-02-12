@@ -8,7 +8,7 @@ use Treex::Web::Form::QueryForm;
 use Regexp::Common qw /URI/;
 use namespace::autoclean;
 
-BEGIN {extends 'Treex::Web::Controller::Base'; }
+BEGIN {extends 'Catalyst::Controller'; }
 
 =head1 NAME
 

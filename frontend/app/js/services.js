@@ -1,9 +1,17 @@
 'use strict';
 
 /* Services */
+var api = '/api/v1/';
 
-
-// Demonstrate how to register services
-// In this case it is a simple value service.
-angular.module('myApp.services', []).
-  value('version', '0.1');
+angular.module('treex-services', ['ngResource']).
+    factory('Results', ['$http', function($http) {
+        var Results = {};
+        Results.query = function() {
+            var promise = $http.get(api + 'results');
+            return promise.then(function(responce) {
+                return responce.data;
+            });
+        };
+        return Results;
+    }]).
+    value('version', '0.1');

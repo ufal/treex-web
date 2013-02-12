@@ -5,7 +5,7 @@ use JSON;
 use Treex::Web::Form::QueryForm;
 use namespace::autoclean;
 
-BEGIN {extends 'Treex::Web::Controller::Base'; }
+BEGIN {extends 'Catalyst::Controller::REST'; }
 
 =head1 NAME
 
@@ -27,15 +27,20 @@ Puts Treex::Web::DB::Result result set to stash
 
 sub base :Chained('/') :PathPart('') :CaptureArgs(0)  {
     my ($self, $c) = @_;
-
-    $c->stash(template => 'results.tt2');
+    my $results_rs = $c->model('WebDB::Result')
+        ->search_rs(
+            {($c->user_exists ? (user => $c->user->id) : (user => undef))},
+            { order_by => { -desc => 'last_modified' } });
+    $c->stash(results_rs => $results_rs);
 }
 
-sub index :Chained('base') :PathPart('results') :Args(0) {
-    my ($self, $c) = @_;
+sub list :Chained('base') :PathPart('results') :Args(0) :ActionClass('REST') { }
 
+sub list_GET {
+    my ($self, $c) = @_;
     my $rs = $c->stash->{results_rs};
-    $c->stash(current_result => $rs->first);
+    my @all = map { $_->rest_data } $rs->all;
+    $self->status_ok($c, entity => \@all )
 }
 
 sub result :Chained('base') :PathPart('result') :CaptureArgs(1) {
@@ -48,28 +53,39 @@ sub result :Chained('base') :PathPart('result') :CaptureArgs(1) {
                                { key => 'unique_token' });
         $c->stash(current_result => $result);
     } catch {
-        $c->log->error("$_");
-        # TODO handle not_found
+        $c->status_not_found(
+            $c,
+            message => "Cannot find result you were looking for!"
+        );
+        $c->detach;
     };
-    $c->stash(template => 'result.tt2');
 }
 
 =head2 show
 
 =cut
 
-sub show :Chained('result') :PathPart('') :Args(0) {
-    my ($self, $c, $unique_token) = @_;
+sub item :Chained('result') :PathPart('') :Args(0) :ActionClass('REST') { }
 
+sub item_GET {
+    my ( $self, $c ) = @_;
+    $self->status_ok($c, entity => $c->stash->{current_result}->rest_data );
 }
 
-sub status :Chained('result') :PathPart('status') :Args(0) {
+sub item_DELETE {
+    my ( $self, $c ) = @_;
+    $c->stash->{current_result}->delete;
+    $c->status_no_content;
+}
+
+sub status :Chained('result') :PathPart('status') :Args(0) :ActionClass('REST') { }
+
+sub status_GET {
     my ( $self, $c ) = @_;
 
     my $curr = $c->stash->{current_result};
     my $status = $curr ? $curr->status($c) : 'unknown';
-    $c->res->content_type('application/json');
-    $c->res->body(to_json({status => $status}));
+    $self->status_ok($c, entity => { status => $status })
 }
 
 sub print_result :Chained('result') :PathPart('print') :Args(0) {
@@ -78,27 +94,6 @@ sub print_result :Chained('result') :PathPart('print') :Args(0) {
 }
 
 sub download :Chained('result') :CaptureArgs(0) {
-}
-
-=head2 delete
-
-=cut
-
-sub delete :Chained('result') :PathPart('delete') :Args(0) {
-  #TODO
-}
-
-sub end :ActionClass('RenderView') {
-    my ( $self, $c ) = @_;
-
-    my $form = Treex::Web::Form::QueryForm->new(
-        item => $c->stash->{current_result},
-        action => $c->uri_for($c->controller('Query')->action_for('index')),
-    );
-
-    $c->stash(
-        query_form => $form
-    );
 }
 
 =head1 AUTHOR

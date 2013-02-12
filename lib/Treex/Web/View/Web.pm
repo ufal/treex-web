@@ -2,25 +2,23 @@ package Treex::Web::View::Web;
 
 use strict;
 use warnings;
-use HTML::FormHandler::Render::Util ('process_attrs');
 
 use base 'Catalyst::View::TT';
 
 
 __PACKAGE__->config(
     INCLUDE_PATH => [
-        Treex::Web->path_to( 'root', 'src', 'tt2' ),
-        Treex::Web->path_to( 'root', 'lib', 'tt2' )
+        Treex::Web->path_to( 'root' )
         ],
     TEMPLATE_EXTENSION => '.tt2',
     ENCODING           => 'utf-8',
     CATALYST_VAR       => 'c',
-    PRE_PROCESS        => 'config/main',
-    WRAPPER            => 'site/wrapper',
+#    PRE_PROCESS        => 'config/main',
+#    WRAPPER            => 'site/wrapper',
     ERROR              => 'error.tt2',
     TIMER              => 0,
     VARIABLES          => {
-        process_attrs => \&process_attrs, # basic html attributes processing
+#        process_attrs => \&process_attrs, # basic html attributes processing
     },
     render_die         => 1,
 );

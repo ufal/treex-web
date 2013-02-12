@@ -18,24 +18,8 @@ var AuthCntl = ['$scope', function($scope) {
 function HomePageCntl() {
 }
 
-var ResultListCntl = ['$scope', function($scope) {
-    $scope.results = [
-        {
-            token: 'IzUHfOw7agc24OGOKXL',
-            last_modified: '2013-02-10T21:59:49+0000',
-            status: 'pending'
-        },
-        {
-            token: 'qTZcVl1gFFEhtgGfKTf',
-            last_modified: '2013-02-10T21:59:49+0000',
-            status: 'done'
-        },
-        {
-            token: 'qTZcVl1gFFEhtgGfKTf',
-            last_modified: '2013-02-10T21:59:49+0000',
-            status: 'unknown'
-        }
-    ];
+var ResultListCntl = ['$scope', 'Results', function($scope, Results) {
+    $scope.results = Results.query();
 }];
 
 function ResultDetailCntl() {

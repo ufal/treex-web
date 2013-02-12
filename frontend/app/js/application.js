@@ -1,9 +1,7 @@
 /*global angular */
 'use strict';
 
-
-
-var web = angular.module('treex-web', ['$strap.directives', 'treex-directives', 'treex-filters']);
+var web = angular.module('treex-web', ['$strap.directives', 'treex-directives', 'treex-filters', 'treex-services']);
 web.config(['$routeProvider', '$locationProvider', function($routeProvider, $locationProvider) {
     $routeProvider.
         when('/', { templateUrl: 'partials/home.html', controller: HomePageCntl }).
