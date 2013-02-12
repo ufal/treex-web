@@ -174,7 +174,7 @@ sub rest_data {
         language => $self->language->code,
         token => $self->unique_token,
         status => $self->status,
-        last_modified => $self->last_modified->epoch,
+        last_modified => $self->last_modified->strftime('%Y-%m-%dT%H:%M:%S%z'),
     };
 }
 
