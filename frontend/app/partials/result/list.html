@@ -1,0 +1,22 @@
+<div id="results-list">
+  <div class="page-header">
+    <h1>Recent Treex Results</h1>
+  </div>
+
+  <table data-provides="rowlink" class="table table-striped">
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Date</th>
+        <th>Status</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr ng-repeat="result in results" bs-rowlink="/result/{{result.token}}">
+        <td>{{result.token}}</td>
+        <td><time jq-timeago datetime="{{result.last_modified}}">{{result.last_modified}}</time></td>
+        <td><span class="label" ng-class="{pending: 'label-warning', failed: 'label-important', done: 'label-success'}[result.status]">{{result.status | ucfirst}}</span></td>
+      </tr>
+    </tbody>
+  </table>
+</div>

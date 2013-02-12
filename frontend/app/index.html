@@ -1,6 +1,7 @@
 <!doctype html>
 <html lang="en" xmlns:ng="http://angularjs.org" ng-app="treex-web">
   <head>
+    <base href="http://localhost/" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <link rel="stylesheet" href="css/bootstrap.min.css" type="text/css" media="screen" />
     <link rel="stylesheet" href="css/application.css" type="text/css" media="screen" />
@@ -17,7 +18,7 @@
             <li data-match-route="/query"><a href="/query"><i class="icon-cog"></i> Run Treex</a></li>
             <li data-match-route="/results"><a href="/results"><i class="icon-tasks"></i> Results</a></li>
             <li class="dropdown" data-match-route="/scenario.*">
-              <a class="dropdown-toggle" href="#" id="scenario-label" role="button" data-toggle="dropdown" data-target="#"><i class="icon-list-alt"></i> Scenarios
+              <a class="dropdown-toggle" id="scenario-label" role="button" data-toggle="dropdown" href="javascript:"><i class="icon-list-alt"></i> Scenarios
                 <b class="caret"></b>
               </a>
               <ul class="dropdown-menu" role="menu" aria-labelledby="scenario-label">
@@ -28,7 +29,7 @@
           </ul>
           <ul class="nav pull-right" ng-controller="AuthCntl">
             <li class="dropdown">
-              <a class="dropdown-toggle" id="account-label" data-toggle="dropdown" href="#"><i class="icon-user"></i> Account
+              <a class="dropdown-toggle" id="account-label" data-toggle="dropdown" href="javascript:"><i class="icon-user"></i> Account
                 <b class="caret"></b>
               </a>
               <ul class="dropdown-menu" role="menu" aria-labelledby="account-label">
