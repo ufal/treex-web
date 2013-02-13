@@ -74,8 +74,9 @@ sub item_GET {
 
 sub item_DELETE {
     my ( $self, $c ) = @_;
-    $c->stash->{current_result}->delete;
-    $c->status_no_content;
+    my $res = $c->stash->{current_result};
+    $res->delete;
+    $self->status_ok($c, entity => $res->rest_data );
 }
 
 sub status :Chained('result') :PathPart('status') :Args(0) :ActionClass('REST') { }
@@ -84,8 +85,8 @@ sub status_GET {
     my ( $self, $c ) = @_;
 
     my $curr = $c->stash->{current_result};
-    my $status = $curr ? $curr->status($c) : 'unknown';
-    $self->status_ok($c, entity => { status => $status })
+    my $status = $curr ? $curr->status : 'unknown';
+    $self->status_ok($c, entity => { status => $status } );
 }
 
 sub print_result :Chained('result') :PathPart('print') :Args(0) {

@@ -8,14 +8,18 @@
       <tr>
         <th>#</th>
         <th>Date</th>
-        <th>Status</th>
+        <th class="span2">Status</th>
       </tr>
     </thead>
     <tbody>
       <tr ng-repeat="result in results" bs-rowlink="/result/{{result.token}}">
         <td>{{result.token}}</td>
         <td><time jq-timeago datetime="{{result.last_modified}}">{{result.last_modified | date:'medium'}}</time></td>
-        <td><span class="label" ng-class="{pending: 'label-warning', failed: 'label-important', done: 'label-success'}[result.status]">{{result.status | ucfirst}}</span></td>
+        <td>
+          <tw-timer interval="1000" call="result.$updatePending()">
+            <span class="label" ng-class="{pending: 'label-warning', failed: 'label-important', done: 'label-success'}[result.status]">{{result.status | ucfirst}}</span>
+          </tw-timer>
+        </td>
       </tr>
     </tbody>
   </table>
