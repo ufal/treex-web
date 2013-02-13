@@ -3,24 +3,32 @@
     <h1>Recent Treex Results</h1>
   </div>
 
-  <table data-provides="rowlink" class="table table-striped">
-    <thead>
-      <tr>
-        <th>#</th>
-        <th>Date</th>
-        <th class="span2">Status</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr ng-repeat="result in results" bs-rowlink="/result/{{result.token}}">
-        <td>{{result.token}}</td>
-        <td><time jq-timeago datetime="{{result.last_modified}}">{{result.last_modified | date:'medium'}}</time></td>
-        <td>
-          <tw-timer interval="1000" call="result.$updatePending()">
-            <span class="label" ng-class="{pending: 'label-warning', failed: 'label-important', done: 'label-success'}[result.status]">{{result.status | ucfirst}}</span>
-          </tw-timer>
-        </td>
-      </tr>
-    </tbody>
-  </table>
+  <ng-switch on="status">
+    <div ng-switch-when="loading" tw-loader></div>
+    <table ng-switch-when="results" data-provides="rowlink" class="table table-striped">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Date</th>
+          <th class="span2">Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr ng-repeat="result in results" bs-rowlink="/result/{{result.token}}">
+          <td>{{result.token}}</td>
+          <td><time jq-timeago datetime="{{result.last_modified}}">{{result.last_modified | date:'medium'}}</time></td>
+          <td>
+            <tw-timer interval="1000" call="result.$updatePending()">
+              <span class="label" ng-class="{pending: 'label-warning', failed: 'label-important', done: 'label-success'}[result.status]">{{result.status | ucfirst}}</span>
+            </tw-timer>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <div ng-switch-when="empty" class="alert alert-info">
+      <h4>No Results</h4>
+      <p>You have no Treex results yet.</p>
+      <p><a href="/run" class="btn btn-info">Try to run Treex &raquo;</a></p>
+    </div>
+  </ng-switch>
 </div>

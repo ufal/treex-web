@@ -19,8 +19,13 @@ function HomePageCntl() {
 }
 
 var ResultListCntl = ['$scope', 'Results', function($scope, Results) {
-    $scope.results = Results.query();
+    $scope.status = 'loading';
+    $scope.results = Results.query().then(function(results) {
+        $scope.status = (results.length > 0) ? 'results' : 'empty';
+        return results;
+    });
 }];
 
-function ResultDetailCntl() {
-}
+var ResultDetailCntl = ['$scope', 'Result', function($scope, Result) {
+    console.log($scope);
+}];

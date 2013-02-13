@@ -17,14 +17,19 @@ angular.module('treex-services', ['ngResource']).
             });
         }
 
+        function asyncCmd(token, cmd, df) {
+            if (!token) return df;
+            var promise = $http.get(api + 'result/' + token + '/' + cmd);
+            return promise.then(function(responce) {
+                return responce.data[cmd] || df;
+            });
+
+        }
+
         Result.get = function(token) { return asyncCall('get', token); };
         Result.delete = function(token) { return asyncCall('delete', token); };
         Result.status = function(token) {
-            if (!token) return 'unknown';
-            var promise = $http.get(api + 'result/' + token + '/status' );
-            return promise.then(function(responce) {
-                return responce.data.status || 'unknown';
-            });
+            return asyncCmd(token, 'status', 'unknown');
         };
         Result.prototype.$delete = function() { return Result.delete(this.token); };
         Result.prototype.$status = function() {
@@ -35,12 +40,26 @@ angular.module('treex-services', ['ngResource']).
                     return status;
                 });
         };
+
         Result.prototype.$updatePending = function() {
             if (this.status != 'pending')
                 return false;
             this.$status();
             return true;
         };
+
+        angular.forEach(['input', 'error', 'scenario'], function(name) {
+            var has = 'has' + name.charAt(0).toUpperCase() + name.slice(1);
+            Result.prototype['$'+name] = function() {
+                var self = this;
+                return self[has] ?
+                    self[name] : asyncCmd(this.token, name, '').then(function(data) {
+                        self[has] = true;
+                        self[name] = data;
+                        return data;
+                    });
+            };
+        });
 
         return Result;
     }]).

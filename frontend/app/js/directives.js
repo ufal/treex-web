@@ -64,6 +64,11 @@ angular.module('treex-directives', []).
             });
         };
     }).
+    directive('twLoader', function() {
+        return function(scope, elm, attrs) {
+            elm.html('<img src="img/ajax-loader.gif" title="Loading..." />');
+        };
+    }).
     directive('appVersion', ['version', function(version) {
         return function(scope, elm, attrs) {
             elm.text(version);
