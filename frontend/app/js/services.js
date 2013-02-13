@@ -4,13 +4,17 @@
 var api = '/api/v1/';
 
 angular.module('treex-services', ['ngResource']).
-    factory('Result', ['$http', function($http) {
+    factory('Result', ['$http', '$q', function($http, $q) {
         function Result(data) {
             angular.copy(data || {}, this);
         }
 
         function asyncCall(method, token) {
-            if (!token) return {};
+            if (!token) {
+                var fake = $q.defer();
+                fake.resolve({});
+                return fake.promise;
+            }
             var promise = $http[method](api + 'result/' + token);
             return promise.then(function(responce) {
                 return new Result(responce.data);
@@ -18,7 +22,11 @@ angular.module('treex-services', ['ngResource']).
         }
 
         function asyncCmd(token, cmd, df) {
-            if (!token) return df;
+            if (!token) {
+                var fake = $q.defer();
+                fake.resolve(df);
+                return fake.promise;
+            }
             var promise = $http.get(api + 'result/' + token + '/' + cmd);
             return promise.then(function(responce) {
                 return responce.data[cmd] || df;
@@ -48,7 +56,7 @@ angular.module('treex-services', ['ngResource']).
             return true;
         };
 
-        angular.forEach(['input', 'error', 'scenario'], function(name) {
+        angular.forEach(['input', 'error', 'scenario', 'print'], function(name) {
             var has = 'has' + name.charAt(0).toUpperCase() + name.slice(1);
             Result.prototype['$'+name] = function() {
                 var self = this;

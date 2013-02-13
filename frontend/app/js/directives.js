@@ -3,6 +3,31 @@
 /* Directives */
 
 angular.module('treex-directives', []).
+    directive('bsActivetab', function() {
+        return {
+            terminal : true,
+            link: function (scope, element, attrs) {
+                $(element).tab('show');
+            }
+        };
+    }).
+    directive('bsShowtab', function() {
+        return {
+            scope: {
+                showtab: '&bsShowtab'
+            },
+            link: function (scope, element, attrs) {
+                $(element).on('show', function(e) {
+                    if (scope.showtab) scope.showtab();
+                });
+                element.click(function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    $(element).tab('show');
+                });
+            }
+        };
+    }).
     directive('twTimer', ['$timeout', function($timeout) {
         return {
             restrict: 'E',
@@ -67,6 +92,40 @@ angular.module('treex-directives', []).
     directive('twLoader', function() {
         return function(scope, elm, attrs) {
             elm.html('<img src="img/ajax-loader.gif" title="Loading..." />');
+        };
+    }).
+    directive('twIf', function() {
+        return {
+            transclude: 'element',
+            priority: 1000,
+            terminal: true,
+            restrict: 'A',
+            compile: function (element, attr, transclude) {
+                return function (scope, element, attr) {
+
+                    var childElement;
+                    var childScope;
+
+                    scope.$watch(attr['twIf'], function (newValue) {
+                        if (childElement) {
+                            childElement.remove();
+                            childElement = undefined;
+                        }
+                        if (childScope) {
+                            childScope.$destroy();
+                            childScope = undefined;
+                        }
+
+                        if (newValue) {
+                            childScope = scope.$new();
+                            transclude(childScope, function (clone) {
+                                childElement = clone;
+                                element.after(clone);
+                            });
+                        }
+                    });
+                };
+            }
         };
     }).
     directive('appVersion', ['version', function(version) {

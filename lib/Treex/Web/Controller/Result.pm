@@ -79,7 +79,10 @@ sub item_DELETE {
     $self->status_ok($c, entity => $res->rest_data );
 }
 
-sub status :Chained('result') :PathPart('status') :Args(0) :ActionClass('REST') { }
+sub status   :Chained('result') :PathPart(status)   :Args(0) :ActionClass('REST') { };
+sub input    :Chained('result') :PathPart(input)    :Args(0) :ActionClass('REST') { };
+sub error    :Chained('result') :PathPart(error)    :Args(0) :ActionClass('REST') { };
+sub scenario :Chained('result') :PathPart(scenario) :Args(0) :ActionClass('REST') { };
 
 sub status_GET {
     my ( $self, $c ) = @_;
@@ -87,6 +90,24 @@ sub status_GET {
     my $curr = $c->stash->{current_result};
     my $status = $curr ? $curr->status : 'unknown';
     $self->status_ok($c, entity => { status => $status } );
+}
+
+sub input_GET {
+    my ( $self, $c ) = @_;
+    my $curr = $c->stash->{current_result};
+    $self->status_ok($c, entity => { input => $curr->input } );
+}
+
+sub error_GET {
+    my ( $self, $c ) = @_;
+    my $curr = $c->stash->{current_result};
+    $self->status_ok($c, entity => { error => $curr->error_log } );
+}
+
+sub scenario_GET {
+    my ( $self, $c ) = @_;
+    my $curr = $c->stash->{current_result};
+    $self->status_ok($c, entity => { scenario => $curr->scenario } );
 }
 
 sub print_result :Chained('result') :PathPart('print') :Args(0) {

@@ -24,6 +24,10 @@ body {
     height: 300px;
 }
 
+.result-tabs {
+    height: 385px;
+}
+
 .nav {
     margin-bottom: 0px;
 }

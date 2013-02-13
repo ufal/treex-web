@@ -26,6 +26,10 @@ var ResultListCntl = ['$scope', 'Results', function($scope, Results) {
     });
 }];
 
-var ResultDetailCntl = ['$scope', 'Result', function($scope, Result) {
-    console.log($scope);
+var ResultDetailCntl = ['$scope', '$routeParams', 'Result', function($scope, params, Result) {
+    $scope.loading = true;
+    $scope.result = Result.get(params.resultId).then(function(result) {
+        $scope.loading = false;
+        return result;
+    });
 }];
