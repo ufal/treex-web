@@ -81,9 +81,26 @@ var AuthCntl = ['$scope', function($scope) {
             $scope.dismiss();
         };
     }],
-    RunTreexCntl = ['$scope', '$rootScope', 'Treex', function($scope, $rootScope, Treex) {
+    RunTreexCntl = ['$scope', '$rootScope', '$location', '$anchorScroll', 'Treex',
+                    function($scope, $rootScope, $location, $anchorScroll, Treex) {
         $scope.languages = Treex.languages();
         ScenarioWatch($scope, $rootScope, this);
+
+        $scope.submit = function() {
+            if ($scope.form.$invalid) return;
+            Treex.query({
+                language: $scope.language.value,
+                scenario: $scope.scenario.scenario,
+                scenario_id: $scope.scenario.id,
+                input: $scope.input
+            }).then(function(result) {
+                $location.path('/result/'+result.token);
+            }, function(reason) {
+                $scope.error = angular.isObject(reason.data) ?
+                    reason.data.error : reason.data;
+                $anchorScroll('query-error');
+            });
+        };
     }],
     ResultListCntl = ['$scope', 'Results', function($scope, Results) {
         $scope.status = 'loading';

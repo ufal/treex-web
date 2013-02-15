@@ -1,14 +1,9 @@
 package Treex::Web::Controller::Query;
 use Moose;
-use Try::Tiny;
-use HTML::FormatText;
-use TheSchwartz::Job;
-use LWP::UserAgent;
 use Treex::Web::Form::QueryForm;
-use Regexp::Common qw /URI/;
 use namespace::autoclean;
 
-BEGIN {extends 'Catalyst::Controller'; }
+BEGIN {extends 'Catalyst::Controller::REST'; }
 
 =head1 NAME
 
@@ -22,7 +17,15 @@ Catalyst Controller.
 
 =cut
 
-sub begin :Private {
+=head2 index
+
+Process the scenario and create the new result
+
+=cut
+
+sub index :Path :Args(0) :ActionClass('REST') { }
+
+sub index_POST {
     my ( $self, $c ) = @_;
 
     my $form = Treex::Web::Form::QueryForm->new(
@@ -30,78 +33,42 @@ sub begin :Private {
         ($c->user_exists ? (user => $c->user) : ()),
         action => $c->uri_for($self->action_for('index')),
     );
-    $c->stash( query_form => $form,
-               template => 'query.tt2');
-}
 
-=head2 index
-
-Process the scenario and create the new result
-
-=cut
-
-sub index :Path :Args(0) {
-    my ( $self, $c ) = @_;
-
-    # we have a post form
-    if ( lc $c->req->method eq 'post' ) {
-        # get form from stash
-        my $form = $c->stash->{query_form};
-        $form->process( params => $c->req->parameters );
-        return unless $form->is_valid;
-        # form is valid, lets create new Result
-        my ($scenario, $scenario_id, $input, $lang)
-            = ($form->value->{scenario},
-               $form->value->{scenario_id},
-               $form->value->{input},
-               $form->value->{language});
-        my $rs = $c->model('WebDB::Result')->new({
-#            session => $c->create_session_id_if_needed,
-            language => $lang,
-            ($c->user_exists ? (user => $c->user->id) : ())
-        });
-        $rs->insert($scenario, $input);
-        $c->log->debug("Creating new result: " . $rs->unique_token);
-
-        # post job
-        my $job = TheSchwartz::Job->new(
-            funcname => "Treex::Web::Job::Treex",
-            uniqkey  => $rs->unique_token,
-            arg      => { lang => $rs->language->code }
-        );
-        my $job_handle = $c->model("TheSchwartz")->insert($job);
-        if ($job_handle) {
-            $rs->job_handle($job_handle->as_string);
-            $rs->update;
-        }
-
-        my $uri = $c->uri_for(
-            $c->controller('Result')->action_for('show'),
-            [ $rs->unique_token ],
-        );
-        $c->response->redirect($uri);
-        $c->detach;
+    $form->process( params => $c->req->parameters );
+    unless ($form->is_valid) {
+        $self->status_bad_request($c, message => (join "\n", $form->errors));
+        return;
     }
+    # form is valid, lets create new Result
+    my ($scenario, $scenario_id, $input, $lang)
+        = ($form->value->{scenario},
+           $form->value->{scenario_id},
+           $form->value->{input},
+           $form->value->{language});
+    my $rs = $c->model('WebDB::Result')->new({
+#        session => $c->create_session_id_if_needed,
+        language => $lang,
+        ($c->user_exists ? (user => $c->user->id) : ())
+    });
+    $rs->insert($scenario, $input);
+    $c->log->debug("Creating new result: " . $rs->unique_token);
+
+    # post job
+    # my $job = TheSchwartz::Job->new(
+    #     funcname => "Treex::Web::Job::Treex",
+    #     uniqkey  => $rs->unique_token,
+    #     arg      => { lang => $rs->language->code }
+    # );
+    # my $job_handle = $c->model("TheSchwartz")->insert($job);
+    # if ($job_handle) {
+    #     $rs->job_handle($job_handle->as_string);
+    #     $rs->update;
+    # }
+
+    $self->status_created($c,
+                          location => "/result/{$rs->unique_token}",
+                          entity => $rs->REST);
 }
-
-my $browser = LWP::UserAgent->new();
-sub extract_text_from_url :Local :Args(0) {
-    my ( $self, $c ) = @_;
-
-    return unless ( lc $c->req->method eq 'post' );
-
-    my $url = $c->req->param('url');
-    unless ($url =~ /$RE{URI}{HTTP}/) {
-        $c->res->body("Bad url: $url");
-        $c->res->status(400);
-        return
-    }
-    my $res = $browser->get($url);
-
-    $c->res->body(HTML::FormatText->format_string($res->content));
-    $c->res->content_type('plain/text');
-}
-
 
 =head1 AUTHOR
 

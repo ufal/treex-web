@@ -114,13 +114,19 @@ angular.module('treex-services', ['ngResource']).
             }
         };
     }]).
-    factory('Treex', ['$http', function($http) {
+    factory('Treex', ['$http', 'Result', function($http, Result) {
         var languages;
         return {
+            query : function(data) {
+                var promise = $http.post(api + 'query', data);
+                return promise.then(function(responce) {
+                    return new Result(responce.data);
+                });
+            },
             languages : function() {
                 if (languages) return languages;
                 return languages = $http.get(api + 'treex/languages')
-                    .then(function(responce){
+                    .then(function(responce) {
                         var result = [];
                         angular.forEach(responce.data, function(group) {
                             angular.forEach(group.options, function(opt) {
