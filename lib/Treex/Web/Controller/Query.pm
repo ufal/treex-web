@@ -31,7 +31,6 @@ sub index_POST {
     my $form = Treex::Web::Form::QueryForm->new(
         schema => $c->model('WebDB')->schema,
         ($c->user_exists ? (user => $c->user) : ()),
-        action => $c->uri_for($self->action_for('index')),
     );
 
     $form->process( params => $c->req->parameters );
