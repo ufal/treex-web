@@ -1,6 +1,6 @@
 /**
  * AngularStrap - Twitter Bootstrap directives for AngularJS
- * @version v0.6.5 - 2013-02-11
+ * @version v0.6.6 - 2013-02-15
  * @link http://mgcrea.github.com/angular-strap
  * @author Olivier Louvignes
  * @license MIT License, http://www.opensource.org/licenses/MIT
@@ -12,84 +12,168 @@ angular.module('$strap.filters', ['$strap.config']);
 angular.module('$strap.directives', ['$strap.config']);
 angular.module('$strap', ['$strap.filters', '$strap.directives', '$strap.config']);
 
+// https://github.com/eternicode/bootstrap-datepicker
 
 angular.module('$strap.directives')
 
-.directive('bsAlert', ['$parse', '$timeout', '$compile', function($parse, $timeout, $compile) {
+.directive('bsDatepicker', ['$timeout', function($timeout) {
 	'use strict';
+
+	var isTouch = 'ontouchstart' in window && !window.navigator.userAgent.match(/PhantomJS/i);
+
+	var DATE_REGEXP_MAP = {
+		'/'    : '[\\/]',
+		'-'    : '[-]',
+		'.'    : '[.]',
+		'dd'   : '(?:(?:[0-2]?[0-9]{1})|(?:[3][01]{1}))',
+		'd'   : '(?:(?:[0-2]?[0-9]{1})|(?:[3][01]{1}))',
+		'mm'   : '(?:[0]?[1-9]|[1][012])',
+		'm'   : '(?:[0]?[1-9]|[1][012])',
+		'yyyy' : '(?:(?:[1]{1}[0-9]{1}[0-9]{1}[0-9]{1})|(?:[2]{1}[0-9]{3}))(?![[0-9]])',
+		'yy'   : '(?:(?:[0-9]{1}[0-9]{1}))(?![[0-9]])'
+	};
 
 	return {
 		restrict: 'A',
-		link: function postLink(scope, element, attrs) {
+		require: '?ngModel',
+		link: function postLink(scope, element, attrs, controller) {
+			//console.log('postLink', this, arguments); window.element = element;
 
-			var getter = $parse(attrs.bsAlert),
-				setter = getter.assign,
-				value = getter(scope);
+			var regexpForDateFormat = function(dateFormat, options) {
+				options || (options = {});
+				var re = dateFormat, regexpMap = DATE_REGEXP_MAP;
+				/*if(options.mask) {
+					regexpMap['/'] = '';
+					regexpMap['-'] = '';
+				}*/
+				angular.forEach(regexpMap, function(v, k) { re = re.split(k).join(v); });
+				return new RegExp('^' + re + '$', ['i']);
+			};
 
-			// For static alerts
-			if(!attrs.bsAlert) {
+			var dateFormatRegexp = isTouch ? 'yyyy/mm/dd' : regexpForDateFormat(attrs.dateFormat || 'mm/dd/yyyy'/*, {mask: !!attrs.uiMask}*/);
 
-				// Setup close button
-				if(angular.isUndefined(attrs.closeButton) || (attrs.closeButton !== '0' && attrs.closeButton !== 'false')) {
-					element.prepend('<button type="button" class="close" data-dismiss="alert">&times;</button>');
-				}
+			// Handle date validity according to dateFormat
+			if(controller) {
+				controller.$parsers.unshift(function(viewValue) {
+					//console.warn('viewValue', viewValue, dateFormatRegexp,  dateFormatRegexp.test(viewValue));
+					if (!viewValue || dateFormatRegexp.test(viewValue)) {
+						controller.$setValidity('date', true);
+						return viewValue;
+					} else {
+						controller.$setValidity('date', false);
+						return undefined;
+					}
+				});
+			}
+
+			// Support add-on
+			var component = element.next('[data-toggle="datepicker"]');
+			if(component.length) {
+				component.on('click', function() { isTouch ? element.trigger('focus') : element.datepicker('show'); });
+			}
+
+			// Use native interface for touch devices
+			if(isTouch && element.prop('type') === 'text') {
+
+				element.prop('type', 'date');
+				element.on('change', function(ev) {
+					scope.$apply(function () {
+						controller.$setViewValue(element.val());
+					});
+				});
 
 			} else {
 
-				scope.$watch(attrs.bsAlert, function(newValue, oldValue) {
-					value = newValue;
+				// If we have a controller (i.e. ngModelController) then wire it up
+				if(controller) {
+					element.on('changeDate', function(ev) {
+						scope.$apply(function () {
+							controller.$setViewValue(element.val());
+						});
+					});
+				}
 
-					// Set alert content
-					element.html((newValue.title ? '<strong>' + newValue.title + '</strong>&nbsp;' : '') + newValue.content || '');
+				// Popover GarbageCollection
+				var $popover = element.closest('.popover');
+				if($popover) {
+					$popover.on('hide', function(e) {
+						var datepicker = element.data('datepicker');
+						if(datepicker) {
+							datepicker.picker.remove();
+							element.data('datepicker', null);
+						}
+					});
+				}
 
-					if(!!newValue.closed) {
-						element.hide();
-					}
-
-					// Compile alert content
-					//$timeout(function(){
-					$compile(element.contents())(scope);
-					//});
-
-					// Add proper class
-					if(newValue.type || oldValue.type) {
-						oldValue.type && element.removeClass('alert-' + oldValue.type);
-						newValue.type && element.addClass('alert-' + newValue.type);
-					}
-
-					// Setup close button
-					if(angular.isUndefined(attrs.closeButton) || (attrs.closeButton !== '0' && attrs.closeButton !== 'false')) {
-						element.prepend('<button type="button" class="close" data-dismiss="alert">&times;</button>');
-					}
-
-				}, true);
+				// Create datepicker
+				element.attr('data-toggle', 'datepicker');
+				element.datepicker({
+					autoclose: true,
+					language: attrs.language || 'en'
+				});
 
 			}
 
-			element.addClass('alert').alert();
-
-			var parentArray = attrs.ngRepeat && attrs.ngRepeat.split(' in ').pop();
-
-			element.on('close', function(ev) {
-
-				if(parentArray) { // ngRepeat, remove from parent array
-					element.hide();
-					ev.preventDefault();
-					scope.$parent.$apply(function() {
-						scope.$parent[parentArray].splice(scope.$index, 1);
-					});
-				} else if(value) { // object, set closed property to 'true'
-					ev.preventDefault();
-					scope.$apply(function() {
-						value.closed = true;
-					});
-				} else { // static, regular behavior
-				}
-
-			});
-
 		}
+
 	};
+
+}]);
+
+
+angular.module('$strap.directives')
+
+.directive('bsDropdown', ['$parse', '$compile', function($parse, $compile) {
+  'use strict';
+
+  var slice = Array.prototype.slice;
+
+  var template = '' +
+  '<ul class="dropdown-menu" role="menu" aria-labelledby="drop1">' +
+    '<li ng-repeat="item in items" ng-class="{divider: !!item.divider, \'dropdown-submenu\': !!item.submenu && item.submenu.length}">' +
+      '<a ng-hide="!!item.divider" tabindex="-1" ng-href="{{item.href}}" ng-click="{{item.click}}" target="{{item.target}}" ng-bind-html-unsafe="item.text"></a>' +
+    '</li>' +
+  '</ul>';
+
+  var linkSubmenu = function(items, parent, scope) {
+    var subitems, submenu, subscope;
+    for (var i = 0, l = items.length; i < l; i++) {
+      if(subitems = items[i].submenu) {
+        subscope = scope.$new();
+        subscope.items = subitems;
+        submenu = $compile(template)(subscope);
+        submenu = submenu.appendTo(parent.children('li:nth-child(' + (i+1) + ')'));
+        asyncLinkSubmenu(subitems, submenu, subscope);
+      }
+    }
+  };
+
+  var asyncLinkSubmenu = function() {
+    var args = slice.call(arguments);
+    setTimeout(function() {
+      linkSubmenu.apply(null, args);
+    });
+  };
+
+  return {
+    restrict: 'EA',
+    scope: true,
+    link: function postLink(scope, element, attr) {
+
+      var getter = $parse(attr.bsDropdown);
+
+      scope.items = getter(scope);
+      var dropdown = $compile(template)(scope);
+      asyncLinkSubmenu(scope.items, dropdown, scope);
+      dropdown.insertAfter(element);
+
+      element
+        .addClass('dropdown-toggle')
+        .attr('data-toggle', "dropdown");
+
+    }
+  };
+
 }]);
 
 
@@ -258,6 +342,174 @@ angular.module('$strap.directives')
 
 angular.module('$strap.directives')
 
+.directive('bsPopover', ['$parse', '$compile', '$http', '$timeout', '$q', '$templateCache', function($parse, $compile, $http, $timeout, $q, $templateCache) {
+	'use strict';
+
+	// Hide popovers when pressing esc
+	$("body").on("keyup", function(ev) {
+		if(ev.keyCode === 27) {
+			$(".popover.in").each(function() {
+				$(this).popover('hide');
+			});
+		}
+	});
+
+	return {
+		restrict: 'A',
+		scope: true,
+		link: function postLink(scope, element, attr, ctrl) {
+
+			var getter = $parse(attr.bsPopover),
+				setter = getter.assign,
+				value = getter(scope),
+				options = {};
+
+			if(angular.isObject(value)) {
+				options = value;
+			}
+
+			$q.when(options.content || $templateCache.get(value) || $http.get(value, {cache: true})).then(function onSuccess(template) {
+
+				// Handle response from $http promise
+				if(angular.isObject(template)) {
+					template = template.data;
+				}
+
+				// Handle data-unique attribute
+				if(!!attr.unique) {
+					element.on('show', function(ev) { // requires bootstrap 2.3.0+
+						// Hide any active popover except self
+						$(".popover.in").each(function() {
+							var $this = $(this),
+								popover = $this.data('popover');
+							if(popover && !popover.$element.is(element)) {
+								$this.popover('hide');
+							}
+						});
+					});
+				}
+
+				// Handle data-hidden attribute to toggle visibility
+				if(!!attr.hidden) {
+					scope.$watch(attr.hidden, function(newValue, oldValue) {
+						if(!!newValue) {
+							popover.hide();
+						} else if(newValue !== oldValue) {
+							popover.show();
+						}
+					});
+				}
+
+				// Initialize popover
+				element.popover(angular.extend({}, options, {
+					content: template,
+					html: true
+				}));
+
+				// Bootstrap override to provide tip() reference & compilation
+				var popover = element.data('popover');
+				popover.hasContent = function() {
+					return this.getTitle() || template; // fix multiple $compile()
+				};
+				popover.getPosition = function() {
+					var r = $.fn.popover.Constructor.prototype.getPosition.apply(this, arguments);
+
+					// Compile content
+					$compile(this.$tip)(scope);
+					scope.$digest();
+
+					// Bind popover to the tip()
+					this.$tip.data('popover', this);
+
+					return r;
+				};
+
+				// Provide scope display functions
+				scope._popover = function(name) {
+					element.popover(name);
+				};
+				scope.hide = function() {
+					element.popover('hide');
+				};
+				scope.show = function() {
+					element.popover('show');
+				};
+				scope.dismiss = scope.hide;
+
+			});
+
+		}
+	};
+
+}]);
+angular.module('$strap.directives')
+
+.directive('bsModal', ['$parse', '$compile', '$http', '$timeout', '$q', '$templateCache', function($parse, $compile, $http, $timeout, $q, $templateCache) {
+        'use strict';
+
+        return {
+                restrict: 'A',
+                scope: true,
+                link: function postLink(scope, element, attr, ctrl) {
+
+                        var getter = $parse(attr.bsModal),
+                                setter = getter.assign,
+                                value = getter(scope);
+
+                        $q.when($templateCache.get(value) || $http.get(value, {cache: true})).then(function onSuccess(template) {
+
+                                // Handle response from $http promise
+                                if(angular.isObject(template)) {
+                                        template = template.data;
+                                }
+
+                                // Build modal object
+                                var id = getter(scope).replace('.html', '').replace(/\//g, '-').replace(/\./g, '-') + '-' + scope.$id;
+                                var $modal = $('<div class="modal hide" tabindex="-1"></div>')
+                                        .attr('id', id)
+                                        .attr('data-backdrop', attr.backdrop || true)
+                                        .attr('data-keyboard', attr.keyboard || true)
+                                        .addClass(attr.modalClass ? 'fade ' + attr.modalClass : 'fade')
+                                        .html(template);
+
+                                $('body').append($modal);
+
+                                // Configure element
+                                element.attr('href', '#' + id).attr('data-toggle', 'modal');
+
+                                // Compile modal content
+                                $timeout(function(){
+                                        $compile($modal)(scope);
+                                });
+
+                                // Modal visibility
+                                scope.visible = false; // modal starts hidden
+                                $modal.on('shown', function() { scope.$apply(function() { scope.visible = true;  }); });
+                                $modal.on('hidden', function() { scope.$apply(function() { scope.visible = false; }); });
+
+                                // Provide scope display functions
+                                scope._modal = function(name) {
+                                        $modal.modal(name);
+                                };
+                                scope.hide = function() {
+                                        $modal.modal('hide');
+                                };
+                                scope.show = function() {
+                                        $modal.modal('show');
+                                };
+                                scope.dismiss = scope.hide;
+
+                                scope.$on('$destroy', function() {
+                                        $modal.remove();
+                                });
+                        });
+                }
+        };
+}]);
+
+
+angular.module('$strap.directives')
+
 .directive('bsButtonSelect', ['$parse', '$timeout', function($parse, $timeout) {
 	'use strict';
 
@@ -298,491 +550,6 @@ angular.module('$strap.directives')
 			});
 		}
 	};
-}]);
-
-// https://github.com/eternicode/bootstrap-datepicker
-
-angular.module('$strap.directives')
-
-.directive('bsDatepicker', ['$timeout', function($timeout) {
-	'use strict';
-
-	var isTouch = 'ontouchstart' in window && !window.navigator.userAgent.match(/PhantomJS/i);
-
-	var DATE_REGEXP_MAP = {
-		'/'    : '[\\/]',
-		'-'    : '[-]',
-		'.'    : '[.]',
-		'dd'   : '(?:(?:[0-2]?[0-9]{1})|(?:[3][01]{1}))',
-		'd'   : '(?:(?:[0-2]?[0-9]{1})|(?:[3][01]{1}))',
-		'mm'   : '(?:[0]?[1-9]|[1][012])',
-		'm'   : '(?:[0]?[1-9]|[1][012])',
-		'yyyy' : '(?:(?:[1]{1}[0-9]{1}[0-9]{1}[0-9]{1})|(?:[2]{1}[0-9]{3}))(?![[0-9]])',
-		'yy'   : '(?:(?:[0-9]{1}[0-9]{1}))(?![[0-9]])'
-	};
-
-	return {
-		restrict: 'A',
-		require: '?ngModel',
-		link: function postLink(scope, element, attrs, controller) {
-			//console.log('postLink', this, arguments); window.element = element;
-
-			var regexpForDateFormat = function(dateFormat, options) {
-				options || (options = {});
-				var re = dateFormat, regexpMap = DATE_REGEXP_MAP;
-				/*if(options.mask) {
-					regexpMap['/'] = '';
-					regexpMap['-'] = '';
-				}*/
-				angular.forEach(regexpMap, function(v, k) { re = re.split(k).join(v); });
-				return new RegExp('^' + re + '$', ['i']);
-			};
-
-			var dateFormatRegexp = isTouch ? 'yyyy/mm/dd' : regexpForDateFormat(attrs.dateFormat || 'mm/dd/yyyy'/*, {mask: !!attrs.uiMask}*/);
-
-			// Handle date validity according to dateFormat
-			if(controller) {
-				controller.$parsers.unshift(function(viewValue) {
-					//console.warn('viewValue', viewValue, dateFormatRegexp,  dateFormatRegexp.test(viewValue));
-					if (!viewValue || dateFormatRegexp.test(viewValue)) {
-						controller.$setValidity('date', true);
-						return viewValue;
-					} else {
-						controller.$setValidity('date', false);
-						return undefined;
-					}
-				});
-			}
-
-			// Support add-on
-			var component = element.next('[data-toggle="datepicker"]');
-			if(component.length) {
-				component.on('click', function() { isTouch ? element.trigger('focus') : element.datepicker('show'); });
-			}
-
-			// Use native interface for touch devices
-			if(isTouch && element.prop('type') === 'text') {
-
-				element.prop('type', 'date');
-				element.on('change', function(ev) {
-					scope.$apply(function () {
-						controller.$setViewValue(element.val());
-					});
-				});
-
-			} else {
-
-				// If we have a controller (i.e. ngModelController) then wire it up
-				if(controller) {
-					element.on('changeDate', function(ev) {
-						scope.$apply(function () {
-							controller.$setViewValue(element.val());
-						});
-					});
-				}
-
-				// Popover GarbageCollection
-				var $popover = element.closest('.popover');
-				if($popover) {
-					$popover.on('hide', function(e) {
-						var datepicker = element.data('datepicker');
-						if(datepicker) {
-							datepicker.picker.remove();
-							element.data('datepicker', null);
-						}
-					});
-				}
-
-				// Create datepicker
-				element.attr('data-toggle', 'datepicker');
-				element.datepicker({
-					autoclose: true,
-					language: attrs.language || 'en'
-				});
-
-			}
-
-		}
-
-	};
-
-}]);
-
-
-angular.module('$strap.directives')
-
-.directive('bsDropdown', ['$parse', '$compile', function($parse, $compile) {
-  'use strict';
-
-  var slice = Array.prototype.slice;
-
-  var template = '' +
-  '<ul class="dropdown-menu" role="menu" aria-labelledby="drop1">' +
-    '<li ng-repeat="item in items" ng-class="{divider: !!item.divider, \'dropdown-submenu\': !!item.submenu && item.submenu.length}">' +
-      '<a ng-hide="!!item.divider" tabindex="-1" ng-href="{{item.href}}" ng-click="{{item.click}}" target="{{item.target}}" ng-bind-html-unsafe="item.text"></a>' +
-    '</li>' +
-  '</ul>';
-
-  var linkSubmenu = function(items, parent, scope) {
-    var subitems, submenu, subscope;
-    for (var i = 0, l = items.length; i < l; i++) {
-      if(subitems = items[i].submenu) {
-        subscope = scope.$new();
-        subscope.items = subitems;
-        submenu = $compile(template)(subscope);
-        submenu = submenu.appendTo(parent.children('li:nth-child(' + (i+1) + ')'));
-        asyncLinkSubmenu(subitems, submenu, subscope);
-      }
-    }
-  };
-
-  var asyncLinkSubmenu = function() {
-    var args = slice.call(arguments);
-    setTimeout(function() {
-      linkSubmenu.apply(null, args);
-    });
-  };
-
-  return {
-    restrict: 'EA',
-    scope: true,
-    link: function postLink(scope, element, attr) {
-
-      var getter = $parse(attr.bsDropdown);
-
-      scope.items = getter(scope);
-      var dropdown = $compile(template)(scope);
-      asyncLinkSubmenu(scope.items, dropdown, scope);
-      dropdown.insertAfter(element);
-
-      element
-        .addClass('dropdown-toggle')
-        .attr('data-toggle', "dropdown");
-
-    }
-  };
-
-}]);
-
-angular.module('$strap.directives')
-
-.directive('bsModal', ['$parse', '$compile', '$http', '$timeout', '$q', '$templateCache', function($parse, $compile, $http, $timeout, $q, $templateCache) {
-	'use strict';
-
-	return {
-		restrict: 'A',
-		scope: true,
-		link: function postLink(scope, element, attr, ctrl) {
-
-			var getter = $parse(attr.bsModal),
-				setter = getter.assign,
-				value = getter(scope);
-
-			$q.when($templateCache.get(value) || $http.get(value, {cache: true})).then(function onSuccess(template) {
-
-				// Handle response from $http promise
-				if(angular.isObject(template)) {
-					template = template.data;
-				}
-
-				// Build modal object
-				var id = getter(scope).replace('.html', '').replace(/\//g, '-').replace(/\./g, '-') + '-' + scope.$id;
-				var $modal = $('<div class="modal hide" tabindex="-1"></div>')
-					.attr('id', id)
-					.attr('data-backdrop', attr.backdrop || true)
-					.attr('data-keyboard', attr.keyboard || true)
-					.addClass(attr.modalClass ? 'fade ' + attr.modalClass : 'fade')
-					.html(template);
-
-				$('body').append($modal);
-
-				// Configure element
-				element.attr('href', '#' + id).attr('data-toggle', 'modal');
-
-				// Compile modal content
-				$timeout(function(){
-					$compile($modal)(scope);
-				});
-
-				// Provide scope display functions
-				scope._modal = function(name) {
-					$modal.modal(name);
-				};
-				scope.hide = function() {
-					$modal.modal('hide');
-				};
-				scope.show = function() {
-					$modal.modal('show');
-				};
-				scope.dismiss = scope.hide;
-
-			});
-		}
-	};
-}]);
-
-
-angular.module('$strap.directives')
-
-.directive('bsNavbar', ['$location', function($location) {
-	'use strict';
-
-	return {
-		restrict: 'A',
-		link: function postLink($scope, element, attrs, controller) {
-			// Watch for the $location
-			$scope.$watch(function() {
-				return $location.path();
-			}, function(newValue, oldValue) {
-
-				element.find('li[data-match-route]').each(function(k, li) {
-					var $li = angular.element(li),
-						// data('match-rout') does not work with dynamic attributes
-						pattern = $li.attr('data-match-route'),
-						regexp = new RegExp('^' + pattern + '$', ["i"]);
-
-					if(regexp.test(newValue)) {
-						$li.addClass('active');
-					} else {
-						$li.removeClass('active');
-					}
-
-				});
-			});
-		}
-	};
-}]);
-
-
-angular.module('$strap.directives')
-
-.directive('bsPopover', ['$parse', '$compile', '$http', '$timeout', '$q', '$templateCache', function($parse, $compile, $http, $timeout, $q, $templateCache) {
-	'use strict';
-
-	// Hide popovers when pressing esc
-	$("body").on("keyup", function(ev) {
-		if(ev.keyCode === 27) {
-			$(".popover.in").each(function() {
-				var $this = $(this);
-				$this.popover('hide');
-			});
-		}
-	});
-
-	return {
-		restrict: 'A',
-		scope: true,
-		link: function postLink(scope, element, attr, ctrl) {
-
-			var getter = $parse(attr.bsPopover),
-				setter = getter.assign,
-				value = getter(scope),
-				options = {};
-
-			if(angular.isObject(value)) {
-				options = value;
-			}
-
-			$q.when(options.content || $templateCache.get(value) || $http.get(value, {cache: true})).then(function onSuccess(template) {
-
-				// Handle response from $http promise
-				if(angular.isObject(template)) {
-					template = template.data;
-				}
-
-				// Handle data-unique attribute
-				if(!!attr.unique) {
-					element.on('show', function(ev) {
-						// Hide any active popover except self
-						$(".popover.in").each(function() {
-							var $this = $(this),
-								popover = $this.data('popover');
-							if(popover && !popover.$element.is(element)) {
-								$this.popover('hide');
-							}
-						});
-					});
-				}
-
-				// Handle data-hide attribute (requires dot-notation model)
-				if(!!attr.hide) {
-					scope.$watch(attr.hide, function(newValue, oldValue) {
-						if(!!newValue) {
-							popover.hide();
-						}
-					});
-				}
-
-				// Initialize popover
-				element.popover(angular.extend({}, options, {
-					content: function() {
-
-						$timeout(function() { // use async $apply
-
-							var popover = element.data('popover'),
-								$tip = popover.tip();
-
-							$compile($tip)(scope);
-
-							setTimeout(function() { // refresh position on nextTick
-								popover.refresh();
-								popover.tip().css('visibility', 'visible');
-							});
-
-						});
-
-						return template;
-					},
-					html: true
-				}));
-
-				// Bootstrap override to provide events, tip() reference, refreshable positions
-				var popover = element.data('popover');
-				popover.hasContent = function() {
-					return this.getTitle() || template; // fix multiple $compile()
-				};
-				popover.refresh = function() {
-					var $tip = this.tip(), inside, pos, actualWidth, actualHeight, placement, tp;
-
-					placement = typeof this.options.placement === 'function' ?
-						this.options.placement.call(this, $tip[0], this.$element[0]) :
-						this.options.placement;
-
-					inside = /in/.test(placement);
-
-					pos = this.getPosition(inside);
-
-					actualWidth = $tip[0].offsetWidth;
-					actualHeight = $tip[0].offsetHeight;
-
-					switch (inside ? placement.split(' ')[1] : placement) {
-						case 'bottom':
-						tp = {top: pos.top + pos.height + 10, left: pos.left + pos.width / 2 - actualWidth / 2};
-						break;
-						case 'top':
-						tp = {top: pos.top - actualHeight - 10, left: pos.left + pos.width / 2 - actualWidth / 2};
-						break;
-						case 'left':
-						tp = {top: pos.top + pos.height / 2 - actualHeight / 2, left: pos.left - actualWidth - 10};
-						break;
-						case 'right':
-						tp = {top: pos.top + pos.height / 2 - actualHeight / 2, left: pos.left + pos.width + 10};
-						break;
-					}
-
-					$tip.offset(tp);
-				};
-				popover.show = function() {
-					if(!$.fn.tooltip.Constructor.prototype.applyPlacement) { // Implemented in bootstrap 2.3.0
-						var e = $.Event('show');
-						this.$element.trigger(e);
-						if (e.isDefaultPrevented()) { return; }
-					}
-					var r = $.fn.popover.Constructor.prototype.show.apply(this, arguments);
-					// Bind popover to the tip()
-					this.$tip.data('popover', this);
-					return r;
-				};
-				popover.hide = function() {
-					if(!$.fn.tooltip.Constructor.prototype.applyPlacement) { // Implemented in bootstrap 2.3.0
-						var e = $.Event('hide');
-						this.$element.trigger(e);
-						if (e.isDefaultPrevented()) { return; }
-					}
-					return $.fn.popover.Constructor.prototype.hide.apply(this, arguments);
-				};
-
-				// Fix flickering due to compilation
-				element.on('show', function(ev) { console.warn('show');
-					popover.tip().css('visibility', 'hidden');
-				});
-
-				// Provide scope display functions
-				scope._popover = function(name) {
-					element.popover(name);
-				};
-				scope.hide = function() {
-					element.popover('hide');
-				};
-				scope.show = function() {
-					element.popover('show');
-				};
-				scope.dismiss = scope.hide;
-
-			});
-
-		}
-	};
-
-}]);
-
-
-// https://github.com/jdewit/bootstrap-timepicker
-// https://github.com/kla/bootstrap-timepicker
-
-angular.module('$strap.directives')
-
-.directive('bsTimepicker', ['$timeout', function($timeout) {
-	'use strict';
-
-	var TIME_REGEXP = '((?:(?:[0-1][0-9])|(?:[2][0-3])|(?:[0-9])):(?:[0-5][0-9])(?::[0-5][0-9])?(?:\\s?(?:am|AM|pm|PM))?)';
-
-	return {
-		restrict: 'A',
-		require: '?ngModel',
-		link: function postLink(scope, element, attrs, controller) {
-
-			// If we have a controller (i.e. ngModelController) then wire it up
-			if(controller) {
-				element.on('change', function(ev) {
-					scope.$apply(function () {
-						controller.$setViewValue(element.val());
-					});
-				});
-			}
-
-			// Handle input time validity
-			var timeRegExp = new RegExp('^' + TIME_REGEXP + '$', ['i']);
-			controller.$parsers.unshift(function(viewValue) {
-				//console.warn('viewValue', viewValue, timeRegExp,  timeRegExp.test(viewValue));
-				if (!viewValue || timeRegExp.test(viewValue)) {
-					controller.$setValidity('time', true);
-					return viewValue;
-				} else {
-					controller.$setValidity('time', false);
-					return undefined;
-				}
-			});
-
-			// Support add-on
-			// var component = element.siblings('[data-toggle="timepicker"]');
-			// if(component.length) {
-			//  component.on('click', function() {
-			//    var $widget = element.data('timepicker').$widget;
-			//   });
-			// }
-
-			// Popover GarbageCollection
-			var $popover = element.closest('.popover');
-			if($popover) {
-				$popover.on('hide', function(e) {
-					var timepicker = element.data('timepicker');
-					if(timepicker) {
-						timepicker.$widget.remove();
-						element.data('timepicker', null);
-					}
-				});
-			}
-
-			// Create datepicker
-			element.attr('data-toggle', 'timepicker');
-			//$timeout(function () {
-				element.timepicker();
-			//});
-
-		}
-	};
-
 }]);
 
 
@@ -863,6 +630,220 @@ angular.module('$strap.directives')
 		}
 	};
 
+}]);
+
+
+// https://github.com/jdewit/bootstrap-timepicker
+// https://github.com/kla/bootstrap-timepicker
+
+angular.module('$strap.directives')
+
+.directive('bsTimepicker', ['$timeout', function($timeout) {
+	'use strict';
+
+	var TIME_REGEXP = '((?:(?:[0-1][0-9])|(?:[2][0-3])|(?:[0-9])):(?:[0-5][0-9])(?::[0-5][0-9])?(?:\\s?(?:am|AM|pm|PM))?)';
+
+	return {
+		restrict: 'A',
+		require: '?ngModel',
+		link: function postLink(scope, element, attrs, controller) {
+
+			// If we have a controller (i.e. ngModelController) then wire it up
+			if(controller) {
+				element.on('change', function(ev) {
+					scope.$apply(function () {
+						controller.$setViewValue(element.val());
+					});
+				});
+			}
+
+			// Handle input time validity
+			var timeRegExp = new RegExp('^' + TIME_REGEXP + '$', ['i']);
+			controller.$parsers.unshift(function(viewValue) {
+				//console.warn('viewValue', viewValue, timeRegExp,  timeRegExp.test(viewValue));
+				if (!viewValue || timeRegExp.test(viewValue)) {
+					controller.$setValidity('time', true);
+					return viewValue;
+				} else {
+					controller.$setValidity('time', false);
+					return undefined;
+				}
+			});
+
+			// Support add-on
+			// var component = element.siblings('[data-toggle="timepicker"]');
+			// if(component.length) {
+			//  component.on('click', function() {
+			//    var $widget = element.data('timepicker').$widget;
+			//   });
+			// }
+
+			// Popover GarbageCollection
+			var $popover = element.closest('.popover');
+			if($popover) {
+				$popover.on('hide', function(e) {
+					var timepicker = element.data('timepicker');
+					if(timepicker) {
+						timepicker.$widget.remove();
+						element.data('timepicker', null);
+					}
+				});
+			}
+
+			// Create datepicker
+			element.attr('data-toggle', 'timepicker');
+			//$timeout(function () {
+				element.timepicker();
+			//});
+
+		}
+	};
+
+}]);
+
+
+angular.module('$strap.directives')
+
+.directive('bsAlert', ['$parse', '$timeout', '$compile', function($parse, $timeout, $compile) {
+	'use strict';
+
+	return {
+		restrict: 'A',
+		link: function postLink(scope, element, attrs) {
+
+			var getter = $parse(attrs.bsAlert),
+				setter = getter.assign,
+				value = getter(scope);
+
+			// For static alerts
+			if(!attrs.bsAlert) {
+
+				// Setup close button
+				if(angular.isUndefined(attrs.closeButton) || (attrs.closeButton !== '0' && attrs.closeButton !== 'false')) {
+					element.prepend('<button type="button" class="close" data-dismiss="alert">&times;</button>');
+				}
+
+			} else {
+
+				scope.$watch(attrs.bsAlert, function(newValue, oldValue) {
+					value = newValue;
+
+					// Set alert content
+					element.html((newValue.title ? '<strong>' + newValue.title + '</strong>&nbsp;' : '') + newValue.content || '');
+
+					if(!!newValue.closed) {
+						element.hide();
+					}
+
+					// Compile alert content
+					//$timeout(function(){
+					$compile(element.contents())(scope);
+					//});
+
+					// Add proper class
+					if(newValue.type || oldValue.type) {
+						oldValue.type && element.removeClass('alert-' + oldValue.type);
+						newValue.type && element.addClass('alert-' + newValue.type);
+					}
+
+					// Setup close button
+					if(angular.isUndefined(attrs.closeButton) || (attrs.closeButton !== '0' && attrs.closeButton !== 'false')) {
+						element.prepend('<button type="button" class="close" data-dismiss="alert">&times;</button>');
+					}
+
+				}, true);
+
+			}
+
+			element.addClass('alert').alert();
+
+			// Support fade-in effect
+			if(element.hasClass('fade')) {
+				element.removeClass('in');
+				setTimeout(function() {
+					element.addClass('in');
+				});
+			}
+
+			var parentArray = attrs.ngRepeat && attrs.ngRepeat.split(' in ').pop();
+
+			element.on('close', function(ev) { console.warn('close!');
+				var removeElement;
+
+				if(parentArray) { // ngRepeat, remove from parent array
+					ev.preventDefault();
+
+					element.removeClass('in');
+						console.warn(scope.$parent);
+
+					removeElement = function() {
+						element.trigger('closed');
+						if(scope.$parent) {
+							scope.$parent.$apply(function() {
+								scope.$parent[parentArray].splice(scope.$index, 1);
+							});
+						}
+					};
+
+					$.support.transition && element.hasClass('fade') ?
+						element.on($.support.transition.end, removeElement) :
+						removeElement();
+
+				} else if(value) { // object, set closed property to 'true'
+					ev.preventDefault();
+
+					element.removeClass('in');
+
+					removeElement = function() {
+						element.trigger('closed');
+						scope.$apply(function() {
+							value.closed = true;
+						});
+					};
+
+					$.support.transition && element.hasClass('fade') ?
+						element.on($.support.transition.end, removeElement) :
+						removeElement();
+
+				} else { // static, regular behavior
+				}
+
+			});
+
+		}
+	};
+}]);
+
+
+angular.module('$strap.directives')
+
+.directive('bsNavbar', ['$location', function($location) {
+	'use strict';
+
+	return {
+		restrict: 'A',
+		link: function postLink($scope, element, attrs, controller) {
+			// Watch for the $location
+			$scope.$watch(function() {
+				return $location.path();
+			}, function(newValue, oldValue) {
+
+				element.find('li[data-match-route]').each(function(k, li) {
+					var $li = angular.element(li),
+						// data('match-rout') does not work with dynamic attributes
+						pattern = $li.attr('data-match-route'),
+						regexp = new RegExp('^' + pattern + '$', ["i"]);
+
+					if(regexp.test(newValue)) {
+						$li.addClass('active');
+					} else {
+						$li.removeClass('active');
+					}
+
+				});
+			});
+		}
+	};
 }]);
 
 angular.module('$strap.directives')
