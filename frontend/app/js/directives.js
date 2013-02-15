@@ -33,11 +33,18 @@ angular.module('treex-directives', []).
             require: ['select', 'ngModel'],
             link: function(scope, element, attrs, cntls) {
                 if (!cntls[1]) return;
-                var selectCntl = cntls[0],
+                var clear = false,
+                    selectCntl = cntls[0],
                     modelCntl = cntls[1];
 
+                modelCntl.$render = function() {
+                    if (!modelCntl.$modelValue)
+                        element.select2('val', null, false);
+                };
+
                 element.bind('change', function() {
-                    element.select2('val', element.val());
+                    var val = element.val();
+                    element.select2('val', !val ? null : val, false);
                 });
 
                 if (selectCntl.databound) {
@@ -48,7 +55,6 @@ angular.module('treex-directives', []).
                         });
                     });
                 }
-
                 element.select2(element.data());
             }
         };

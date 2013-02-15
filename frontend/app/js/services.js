@@ -85,6 +85,35 @@ angular.module('treex-services', ['ngResource']).
         };
         return Results;
     }]).
+    factory('Scenario', ['$resource', function($resource) {
+        return $resource(api + 'scenario/:id');
+    }]).
+    factory('Scenarios', ['$http', 'Scenario', function($http, Scenario) {
+        return {
+            query: function(language) {
+                var promise = $http.get(api + 'scenarios', {
+                    params : { language : (angular.isObject(language) ? language.value : language) }
+                });
+                return promise.then(function(responce) {
+                    var result = [];
+                    console.log(responce.data);
+                    angular.forEach(responce.data, function(item){
+                        result.push(new Scenario(item));
+                    });
+                    return result;
+                });
+            }
+        };
+    }]).
+    factory('Input', ['$http', function($http) {
+        return {
+            loadUrl: function(url) {
+                return $http.post(api + 'input/url', { 'url': url }).then(function(responce) {
+                    return responce.data.content;
+                });
+            }
+        };
+    }]).
     factory('Treex', ['$http', function($http) {
         var languages;
         return {

@@ -2582,4 +2582,4 @@ if (!(window.console && console.log)) {
         }
     };
 
-}(jQuery));
+}(jQuery))

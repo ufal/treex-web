@@ -6,7 +6,7 @@ use Try::Tiny;
 use JSON;
 use namespace::autoclean;
 
-BEGIN { extends 'Catalyst::Controller::ActionRole'; }
+BEGIN { extends 'Catalyst::Controller::REST'; }
 
 =head1 NAME
 
@@ -36,7 +36,6 @@ sub base :Chained('/') :PathPart('') :CaptureArgs(0)  {
             action => $c->uri_for($self->action_for('add')),
             schema => $c->model('WebDB')->schema,
         ),
-        template => 'scenarios.tt2',
     );
 
     $c->stash( user_scenarios => $c->user->search_related_rs('scenarios') )
@@ -55,8 +54,20 @@ sub object :Chained('base') :PathPart('scenario') :CaptureArgs(1) {
     $c->stash(template => 'scenario.tt2');
 }
 
-sub index :Chained('base') :PathPart('scenarios') :Args(0) {
+sub list :Chained('base') :PathPart('scenarios') :Args(0) :ActionClass('REST') { }
+
+sub list_GET {
     my ( $self, $c ) = @_;
+
+    my $lang = $c->req->param('language');
+    my $rs = defined $lang ? $c->stash->{scenarios}->search({
+        -or => [
+            'scenario_languages.language' => $lang,
+            'scenario_languages.language' => undef,
+        ],
+    }) : $c->stash->{scenarios};
+    my @all = map { $_->REST } $rs->all;
+    $self->status_ok($c, entity => \@all);
 }
 
 my $json = JSON->new;

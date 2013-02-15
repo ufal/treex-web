@@ -36,21 +36,26 @@ body {
     overflow: auto;
 }
 
-#treexview, .chosen, .ace-editor {
+#treexview, .ace-editor, .scenario-btns {
     margin-bottom: 10px;
 }
 
-.form-controls {
+.form-controls, .scenario-picks {
     padding-top: 10px;
 }
 
-#scenario-name-wrap {
-    margin-top: 10px;
+.long-desc {
+    font-size: 85%;
 }
 
 .modal-big {
     width: 900px;
     margin-left: -450px;
+}
+
+.modal-large {
+    width: 700px;
+    margin-left: -350px;
 }
 
 @media (max-width: 767px) {

@@ -167,7 +167,7 @@ __PACKAGE__->belongs_to(
 
 =cut
 
-sub rest_data {
+sub REST {
     my $self = shift;
 
     return {

@@ -2,17 +2,6 @@
 
 /* Controllers */
 
-var AuthCntl = ['$scope', function($scope) {
-    $scope.loggedIn = false;
-
-    $scope.$on('auth:loggedIn', function(){
-        $scope.loggedIn = true;
-    });
-
-    $scope.$on('auth:loggedOut', function(){
-        $scope.loggedIn = false;
-    });
-}];
 
 function HomePageCntl() {
 }
@@ -30,10 +19,67 @@ function ScenarioWatch(scope, rootScope, cntl) {
         scope.language = language;
     });
 }
+var AuthCntl = ['$scope', function($scope) {
+    $scope.loggedIn = false;
 
-var ScenarioPickCntl = ['$scope', '$rootScope', 'Treex', function($scope, $rootScope, Treex) {
+    $scope.$on('auth:loggedIn', function(){
+        $scope.loggedIn = true;
+    });
+
+    $scope.$on('auth:loggedOut', function(){
+        $scope.loggedIn = false;
+    });
+}],
+    InputUrlCntl = ['$scope', 'Input', function($scope, Input) {
+        $scope.extract = function() {
+            $scope.loading = true;
+            $scope.error = null;
+            $scope.text = Input.loadUrl($scope.url).then(function(data) {
+                $scope.loading = false;
+                return data;
+            }, function(reason) {
+                $scope.loading = false;
+                $scope.error = reason.data.error;
+            });
+        };
+
+        $scope.insert = function() {
+            if ($scope.$parent) {
+                $scope.$parent.input = $scope.text;
+            }
+            $scope.dismiss();
+        };
+    }],
+    ScenarioPickCntl = ['$scope', '$rootScope', 'Treex', 'Scenarios', function($scope, $rootScope, Treex, Scenarios) {
         $scope.languages = Treex.languages();
         ScenarioWatch($scope, $rootScope, this);
+
+        function fetchScenarios(lang) {
+            $scope.status = 'loading';
+            $scope.scenarios = Scenarios.query(lang).then(function(data) {
+                $scope.status = (data.length > 0) ? 'result' : 'empty';
+                return data;
+            });
+        }
+
+        $scope.$watch('visible', function(visible) {
+            if (visible) fetchScenarios($scope.language);
+            else $scope.status = 'loading';
+        });
+
+        $scope.$watch('language', function(value, old) {
+            if (value !== old && $scope.visible) {
+                fetchScenarios(value);
+            }
+        });
+
+        // propagete scenario pick to the parent scope
+        $scope.pick = function(scenario) {
+            if ($scope.$parent !== null) {
+                $scope.$parent.scenario = scenario;
+            }
+            $scope.dismiss();
+        };
     }],
     RunTreexCntl = ['$scope', '$rootScope', 'Treex', function($scope, $rootScope, Treex) {
         $scope.languages = Treex.languages();

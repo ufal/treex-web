@@ -39,7 +39,7 @@ sub list :Chained('base') :PathPart('results') :Args(0) :ActionClass('REST') { }
 sub list_GET {
     my ($self, $c) = @_;
     my $rs = $c->stash->{results_rs};
-    my @all = map { $_->rest_data } $rs->all;
+    my @all = map { $_->REST } $rs->all;
     $self->status_ok($c, entity => \@all )
 }
 
@@ -69,14 +69,14 @@ sub item :Chained('result') :PathPart('') :Args(0) :ActionClass('REST') { }
 
 sub item_GET {
     my ( $self, $c ) = @_;
-    $self->status_ok($c, entity => $c->stash->{current_result}->rest_data );
+    $self->status_ok($c, entity => $c->stash->{current_result}->REST );
 }
 
 sub item_DELETE {
     my ( $self, $c ) = @_;
     my $res = $c->stash->{current_result};
     $res->delete;
-    $self->status_ok($c, entity => $res->rest_data );
+    $self->status_ok($c, entity => $res->REST );
 }
 
 sub status   :Chained('result') :PathPart(status)   :Args(0) :ActionClass('REST') { };
