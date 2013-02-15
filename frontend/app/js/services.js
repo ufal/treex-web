@@ -85,4 +85,23 @@ angular.module('treex-services', ['ngResource']).
         };
         return Results;
     }]).
+    factory('Treex', ['$http', function($http) {
+        var languages;
+        return {
+            languages : function() {
+                if (languages) return languages;
+                return languages = $http.get(api + 'treex/languages')
+                    .then(function(responce){
+                        var result = [];
+                        angular.forEach(responce.data, function(group) {
+                            angular.forEach(group.options, function(opt) {
+                                opt.group = group.group;
+                                result.push(opt);
+                            });
+                        });
+                        return result;
+                    });
+            }
+        };
+    }]).
     value('version', '0.1');

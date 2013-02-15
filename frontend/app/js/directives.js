@@ -28,6 +28,31 @@ angular.module('treex-directives', []).
             }
         };
     }).
+    directive('bsSelect2', ['$timeout', function($timeout) {
+        return {
+            require: ['select', 'ngModel'],
+            link: function(scope, element, attrs, cntls) {
+                if (!cntls[1]) return;
+                var selectCntl = cntls[0],
+                    modelCntl = cntls[1];
+
+                element.bind('change', function() {
+                    element.select2('val', element.val());
+                });
+
+                if (selectCntl.databound) {
+                    scope.$watch(selectCntl.databound, function(value) {
+                        if (value === undefined) return;
+                        $timeout(function() {
+                            element.trigger('change');
+                        });
+                    });
+                }
+
+                element.select2(element.data());
+            }
+        };
+    }]).
     directive('twTimer', ['$timeout', function($timeout) {
         return {
             restrict: 'E',

@@ -5,6 +5,7 @@ var web = angular.module('treex-web', ['$strap.directives', 'treex-directives', 
 web.config(['$routeProvider', '$locationProvider', function($routeProvider, $locationProvider) {
     $routeProvider.
         when('/', { templateUrl: 'partials/home.html', controller: HomePageCntl }).
+        when('/run', { templateUrl: 'partials/treex/run.html', controller: RunTreexCntl }).
         when('/results', { templateUrl: 'partials/result/list.html', controller: ResultListCntl }).
         when('/result/:resultId', { templateUrl: 'partials/result/detail.html', controller: ResultDetailCntl });
     $locationProvider.html5Mode(true);
