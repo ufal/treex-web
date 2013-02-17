@@ -60,7 +60,7 @@ sub set_status {
             unless defined $_[0] && ref $_[0] eq 'HASH';
         %params = %{$_[0]};
     } else {
-        %params = @_;
+        %params = @_; # TODO check number of arguments
     }
 
     foreach my $key (keys %params) {
