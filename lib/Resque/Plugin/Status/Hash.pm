@@ -16,8 +16,8 @@ has [qw/ name status message time num total /] => ( is => 'rw' );
 sub BUILD {
     my $self = shift;
 
-    $self->time(time());
-    $self->status('queued');
+    $self->time(time()) unless $self->time;
+    $self->status('queued') unless $self->status;
 }
 
 sub is_queued    { $_[0]->status eq 'queued' }
