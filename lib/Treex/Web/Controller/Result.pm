@@ -39,10 +39,12 @@ sub list_GET {
     my $rs = $c->stash->{results_rs};
     my @all = map { $_->REST } $rs->all;
 
-    my @statuses = $c->model('Resque')->status_manager->mget( map { $_->{token} } @all );
-    for (@all) {
-        my $status = pop @statuses;
-        $_->{status} = $status ? $status->status : 'unknown';
+    if (scalar @all > 0) {
+        my @statuses = $c->model('Resque')->status_manager->mget( map { $_->{token} } @all );
+        for (@all) {
+            my $status = pop @statuses;
+            $_->{status} = $status ? $status->status : 'unknown';
+        }
     }
     $self->status_ok($c, entity => \@all )
 }
@@ -83,9 +85,14 @@ sub item_GET {
 
 sub item_DELETE {
     my ( $self, $c ) = @_;
-    my $res = $c->stash->{current_result};
-    $res->delete;
-    $self->status_ok($c, entity => $res->REST );
+    my $curr = $c->stash->{current_result};
+    my $resque = $c->model('Resque');
+    my $status = $resque->status_manager->get($curr->unique_token);
+    if ($status->is_killable) {
+        $resque->status_manager->kill($status->uuid);
+    }
+    $curr->delete;
+    $self->status_ok($c, entity => $curr->REST );
 }
 
 sub status   :Chained('result') :PathPart(status)   :Args(0) :ActionClass('REST') { };

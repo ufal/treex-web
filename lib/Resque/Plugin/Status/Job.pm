@@ -111,11 +111,12 @@ sub kill {
         @_
     );
     $self->killed(1);
+    $self->status->status_manager->killed($self->uuid);
     die 'Killed' unless $no_die;
 }
 
 sub should_kill {
-    $_[0]->status_store->should_kill($_[0]->uuid)
+    $_[0]->status_manager->should_kill($_[0]->uuid)
 }
 
 1;

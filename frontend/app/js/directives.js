@@ -214,6 +214,27 @@ angular.module('treex-directives', []).
             }
         };
     }).
+    directive('fadey', function() {
+        return {
+            restrict: 'A',
+            link: function(scope, elm, attrs) {
+                var duration = parseInt(attrs.fadey);
+                if (isNaN(duration)) {
+                    duration = 500;
+                }
+                elm.hide();
+                elm.fadeIn(duration);
+
+                scope.destroy = function(complete) {
+                    elm.fadeOut(duration, function() {
+                        if (complete) {
+                            complete.apply(scope);
+                        }
+                    });
+                };
+            }
+        };
+    }).
     directive('appVersion', ['version', function(version) {
         return function(scope, elm, attrs) {
             elm.text(version);

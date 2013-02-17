@@ -204,20 +204,21 @@ sub insert {
     return $self->next::method();
 }
 
+sub delete {
+    my $self = shift;
+
+    # remove all files too
+    my $path = $self->files_path;
+    File::Path::remove_tree("$path/");
+
+    return $self->next::method(@_);
+}
+
 sub input {
     my ( $self, $input ) = @_;
 
     # write down input file
     return $self->_file_rw('input.txt', $input);
-}
-
-sub failure_log {
-    my ( $self, $c ) = @_;
-
-    return unless $self->job_handle;
-
-    my $job_handle = $c->model('TheSchwartz')->handle_from_string($self->job_handle);
-    return $job_handle->failure_log;
 }
 
 sub scenario {
