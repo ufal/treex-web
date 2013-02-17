@@ -38,7 +38,7 @@ sub perform {
     push @cmd, "Write::Treex to=result.treex";
 
     open my $err, ">error.log" or die $!;
-    my $timeout = 5;
+    my $timeout = 30;
     my ( $ret, $h );
     try {
         $h = harness \@cmd, '<', \undef, '>&', $err, (my $t = timeout($timeout, exception => Treex::Web::Job::Exception::TimedOut->new()));
