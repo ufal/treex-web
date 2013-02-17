@@ -5,7 +5,7 @@ use IO::Scalar;
 use File::Spec;
 use namespace::autoclean;
 
-BEGIN {extends 'Treex::Web::Controller::Base'; }
+BEGIN {extends 'Catalyst::Controller'; }
 
 =head1 NAME
 

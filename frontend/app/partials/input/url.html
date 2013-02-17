@@ -1,0 +1,28 @@
+<div class="modal-header">
+  <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+  <h3 id="load-from-url-modal-label">Load Input From URL</h3>
+</div>
+<div class="modal-body">
+  <form name="urlload">
+    <div class="input-prepend input-append">
+      <span class="add-on"><i class="icon-globe"></i></span>
+      <input class="input-xlarge" type="url" ng-model="url" required="required">
+      <div class="btn-group">
+        <button type="button" ng-click="extract()" ng-disabled="urlload.$invalid" class="btn">Extract text</button>
+      </div>
+    </div>
+  </form>
+  <div tw-if="loading" tw-loader></div>
+  <div tw-if="error" class="alert alert-error">
+    <h4>Oh Snap!</h4>
+    {{error}}
+  </div>
+  <div tw-if="text">
+    <p>Extracted text:</p>
+    <pre>{{text}}</pre>
+  </div>
+</div>
+<div class="modal-footer">
+  <button type="button" class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+  <button type="button" ng-click="insert()" class="btn btn-primary">Insert</button>
+</div>

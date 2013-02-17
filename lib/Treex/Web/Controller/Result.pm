@@ -1,11 +1,9 @@
 package Treex::Web::Controller::Result;
 use Moose;
 use Try::Tiny;
-use JSON;
-use Treex::Web::Form::QueryForm;
 use namespace::autoclean;
 
-BEGIN {extends 'Treex::Web::Controller::Base'; }
+BEGIN {extends 'Catalyst::Controller::REST'; }
 
 =head1 NAME
 
@@ -27,15 +25,28 @@ Puts Treex::Web::DB::Result result set to stash
 
 sub base :Chained('/') :PathPart('') :CaptureArgs(0)  {
     my ($self, $c) = @_;
-
-    $c->stash(template => 'results.tt2');
+    my $results_rs = $c->model('WebDB::Result')
+        ->search_rs(
+            {($c->user_exists ? (user => $c->user->id) : (user => undef))},
+            { order_by => { -desc => 'last_modified' } });
+    $c->stash(results_rs => $results_rs);
 }
 
-sub index :Chained('base') :PathPart('results') :Args(0) {
-    my ($self, $c) = @_;
+sub list :Chained('base') :PathPart('results') :Args(0) :ActionClass('REST') { }
 
+sub list_GET {
+    my ($self, $c) = @_;
     my $rs = $c->stash->{results_rs};
-    $c->stash(current_result => $rs->first);
+    my @all = map { $_->REST } $rs->all;
+
+    if (scalar @all > 0) {
+        my @statuses = $c->model('Resque')->status_manager->mget( map { $_->{token} } @all );
+        for (@all) {
+            my $job = pop @statuses;
+            $_->{job} = $job ? $job->REST : {status => 'unknown'};
+        }
+    }
+    $self->status_ok($c, entity => \@all )
 }
 
 sub result :Chained('base') :PathPart('result') :CaptureArgs(1) {
@@ -46,30 +57,73 @@ sub result :Chained('base') :PathPart('result') :CaptureArgs(1) {
     try {
         my $result = $rs->find({ unique_token => $unique_token },
                                { key => 'unique_token' });
+        die 'No result' unless $result;
         $c->stash(current_result => $result);
     } catch {
-        $c->log->error("$_");
-        # TODO handle not_found
+        $self->status_not_found(
+            $c,
+            message => "Cannot find result you were looking for!"
+        );
+        $c->detach;
     };
-    $c->stash(template => 'result.tt2');
 }
 
 =head2 show
 
 =cut
 
-sub show :Chained('result') :PathPart('') :Args(0) {
-    my ($self, $c, $unique_token) = @_;
+sub item :Chained('result') :PathPart('') :Args(0) :ActionClass('REST') { }
 
+sub item_GET {
+    my ( $self, $c ) = @_;
+    my $curr = $c->stash->{current_result};
+    my $item = $curr->REST;
+    my $job = $c->model('Resque')->status_manager->get($curr->unique_token);
+    $item->{job} = $job ? $job->REST : {status =>'unknown'};
+    $self->status_ok($c, entity => $item );
 }
 
-sub status :Chained('result') :PathPart('status') :Args(0) {
+sub item_DELETE {
+    my ( $self, $c ) = @_;
+    my $curr = $c->stash->{current_result};
+    my $resque = $c->model('Resque');
+    my $status = $resque->status_manager->get($curr->unique_token);
+    if ($status->is_killable) {
+        $resque->status_manager->kill($status->uuid);
+    }
+    $curr->delete;
+    $self->status_ok($c, entity => $curr->REST );
+}
+
+sub status   :Chained('result') :PathPart(status)   :Args(0) :ActionClass('REST') { };
+sub input    :Chained('result') :PathPart(input)    :Args(0) :ActionClass('REST') { };
+sub error    :Chained('result') :PathPart(error)    :Args(0) :ActionClass('REST') { };
+sub scenario :Chained('result') :PathPart(scenario) :Args(0) :ActionClass('REST') { };
+
+sub status_GET {
     my ( $self, $c ) = @_;
 
     my $curr = $c->stash->{current_result};
-    my $status = $curr ? $curr->status($c) : 'unknown';
-    $c->res->content_type('application/json');
-    $c->res->body(to_json({status => $status}));
+    my $status = $c->model('Resque')->status_manager->get($curr->unique_token);
+    $self->status_ok($c, entity => $status ? $status->REST : { status => 'unknown' } );
+}
+
+sub input_GET {
+    my ( $self, $c ) = @_;
+    my $curr = $c->stash->{current_result};
+    $self->status_ok($c, entity => { input => $curr->input } );
+}
+
+sub error_GET {
+    my ( $self, $c ) = @_;
+    my $curr = $c->stash->{current_result};
+    $self->status_ok($c, entity => { error => $curr->error_log } );
+}
+
+sub scenario_GET {
+    my ( $self, $c ) = @_;
+    my $curr = $c->stash->{current_result};
+    $self->status_ok($c, entity => { scenario => $curr->scenario } );
 }
 
 sub print_result :Chained('result') :PathPart('print') :Args(0) {
@@ -78,27 +132,6 @@ sub print_result :Chained('result') :PathPart('print') :Args(0) {
 }
 
 sub download :Chained('result') :CaptureArgs(0) {
-}
-
-=head2 delete
-
-=cut
-
-sub delete :Chained('result') :PathPart('delete') :Args(0) {
-  #TODO
-}
-
-sub end :ActionClass('RenderView') {
-    my ( $self, $c ) = @_;
-
-    my $form = Treex::Web::Form::QueryForm->new(
-        item => $c->stash->{current_result},
-        action => $c->uri_for($c->controller('Query')->action_for('index')),
-    );
-
-    $c->stash(
-        query_form => $form
-    );
 }
 
 =head1 AUTHOR

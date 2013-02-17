@@ -1,0 +1,37 @@
+<div id="results-list">
+  <div class="page-header">
+    <h1>Recent Treex Results</h1>
+  </div>
+  <ng-switch on="status">
+    <div ng-switch-when="loading" tw-loader></div>
+    <table ng-switch-when="results" data-provides="rowlink" class="table table-striped">
+      <thead>
+        <tr>
+          <th class="span2">Status</th>
+          <th>Name</th>
+          <th>Date</th>
+          <th class="span1"></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr ng-repeat="result in results" bs-rowlink="/result/{{result.token}}">
+          <td>
+            <tw-timer interval="3000" call="result.$updatePending()">
+              <span class="label" ng-class="{queued: 'label-warning', working: 'label-info', killed: 'label-important', failed: 'label-important', completed: 'label-success'}[result.job.status]">{{result.job.status | ucfirst}}</span>
+            </tw-timer>
+          </td>
+          <td>{{result.name}}</td>
+          <td><time jq-timeago datetime="{{result.last_modified}}">{{result.last_modified | date:'medium'}}</time></td>
+          <td class="nolink">
+            <button bs-tooltip title="Trash result" ng-click="results.$remove(result)" class="btn btn-inverse btn-mini"><i class="icon-white icon-trash"> </i></button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <div ng-switch-when="empty" class="alert alert-info">
+      <h4>No Results</h4>
+      <p>You have no Treex results yet.</p>
+      <p><a href="/run" class="btn btn-info">Try to run Treex &raquo;</a></p>
+    </div>
+  </ng-switch>
+</div>

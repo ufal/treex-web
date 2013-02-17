@@ -132,5 +132,14 @@ Related object: L<Treex::Web::DB::Result::Result>
 
 __PACKAGE__->has_many( "results" => "Treex::Web::DB::Result::Result", "language" );
 
+sub REST {
+    my $self = shift;
+    return {
+        id => $self->id,
+        code => $self->code,
+        name => $self->name,
+    };
+}
+
 __PACKAGE__->meta->make_immutable;
 1;

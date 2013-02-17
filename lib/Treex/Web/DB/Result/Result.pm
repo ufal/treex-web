@@ -167,6 +167,17 @@ __PACKAGE__->belongs_to(
 
 =cut
 
+sub REST {
+    my $self = shift;
+
+    return {
+        language => $self->language->code,
+        name => $self->name,
+        token => $self->unique_token,
+        last_modified => $self->last_modified->strftime('%Y-%m-%dT%H:%M:%S%z'),
+    };
+}
+
 sub new {
     my ( $self, $attrs ) = @_;
 
@@ -193,20 +204,14 @@ sub insert {
     return $self->next::method();
 }
 
-sub status {
-    my ( $self, $c ) = @_;
+sub delete {
+    my $self = shift;
 
-    return 'unknown' unless $self->job_handle;
+    # remove all files too
+    my $path = $self->files_path;
+    File::Path::remove_tree("$path/");
 
-    my $job_handle = $c->model('TheSchwartz')->handle_from_string($self->job_handle);
-    return 'pending' if $job_handle->is_pending;
-
-    my $exit_status = $job_handle->exit_status;
-    return 'failed' if defined $exit_status and $exit_status != 0;
-
-    # We don't have many options here... The job is done or has failed
-    # horribly somehow. Either way we are done.
-    return 'done';
+    return $self->next::method(@_);
 }
 
 sub input {
@@ -214,15 +219,6 @@ sub input {
 
     # write down input file
     return $self->_file_rw('input.txt', $input);
-}
-
-sub failure_log {
-    my ( $self, $c ) = @_;
-
-    return unless $self->job_handle;
-
-    my $job_handle = $c->model('TheSchwartz')->handle_from_string($self->job_handle);
-    return $job_handle->failure_log;
 }
 
 sub scenario {

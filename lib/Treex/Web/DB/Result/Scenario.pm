@@ -183,12 +183,13 @@ sub languages_names {
     map { $_->name } shift->languages;
 }
 
-sub TO_JSON {
+sub REST {
     my $self = shift;
     return {
         id => $self->id,
         name => $self->name,
         description => $self->description,
+        languages => (map { $_->REST } $self->languages),
         scenario => $self->scenario,
         public => $self->public
     };

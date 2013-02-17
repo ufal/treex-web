@@ -3,7 +3,7 @@ use Moose;
 use Treex::Web::Form::QueryForm;
 use namespace::autoclean;
 
-BEGIN { extends 'Treex::Web::Controller::Base' }
+BEGIN { extends 'Catalyst::Controller' }
 
 #
 # Sets the actions in this controller to be registered with no prefix
@@ -47,11 +47,6 @@ sub index :Path :Args(0) {
 sub auto :Path {
     my ( $self, $c ) = @_;
 
-    my $results_rs = $c->model('WebDB::Result')
-        ->search_rs(
-            {($c->user_exists ? (user => $c->user->id) : (user => undef))},
-            { order_by => { -desc => 'last_modified' } });
-    $c->stash(results_rs => $results_rs);
 }
 
 =head2 default
