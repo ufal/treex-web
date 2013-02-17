@@ -52,17 +52,14 @@ sub index_POST {
     $rs->insert($scenario, $input);
     $c->log->debug("Creating new result: " . $rs->unique_token);
 
-    # post job
-    # my $job = TheSchwartz::Job->new(
-    #     funcname => "Treex::Web::Job::Treex",
-    #     uniqkey  => $rs->unique_token,
-    #     arg      => { lang => $rs->language->code }
-    # );
-    # my $job_handle = $c->model("TheSchwartz")->insert($job);
-    # if ($job_handle) {
-    #     $rs->job_handle($job_handle->as_string);
-    #     $rs->update;
-    # }
+    # post the job
+    my $resque = $c->model('Resque');
+
+    $resque->push(treex => {
+        uuid => $rs->unique_token,
+        class => 'Treex::Web::Job::Process',
+        args => [ $rs->language->code ]
+    });
 
     $self->status_created($c,
                           location => "/result/{$rs->unique_token}",

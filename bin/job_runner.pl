@@ -11,10 +11,9 @@ use FindBin;
 use lib "$FindBin::Bin/../lib";
 use Config::Any;
 
-use TheSchwartz;
 use Path::Class::File;
 use File::Spec;
-use Treex::Web::Job::Treex;
+use Resque;
 
 use Getopt::Long;
 use Pod::Usage;
@@ -45,6 +44,9 @@ if ($opts{version}) {
 
 my $self = Path::Class::File->new( File::Spec->rel2abs( $0 ) );
 my $app_dir = $self->parent->parent;
+
+$ENV{'TREEX_WEB_DATA'} = File::Spec->catdir($app_dir, 'data');
+
 my $config_file = Path::Class::File->new($app_dir, 'share', 'etc', 'treex_web.pl' );
 
 # A bit of custom config riding/hacking to use the application's
@@ -55,22 +57,12 @@ my $config = Config::Any->load_files({
 });
 $config = $config->[0]->{$config_file};
 
-my $args = $config->{"Model::TheSchwartz"}->{args};
-$args->{verbose} = 0;
-$args->{databases}->[0]->{dsn} =~ s/__path_to\(([^)]+)\)__/ _path_to($1)  /e;
+my $args = $config->{"Model::Resque"}->{args};
 
-my $client = TheSchwartz->new(%{$args});
-
-$client->set_scoreboard(Path::Class::File->new($app_dir, 'tmp'));
-print "Scoreboard set to: " . $client->scoreboard;
-$client->can_do('Treex::Web::Job::Treex');
-
-$client->work();
-
-sub _path_to {
-    Path::Class::File->new($app_dir,+shift);
-}
-
+my $w = Resque->new( $args )->worker;
+$w->add_queue('treex');
+$w->verbose(1);
+$w->work;
 
 __END__
 

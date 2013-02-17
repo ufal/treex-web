@@ -1,34 +1,28 @@
-package Treex::Web::Job::Treex;
-use Moose;
-use TheSchwartz::Job;
+package Treex::Web::Job::Process;
 use Cwd;
-use Treex::Web;
 use File::Path qw(make_path);
+use File::Spec;
 use IPC::Run;
 
-extends 'TheSchwartz::Worker';
+sub perform {
+    my $job = shift;
 
-sub keep_exit_status_for { 7 * 24 * 60 * 60 } # 7 days
+    my $data_dir = $ENV{'TREEX_WEB_DATA'};
+    die "No data dir in environment" unless $data_dir;
 
-sub work {
-    my $self = shift;
-    my TheSchwartz::Job $job = shift;
-
-    my $lang = $job->arg->{lang};
-    my $key = $job->uniqkey;
-    my $result_dir = Treex::Web->path_to(
-        'data',
+    my $lang = $job->args->[0];
+    my $key = $job->uuid;
+    my $result_dir = File::Spec->catdir(
+        $data_dir,
         'results',
         substr($key, 0, 2),
         $key
-        );
+    );
 
     make_path("$result_dir/"); # make sure the dir exists
     print "Resul dir: $result_dir\n";
     chdir $result_dir  or die "Switch to result_dir has failed.";
     print getcwd;
-
-    $self->start_stats($job);
 
     # Form a command
     my @cmd = qw(treex);# -Len Read::Text scenario.scen Write::Treex to=-);
@@ -41,49 +35,28 @@ sub work {
     my $ret;
     eval { $ret = IPC::Run::run \@cmd, '<', \undef, '>&', $err; };
     if ($@) {
-        $job->permanent_failure($@, 1);
+        $job->failed($@);
     } elsif (not $ret) {
-        $job->permanent_failure('Treex failed to execute the scenario', $ret);
-    } else {
-        $job->completed;
+        $job->failed('Treex failed to execute the scenario');
     }
 
-    $self->end_stats($job);
+    return $ret;
 }
-
-sub start_stats {
-    my ( $self, $job ) = @_;
-
-    open my $stats, ">stats" or die $!;
-    print $stats join("\n", ($job->handle->as_string, time)), "\n";
-    close $stats;
-}
-
-sub end_stats {
-    my ( $self, $job ) = @_;
-
-    open my $stats, ">>stats" or die $!;
-    print $stats time, "\n";
-    close $stats;
-}
-
-__PACKAGE__->meta->make_immutable;
-
 1;
 __END__
 
 =head1 NAME
 
-Treex::Web::Job::Treex - TheSchwartz::Job for executing treex commands
+Treex::Web::Job::Process - Job for executing treex commands
 
 =head1 SYNOPSIS
 
-   use Treex::Web::Job::Treex;
+   use Treex::Web::Job::Process;
    blah blah blah
 
 =head1 DESCRIPTION
 
-Stub documentation for Treex::Web::Job::Treex,
+Stub documentation for Treex::Web::Job::Process,
 
 Blah blah blah.
 

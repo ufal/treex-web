@@ -53,7 +53,7 @@ requires 'HTML::FormHandler::Model::DBIC';
 requires 'Catalyst::Plugin::Assets';
 requires 'IPC::Run'; # used to run treex command
 requires 'HTML::FormatText';
-requires 'TheSchwartz';
+requires 'Resque'; # job processing queue
 requires 'Regexp::Common';
 
 

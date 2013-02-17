@@ -1,10 +1,10 @@
-package Treex::Web::Model::TheSchwartz;
+package Treex::Web::Model::Resque;
 use Moose;
 use namespace::autoclean;
 
 extends 'Catalyst::Model::Adaptor';
 
-__PACKAGE__->config( class => 'TheSchwartz' );
+__PACKAGE__->config( class => 'Resque', args => { plugins => ['Status'] } );
 
 sub prepare_arguments {
     my ($self, $c) = @_; # app
@@ -16,9 +16,10 @@ sub mangle_arguments {
     return %$args; # now the args are a plain list
 }
 
+
 =head1 NAME
 
-Treex::Web::Model::TheSchwartz - Catalyst Model
+Treex::Web::Model::Resque - Catalyst Model
 
 =head1 DESCRIPTION
 

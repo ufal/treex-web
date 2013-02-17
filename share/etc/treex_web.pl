@@ -10,12 +10,11 @@ my $config = {
             quote_names => 1,
         },
     },
-    'Model::TheSchwartz' => {
+    'Model::Resque' => {
         args => {
-            verbose => 1,
-            databases => [{
-                dsn => 'dbi:SQLite:__path_to(share/theschwartz.db)__'
-            }]
+            redis => '127.0.0.1:6379', # standard redis configuration
+            namespace => 'treex_resque',
+            plugins => [ 'Status' ]
         }
     }
 };
