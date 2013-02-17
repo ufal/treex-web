@@ -81,26 +81,35 @@ var AuthCntl = ['$scope', function($scope) {
             $scope.dismiss();
         };
     }],
-    RunTreexCntl = ['$scope', '$rootScope', '$location', '$anchorScroll', 'Treex',
-                    function($scope, $rootScope, $location, $anchorScroll, Treex) {
-        $scope.languages = Treex.languages();
-        ScenarioWatch($scope, $rootScope, this);
+    RunTreexCntl =
+        ['$scope', '$rootScope', '$location', '$anchorScroll', '$timeout', 'Treex',
+         function($scope, $rootScope, $location, $anchorScroll, $timeout, Treex) {
+             $scope.languages = Treex.languages();
+             ScenarioWatch($scope, $rootScope, this);
+             $scope.$watch('scenario.compose', function(value) {
+                 if (value && $scope.ace) {
+                     $timeout(function() {
+                         $scope.ace.resize();
+                         $scope.ace.focus();
+                     });
+                 }
+             });
 
-        $scope.submit = function() {
-            if ($scope.form.$invalid) return;
-            Treex.query({
-                language: $scope.language.value,
-                scenario: $scope.scenario.scenario,
-                scenario_id: $scope.scenario.id,
-                input: $scope.input
-            }).then(function(result) {
-                $location.path('/result/'+result.token);
-            }, function(reason) {
-                $scope.error = angular.isObject(reason.data) ?
-                    reason.data.error : reason.data;
-                $anchorScroll('query-error');
-            });
-        };
+             $scope.submit = function() {
+                 if ($scope.form.$invalid) return;
+                 Treex.query({
+                     language: $scope.language.value,
+                     scenario: $scope.scenario.scenario,
+                     scenario_id: $scope.scenario.id,
+                     input: $scope.input
+                 }).then(function(result) {
+                     $location.path('/result/'+result.token);
+                 }, function(reason) {
+                     $scope.error = angular.isObject(reason.data) ?
+                         reason.data.error : reason.data;
+                     $anchorScroll('query-error');
+                 });
+             };
     }],
     ResultListCntl = ['$scope', 'Results', function($scope, Results) {
         $scope.status = 'loading';

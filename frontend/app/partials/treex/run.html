@@ -17,14 +17,14 @@
       <span class="muted"> or </span>
       <button type="button" class="btn btn-inverse" ng-model="scenario.compose" bs-button><i class="icon-white icon-pencil"></i> Compose your own</button>
     </div>
-    <p class="lead" ng-show="scenario.name">
-      <strong>{{scenario.name}}</strong>
-    </p>
+    <h4 ng-show="scenario.name">{{scenario.name}}</h4>
     <p ng-show="scenario.description" class="well well-small" ng-bind-html-unsafe="scenario.description | noHTML | newlines"></p>
     <div class="form-controls" ng-show="scenario.compose">
       <label for="scenario-name">Scenario name:</label>
       <input type="text" id="scenario-name" name="scenario-name" ng-model="scenario.name" />
-      <input type="hidden" name="scenario" required ng-model="scenario.scenario" />
+      <div ace="perl" ng-model="scenario.scenario">
+        <input type="hidden" name="scenario" required ng-model="scenario.scenario" />
+      </div>
     </div>
     <h3><i class="iconic-check" ng-show="input" style="color: #51A351"> </i>Input</h3>
     <div class="btn-toolbar">

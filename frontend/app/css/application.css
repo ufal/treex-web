@@ -40,6 +40,11 @@ body {
     margin-bottom: 10px;
 }
 
+.ace-editor {
+    height: 350px;
+    width: 100%;
+}
+
 .form-controls, .scenario-picks {
     padding-top: 10px;
 }
