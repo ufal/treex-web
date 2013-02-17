@@ -63,7 +63,8 @@
         this.bundles = [ ]; // an array, because order matters
         this.file = "";
     };
-    treex.Document = function() { return new Document(); };
+    treex.Document = Document;
+    treex.document = function() { return new Document(); };
 
     Document.fromJSON = function(json) {
         var doc = new Document();
@@ -79,7 +80,8 @@
         this.zones = { }; // indexed by `language`-`selector`
         this.document = null;
     };
-    treex.Bundle = function() { return new Bundle(); };
+    treex.Bundle = Bundle;
+    treex.bundle = function() { return new Bundle(); };
 
     Bundle.prototype = {
         allTrees : function() {
@@ -108,7 +110,8 @@
         this.sentence = '';
         this.bundle = null;
     };
-    treex.Zone = function() { return new Zone(); };
+    treex.Zone = Zone;
+    treex.zone = function() { return new Zone(); };
 
     Zone.fromJSON = function(json) {
         var zone = new Zone();
@@ -128,8 +131,9 @@
     Tree = function(root) {
         this.root = root;
     };
+    treex.Tree = Tree;
     // mask constructor
-    treex.Tree = function(root) { return new Tree(root); };
+    treex.tree = function(root) { return new Tree(root); };
 
     Tree.fromJSON = function(nodes) {
         // index nodes first
@@ -192,7 +196,8 @@
         this.order = order++;
         this.uid = _.uniqueId('node_'); // globaly unique id
     };
-    treex.Node = function(id, data) { return new Node(id, data); };
+    treex.Node = Node;
+    treex.node = function(id, data) { return new Node(id, data); };
 
     // Try to match function names with Treex::PML::Node
     Node.prototype = {
