@@ -11,17 +11,17 @@
     <select bs-select2="languages" data-placeholder="Select an Language" data-allow-clear="true" style="width:350px" required ng-model="language" ng-options="lang.label group by lang.group for lang in languages">
       <option value=""></option>
     </select>
-    <h3><i class="iconic-check" ng-show="scenario.scenario" style="color: #51A351"> </i>Scenario</h3>
+    <h3><i class="iconic-check" ng-show="scenario.scenario && scenario.name" style="color: #51A351"> </i>Scenario</h3>
     <div class="scenario-btns">
       <button type="button" class="btn btn-primary" modal-class="modal-big" ng-controller="ScenarioPickCntl" bs-modal="'partials/scenario/picker.html'"><i class="icon-white icon-list-alt"></i> Pick scenario</button>
       <span class="muted"> or </span>
-      <button type="button" class="btn btn-inverse" ng-model="scenario.compose" bs-button><i class="icon-white icon-pencil"></i> Compose your own</button>
+      <button type="button" class="btn" ng-class="{false: 'btn-inverse', true: ''}[scenario.compose]" ng-model="scenario.compose" bs-button><i ng-class="{false: 'icon-white', true: ''}[scenario.compose]" class="icon-pencil"></i> Compose your own</button>
     </div>
     <h4 ng-show="scenario.name">{{scenario.name}}</h4>
     <p ng-show="scenario.description" class="well well-small" ng-bind-html-unsafe="scenario.description | noHTML | newlines"></p>
     <div class="form-controls" ng-show="scenario.compose">
-      <label for="scenario-name">Scenario name:</label>
-      <input type="text" id="scenario-name" name="scenario-name" ng-model="scenario.name" />
+      <input type="text" id="scenario-name" placeholder="Enter Scenario Name" required name="scenario-name" ng-model="scenario.name" />
+      <span class="help-block"><span class="label label-info">Required Field!</span></span>
       <div ace="perl" ng-model="scenario.scenario">
         <input type="hidden" name="scenario" required ng-model="scenario.scenario" />
       </div>

@@ -85,6 +85,7 @@ var AuthCntl = ['$scope', function($scope) {
         ['$scope', '$rootScope', '$location', '$anchorScroll', '$timeout', 'Treex',
          function($scope, $rootScope, $location, $anchorScroll, $timeout, Treex) {
              $scope.languages = Treex.languages();
+             $scope.scenario = { compose: false };
              ScenarioWatch($scope, $rootScope, this);
              $scope.$watch('scenario.compose', function(value) {
                  if (value && $scope.ace) {
