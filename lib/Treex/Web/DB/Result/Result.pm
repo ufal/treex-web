@@ -172,6 +172,7 @@ sub REST {
 
     return {
         language => $self->language->code,
+        name => $self->name,
         token => $self->unique_token,
         last_modified => $self->last_modified->strftime('%Y-%m-%dT%H:%M:%S%z'),
     };

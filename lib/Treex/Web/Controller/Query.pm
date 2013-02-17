@@ -39,13 +39,15 @@ sub index_POST {
         return;
     }
     # form is valid, lets create new Result
-    my ($scenario, $scenario_id, $input, $lang)
-        = ($form->value->{scenario},
+    my ($scenario_name, $scenario, $scenario_id, $input, $lang)
+        = ($form->value->{scenario_name},
+           $form->value->{scenario},
            $form->value->{scenario_id},
            $form->value->{input},
            $form->value->{language});
     my $rs = $c->model('WebDB::Result')->new({
 #        session => $c->create_session_id_if_needed,
+        name => $scenario_name,
         language => $lang,
         ($c->user_exists ? (user => $c->user->id) : ())
     });

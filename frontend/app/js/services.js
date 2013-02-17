@@ -7,6 +7,7 @@ angular.module('treex-services', ['ngResource']).
     factory('Result', ['$http', '$q', function($http, $q) {
         function Result(data) {
             angular.copy(data || {}, this);
+            if (!this.name) this.name = this.token;
         }
 
         function asyncCall(method, token) {

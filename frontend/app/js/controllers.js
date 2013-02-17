@@ -102,6 +102,7 @@ var AuthCntl = ['$scope', function($scope) {
                      language: $scope.language.value,
                      scenario: $scope.scenario.scenario,
                      scenario_id: $scope.scenario.id,
+                     scenario_name: $scope.scenario.name,
                      input: $scope.input
                  }).then(function(result) {
                      $location.path('/result/'+result.token);

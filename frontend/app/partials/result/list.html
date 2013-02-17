@@ -15,7 +15,7 @@
       </thead>
       <tbody>
         <tr ng-repeat="result in results" bs-rowlink="/result/{{result.token}}">
-          <td>{{result.token}}</td>
+          <td>{{result.name}}</td>
           <td><time jq-timeago datetime="{{result.last_modified}}">{{result.last_modified | date:'medium'}}</time></td>
           <td>
             <tw-timer interval="3000" call="result.$updatePending()">

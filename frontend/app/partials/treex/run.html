@@ -11,7 +11,7 @@
     <select bs-select2="languages" data-placeholder="Select an Language" data-allow-clear="true" style="width:350px" required ng-model="language" ng-options="lang.label group by lang.group for lang in languages">
       <option value=""></option>
     </select>
-    <h3><i class="iconic-check" ng-show="scenario.scenario && scenario.name" style="color: #51A351"> </i>Scenario</h3>
+    <h3><i class="iconic-check" ng-show="scenario.scenario" style="color: #51A351"> </i>Scenario</h3>
     <div class="scenario-btns">
       <button type="button" class="btn btn-primary" modal-class="modal-big" ng-controller="ScenarioPickCntl" bs-modal="'partials/scenario/picker.html'"><i class="icon-white icon-list-alt"></i> Pick scenario</button>
       <span class="muted"> or </span>
@@ -20,8 +20,8 @@
     <h4 ng-show="scenario.name">{{scenario.name}}</h4>
     <p ng-show="scenario.description" class="well well-small" ng-bind-html-unsafe="scenario.description | noHTML | newlines"></p>
     <div class="form-controls" ng-show="scenario.compose">
-      <input type="text" id="scenario-name" placeholder="Enter Scenario Name" required name="scenario-name" ng-model="scenario.name" />
-      <span class="help-block"><span class="label label-info">Required Field!</span></span>
+      <input type="text" id="scenario-name" placeholder="Enter Scenario Name" name="scenario-name" ng-model="scenario.name" />
+      <span class="help-block"><span class="label label-info">Optional</span> Scenario name is optional but it can help you navigate the results.</span>
       <div ace="perl" ng-model="scenario.scenario">
         <input type="hidden" name="scenario" required ng-model="scenario.scenario" />
       </div>

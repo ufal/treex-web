@@ -16,6 +16,7 @@ has_field 'language' => (type => 'Select', widget => 'Select', options_method =>
 has_field 'result_hash' => (type => 'Hidden');
 has_field 'scenario_id' => (type => 'Hidden');
 has_field 'scenario' => (type => 'TextArea');
+has_field 'scenario_name' => (type => 'Text');
 has_field 'input' => (type => 'TextArea', required => 1, rows => 10, element_attr => { class => 'input-block-level' });
 has_field 'submit' => (type => 'Submit', value => 'Run this Treex scenario', element_attr => { class => 'btn btn-primary btn-large'});
 
