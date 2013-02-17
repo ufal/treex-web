@@ -88,7 +88,7 @@ sub item_DELETE {
     my $curr = $c->stash->{current_result};
     my $resque = $c->model('Resque');
     my $status = $resque->status_manager->get($curr->unique_token);
-    if ($status->is_killable) {
+    if ($status && $status->is_killable) {
         $resque->status_manager->kill($status->uuid);
     }
     $curr->delete;
