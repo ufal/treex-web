@@ -50,7 +50,7 @@ angular.module('treex-services', ['ngResource']).
         };
 
         Result.prototype.$updatePending = function() {
-            if (this.status != 'pending')
+            if (this.status != 'queued' && this.status != 'working')
                 return false;
             this.$status();
             return true;

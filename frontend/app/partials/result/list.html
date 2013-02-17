@@ -19,7 +19,7 @@
           <td><time jq-timeago datetime="{{result.last_modified}}">{{result.last_modified | date:'medium'}}</time></td>
           <td>
             <tw-timer interval="3000" call="result.$updatePending()">
-              <span class="label" ng-class="{pending: 'label-warning', failed: 'label-important', done: 'label-success'}[result.status]">{{result.status | ucfirst}}</span>
+              <span class="label" ng-class="{queued: 'label-warning', working: 'label-info', killed: 'label-important', failed: 'label-important', completed: 'label-success'}[result.status]">{{result.status | ucfirst}}</span>
             </tw-timer>
           </td>
         </tr>

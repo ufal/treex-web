@@ -8,14 +8,14 @@
   </div>
 
   <div class="row-fluid">
-    <div tw-if="result.status == 'pending'">
+    <div tw-if="result.status == 'queued' || result.status == 'working'">
       <tw-timer interval="3000" call="result.$updatePending()">
         <div class="center"><img title="Treex is running..." src="/img/treex-loading.gif" /></div>
         <h2 class="center">Treex is running...</h2>
         <p class="center muted">Please wait while Treex process your request.</p>
       </tw-timer>
     </div>
-    <div tw-if="result.status && result.status != 'pending'">
+    <div tw-if="result.status && result.status != 'queued' && result.status != 'working'">
       <div class="btn-toolbar">
         <div class="btn-group">
           <a class="btn" ng-href="/result/{{result.token}}.zip"><i class="icon-download-alt"></i> Download all</a>
