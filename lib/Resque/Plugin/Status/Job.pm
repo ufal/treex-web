@@ -6,6 +6,12 @@ use Resque::Plugin::Status::Hash;
 use DateTime;
 use namespace::autoclean;
 
+use Exception::Class (
+    'Resque::Plugin::Status::Exception::Killed' => {
+        description => 'Job has been killed'
+    }
+);
+
 requires qw / resque /;
 
 has uuid => (
@@ -63,9 +69,17 @@ sub set_status {
     $self->resque->set_status($self->uuid, $status);
 }
 
-after 'perform' => sub { $_[0]->completed };
+after 'perform' => sub {
+    return if $_[0]->killed;
+    my $status = $_[0]->status;
+    $_[0]->completed if $status && $status->is_working;
+};
 
-after 'fail' => sub { $_[0]->failed };
+after 'fail' => sub {
+    return if $_[0]->killed;
+    my $status = $_[0]->status;
+    $_[0]->failed if $status && $status->is_working;
+};
 
 sub at {
     my $self = shift;
@@ -86,9 +100,11 @@ sub tick {
 
 sub failed {
     my $self = shift;
+    my $message = shift;
     return if $self->killed;
     $self->set_status(
         status => 'failed',
+        ($message ? (message => $message) : ()),
         @_
     );
 }
@@ -104,7 +120,7 @@ sub completed {
 }
 
 sub kill {
-    my ( $self, $no_die ) = @_;
+    my ( $self, $no_throw ) = @_;
     $self->set_status(
         status => 'killed',
         message => 'Killed at '.DateTime->now->strftime("%Y/%m/%d %H:%M:%S %Z"),
@@ -112,7 +128,7 @@ sub kill {
     );
     $self->killed(1);
     $self->status->status_manager->killed($self->uuid);
-    die 'Killed' unless $no_die;
+    Resque::Plugin::Status::Exception::Killed->throw unless $no_throw;
 }
 
 sub should_kill {

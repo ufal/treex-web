@@ -37,23 +37,23 @@ angular.module('treex-services', ['ngResource']).
 
         Result.get = function(token) { return asyncCall('get', token); };
         Result.delete = function(token) { return asyncCall('delete', token); };
-        Result.status = function(token) {
-            return asyncCmd(token, 'status', 'unknown');
+        Result.job = function(token) {
+            return asyncCall('get', token + '/status');
         };
         Result.prototype.$delete = function() { return Result.delete(this.token); };
-        Result.prototype.$status = function() {
+        Result.prototype.$job = function() {
             var self = this;
-            return Result.status(this.token).
-                then(function(status) {
-                    self.status = status;
-                    return status;
+            return Result.job(this.token).
+                then(function(job) {
+                    self.job = job;
+                    return job;
                 });
         };
 
         Result.prototype.$updatePending = function() {
-            if (this.status != 'queued' && this.status != 'working')
+            if (this.job && this.job.status != 'queued' && this.job.status != 'working')
                 return false;
-            this.$status();
+            this.$job();
             return true;
         };
 

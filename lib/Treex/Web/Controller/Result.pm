@@ -42,8 +42,8 @@ sub list_GET {
     if (scalar @all > 0) {
         my @statuses = $c->model('Resque')->status_manager->mget( map { $_->{token} } @all );
         for (@all) {
-            my $status = pop @statuses;
-            $_->{status} = $status ? $status->status : 'unknown';
+            my $job = pop @statuses;
+            $_->{job} = $job ? $job->REST : {status => 'unknown'};
         }
     }
     $self->status_ok($c, entity => \@all )
@@ -78,8 +78,8 @@ sub item_GET {
     my ( $self, $c ) = @_;
     my $curr = $c->stash->{current_result};
     my $item = $curr->REST;
-    my $status = $c->model('Resque')->status_manager->get($curr->unique_token);
-    $item->{status} = $status ? $status->status : 'unknown';
+    my $job = $c->model('Resque')->status_manager->get($curr->unique_token);
+    $item->{job} = $job ? $job->REST : {status =>'unknown'};
     $self->status_ok($c, entity => $item );
 }
 

@@ -2,7 +2,14 @@ package Treex::Web::Job::Process;
 use Cwd;
 use File::Path qw(make_path);
 use File::Spec;
-use IPC::Run;
+use Try::Tiny;
+use Scalar::Util 'blessed';
+use Exception::Class (
+    'Treex::Web::Job::Exception::TimedOut' => {
+        description => 'Treex job has timed out'
+    }
+);
+use IPC::Run qw(run harness start finish timeout);
 
 sub perform {
     my $job = shift;
@@ -22,7 +29,6 @@ sub perform {
     make_path("$result_dir/"); # make sure the dir exists
     print "Resul dir: $result_dir\n";
     chdir $result_dir  or die "Switch to result_dir has failed.";
-    print getcwd;
 
     # Form a command
     my @cmd = qw(treex);# -Len Read::Text scenario.scen Write::Treex to=-);
@@ -32,14 +38,35 @@ sub perform {
     push @cmd, "Write::Treex to=result.treex";
 
     open my $err, ">error.log" or die $!;
-    my $ret;
-    eval { $ret = IPC::Run::run \@cmd, '<', \undef, '>&', $err; };
-    if ($@) {
-        $job->failed($@);
-    } elsif (not $ret) {
-        $job->failed('Treex failed to execute the scenario');
-    }
-
+    my $timeout = 5;
+    my ( $ret, $h );
+    try {
+        $h = harness \@cmd, '<', \undef, '>&', $err, (my $t = timeout($timeout, exception => Treex::Web::Job::Exception::TimedOut->new()));
+        $h->start;
+        $h->{non_blocking}   = 0;
+        $h->{auto_close_ins} = 1;
+        $h->{break_on_io}    = 0;
+        while ($h->pumpable) {
+            $h->_select_loop;
+            $job->at($t->end_time - $t->start_time, $timeout);
+            sleep(1);
+        }
+        $ret = $h->finish;
+        if (not $ret) {
+            $job->failed('Treex failed to execute the scenario');
+        }
+    } catch {
+        if (blessed $_) {
+            if ( $_->isa('Resque::Plugin::Status::Exception::Killed') ) {
+                # ok we have been killed
+            } elsif ( $_->isa('Treex::Web::Job::Exception::TimedOut')) {
+                $job->failed($_->description);
+            }
+        } else {
+            $job->failed($_);
+        }
+        $h->kill_kill(grace => 5); # this can also throw
+    };
     return $ret;
 }
 1;

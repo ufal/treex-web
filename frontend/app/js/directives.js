@@ -42,7 +42,7 @@ angular.module('treex-directives', []).
                     textarea.val(value);
                 };
 
-                editor.getSession().on('change', function() {
+                editor.getSession().on('changeAnnotation', function() {
                     if (valid(editor)) {
                         scope.$apply(read);
                     }

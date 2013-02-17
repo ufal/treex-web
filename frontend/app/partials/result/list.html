@@ -17,7 +17,7 @@
         <tr ng-repeat="result in results" bs-rowlink="/result/{{result.token}}">
           <td>
             <tw-timer interval="3000" call="result.$updatePending()">
-              <span class="label" ng-class="{queued: 'label-warning', working: 'label-info', killed: 'label-important', failed: 'label-important', completed: 'label-success'}[result.status]">{{result.status | ucfirst}}</span>
+              <span class="label" ng-class="{queued: 'label-warning', working: 'label-info', killed: 'label-important', failed: 'label-important', completed: 'label-success'}[result.job.status]">{{result.job.status | ucfirst}}</span>
             </tw-timer>
           </td>
           <td>{{result.name}}</td>

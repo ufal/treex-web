@@ -8,14 +8,14 @@
   </div>
 
   <div class="row-fluid">
-    <div tw-if="result.status == 'queued' || result.status == 'working'">
+    <div tw-if="result.job.status == 'queued' || result.job.status == 'working'">
       <tw-timer interval="3000" call="result.$updatePending()">
         <div class="center"><img title="Treex is running..." src="/img/treex-loading.gif" /></div>
         <h2 class="center">Treex is running...</h2>
         <p class="center muted">Please wait while Treex process your request.</p>
       </tw-timer>
     </div>
-    <div tw-if="result.status && result.status != 'queued' && result.status != 'working'">
+    <div tw-if="result.job.status && result.job.status != 'queued' && result.job.status != 'working'">
       <div class="btn-toolbar">
         <div class="btn-group">
           <a class="btn" ng-href="/result/{{result.token}}.zip"><i class="icon-download-alt"></i> Download all</a>
@@ -33,10 +33,10 @@
           <button class="btn"><i class="icon-repeat"></i> Run again</button>
         </div>
       </div>
-      <div tw-if="result.status == 'failed'" class="treex-failed alert alert-error">
+      <div tw-if="result.job.status == 'failed'" class="treex-failed alert alert-error">
         <h4>Oh Snap!</h4>
         <p>An error has occurred. We're terribly sorry about that, but it's one of those things that happens from time to time.</p>
-        <p>Here's the error message, on the off-chance that it means something to you: TODO: SHOW ERROR MSG!</p>
+        <p tw-if="result.job.message">Here's the error message: <strong>{{result.job.message}}</strong></p>
       </div>
       <div id="treexview">
         <ul class="pager hide" style="text-align:left">
