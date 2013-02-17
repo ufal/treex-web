@@ -39,7 +39,7 @@ sub is_killable {
     none { $_ eq $self->status } qw{failed killed completed};
 }
 
-sub TO_JSON {
+sub REST {
     my $self = shift;
     return {
         uuid => $self->uuid,
@@ -52,6 +52,8 @@ sub TO_JSON {
         pct_comlete => $self->pct_comlete
     };
 }
+
+*TO_JSON = \&REST;
 
 __PACKAGE__->meta->make_immutable;
 1;

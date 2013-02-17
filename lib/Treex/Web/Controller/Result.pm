@@ -1,8 +1,6 @@
 package Treex::Web::Controller::Result;
 use Moose;
 use Try::Tiny;
-use JSON;
-use Treex::Web::Form::QueryForm;
 use namespace::autoclean;
 
 BEGIN {extends 'Catalyst::Controller::REST'; }
@@ -40,6 +38,12 @@ sub list_GET {
     my ($self, $c) = @_;
     my $rs = $c->stash->{results_rs};
     my @all = map { $_->REST } $rs->all;
+
+    my @statuses = $c->model('Resque')->status_manager->mget( map { $_->{token} } @all );
+    for (@all) {
+        my $status = pop @statuses;
+        $_->{status} = $status ? $status->status : 'unknown';
+    }
     $self->status_ok($c, entity => \@all )
 }
 
@@ -51,9 +55,10 @@ sub result :Chained('base') :PathPart('result') :CaptureArgs(1) {
     try {
         my $result = $rs->find({ unique_token => $unique_token },
                                { key => 'unique_token' });
+        die 'No result' unless $result;
         $c->stash(current_result => $result);
     } catch {
-        $c->status_not_found(
+        $self->status_not_found(
             $c,
             message => "Cannot find result you were looking for!"
         );
@@ -69,7 +74,11 @@ sub item :Chained('result') :PathPart('') :Args(0) :ActionClass('REST') { }
 
 sub item_GET {
     my ( $self, $c ) = @_;
-    $self->status_ok($c, entity => $c->stash->{current_result}->REST );
+    my $curr = $c->stash->{current_result};
+    my $item = $curr->REST;
+    my $status = $c->model('Resque')->status_manager->get($curr->unique_token);
+    $item->{status} = $status ? $status->status : 'unknown';
+    $self->status_ok($c, entity => $item );
 }
 
 sub item_DELETE {
@@ -88,8 +97,8 @@ sub status_GET {
     my ( $self, $c ) = @_;
 
     my $curr = $c->stash->{current_result};
-    my $status = $curr ? $curr->status : 'unknown';
-    $self->status_ok($c, entity => { status => $status } );
+    my $status = $c->model('Resque')->status_manager->get($curr->unique_token);
+    $self->status_ok($c, entity => $status ? $status->REST : { status => 'unknown' } );
 }
 
 sub input_GET {

@@ -49,11 +49,16 @@ sub mget {
 
     my @status_keys = map { $self->status_key($_) } @_;
     my @vals = $self->redis->mget(@status_keys);
-    my %pairs = zip @_, @vals;
     map {
-        my $hash = $self->decode($pairs{$_});
-        $hash->uuid($_); $hash
-    } keys %pairs;
+        my $val = pop @vals;
+        if ($val) {
+            my $hash = $self->decode($val);
+            $hash->uuid($_);
+            $hash
+        } else {
+            undef
+        }
+    } @_;
 }
 
 sub set {

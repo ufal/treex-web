@@ -173,7 +173,6 @@ sub REST {
     return {
         language => $self->language->code,
         token => $self->unique_token,
-        status => $self->status,
         last_modified => $self->last_modified->strftime('%Y-%m-%dT%H:%M:%S%z'),
     };
 }
@@ -202,23 +201,6 @@ sub insert {
     $self->input($input);
 
     return $self->next::method();
-}
-
-sub status {
-    my $self = shift;
-
-    return 'unknown' unless $self->job_handle;
-
-    return ('done', 'pending', 'failed')[rand(3)];
-
-#    return 'pending' if $job_handle->is_pending;
-
-#    my $exit_status = $job_handle->exit_status;
-#    return 'failed' if defined $exit_status and $exit_status != 0;
-
-    # We don't have many options here... The job is done or has failed
-    # horribly somehow. Either way we are done.
-#    return 'done';
 }
 
 sub input {
