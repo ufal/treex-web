@@ -3,6 +3,119 @@
 /* Directives */
 
 angular.module('treex-directives', []).
+    directive('twView', ['$rootScope', function($rootScope) {
+        return {
+            restrict: 'A',
+            transclude: true,
+            scope: {
+                result: '=twView'
+            },
+            template: '<div id="treex-view"><div ng-transclude></div><div id="gfx-holder"></div></div>',
+            controller: ['$element', function($element) {
+                this.$view = null;
+                this.$doc = null;
+
+                this.nextBundle = function() {
+                    var view = this.$view;
+                    if (view && view.hasNextBundle()) {
+                        view.nextBundle();
+                        this.change();
+                    }
+                };
+
+                this.previousBundle = function() {
+                    var view = this.$view;
+                    if (view && view.hasPreviousBundle()) {
+                        view.previousBundle();
+                        this.change();
+                    }
+                };
+
+                this.change = function(fn) {
+                    if (fn) {
+                        $element.bind('change', fn);
+                    } else {
+                        $element.trigger('change');
+                    }
+                };
+            }],
+            link : function(scope, element, attrs, cntl) {
+                scope.$watch('result.job.status', function(value) {
+                    if (cntl.$view != null || value != 'completed') return;
+
+                    var result = scope.result;
+                    result.$print().then(function(data) {
+                        cntl.$doc = Treex.Document.fromJSON(data);
+                        cntl.$view = Treex.TreeView('gfx-holder');
+                        cntl.$view.renderDocument(cntl.$doc);
+                        $rootScope.$broadcast('treex:rendered');
+                    });
+                });
+            }
+        };
+    }]).
+    directive('twViewPager', function() {
+        return {
+            restrict: 'A',
+            require: '^twView',
+            link : function(scope, element, attrs, cntl) {
+                cntl.change(function() { // on view change
+                    if (cntl.$view) {
+                        scope.hasPreviousBundle = cntl.$view.hasPreviousBundle();
+                        scope.hasNextBundle = cntl.$view.hasNextBundle();
+                        scope.$apply();
+                    }
+                });
+                element.find('.prevBundle').bind('click', function(e) {
+                    e.stopPropagation();
+                    cntl.previousBundle();
+                });
+                element.find('.nextBundle').bind('click', function(e) {
+                    e.stopPropagation();
+                    cntl.nextBundle();
+                });
+
+                scope.$on('treex:rendered', function() {
+                    if (cntl.$doc && cntl.$doc.bundles.length > 1) {
+                        element.show();
+                        scope.hasPreviousBundle = cntl.$view.hasPreviousBundle();
+                        scope.hasNextBundle = cntl.$view.hasNextBundle();
+                    } else {
+                        element.hide();
+                    }
+                });
+            }
+        };
+    }).
+    directive('twViewSentence', function() {
+        return {
+            restrict: 'A',
+            require: '^twView',
+            link : function(scope, element, attrs, cntl) {
+                cntl.change(function() { // on view change
+                    if (cntl.$view) {
+                        scope.sentence = cntl.$view.getSentences().join("\n");
+                        scope.$apply();
+                    }
+                });
+                scope.$on('treex:rendered', function() {
+                    scope.sentence = cntl.$view.getSentences().join("\n");
+                });
+
+            }
+        };
+    }).
+    directive('twViewLoading', function() {
+        return {
+            restrict: 'A',
+            require: '^twView',
+            link : function(scope, element, attrs, cntl) {
+                scope.$on('treex:rendered', function() {
+                    element.hide();
+                });
+            }
+        };
+    }).
     directive('ace', function() {
         var ACE_EDITOR_CLASS = 'ace-editor';
 
@@ -155,7 +268,6 @@ angular.module('treex-directives', []).
     directive('bsRowlink', ['$location', function($location) {
         return function(scope, element, attrs) {
             attrs.$observe('bsRowlink', function(value) {
-                console.log(value);
                 if (!value) return;
 
                 function handler() { scope.$apply(function(){ $location.path(value); }); }

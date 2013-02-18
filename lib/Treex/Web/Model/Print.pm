@@ -90,7 +90,7 @@ sub process {
 
     $c->res->content_type('application/json');
     $c->res->body(JSON->new->allow_nonref->allow_blessed->convert_blessed->
-                      pretty->encode({ bundles => \@bundles}));
+                      pretty->encode({ print => \@bundles}));
 }
 
 =head1 NAME

@@ -62,9 +62,8 @@ angular.module('treex-services', ['ngResource']).
             Result.prototype['$'+name] = function() {
                 var self = this;
                 return self[has] ?
-                    self[name] : asyncCmd(this.token, name, '').then(function(data) {
+                    self[name] : self[name] = asyncCmd(this.token, name, '').then(function(data) {
                         self[has] = true;
-                        self[name] = data;
                         return data;
                     });
             };

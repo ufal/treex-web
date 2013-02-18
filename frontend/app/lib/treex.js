@@ -66,9 +66,9 @@
     treex.Document = Document;
     treex.document = function() { return new Document(); };
 
-    Document.fromJSON = function(json) {
+    Document.fromJSON = function(bundles) {
         var doc = new Document();
-        _.each(json.bundles, function(bundle) {
+        _.each(bundles, function(bundle) {
             var b = Bundle.fromJSON(bundle);
             b.document = doc;
             doc.bundles.push( b );
