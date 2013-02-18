@@ -1,0 +1,33 @@
+<div id="auth-login">
+  <div class="page-header">
+    <h1>Login</h1>
+  </div>
+  <div class="row-fluid">
+    <div class="span6">
+      <form name="form">
+        <div class="control-group">
+          <label class="control-label" for="input-email">Email:</label>
+          <input type="email" ng-model="login.username" id="input-email" required class="input-xlarge" placeholder="Email address">
+        </div>
+        <div class="control-group">
+          <label class="control-label" for="input-password">Password:</label>
+          <input type="password" ng-model="login.password" id="input-password" required class="input-xlarge" placeholder="Password">
+        </div>
+        <div class="control-group">
+          <label class="checkbox">
+            <input type="checkbox" ng-model="login.remember"> Remember me
+          </label>
+        </div>
+        <button ng-disabled="form.$invalid" class="btn btn-large btn-primary" type="button">Sign in</button>
+      </form>
+    </div>
+    <div class="span6">
+      <h2>Why should I login?</h2>
+      <p>Todo: list some cool advantages</p>
+      <ul>
+        <li><a href="/signup">Sign up!</a></li>
+        <li><a href="/forgotten-password">Forgot your password?</a></li>
+      </ul>
+    </div>
+  </div>
+</div>

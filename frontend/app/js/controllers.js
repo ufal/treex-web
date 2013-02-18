@@ -19,6 +19,7 @@ function ScenarioWatch(scope, rootScope, cntl) {
         scope.language = language;
     });
 }
+
 var AuthCntl = ['$scope', function($scope) {
     $scope.loggedIn = false;
 
@@ -30,6 +31,8 @@ var AuthCntl = ['$scope', function($scope) {
         $scope.loggedIn = false;
     });
 }],
+    LoginCntl = [ function() { }],
+    SignUpCntl = [ function() { }],
     InputUrlCntl = ['$scope', 'Input', function($scope, Input) {
         $scope.extract = function() {
             $scope.loading = true;
