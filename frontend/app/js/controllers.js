@@ -53,7 +53,7 @@ var AuthCntl = ['$scope', function($scope) {
             $scope.dismiss();
         };
     }],
-    ScenarioPickCntl = ['$scope', '$rootScope', 'Treex', 'Scenarios', function($scope, $rootScope, Treex, Scenarios) {
+    ScenarioPickCntl = ['$scope', '$rootScope', '$timeout', 'Treex', 'Scenarios', function($scope, $rootScope, $timeout, Treex, Scenarios) {
         $scope.languages = Treex.languages();
         ScenarioWatch($scope, $rootScope, this);
 
@@ -78,10 +78,12 @@ var AuthCntl = ['$scope', function($scope) {
 
         // propagete scenario pick to the parent scope
         $scope.pick = function(scenario) {
-            if ($scope.$parent !== null) {
-                $scope.$parent.scenario = scenario;
-            }
-            $scope.dismiss();
+            $timeout(function() {
+                if ($scope.$parent !== null) {
+                    $scope.$parent.scenario = scenario;
+                }
+                $scope.dismiss();
+            });
         };
     }],
     RunTreexCntl =

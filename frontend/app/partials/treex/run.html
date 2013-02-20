@@ -15,7 +15,7 @@
     <div class="scenario-btns">
       <button type="button" class="btn btn-primary" modal-class="modal-big" ng-controller="ScenarioPickCntl" bs-modal="'partials/scenario/picker.html'"><i class="icon-white icon-list-alt"></i> Pick scenario</button>
       <span class="muted"> or </span>
-      <button type="button" class="btn" ng-class="{false: 'btn-inverse', true: ''}[scenario.compose]" ng-model="scenario.compose" bs-button><i ng-class="{false: 'icon-white', true: ''}[scenario.compose]" class="icon-pencil"></i> Compose your own</button>
+      <button type="button" class="btn" ng-class="{'btn-inverse' : !scenario.compose}" ng-model="scenario.compose" bs-button><i ng-class="{'icon-white' : !scenario.compose}" class="icon-pencil"></i> Compose your own</button>
     </div>
     <h4 ng-show="scenario.name">{{scenario.name}}</h4>
     <p ng-show="scenario.description" class="well well-small" ng-bind-html-unsafe="scenario.description | noHTML | newlines"></p>
@@ -23,7 +23,7 @@
       <input type="text" id="scenario-name" placeholder="Enter Scenario Name" name="scenario-name" ng-model="scenario.name" />
       <span class="help-block"><span class="label label-info">Optional</span> Scenario name is optional but it can help you navigate the results.</span>
       <div ace="perl" ng-model="scenario.scenario">
-        <input type="hidden" name="scenario" required ng-model="scenario.scenario" />
+        <textarea name="scenario" id="scenario-text" rows="12" required ng-model="scenario.scenario"></textarea>
       </div>
     </div>
     <h3><i class="iconic-check" ng-show="input" style="color: #51A351"> </i>Input</h3>

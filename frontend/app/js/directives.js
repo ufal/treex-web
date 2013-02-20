@@ -151,8 +151,10 @@ angular.module('treex-directives', []).
 
                 ngModel.$render = function() {
                     var value = ngModel.$viewValue || '';
+                    editor.getSession().removeListener('change', change);
                     editor.getSession().setValue(value);
                     textarea.val(value);
+                    editor.getSession().on('change', change);
                 };
 
                 editor.getSession().on('changeAnnotation', function() {
@@ -163,6 +165,18 @@ angular.module('treex-directives', []).
 
                 editor.getSession().setValue(textarea.val());
                 read();
+
+                editor.getSession().on('change', change);
+
+                function change() {
+                    var value = ngModel.$viewValue || '';
+                    if (value != editor.getSession().getValue()) {
+                        scope.$apply(function() {
+                            ngModel.$setViewValue(editor.getValue());
+                            textarea.val(editor.getValue());
+                        });
+                    }
+                }
 
                 function read() {
                     ngModel.$setViewValue(editor.getValue());
