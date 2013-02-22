@@ -1,0 +1,23 @@
+<div id="auth-signup">
+  <div class="page-header">
+    <h1>Sign Up</h1>
+  </div>
+  <div class="row-fluid">
+    <form name="form">
+      <div class="control-group">
+        <label class="control-label" for="input-email">Email:</label>
+        <input type="email" name="email" ng-model="signup.username" id="input-email" required class="input-xlarge" placeholder="Email address">
+      </div>
+      <div class="control-group" ng-class="{'error' : form.confirm.$error.same}">
+        <label class="control-label" for="input-password">Password:</label>
+        <input type="password" name="password" ng-model="signup.password" id="input-password" required class="input-xlarge" placeholder="Password">
+      </div>
+      <div class="control-group" ng-class="{'error' : form.confirm.$error.same}">
+        <label class="control-label" for="input-confirm-password">Confirm password:</label>
+        <input type="password" validate-same-as="signup.password" name="confirm" ng-model="signup.passwordConfirm" id="input-confirm-password" required class="input-xlarge" placeholder="Confirm password">
+        <span ng-show="form.confirm.$error.same" class="help-block">Passwords are not the same.</span>
+      </div>
+      <button ng-disabled="form.$invalid" class="btn btn-large btn-primary" type="button">Sign Up</button>
+    </form>
+  </div>
+</div>
