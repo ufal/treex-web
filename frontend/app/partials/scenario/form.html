@@ -4,14 +4,14 @@
   </div>
   <form name="form" id="scenario-form">
     <div class="control-group">
-      <input type="text" name="name" ng-model="scenario.name" placeholder="Scenario name" />
+      <input type="text" name="name" required ng-model="scenario.name" placeholder="Scenario name" />
       <span class="help-block">
       Try use a very descriptive name for your scenario e.g.: "English
       analysis using XY parser"
       </span>
     </div>
     <div class="control-group">
-      <select bs-select2="languages" multiple data-placeholder="Select languages" style="width:350px" required ng-model="scenario.languages" ng-options="lang.label group by lang.group for lang in languages">
+      <select bs-select2="languages" multiple data-placeholder="Select languages" style="width:350px" ng-model="scenario.languages" ng-options="lang.label group by lang.group for lang in languages">
       </select>
       <span class="help-block">
       Select languages which your scenario can process. Leave empty if
@@ -38,7 +38,7 @@
       </span>
     </div>
     <div>
-      <button class="btn btn-primary" type="button">Save your scenario</button>
+      <button class="btn btn-primary" ng-disabled="form.$invalid" ng-click="scenario.$save()" type="button">Save scenario</button>
       <a class="btn" href="/scenarios">Cancel</a>
     </div>
   </form>

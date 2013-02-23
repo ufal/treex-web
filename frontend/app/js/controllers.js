@@ -125,9 +125,11 @@ var AuthCntl = ['$scope', function($scope) {
             return scenarios;
         });
     }],
-    ScenarioFormCntl = ['$scope', 'Scenario', 'Treex', function($scope, Scenario, Treex) {
-        $scope.languages = Treex.languages();
-        // TODO: save methods and other stuff
+    ScenarioFormCntl =
+        ['$scope', '$routeParams', '$location', 'Scenario', 'Treex',
+         function($scope, params, $location, Scenario, Treex) {
+             $scope.languages = Treex.languages();
+             $scope.scenario = params.scenarioId ? Scenario.get(params.scenarioId) : new Scenario();
     }],
     ResultListCntl = ['$scope', 'Results', function($scope, Results) {
         $scope.status = 'loading';
