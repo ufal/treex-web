@@ -168,21 +168,30 @@ __PACKAGE__->has_many(
 
 sub new {
     my ( $self, $attrs ) = @_;
-    
+
     $attrs->{active} = 0 unless defined $attrs->{active} && $attrs->{active};
     $attrs->{activate_token} = $self->get_uuid
         if $attrs->{active} == 0;
-    
+
     my $new = $self->next::method($attrs);
-    
+
     return $new;
 }
 
 sub name {
     my $self = shift;
-    my @parts = split /@/, $self->email; 
+    my @parts = split /@/, $self->email;
     shift @parts;
 }
-    
+
+sub REST {
+    my $self = shift;
+
+    return {
+        id => $self->id,
+        name => $self->name,
+    };
+}
+
 __PACKAGE__->meta->make_immutable(inline_constructor => 0);
 1;

@@ -189,8 +189,9 @@ sub REST {
         id => $self->id,
         name => $self->name,
         description => $self->description,
-        languages => (map { $_->REST } $self->languages),
+        languages => [(map { $_->REST } $self->languages)],
         scenario => $self->scenario,
+        ($self->user ? (user => $self->user->REST) : ()),
         public => $self->public
     };
 }
