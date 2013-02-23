@@ -36,7 +36,17 @@ body {
     overflow: auto;
 }
 
+.ace-editor {
+    border: 1px solid #CCC;
+    -webkit-border-radius: 4px;
+    -moz-border-radius: 4px;
+    border-radius: 4px;
+}
 #treexview, .ace-editor, .scenario-btns {
+    margin-bottom: 10px;
+}
+
+.control-group .select2-container {
     margin-bottom: 10px;
 }
 
