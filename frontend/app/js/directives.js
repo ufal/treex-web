@@ -165,20 +165,24 @@ angular.module('treex-directives', []).
 
                 editor.getSession().setValue(textarea.val());
                 read();
-
                 editor.getSession().on('change', change);
+
+                scope.$watch(attrs.ngModel, function() {
+                    // This have to be here to trigger form validation
+                    // I think it is an angular bug
+                });
 
                 scope.$on('$viewContentLoaded', function() {
                     editor.resize();
                 });
 
-
                 function change() {
-                    var value = ngModel.$viewValue || '';
-                    if (value != editor.getSession().getValue()) {
+                    var value = ngModel.$viewValue;
+                    var editorValue = editor.getSession().getValue();
+                    if (value != editorValue) {
                         scope.$apply(function() {
-                            ngModel.$setViewValue(editor.getValue());
-                            textarea.val(editor.getValue());
+                            ngModel.$setViewValue(editorValue);
+                            textarea.val(editorValue);
                         });
                     }
                 }
