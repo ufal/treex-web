@@ -10,6 +10,8 @@ web.config(['$routeProvider', '$locationProvider', '$httpProvider', function($ro
         when('/signup', { templateUrl: 'partials/auth/signup.html', controller: SignUpCntl }).
         when('/signup/success', { templateUrl: 'partials/auth/signup-success.html', controller: SignUpCntl }).
         when('/run', { templateUrl: 'partials/treex/run.html', controller: RunTreexCntl }).
+        when('/scenarios', { templateUrl: 'partials/scenario/list.html', controller: ScenariosCntl }).
+        when('/scenario', { templateUrl: 'partials/scenario/form.html', controller: ScenarioFormCntl }).
         when('/results', { templateUrl: 'partials/result/list.html', controller: ResultListCntl }).
         when('/result/:resultId', { templateUrl: 'partials/result/detail.html', controller: ResultDetailCntl });
     $locationProvider.html5Mode(true);

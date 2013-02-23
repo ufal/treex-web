@@ -91,9 +91,9 @@ angular.module('treex-services', ['ngResource']).
     factory('Scenarios', ['$http', 'Scenario', function($http, Scenario) {
         return {
             query: function(language) {
-                var promise = $http.get(api + 'scenarios', {
+                var promise = $http.get(api + 'scenarios', language ? {
                     params : { language : (angular.isObject(language) ? language.value : language) }
-                });
+                } : { });
                 return promise.then(function(responce) {
                     var result = [];
                     console.log(responce.data);

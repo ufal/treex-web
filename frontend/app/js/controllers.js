@@ -118,6 +118,17 @@ var AuthCntl = ['$scope', function($scope) {
                  });
              };
     }],
+    ScenariosCntl = ['$scope', 'Scenarios', function($scope, Scenarios) {
+        $scope.status = 'loading';
+        $scope.scenarios = Scenarios.query().then(function(scenarios) {
+            $scope.status = (scenarios.length > 0) ? 'results' : 'empty';
+            return scenarios;
+        });
+    }],
+    ScenarioFormCntl = ['$scope', 'Scenario', 'Treex', function($scope, Scenario, Treex) {
+        $scope.languages = Treex.languages();
+        // TODO: save methods and other stuff
+    }],
     ResultListCntl = ['$scope', 'Results', function($scope, Results) {
         $scope.status = 'loading';
         $scope.results = Results.query().then(function(results) {

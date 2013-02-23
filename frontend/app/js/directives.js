@@ -168,6 +168,11 @@ angular.module('treex-directives', []).
 
                 editor.getSession().on('change', change);
 
+                scope.$on('$viewContentLoaded', function() {
+                    editor.resize();
+                });
+
+
                 function change() {
                     var value = ngModel.$viewValue || '';
                     if (value != editor.getSession().getValue()) {
@@ -224,15 +229,20 @@ angular.module('treex-directives', []).
                         element.select2('val', null, false);
                 };
 
+                var prevVal = null;
                 element.bind('change', function() {
                     var val = element.val();
+                    if (angular.equals(prevVal, val))
+                        return;
+                    prevVal = val;
                     element.select2('val', !val ? null : val, false);
                 });
 
                 if (selectCntl.databound) {
                     scope.$watch(selectCntl.databound, function(value) {
-                        if (value === undefined) return;
+                        if (value === undefined || angular.equals(prevVal, value)) return;
                         $timeout(function() {
+                            prevVal = value;
                             element.trigger('change');
                         });
                     });

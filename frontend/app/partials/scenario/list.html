@@ -1,0 +1,51 @@
+<div id="scenario-list">
+  <div class="page-header">
+    <h1>Browse Scenarios</h1>
+  </div>
+
+  <div class="btn-toolbar">
+    <div class="btn-group">
+      <a class="btn btn-inverse" href="/scenario/add"><i class="icon-white icon-pencil"></i> Compose new scenario</a>
+    </div>
+  </div>
+  <ng-switch on="status">
+    <div ng-switch-when="loading" tw-loader></div>
+    <table ng-switch-when="results" data-provides="rowlink" class="table table-condensed table-striped">
+      <thead>
+        <tr>
+          <th class="span1"></th>
+          <th class="span3">Name</th>
+          <th>Languages</th>
+          <th>Description</th>
+          <th class="span2">User</th>
+          <th class="span2"></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr ng-repeat="scenario in scenarios" bs-rowlink="/scenario/{{scenario.id}}">
+          <td class="nolink">
+            <a rel="tooltip" ng-href="/scenario/{{scenario.id}}/run" title="Run this scenario" class="btn btn-inverse btn-mini"><i class="icon-white icon-forward"></i></a>
+          </td>
+          <td>{{scenario.name}}
+            <span tw-if="scenario.public" class="label label-success pull-right">Public</span>
+            <span tw-if="!scenario.public" class="label label-inverse pull-right">Private</span>
+          </td>
+          <td>
+            <span ng-repeat="language in scenario.languages">{{language.name}}</span>
+          </td>
+          <td ng-bind-html-unsafe="scenario.description | noHTML | newlines"></td>
+          <td>{{scenario.user.name}}</td>
+          <td class="nolink">
+            <a rel="tooltip" href="" title="Edit" class="btn btn-mini"><i class="icon-edit"></i></a>
+            <a rel="tooltip" href="" title="Download" class="btn btn-mini"><i class="icon-download-alt"></i></a>
+            <a rel="tooltip" href="" title="Remove" class="btn btn-mini"><i class="icon-remove"></i></a>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <div ng-switch-when="empty" class="alert alert-info">
+      <h4>No Scenarios</h4>
+      <p>There are no scenarios to browse.</p>
+    </div>
+  </ng-switch>
+</div>
