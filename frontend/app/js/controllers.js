@@ -129,7 +129,15 @@ var AuthCntl = ['$scope', function($scope) {
         ['$scope', '$routeParams', '$location', 'Scenario', 'Treex',
          function($scope, params, $location, Scenario, Treex) {
              $scope.languages = Treex.languages();
+             var scenario =
              $scope.scenario = params.scenarioId ? Scenario.get(params.scenarioId) : new Scenario();
+             $scope.saveOrUpdate = function() {
+                 if (scenario.id) {
+                     scenario.$update();
+                 } else {
+                     scenario.$save();
+                 }
+             };
     }],
     ResultListCntl = ['$scope', 'Results', function($scope, Results) {
         $scope.status = 'loading';

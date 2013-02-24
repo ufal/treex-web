@@ -86,7 +86,9 @@ angular.module('treex-services', ['ngResource']).
         return Results;
     }]).
     factory('Scenario', ['$resource', function($resource) {
-        return $resource(api + 'scenario/:id');
+        var Scenario = $resource(api + 'scenario/:id', { id : '@id' },
+                                { 'update': {method : 'PUT' } });
+        return Scenario;
     }]).
     factory('Scenarios', ['$http', 'Scenario', function($http, Scenario) {
         return {

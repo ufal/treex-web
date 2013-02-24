@@ -30,28 +30,11 @@ sub base :Chained('/') :PathPart('') :CaptureArgs(0)  {
     $c->stash->{scenarios} = $c->model('WebDB::Scenario')->search_rs(undef, {
         prefetch => ['user', { scenario_languages => 'language' }]
     });
-    $c->stash->{public_scenarios} = $c->model('WebDB::Scenario')->search({public => 1}, {prefetch => 'user'});
     $c->stash(
         scenario_form => Treex::Web::Form::ScenarioForm->new(
-            action => $c->uri_for($self->action_for('add')),
             schema => $c->model('WebDB')->schema,
         ),
     );
-
-    $c->stash( user_scenarios => $c->user->search_related_rs('scenarios') )
-        if $c->user_exists;
-}
-
-sub object :Chained('base') :PathPart('scenario') :CaptureArgs(1) {
-    my ( $self, $c, $scenario_id ) = @_;
-
-    my $scenario = $c->model('WebDB::Scenario')->find($scenario_id);
-    $c->stash(scenario => $scenario);
-
-    $c->detach($self->action_for('not_found'))
-        unless $scenario;
-
-    $c->stash(template => 'scenario.tt2');
 }
 
 sub list :Chained('base') :PathPart('scenarios') :Args(0) :ActionClass('REST') { }
@@ -60,114 +43,119 @@ sub list_GET {
     my ( $self, $c ) = @_;
 
     my $lang = $c->req->param('language');
-    my $rs = defined $lang ? $c->stash->{scenarios}->search({
+    my $scenarios_rs = $c->stash->{scenarios};
+
+    $scenarios_rs = $c->user_exists ?
+        $scenarios_rs->search_rs({
+            -or => [
+                public => 1,
+                user => $c->user->id
+            ]
+        }) : $scenarios_rs->search_rs({ public => 1 });
+
+    $scenarios_rs = $scenarios_rs->search({
         -or => [
             'scenario_languages.language' => $lang,
             'scenario_languages.language' => undef,
         ],
-    }) : $c->stash->{scenarios};
-    my @all = map { $_->REST } $rs->all;
+    }) if $lang;
+    my @all = map { $_->REST } $scenarios_rs->all;
     $self->status_ok($c, entity => \@all);
 }
 
-my $json = JSON->new;
-sub pick :Chained('base') :PathPart('scenarios/pick') :Args(0) {
-    my ( $self, $c ) = @_;
+sub scenario :Chained('base') :PathPart('scenario') CaptureArgs(1) {
+    my ( $self, $c, $scenario_id ) = @_;
 
-    my $lang = $c->req->param('lang');
-    my @scenarios = defined $lang ? $c->stash->{scenarios}->search({
-        -or => [
-            'scenario_languages.language' => $lang,
-            'scenario_languages.language' => undef,
-        ],
-    }) : $c->stash->{scenarios}->all;
-
-    $c->res->content_type('application/json');
-    $c->res->body($json->convert_blessed->encode({scenarios => \@scenarios}));
-}
-
-sub not_found :Private {
-    my ( $self, $c ) = @_;
-
-    $c->response->status(404);
-    $c->stash('template' => 'scenario/not_found.tt2');
-}
-
-sub view :Chained('object') :PathPart('') :Args(0) {
-
-}
-
-sub run :Chained('object') :PathPart('run') :Args(0) {
-    my ( $self, $c ) = @_;
-
-    my $scenario = $c->stash->{'scenario'};
-    my $form = Treex::Web::Form::RunScenario->new(
-        schema => $c->model('WebDB')->schema,
-        scenario => $scenario,
-        ($c->user_exists ? (user => $c->user) : ()),
-        action => $c->uri_for($self->action_for('run'), [$scenario->id]),
-    );
-    $c->stash( query_form => $form,
-               template => 'scenario/run.tt2');
-
-    if ($c->req->method eq 'POST') {
-        $c->req->parameters->{scenario_id} = undef;
-        $c->req->parameters->{scenario} = $scenario->scenario;
-        $c->forward(qw/Controller::Query index/);
-    }
-}
-
-sub download :Chained('object') :PathPart('download') :Args(0) {
-}
-
-sub add :Chained('base') :PathPart('scenario/add') :Args(0) :Does('NeedsLogin') {
-    my ( $self, $c ) = @_;
-    my $form = $c->stash->{'scenario_form'};
-
-    if ( $c->req->method eq 'POST' ) {
-        my $new_scenario = $c->model('WebDB::Scenario')->new_result({ user => $c->user->id });
-
-        if ($form->process(item => $new_scenario, params => $c->req->parameters)) {
-            $c->flash->{status_msg} = 'Scenario successfully created';
-            $c->response->redirect($c->uri_for($self->action_for('view'), [$new_scenario->id]));
-        } else {
-            $c->flash->{error_msg} = 'Saving scenario has failed';
-        }
+    my $scenario = $c->model('WebDB::Scenario')->find($scenario_id);
+    unless ($scenario) {
+        $self->status_not_found($c, message => 'Scenario not found.');
+        $c->detach;
     }
 
-    $c->stash(template => 'scenario/new.tt2');
-}
-
-sub edit :Chained('object') :PathPart('edit') :Args(0) :Does('NeedsLogin') {
-    my ( $self, $c ) = @_;
-    my $form = $c->stash->{'scenario_form'};
-    my $scenario = $c->stash->{'scenario'};
-
-    if ( $c->req->method eq 'POST' ) {
-        if ($form->process(item => $scenario, params => $c->req->parameters)) {
-            $c->flash->{status_msg} = 'Scenario saved';
-            $c->response->redirect($c->uri_for($self->action_for('view'), [$scenario->id]));
-        } else {
-            $c->flash->{error_msg} = 'Saving scenario has failed';
-        }
+    unless ($scenario->public || ($c->user_exists && $c->user->id == $scenario->user)) {
+        $self->status_forbidden($c, message => 'Access denied');
+        $c->detach;
     }
-    $c->stash(template => 'scenario/edit.tt2');
+
+    $c->stash(scenario => $scenario);
 }
 
-sub delete :Chained('object') :PathPart('delete') :Args(0) :Does('NeedsLogin') {
+sub item :Chained('scenario') :PathPart('scenario') Args(0) :ActionClass('REST') { }
+
+sub check_user :Pivate {
     my ( $self, $c ) = @_;
-
-    return unless $c->req->method eq 'POST';
-
     my $scenario = $c->stash->{scenario};
 
-    if ($scenario->delete) {
-        $c->flash->{status_msg} = 'Scenario successfully deleted';
-    } else {
-        # TODO: throw 500 instead of message
-        $c->flash->{status_msg} = 'Scenario delete has failed';
+    # Check for user existence
+    unless ($c->user_exists && $c->user->id == $scenario->user->id) {
+        $self->status_forbidden($c, message => 'Access denied');
+        $c->detach;
     }
-    $c->response->redirect($c->uri_for($self->action_for('index')));
+}
+
+sub new_item :Chained('base') :PathPart('scenario') Args(0) :ActionClass('REST') {
+    my ( $self, $c ) = @_;
+
+    unless ($c->user_exists) {
+        $self->status_forbidden($c, message => 'Access denied');
+        $c->detach;
+    }
+}
+
+sub new_item_POST {
+    my ( $self, $c ) = @_;
+
+    my $form = $c->stash->{'scenario_form'};
+    my $new_scenario = $c->model('WebDB::Scenario')->new_result({ user => $c->user->id });
+
+    if ($form->process(item => $new_scenario, params => $c->req->parameters)) {
+        $self->status_created($c,
+                              location => "/scenario/${new_scenario->id}",
+                              entity => $new_scenario->REST
+                          );
+    } else {
+        $self->status_bad_request($c, message => 'Saving scenario has failed');
+    }
+}
+
+sub item_GET {
+    my ( $self, $c ) = @_;
+    my $scenario = $c->stash->{scenario};
+    $self->status_ok($c, entity => $scenario->REST);
+}
+
+sub item_PUT :Does('NeedsLogin') {
+    my ( $self, $c ) = @_;
+    my $scenario = $c->stash->{scenario};
+    my $form = $c->stash->{'scenario_form'};
+
+    $c->forward('check_user');
+
+    if ($form->process(item => $scenario, params => $c->req->parameters)) {
+        $self->status_ok($c, entity => $scenario->REST);
+    } else {
+        $self->status_bad_request($c, message => 'Updating scenario has failed');
+    }
+}
+
+sub item_DELETE :Does('NeedsLogin') {
+    my ( $self, $c ) = @_;
+    my $scenario = $c->stash->{scenario};
+
+    $c->forward('check_user');
+
+    $scenario->delete;
+    $self->status_ok($c, entity => $scenario->REST);
+}
+
+sub download :Chained('scenario') :PathPart('download') :Args(0) {
+    my ( $self, $c ) = @_;
+    my $scenario = $c->stash->{scenario};
+
+    $c->res->content_type('plain/text');
+    $c->res->header('Content-Disposition', qq[attachment; filename="${scenario->name}.scen"]);
+    $c->res->body($scenario->scenario);
+
 }
 
 =head1 AUTHOR
