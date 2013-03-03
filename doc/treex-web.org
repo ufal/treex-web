@@ -1,4 +1,4 @@
-* Notes
+* TODOs
 ** TODO Connecting trees                                              :Later:
    Redraw still needs fixing
    - Also fix connection repainting
@@ -8,3 +8,4 @@
 ** TODO Complete stubs
    Rectangle, Point
 ** TODO Remove form encoding from angular frontend                    :Later:
+   This can be done by accessing $c->req->data instead of params
