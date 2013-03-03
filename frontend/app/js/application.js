@@ -13,7 +13,8 @@ web.config(['$routeProvider', '$locationProvider', '$httpProvider', function($ro
         when('/scenarios', { templateUrl: 'partials/scenario/list.html', controller: ScenariosCntl }).
         when('/scenario', { login: true, templateUrl: 'partials/scenario/form.html', controller: ScenarioFormCntl }).
         when('/results', { templateUrl: 'partials/result/list.html', controller: ResultListCntl }).
-        when('/result/:resultId', { templateUrl: 'partials/result/detail.html', controller: ResultDetailCntl });
+        when('/result/:resultId', { templateUrl: 'partials/result/detail.html', controller: ResultDetailCntl }).
+        otherwise({ templateUrl: 'partials/404.html' });
     $locationProvider.html5Mode(true);
 
     // TODO: This have to be removed in future

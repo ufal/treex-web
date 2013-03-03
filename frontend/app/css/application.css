@@ -6,8 +6,13 @@ body {
     text-align: center;
 }
 
-.hero-unit {
+.hero-unit  {
     margin-top: 20px;
+}
+
+.error-page {
+    margin-top: 20px;
+    padding: 35px
 }
 
 .hero-unit h1 {
