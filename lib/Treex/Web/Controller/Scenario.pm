@@ -66,21 +66,28 @@ sub list_GET {
 sub scenario :Chained('base') :PathPart('scenario') CaptureArgs(1) {
     my ( $self, $c, $scenario_id ) = @_;
 
-    my $scenario = $c->model('WebDB::Scenario')->find($scenario_id);
-    unless ($scenario) {
-        $self->status_not_found($c, message => 'Scenario not found.');
-        $c->detach;
-    }
+    if ($scenario_id) {
+            my $scenario = $c->model('WebDB::Scenario')->find($scenario_id);
+            unless ($scenario) {
+                $self->status_not_found($c, message => 'Scenario not found.');
+                $c->detach;
+            }
 
-    unless ($scenario->public || ($c->user_exists && $c->user->id == $scenario->user)) {
-        $self->status_forbidden($c, message => 'Access denied');
-        $c->detach;
-    }
+            unless ($scenario->public || ($c->user_exists && $c->user->id == $scenario->user)) {
+                $self->status_forbidden($c, message => 'Access denied');
+                $c->detach;
+            }
 
-    $c->stash(scenario => $scenario);
+            $c->stash(scenario => $scenario);
+    } else {
+        unless ($c->user_exists) {
+            $self->status_forbidden($c, message => 'Access denied');
+            $c->detach;
+        }
+    }
 }
 
-sub item :Chained('scenario') :PathPart('scenario') Args(0) :ActionClass('REST') { }
+sub item :Chained('scenario') :PathPart('') Args(0) :ActionClass('REST') { }
 
 sub check_user :Pivate {
     my ( $self, $c ) = @_;
@@ -93,16 +100,7 @@ sub check_user :Pivate {
     }
 }
 
-sub new_item :Chained('base') :PathPart('scenario') Args(0) :ActionClass('REST') {
-    my ( $self, $c ) = @_;
-
-    unless ($c->user_exists) {
-        $self->status_forbidden($c, message => 'Access denied');
-        $c->detach;
-    }
-}
-
-sub new_item_POST {
+sub item_POST {
     my ( $self, $c ) = @_;
 
     my $form = $c->stash->{'scenario_form'};

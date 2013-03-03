@@ -146,7 +146,7 @@ var AuthCntl = ['$scope', function($scope) {
          function($scope, params, $location, Scenario, Treex) {
              $scope.languages = Treex.languages();
              var scenario =
-             $scope.scenario = params.scenarioId ? Scenario.get(params.scenarioId) : new Scenario();
+             $scope.scenario = params.scenarioId ? Scenario.get({id : params.scenarioId}) : new Scenario();
              $scope.saveOrUpdate = function() {
                  if (scenario.id) {
                      scenario.$update();
@@ -154,7 +154,18 @@ var AuthCntl = ['$scope', function($scope) {
                      scenario.$save();
                  }
              };
-    }],
+         }],
+    ScenarioDetailCntl =
+        ['$scope', '$routeParams', 'Scenario', 'Treex',
+         function($scope, params, Scenario, Treex) {
+             $scope.status = 'loading';
+             $scope.scenario = Scenario.get({id : params.scenarioId}, function(data) {
+                 $scope.status = 'scenario';
+                 return data;
+             }, function() {
+                 $scope.status = 'not-found';
+             });
+         }],
     ResultListCntl = ['$scope', 'Results', function($scope, Results) {
         $scope.status = 'loading';
         $scope.results = Results.query().then(function(results) {

@@ -12,6 +12,8 @@ web.config(['$routeProvider', '$locationProvider', '$httpProvider', function($ro
         when('/run', { templateUrl: 'partials/treex/run.html', controller: RunTreexCntl }).
         when('/scenarios', { templateUrl: 'partials/scenario/list.html', controller: ScenariosCntl }).
         when('/scenario', { login: true, templateUrl: 'partials/scenario/form.html', controller: ScenarioFormCntl }).
+        when('/scenario/:scenarioId', { templateUrl: 'partials/scenario/detail.html', controller: ScenarioDetailCntl }).
+        when('/scenario/:scenarioId/edit', { login: true, templateUrl: 'partials/scenario/form.html', controller: ScenarioFormCntl }).
         when('/results', { templateUrl: 'partials/result/list.html', controller: ResultListCntl }).
         when('/result/:resultId', { templateUrl: 'partials/result/detail.html', controller: ResultDetailCntl }).
         otherwise({ templateUrl: 'partials/404.html' });
