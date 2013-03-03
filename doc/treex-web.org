@@ -2,8 +2,9 @@
 ** TODO Connecting trees                                              :Later:
    Redraw still needs fixing
    - Also fix connection repainting
-** TODO Anchors                                                     :Stopper:
+** DONE Anchors                                                     :Stopper:
    Rethink anchors and other stuff; still have to place anchors in the
    center and to the lowest layer possible
 ** TODO Complete stubs
-   Rectangle, Point class
+   Rectangle, Point
+** TODO Remove form encoding from angular frontend                    :Later:
