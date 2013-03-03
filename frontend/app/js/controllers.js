@@ -23,7 +23,7 @@ function ScenarioWatch(scope, rootScope, cntl) {
 var AuthCntl = ['$scope', function($scope) {
     $scope.loggedIn = false;
 
-    $scope.$on('auth:loggedIn', function(){
+    $scope.$on('auth:logginConfirmed', function(){
         $scope.loggedIn = true;
     });
 
@@ -31,7 +31,23 @@ var AuthCntl = ['$scope', function($scope) {
         $scope.loggedIn = false;
     });
 }],
-    LoginCntl = [ function() { }],
+    LoginCntl = [ '$scope', '$location', 'Auth', function($scope, $location, Auth) {
+        $scope.login = function() {
+            Auth.login($scope.auth)
+                .success(function() {
+                    $location.path(Auth.redirectAfterLogin());
+                })
+                .error(function(data) {
+                    // TODO: display error
+                    console.log(data);
+                });
+        };
+    }],
+    LogoutCntl = [ '$location', 'Auth', function($location, Auth) {
+        Auth.logout().then(function() {
+            $location.path('/');
+        });
+    }],
     SignUpCntl = [ function() { }],
     InputUrlCntl = ['$scope', 'Input', function($scope, Input) {
         $scope.extract = function() {

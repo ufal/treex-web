@@ -7,18 +7,18 @@
       <form name="form">
         <div class="control-group">
           <label class="control-label" for="input-email">Email:</label>
-          <input type="email" ng-model="login.username" id="input-email" required class="input-xlarge" placeholder="Email address">
+          <input type="email" ng-model="auth.email" id="input-email" required class="input-xlarge" placeholder="Email address">
         </div>
         <div class="control-group">
           <label class="control-label" for="input-password">Password:</label>
-          <input type="password" ng-model="login.password" id="input-password" required class="input-xlarge" placeholder="Password">
+          <input type="password" ng-model="auth.password" id="input-password" required class="input-xlarge" placeholder="Password">
         </div>
         <div class="control-group">
           <label class="checkbox">
-            <input type="checkbox" ng-model="login.remember"> Remember me
+            <input type="checkbox" ng-model="auth.remember"> Remember me
           </label>
         </div>
-        <button ng-disabled="form.$invalid" class="btn btn-large btn-primary" type="button">Sign in</button>
+        <input ng-disabled="form.$invalid" ng-click="login()" class="btn btn-large btn-primary" type="submit" value="Sign in" />
       </form>
     </div>
     <div class="span6">

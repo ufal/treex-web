@@ -24,7 +24,6 @@ use Catalyst qw/
     Session
     Session::Store::FastMmap
     Session::State::Cookie
-    +CatalystX::SimpleLogin
     Authentication
     Assets
 /;
