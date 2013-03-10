@@ -35,9 +35,7 @@ sub _build_login_form {
 }
 
 
-sub index :Path :Args(0) :ActionClass('REST') {
-    my ( $self, $c ) = @_;
-}
+sub index :Path :Args(0) :ActionClass('REST') { }
 
 sub index_GET {
     my ( $self, $c ) = @_;
@@ -71,7 +69,6 @@ sub index_DELETE {
     $c->delete_session;
     $self->status_no_content( $c );
 }
-
 
 =head1 AUTHOR
 

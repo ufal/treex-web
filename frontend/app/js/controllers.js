@@ -48,7 +48,17 @@ var AuthCntl = ['$scope', function($scope) {
             $location.path('/');
         });
     }],
-    SignUpCntl = [ function() { }],
+    SignUpCntl = [ '$scope', '$location', '$anchorScroll', 'User', function($scope, $location, $anchorScroll, User) {
+        $scope.signup = function() {
+            User.signup($scope.user).then(function(user) {
+                $location.path('/signup/success');
+            }, function(reason) {
+                $scope.error = angular.isObject(reason.data) ?
+                    reason.data.error : reason.data;
+                $anchorScroll('form-error');
+            });
+        };
+    }],
     InputUrlCntl = ['$scope', 'Input', function($scope, Input) {
         $scope.extract = function() {
             $scope.loading = true;

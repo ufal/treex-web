@@ -1,4 +1,4 @@
-package Treex::Web::Form::SignupForm;
+package Treex::Web::Form::Signup;
 
 use strict;
 use warnings;
@@ -9,17 +9,21 @@ extends 'Treex::Web::Form::Base';
 with 'HTML::FormHandler::TraitFor::Model::DBIC';
 
 has '+item_class' => ( default => 'Treex::Web::DB::Result::User' );
-has '+name' => (default => 'signup_form');
+has '+name' => (default => 'signup-form');
 
 has_field 'email' => (type => 'Email', value => '', required => 1);
 has_field 'password' => (type => 'Password', required => 1);
-has_field 'password_confirm' => (type => 'Password', label => 'Confirm password', required => 1);
+has_field 'password_confirm' => (type => 'Password', name => 'passwordConfirm', label => 'Confirm password', required => 1);
 has_field 'submit' => (type => 'Submit', value => 'Submit');
 
-after 'validate' => sub {
+sub validate {
     my $self = shift;
-    $self->field('password_confirm')->add_error('Passwords are not the same.')
-        if $self->field('password')->value ne $self->field('password_confirm')->value;
+
+    $self->field('email')->add_error('email is already taken')
+        unless $self->schema->resultset('User')->is_email_available($self->field('email')->value);
+
+    $self->field('passwordConfirm')->add_error('passwords are not the same')
+        if $self->field('password')->value ne $self->field('passwordConfirm')->value;
 };
 
 no HTML::FormHandler::Moose;
@@ -28,16 +32,16 @@ __END__
 
 =head1 NAME
 
-Treex::Web::Forms::SignupForm - Perl extension for blah blah blah
+Treex::Web::Forms::Signup - Perl extension for blah blah blah
 
 =head1 SYNOPSIS
 
-   use Treex::Web::Forms::SignupForm;
+   use Treex::Web::Forms::Signup;
    blah blah blah
 
 =head1 DESCRIPTION
 
-Stub documentation for Treex::Web::Forms::SignupForm;
+Stub documentation for Treex::Web::Forms::Signup;
 
 Blah blah blah.
 
