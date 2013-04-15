@@ -12,7 +12,6 @@ use warnings;
 use DBIx::Class::UUIDColumns;
 use File::Path ();
 use File::Spec ();
-use TheSchwartz::JobHandle;
 use Treex::Web;
 
 use Moose;

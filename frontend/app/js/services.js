@@ -142,6 +142,28 @@ angular.module('treex-services', ['ngResource']).
             }
         };
     }]).
+    factory('User', [ '$http', function($http) {
+        function User(data) {
+            angular.copy(data || {}, this);
+        }
+
+        User.emailAvailable = function(email) {
+            // TODO: validate email first
+            var promise = $http.get(api + 'user/email-available', { 'params' : { 'email' : email} });
+            return promise.then(function(responce) {
+                return responce.data.available == 1;
+            });
+        };
+
+        User.signup = function(data) {
+            var promise = $http.post(api + 'user/signup', data);
+            return promise.then(function(responce) {
+                return new User(responce.data);
+            });
+        };
+
+        return User;
+    }]).
     factory('Auth', ['$rootScope', '$http', function(scope, $http) {
         var loggedIn = false;
         var user = {};
