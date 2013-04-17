@@ -230,6 +230,15 @@ sub _extract_language_id {
     return ref $_[0] eq 'HASH' ? $_[0]->{id} : $_[0];
 }
 
+sub set_params {
+    my $self = shift;
+    my $params = scalar @_ == 1 && ref $_[0] eq 'HASH' ? $_[0] : { @_ };
+
+    delete $params->{user};
+
+    return $self->next::method($params);
+}
+
 sub languages_names {
     map { $_->name } shift->languages;
 }
@@ -242,7 +251,7 @@ sub REST {
         description => $self->description,
         languages => [(map { $_->REST } $self->languages)],
         scenario => $self->scenario,
-        ($self->user ? (user => $self->user->id) : ()),
+        ($self->user ? (user => $self->user->REST) : ()),
         public => $self->public
     };
 }

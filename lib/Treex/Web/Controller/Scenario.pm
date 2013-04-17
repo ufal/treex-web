@@ -124,7 +124,7 @@ sub item_PUT :Does('NeedsLogin') {
     my ( $self, $c ) = @_;
     my $scenario = $c->stash->{scenario};
     $c->forward('check_user');
-    $c->log_data;
+
     try {
         $c->model('WebDB')->txn_do(
             sub {
