@@ -1,9 +1,17 @@
 package Treex::Web::Model::WebDB;
 
 use strict;
-use warnings;
-
 use base 'Catalyst::Model::DBIC::Schema';
+
+# __PACKAGE__->config(
+#     schema_class => 'Treex::Web::DB',
+
+#     connect_info => {
+#         dsn => 'dbi:SQLite:db/treex.db',
+#         user => '',
+#         password => '',
+#     }
+# );
 
 =head1 NAME
 

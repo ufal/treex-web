@@ -144,9 +144,9 @@ var AuthCntl = ['$scope', function($scope) {
                  });
              };
     }],
-    ScenariosCntl = ['$scope', 'Scenario', function($scope, Scenario) {
+    ScenariosCntl = ['$scope', 'Scenarios', function($scope, Scenarios) {
         $scope.status = 'loading';
-        $scope.scenarios = Scenario.query({ language : '' }, function(scenarios) {
+        $scope.scenarios = Scenarios.query().then(function(scenarios) {
             $scope.status = (scenarios.length > 0) ? 'results' : 'empty';
             return scenarios;
         });

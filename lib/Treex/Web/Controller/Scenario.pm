@@ -1,8 +1,9 @@
 package Treex::Web::Controller::Scenario;
 use Moose;
+use Treex::Web::Form::ScenarioForm;
+use Treex::Web::Form::RunScenario;
 use Try::Tiny;
 use JSON;
-use DBIx::Class::ResultSet::RecursiveUpdate;
 use namespace::autoclean;
 
 BEGIN { extends 'Catalyst::Controller::REST'; }
@@ -23,17 +24,22 @@ Catalyst Controller.
 
 =cut
 
-sub base :Chained('/') :PathPart('scenarios') :CaptureArgs(0)  {
+sub base :Chained('/') :PathPart('') :CaptureArgs(0)  {
     my ( $self, $c ) = @_;
 
     $c->stash->{scenarios} = $c->model('WebDB::Scenario')->search_rs(undef, {
         prefetch => ['user', { scenario_languages => 'language' }]
     });
+    $c->stash(
+        scenario_form => Treex::Web::Form::ScenarioForm->new(
+            schema => $c->model('WebDB')->schema,
+        ),
+    );
 }
 
-sub scenarios :Chained('base') :PathPart('') :Args(0) :ActionClass('REST') { }
+sub list :Chained('base') :PathPart('scenarios') :Args(0) :ActionClass('REST') { }
 
-sub scenarios_GET {
+sub list_GET {
     my ( $self, $c ) = @_;
 
     my $lang = $c->req->param('language');
@@ -48,37 +54,16 @@ sub scenarios_GET {
         }) : $scenarios_rs->search_rs({ public => 1 });
 
     $scenarios_rs = $scenarios_rs->search({
-        'scenario_languages.language' => $lang,
+        -or => [
+            'scenario_languages.language' => $lang,
+            'scenario_languages.language' => undef,
+        ],
     }) if $lang;
     my @all = map { $_->REST } $scenarios_rs->all;
     $self->status_ok($c, entity => \@all);
 }
 
-sub scenarios_POST {
-    my ( $self, $c ) = @_;
-
-    my $new_scenario = $c->model('WebDB::Scenario')->new_result(user => $c->user->id);
-    $new_scenario->set_params($c->req->data);
-
-    try {
-        $c->model('WebDB')->txn_do(
-            sub {
-                if ($new_scenario->validate) {
-                    $new_scenario->insert;
-                    $self->status_created($c,
-                                          location => "/scenario/${new_scenario->id}",
-                                          entity => $new_scenario->REST
-                                      );
-                } else {
-                    $self->status_bad_request($c, message => "Can't save invalid scenario:\n". join "\n", @{$new_scenario->validation_errors});
-                }
-            });
-    } catch {
-        $c->error("Scenario save error: $_");
-    };
-}
-
-sub scenario :Chained('base') :PathPart('') CaptureArgs(1) {
+sub scenario :Chained('base') :PathPart('scenario') CaptureArgs(1) {
     my ( $self, $c, $scenario_id ) = @_;
 
     if ($scenario_id) {
@@ -115,6 +100,22 @@ sub check_user :Pivate {
     }
 }
 
+sub item_POST {
+    my ( $self, $c ) = @_;
+
+    my $form = $c->stash->{'scenario_form'};
+    my $new_scenario = $c->model('WebDB::Scenario')->new_result({ user => $c->user->id });
+
+    if ($form->process(item => $new_scenario, params => $c->req->parameters)) {
+        $self->status_created($c,
+                              location => "/scenario/${new_scenario->id}",
+                              entity => $new_scenario->REST
+                          );
+    } else {
+        $self->status_bad_request($c, message => 'Saving scenario has failed');
+    }
+}
+
 sub item_GET {
     my ( $self, $c ) = @_;
     my $scenario = $c->stash->{scenario};
@@ -124,30 +125,15 @@ sub item_GET {
 sub item_PUT :Does('NeedsLogin') {
     my ( $self, $c ) = @_;
     my $scenario = $c->stash->{scenario};
-    $c->forward('check_user');
-    $c->log_data;
+    my $form = $c->stash->{'scenario_form'};
 
-    try {
-        $c->model('WebDB')->txn_do(
-            sub {
-                $scenario->set_params($c->req->data);
-                if ($scenario->validate) {
-                    use Data::Dumper;
-                    print STDERR Dumper($scenario->get_params);
-                    DBIx::Class::ResultSet::RecursiveUpdate::Functions::recursive_update(
-                        resultset => $c->model('WebDB::Scenario'),
-                        updates => $scenario->get_params,
-                        object => $scenario
-                    );
-                    $scenario->discard_changes;
-                    $self->status_ok($c, entity => $scenario->REST);
-                } else {
-                    $self->status_bad_request($c, message => "Parameters are invalid:\n". join "\n", @{$scenario->validation_errors});
-                }
-            });
-    } catch {
-        $c->error("Scenario update error: $_");
-    };
+    $c->forward('check_user');
+
+    if ($form->process(item => $scenario, params => $c->req->parameters)) {
+        $self->status_ok($c, entity => $scenario->REST);
+    } else {
+        $self->status_bad_request($c, message => 'Updating scenario has failed');
+    }
 }
 
 sub item_DELETE :Does('NeedsLogin') {

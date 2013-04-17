@@ -49,7 +49,7 @@ sub index_GET {
 sub index_POST {
     my ( $self, $c ) = @_;
     my $form = $self->login_form;
-    my $p = $c->req->data;
+    my $p = $c->req->parameters;
 
     if( $form->process(ctx => $c, params => $p) ) {
         # TODO: This is security threat, session should be replaced

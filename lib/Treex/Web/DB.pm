@@ -8,7 +8,7 @@ our $VERSION = 1;
 
 __PACKAGE__->load_namespaces;
 
-__PACKAGE__->load_components(qw/InflateColumn::Boolean +Treex::Web::DB::Validation/);
+__PACKAGE__->load_components("InflateColumn::Boolean");
 __PACKAGE__->true_is('1');
 __PACKAGE__->false_is('0');
 

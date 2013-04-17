@@ -21,12 +21,12 @@ web.config(['$routeProvider', '$locationProvider', '$httpProvider', function($ro
 
     // TODO: This have to be removed in future
     // Use x-www-form-urlencoded Content-Type
-    //$httpProvider.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded;charset=utf-8';
+    $httpProvider.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded;charset=utf-8';
 
     // Override $http service's default transformRequest
-    // $httpProvider.defaults.transformRequest = [function(data) {
-    //     return angular.isObject(data) && String(data) !== '[object File]' ? jQuery.param(data) : data;
-    // }];
+    $httpProvider.defaults.transformRequest = [function(data) {
+        return angular.isObject(data) && String(data) !== '[object File]' ? jQuery.param(data) : data;
+    }];
 }]);
 
 web.run(['$rootScope', '$route', '$location', 'Auth', function(scope, $route, $location, Auth) {
