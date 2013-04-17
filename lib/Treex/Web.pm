@@ -26,6 +26,7 @@ use Catalyst qw/
     Session::State::Cookie
     Authentication
     Assets
+    +Treex::Web::Debug
 /;
 #    Authorization::Roles
 
