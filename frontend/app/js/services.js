@@ -87,26 +87,11 @@ angular.module('treex-services', ['ngResource']).
         return Results;
     }]).
     factory('Scenario', ['$resource', function($resource) {
-        var Scenario = $resource(api + 'scenario/:id', { id : '@id' },
-                                { 'update': {method : 'PUT' } });
+        var Scenario = $resource(api + 'scenarios/:id', { id : '@id' },
+                                { 'update': {method : 'PUT' },
+                                  'query': {method: 'GET', params: { language: '@language' }, isArray : true}
+                                });
         return Scenario;
-    }]).
-    factory('Scenarios', ['$http', 'Scenario', function($http, Scenario) {
-        return {
-            query: function(language) {
-                var promise = $http.get(api + 'scenarios', language ? {
-                    params : { language : (angular.isObject(language) ? language.value : language) }
-                } : { });
-                return promise.then(function(responce) {
-                    var result = [];
-                    console.log(responce.data);
-                    angular.forEach(responce.data, function(item){
-                        result.push(new Scenario(item));
-                    });
-                    return result;
-                });
-            }
-        };
     }]).
     factory('Input', ['$http', function($http) {
         return {

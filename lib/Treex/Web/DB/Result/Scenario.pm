@@ -7,12 +7,10 @@ Treex::Web::DB::Result::Scenario
 
 =cut
 
-use strict;
-use warnings;
-
 use Moose;
 use MooseX::NonMoose;
 use MooseX::MarkAsMethods autoclean => 1;
+use namespace::autoclean;
 extends 'DBIx::Class::Core';
 
 =head1 COMPONENTS LOADED
@@ -27,13 +25,13 @@ extends 'DBIx::Class::Core';
 
 =cut
 
-__PACKAGE__->load_components("InflateColumn::DateTime", "TimeStamp");
+__PACKAGE__->load_components('InflateColumn::DateTime', 'TimeStamp', '+Treex::Web::DB::Validation');
 
 =head1 TABLE: C<scenarios>
 
 =cut
 
-__PACKAGE__->table("scenarios");
+__PACKAGE__->table('scenarios');
 
 =head1 ACCESSORS
 
@@ -72,38 +70,73 @@ __PACKAGE__->table("scenarios");
 =cut
 
 __PACKAGE__->add_columns(
-    "id",
-    { data_type => "integer", is_auto_increment => 1, is_nullable => 0 },
-    "scenario",
-    { data_type => "text", is_nullable => 0 },
-    "name",
-    { data_type => "varchar", is_nullable => 0, size => 120 },
-    "description",
-    { data_type => "text", is_nullable => 1 },
-    "public",
+    'id',
+    {
+        data_type => 'integer',
+        is_auto_increment => 1,
+        is_nullable => 0,
+        validate => {
+            readonly => 1
+        }
+    },
+    'scenario',
+    {
+        data_type => 'text',
+        is_nullable => 0,
+        validate => {
+            mixin => ':str',
+            filters => [],
+        }
+    },
+    'name',
+    {
+        data_type => "varchar",
+        is_nullable => 0,
+        size => 120,
+        validate => {
+            mixin => ':str',
+            max_length => '120'
+        }
+
+    },
+    'description',
+    {
+        data_type => 'text',
+        is_nullable => 1,
+        validate => {
+            mixin => ':str'
+        }
+    },
+    'public',
     {
         data_type => 'boolean',
         is_nullable => 0,
         is_boolean => 1,
-        default => 0
+        default => 0,
+        validate => {
+            mixin => ':flg'
+        }
     },
-    "user",
+    'user',
     {
-        data_type      => "integer",
-        default_value  => 0,
+        data_type => 'integer',
+        default_value => 0,
         is_foreign_key => 1,
-        is_nullable    => 0,
+        is_nullable => 0,
+        validate => {
+            readonly => 1
+        }
     },
-    "created_at",
+    'created_at',
     {
-        data_type => "datetime",
+        data_type => 'datetime',
         is_nullable => 0,
         set_on_create => 1,
         set_on_update => 0
     },
-    "last_modified",
+    'last_modified',
     {
-        data_type => "datetime",
+        data_type => 'datetime',
         is_nullable => 0,
         set_on_create => 1,
         set_on_update => 1
@@ -179,6 +212,24 @@ Related object: L<Treex::Web::DB::Result::Language>
 
 __PACKAGE__->many_to_many( "languages" => "scenario_languages", "language" );
 
+=head1 VALIDATION
+
+Additional validation for languages
+
+=cut
+
+__PACKAGE__->validation_fields({
+    languages => {
+        required => 0,
+        multiples => 1,
+        filters => [\&_extract_language_id, qw/trim strip numeric/]
+    }
+});
+
+sub _extract_language_id {
+    return ref $_[0] eq 'HASH' ? $_[0]->{id} : $_[0];
+}
+
 sub languages_names {
     map { $_->name } shift->languages;
 }
@@ -191,7 +242,7 @@ sub REST {
         description => $self->description,
         languages => [(map { $_->REST } $self->languages)],
         scenario => $self->scenario,
-        ($self->user ? (user => $self->user->REST) : ()),
+        ($self->user ? (user => $self->user->id) : ()),
         public => $self->public
     };
 }
