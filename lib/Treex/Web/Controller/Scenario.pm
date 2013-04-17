@@ -2,6 +2,7 @@ package Treex::Web::Controller::Scenario;
 use Moose;
 use Try::Tiny;
 use JSON;
+use DBIx::Class::ResultSet::RecursiveUpdate;
 use namespace::autoclean;
 
 BEGIN { extends 'Catalyst::Controller::REST'; }
@@ -124,13 +125,21 @@ sub item_PUT :Does('NeedsLogin') {
     my ( $self, $c ) = @_;
     my $scenario = $c->stash->{scenario};
     $c->forward('check_user');
+    $c->log_data;
 
     try {
         $c->model('WebDB')->txn_do(
             sub {
                 $scenario->set_params($c->req->data);
                 if ($scenario->validate) {
-                    $scenario->update;
+                    use Data::Dumper;
+                    print STDERR Dumper($scenario->get_params);
+                    DBIx::Class::ResultSet::RecursiveUpdate::Functions::recursive_update(
+                        resultset => $c->model('WebDB::Scenario'),
+                        updates => $scenario->get_params,
+                        object => $scenario
+                    );
+                    $scenario->discard_changes;
                     $self->status_ok($c, entity => $scenario->REST);
                 } else {
                     $self->status_bad_request($c, message => "Parameters are invalid:\n". join "\n", @{$scenario->validation_errors});

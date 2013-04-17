@@ -54,6 +54,8 @@ sub validation_rules {
 
 sub set_params { shift->validation_rules->set_params(@_) }
 
+sub get_params { shift->validation_rules->get_params }
+
 sub validate {
     my $self = shift;
 
@@ -62,11 +64,8 @@ sub validate {
     $self->{_validation_errors} = undef;
 
     if ($rules->validate(@_)) {
-        $self->set_columns($rules->params);
         return 1;
     }
-    use Data::Dumper;
-    print STDERR Dumper($rules->errors_to_string);
 
     my @errors = $rules->get_errors;
     $self->{_validation_errors} = \@errors;

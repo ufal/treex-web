@@ -84,8 +84,8 @@ __PACKAGE__->add_columns(
         data_type => 'text',
         is_nullable => 0,
         validate => {
-            mixin => ':str',
-            filters => [],
+            required => 1,
+            min_length => 1,
         }
     },
     'name',
@@ -102,9 +102,10 @@ __PACKAGE__->add_columns(
     'description',
     {
         data_type => 'text',
-        is_nullable => 1,
+        is_nullable => 0,
         validate => {
-            mixin => ':str'
+            required => 1,
+            min_length => 1,
         }
     },
     'public',
@@ -220,21 +221,32 @@ Additional validation for languages
 
 __PACKAGE__->validation_fields({
     languages => {
-        required => 0,
+        required => 1,
         multiples => 1,
-        filters => [\&_extract_language_id, qw/trim strip numeric/]
+        default => [],
+        filters => [qw/trim strip numeric/]
     }
 });
-
-sub _extract_language_id {
-    return ref $_[0] eq 'HASH' ? $_[0]->{id} : $_[0];
-}
 
 sub set_params {
     my $self = shift;
     my $params = scalar @_ == 1 && ref $_[0] eq 'HASH' ? $_[0] : { @_ };
 
-    delete $params->{user};
+    delete $params->{user}; # filter user
+
+    if (exists $params->{languages} and ref $params->{languages} eq 'ARRAY') {
+        my @languages;
+        for (@{$params->{languages}}) {
+            if (ref $_ eq 'HASH') {
+                if (exists $_->{id}) {
+                    push @languages, $_->{id};
+                } elsif (exists $_->{value}) {
+                    push @languages, $_->{value};
+                }
+            }
+        }
+        $params->{languages} = \@languages;
+    }
 
     return $self->next::method($params);
 }
