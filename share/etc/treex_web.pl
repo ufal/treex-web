@@ -16,5 +16,5 @@ my $config = {
             namespace => 'treex_resque',
             plugins => [ 'Status' ]
         }
-    }
+    },
 };

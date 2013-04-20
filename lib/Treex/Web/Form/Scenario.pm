@@ -1,4 +1,4 @@
-package Treex::Web::Form::ScenarioForm;
+package Treex::Web::Form::Scenario;
 
 use strict;
 use warnings;
@@ -22,15 +22,12 @@ has_field 'name' => (
     type => 'Text',
     value => '',
     maxlength => 120,
-    required => 1,
-    element_attr => { class => 'input-xxlarge', placeholder => 'Scenario name'}
+    required => 1
 );
-has_field 'languages' => (type => 'Multiple', options_method => \&language_options, element_attr => { class => 'language-select input-xxlarge' });
+has_field 'languages' => (type => 'Multiple', options_method => \&language_options);
 has_field 'scenario' => (type => 'TextArea', required => 1);
-has_field 'description' => (type => 'TextArea', required => 1, rows => 12, element_attr => { class => 'editor', placeholder => 'Scenario Description' });
-has_field 'public' => (type => 'Boolean', do_label => 0, default => 0);
-has_field 'user' => (type => 'Integer', widget => 'NoRender');
-has_field 'submit' => (type => 'Submit', value => 'Submit');
+has_field 'description' => (type => 'TextArea', required => 1);
+has_field 'public' => (type => 'Boolean', default => 0);
 
 no HTML::FormHandler::Moose;
 1;
@@ -38,16 +35,16 @@ __END__
 
 =head1 NAME
 
-Treex::Web::Forms::ScenarioForm - Perl extension for blah blah blah
+Treex::Web::Forms::Scenario - Perl extension for blah blah blah
 
 =head1 SYNOPSIS
 
-   use Treex::Web::Forms::ScenarioForm;
+   use Treex::Web::Forms::Scenario;
    blah blah blah
 
 =head1 DESCRIPTION
 
-Stub documentation for Treex::Web::Forms::ScenarioForm,
+Stub documentation for Treex::Web::Forms::Scenario,
 
 Blah blah blah.
 

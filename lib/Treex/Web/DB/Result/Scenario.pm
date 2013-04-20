@@ -184,14 +184,14 @@ sub languages_names {
 }
 
 sub REST {
-    my $self = shift;
+    my ($self, $nested) = @_;
     return {
         id => $self->id,
         name => $self->name,
         description => $self->description,
-        languages => [(map { $_->REST } $self->languages)],
+        languages => [(map { $nested ? $_->REST($nested) : $_->id } $self->languages)],
         scenario => $self->scenario,
-        ($self->user ? (user => $self->user->REST) : ()),
+        ($self->user ? (user => ($nested ? $self->user->REST($nested) : $self->user->id)) : ()),
         public => $self->public
     };
 }
