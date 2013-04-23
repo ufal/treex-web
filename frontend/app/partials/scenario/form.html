@@ -1,6 +1,6 @@
 <div id="scenario-list">
   <div class="page-header">
-    <h1>Add New Scenario</h1>
+    <h1>{{scenario.name || 'Add New Scenario'}}</h1>
   </div>
   <form name="form" id="scenario-form">
     <div class="control-group">
@@ -11,7 +11,10 @@
       </span>
     </div>
     <div class="control-group">
-      <select bs-select2="languages" multiple data-placeholder="Select languages" style="width:350px" ng-model="scenario.languages" ng-options="lang.label group by lang.group for lang in languages">
+      <select bs-select2="languages" multiple data-placeholder="Select languages" style="width:350px" ng-model="scenario.languages">
+        <optgroup ng-repeat="item in languages" label="{{item.group}}">
+          <option ng-repeat="option in item.options" value="{{option.value}}">{{option.label}}</option>
+        </optgroup>
       </select>
       <span class="help-block">
       Select languages which your scenario can process. Leave empty if
@@ -20,7 +23,7 @@
     </div>
     <div class="control-group">
       <label for="scenario-public" class="checkbox">
-      <input type="checkbox" name="public" id="scenario-public" ng-model="scenario.public" /> Should this scenario be public?
+      <input type="checkbox" name="public" id="scenario-public" ng-model="scenario.public"/> Should this scenario be public?
       </label>
     </div>
     <div class="control-group">

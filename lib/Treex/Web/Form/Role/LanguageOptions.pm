@@ -6,18 +6,14 @@ sub language_options {
     my $self = shift;
     $self = $self->form if $self->isa('HTML::FormHandler::Field');
     return unless $self->schema;
-    my $res = $self->schema->resultset('LanguageGroup')->search(undef, {
-        order_by => { -asc => ['me.position', 'languages.position'] },
-        join => { languages => 'language_group' },
-        prefetch => [ 'languages' ],
+    my $res = $self->schema->resultset('Language')->search(undef, {
+        order_by => { -asc => ['me.position'] },
     });
     my @options;
-    while (my $group = $res->next) {
+    while (my $lang = $res->next) {
         push @options, {
-            group => $group->name,
-            options => [
-                map { {value => $_->id, label => $_->name} } $group->languages
-            ]
+            value => $lang->id,
+            label => $lang->name
         };
     }
     return @options;

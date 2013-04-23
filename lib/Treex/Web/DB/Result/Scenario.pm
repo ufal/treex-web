@@ -10,6 +10,7 @@ Treex::Web::DB::Result::Scenario
 use strict;
 use warnings;
 
+use boolean;
 use Moose;
 use MooseX::NonMoose;
 use MooseX::MarkAsMethods autoclean => 1;
@@ -27,7 +28,7 @@ extends 'DBIx::Class::Core';
 
 =cut
 
-__PACKAGE__->load_components("InflateColumn::DateTime", "TimeStamp");
+__PACKAGE__->load_components('InflateColumn::DateTime', 'TimeStamp');
 
 =head1 TABLE: C<scenarios>
 
@@ -84,7 +85,6 @@ __PACKAGE__->add_columns(
     {
         data_type => 'boolean',
         is_nullable => 0,
-        is_boolean => 1,
         default => 0
     },
     "user",
@@ -184,15 +184,18 @@ sub languages_names {
 }
 
 sub REST {
-    my ($self, $nested) = @_;
+    my $self = shift;
+    use Data::Dumper;
+    print STDERR Dumper($self->public);
+
     return {
         id => $self->id,
         name => $self->name,
         description => $self->description,
-        languages => [(map { $nested ? $_->REST($nested) : $_->id } $self->languages)],
+        languages => ([map { $_->id } $self->languages]),
         scenario => $self->scenario,
-        ($self->user ? (user => ($nested ? $self->user->REST($nested) : $self->user->id)) : ()),
-        public => $self->public
+        ($self->user ? (user => $self->user->REST) : ()),
+        public => $self->public ? true : false
     };
 }
 

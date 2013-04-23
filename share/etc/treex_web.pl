@@ -17,4 +17,7 @@ my $config = {
             plugins => [ 'Status' ]
         }
     },
+    'Catalyst::Controller::REST' => {
+        json_options => { convert_blessed => 1, allow_blessed => 1 }
+    }
 };

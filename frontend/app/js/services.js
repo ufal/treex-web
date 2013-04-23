@@ -115,14 +115,7 @@ angular.module('treex-services', ['ngResource']).
                 if (languages) return languages;
                 return languages = $http.get(api + 'treex/languages')
                     .then(function(responce) {
-                        var result = [];
-                        angular.forEach(responce.data, function(group) {
-                            angular.forEach(group.options, function(opt) {
-                                opt.group = group.group;
-                                result.push(opt);
-                            });
-                        });
-                        return result;
+                        return responce.data;
                     });
             }
         };

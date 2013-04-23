@@ -155,15 +155,7 @@ var AuthCntl = ['$scope', function($scope) {
          function($scope, params, $location, Scenario, Treex) {
              $scope.languages = Treex.languages();
              var scenario =
-             $scope.scenario = params.scenarioId ? Scenario.get({id : params.scenarioId}, function(data) {
-                 // fix user and languages
-                 data.user = data.user.id;
-                 var languages = [];
-                 for (var i=0, ii = data.languages.length; i < ii; i++) {
-                     languages.push(data.languages[i].id);
-                 }
-                 data.languages = languages;
-             }) : new Scenario();
+             $scope.scenario = params.scenarioId ? Scenario.get({id : params.scenarioId}) : new Scenario();
              $scope.saveOrUpdate = function() {
                  if (scenario.id) {
                      scenario.$update();
