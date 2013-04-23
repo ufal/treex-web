@@ -31,7 +31,7 @@
             <span tw-if="!scenario.public" class="label label-inverse pull-right">Private</span>
           </td>
           <td>
-            <span ng-repeat="language in scenario.languages">{{language.name}}</span>
+            <p class="language-tags"><span ng-repeat="language in scenario.languages">{{languagesMap[language]}}</span></p>
           </td>
           <td ng-bind-html-unsafe="scenario.description | noHTML | newlines"></td>
           <td>{{scenario.user.name}}</td>

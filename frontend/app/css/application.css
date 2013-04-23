@@ -41,6 +41,10 @@ body {
     overflow: auto;
 }
 
+.language-tags span {
+    margin: 0 3px;
+}
+
 .ace-editor {
     border: 1px solid #CCC;
     -webkit-border-radius: 4px;

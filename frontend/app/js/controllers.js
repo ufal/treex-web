@@ -79,15 +79,15 @@ var AuthCntl = ['$scope', function($scope) {
             $scope.dismiss();
         };
     }],
-    ScenarioPickCntl = ['$scope', '$rootScope', '$timeout', 'Treex', 'Scenarios', function($scope, $rootScope, $timeout, Treex, Scenarios) {
+    ScenarioPickCntl = ['$scope', '$rootScope', '$timeout', 'Treex', 'Scenario', function($scope, $rootScope, $timeout, Treex, Scenario) {
         $scope.languages = Treex.languages();
+        $scope.languagesMap = Treex.languagesMap();
         ScenarioWatch($scope, $rootScope, this);
 
         function fetchScenarios(lang) {
             $scope.status = 'loading';
-            $scope.scenarios = Scenarios.query(lang).then(function(data) {
+            $scope.scenarios = Scenario.query({language: lang}, function(data) {
                 $scope.status = (data.length > 0) ? 'result' : 'empty';
-                return data;
             });
         }
 
@@ -144,7 +144,8 @@ var AuthCntl = ['$scope', function($scope) {
                  });
              };
     }],
-    ScenariosCntl = ['$scope', 'Scenario', function($scope, Scenario) {
+    ScenariosCntl = ['$scope', 'Scenario', 'Treex', function($scope, Scenario, Treex) {
+        $scope.languagesMap = Treex.languagesMap();
         $scope.status = 'loading';
         $scope.scenarios = Scenario.query({ language : '' }, function(scenarios) {
             $scope.status = (scenarios.length > 0) ? 'results' : 'empty';
@@ -168,6 +169,7 @@ var AuthCntl = ['$scope', function($scope) {
         ['$scope', '$routeParams', 'Scenario', 'Treex',
          function($scope, params, Scenario, Treex) {
              $scope.status = 'loading';
+             $scope.languagesMap = Treex.languagesMap();
              $scope.scenario = Scenario.get({id : params.scenarioId}, function(data) {
                  $scope.status = 'scenario';
                  return data;

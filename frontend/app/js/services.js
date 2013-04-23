@@ -102,8 +102,9 @@ angular.module('treex-services', ['ngResource']).
             }
         };
     }]).
-    factory('Treex', ['$http', 'Result', function($http, Result) {
-        var languages;
+    factory('Treex', ['$http', '$q', 'Result', function($http, $q, Result) {
+        var languages, map;
+
         return {
             query : function(data) {
                 var promise = $http.post(api + 'query', data);
@@ -117,6 +118,18 @@ angular.module('treex-services', ['ngResource']).
                     .then(function(responce) {
                         return responce.data;
                     });
+            },
+            languagesMap : function() {
+                if (map) return map;
+                return map = this.languages().then(function(languages) {
+                    var index = {};
+                    angular.forEach(languages, function(group) {
+                        angular.forEach(group.options, function(lang) {
+                            index[lang.value] = lang.label;
+                        });
+                    });
+                    return index;
+                });
             }
         };
     }]).
