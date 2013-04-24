@@ -1,3 +1,5 @@
+/*global angular */
+
 'use strict';
 
 /* Services */
@@ -17,7 +19,7 @@ angular.module('treex-services', ['ngResource']).
                 fake.resolve({});
                 return fake.promise;
             }
-            var promise = $http[method](api + 'result/' + token);
+            var promise = $http[method](api + 'results/' + token);
             return promise.then(function(responce) {
                 return new Result(responce.data);
             });
@@ -29,7 +31,7 @@ angular.module('treex-services', ['ngResource']).
                 fake.resolve(df);
                 return fake.promise;
             }
-            var promise = $http.get(api + 'result/' + token + '/' + cmd);
+            var promise = $http.get(api + 'results/' + token + '/' + cmd);
             return promise.then(function(responce) {
                 return responce.data[cmd] || df;
             });

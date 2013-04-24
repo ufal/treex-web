@@ -70,7 +70,7 @@ sub scenarios_POST {
 
     if ($form->process(item => $new_scenario, params => $c->req->data)) {
         $self->status_created($c,
-                              location => "/scenario/${new_scenario->id}",
+                              location => "/scenario/${$new_scenario->id}",
                               entity => $new_scenario->REST
                           );
     } else {
