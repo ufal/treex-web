@@ -185,8 +185,6 @@ sub languages_names {
 
 sub REST {
     my $self = shift;
-    use Data::Dumper;
-    print STDERR Dumper($self->public);
 
     return {
         id => $self->id,
