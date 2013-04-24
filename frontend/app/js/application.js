@@ -42,7 +42,7 @@ web.run(['$rootScope', '$route', '$location', 'Auth', function(scope, $route, $l
     // register listener to watch route changes
     scope.$on( '$routeChangeStart', function(event, next, current) {
         var path = $location.path();
-        if (next.$route.login === true) {
+        if (next && next.$route && next.$route.login === true) {
             if (Auth.loggedIn() !== true) {
                 Auth.redirectAfterLogin(path); // save redirect path
                 if (next.redirectTo != loginPath) {
