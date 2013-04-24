@@ -1,6 +1,18 @@
 * What needs to be done
 
-** TODO Fix API to support angular resources
+** TODO Fix utf8
+
+   Seems like all utf8 input is broken. WTF??
+
+** TODO Drawing trees
+   SCHEDULED: <2013-04-20 So>
+
+   Use [[http://d3js.org/][D3js.org]]
+
+   Try not to trash everything I already have.
+   Also consider dropping Coffescript
+
+** DONE Fix API to support angular resources
    SCHEDULED: <2013-04-15 Po>
 
    Url format should be *api/resource/:id/?:action*
@@ -11,15 +23,7 @@
 
    Consider using [[http://apiary.io][Apiary]] for testing and documentation
 
-** TODO Fix scenario CRUD
+** DONE Fix scenario CRUD
    SCHEDULED: <2013-04-16 Út>
 
    The scenario CRUD is still /not complete/ - at least on the fronted side.
-
-** TODO Drawing trees
-   SCHEDULED: <2013-04-20 So>
-
-   Use [[http://d3js.org/][D3js.org]]
-
-   Try not to trash everything I already have.
-   Also consider dropping Coffescript
