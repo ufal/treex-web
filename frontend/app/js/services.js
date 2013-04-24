@@ -162,7 +162,7 @@ angular.module('treex-services', ['ngResource']).
 
         function Auth() {}
         Auth.ping = function() {
-            $http.get(api + 'auth').success(function() {
+            return $http.get(api + 'auth').success(function() {
                 scope.$broadcast('auth:logginConfirmed');
                 loggedIn = true;
             });
