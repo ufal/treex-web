@@ -4,6 +4,10 @@
   </div>
   <div class="row-fluid">
     <div class="span6">
+      <div ng-show="error" id="login-error" class="alert alert-error">
+        <h4>Login Error!</h4>
+        {{error}}
+      </div>
       <form name="form">
         <div class="control-group">
           <label class="control-label" for="input-email">Email:</label>

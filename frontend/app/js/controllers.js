@@ -38,8 +38,7 @@ var AuthCntl = ['$scope', function($scope) {
                     $location.path(Auth.redirectAfterLogin());
                 })
                 .error(function(data) {
-                    // TODO: display error
-                    console.log(data);
+                    $scope.error = data.error;
                 });
         };
     }],
