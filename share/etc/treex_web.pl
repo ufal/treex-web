@@ -1,6 +1,7 @@
 ## Config used for production
 my $config = {
     name => 'Treex::Web',
+    encoding => 'UTF-8',
     'Model::WebDB' => {
         connect_info => {
             dsn => 'dbi:Pg:dbname=treex',

@@ -11,6 +11,7 @@ use strict;
 use warnings;
 
 use boolean;
+use Encode;
 use Moose;
 use MooseX::NonMoose;
 use MooseX::MarkAsMethods autoclean => 1;
@@ -189,9 +190,9 @@ sub REST {
     return {
         id => $self->id,
         name => $self->name,
-        description => $self->description,
+        description => decode_utf8($self->description),
         languages => ([map { $_->id } $self->languages]),
-        scenario => $self->scenario,
+        scenario => decode_utf8($self->scenario),
         ($self->user ? (user => $self->user->REST) : ()),
         public => $self->public ? true : false
     };

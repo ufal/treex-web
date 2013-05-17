@@ -1,8 +1,8 @@
+use utf8;
+
 package Treex::Web::Controller::Scenario;
 use Moose;
 use Treex::Web::Form::Scenario;
-use Try::Tiny;
-use JSON;
 use namespace::autoclean;
 
 BEGIN { extends 'Catalyst::Controller::REST'; }
@@ -127,9 +127,6 @@ sub item_PUT :Does('NeedsLogin') {
     my $form = $c->stash->{'scenario_form'};
 
     $c->forward('check_user');
-
-    use Data::Dumper;
-    print STDERR Dumper($c->req->data);
 
     if ($form->process(item => $scenario, params => $c->req->data)) {
         $self->status_ok($c, entity => $scenario->REST);

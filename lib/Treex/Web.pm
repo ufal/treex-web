@@ -19,8 +19,7 @@ use Catalyst::Runtime 5.80;
 use Catalyst qw/
     ConfigLoader
     Static::Simple
-    Unicode
-    I18N
+    Unicode::Encoding
     Session
     Session::Store::FastMmap
     Session::State::Cookie
