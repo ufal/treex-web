@@ -85,7 +85,7 @@ var AuthCntl = ['$scope', function($scope) {
 
         function fetchScenarios(lang) {
             $scope.status = 'loading';
-            $scope.scenarios = Scenario.query({language: lang}, function(data) {
+            $scope.scenarios = Scenario.query({language: (lang||null)}, function(data) {
                 $scope.status = (data.length > 0) ? 'result' : 'empty';
             });
         }
@@ -129,7 +129,7 @@ var AuthCntl = ['$scope', function($scope) {
              $scope.submit = function() {
                  if ($scope.form.$invalid) return;
                  Treex.query({
-                     language: $scope.language.value,
+                     language: $scope.language,
                      scenario: $scope.scenario.scenario,
                      scenario_id: $scope.scenario.id,
                      scenario_name: $scope.scenario.name,
