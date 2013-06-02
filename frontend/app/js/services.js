@@ -1,3 +1,5 @@
+/*global angular */
+
 'use strict';
 
 /* Services */
@@ -17,7 +19,7 @@ angular.module('treex-services', ['ngResource']).
                 fake.resolve({});
                 return fake.promise;
             }
-            var promise = $http[method](api + 'result/' + token);
+            var promise = $http[method](api + 'results/' + token);
             return promise.then(function(responce) {
                 return new Result(responce.data);
             });
@@ -29,7 +31,7 @@ angular.module('treex-services', ['ngResource']).
                 fake.resolve(df);
                 return fake.promise;
             }
-            var promise = $http.get(api + 'result/' + token + '/' + cmd);
+            var promise = $http.get(api + 'results/' + token + '/' + cmd);
             return promise.then(function(responce) {
                 return responce.data[cmd] || df;
             });
@@ -102,8 +104,9 @@ angular.module('treex-services', ['ngResource']).
             }
         };
     }]).
-    factory('Treex', ['$http', 'Result', function($http, Result) {
-        var languages;
+    factory('Treex', ['$http', '$q', 'Result', function($http, $q, Result) {
+        var languages, map;
+
         return {
             query : function(data) {
                 var promise = $http.post(api + 'query', data);
@@ -115,15 +118,20 @@ angular.module('treex-services', ['ngResource']).
                 if (languages) return languages;
                 return languages = $http.get(api + 'treex/languages')
                     .then(function(responce) {
-                        var result = [];
-                        angular.forEach(responce.data, function(group) {
-                            angular.forEach(group.options, function(opt) {
-                                opt.group = group.group;
-                                result.push(opt);
-                            });
-                        });
-                        return result;
+                        return responce.data;
                     });
+            },
+            languagesMap : function() {
+                if (map) return map;
+                return map = this.languages().then(function(languages) {
+                    var index = {};
+                    angular.forEach(languages, function(group) {
+                        angular.forEach(group.options, function(lang) {
+                            index[lang.value] = lang.label;
+                        });
+                    });
+                    return index;
+                });
             }
         };
     }]).
@@ -156,7 +164,7 @@ angular.module('treex-services', ['ngResource']).
 
         function Auth() {}
         Auth.ping = function() {
-            $http.get(api + 'auth').success(function() {
+            return $http.get(api + 'auth').success(function() {
                 scope.$broadcast('auth:logginConfirmed');
                 loggedIn = true;
             });

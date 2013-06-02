@@ -8,8 +8,11 @@
   </div>
   <form name="form" id="treex-run-form">
     <h3><i class="iconic-check" ng-show="language" style="color: #51A351"> </i>Language</h3>
-    <select bs-select2="languages" data-placeholder="Select an language" data-allow-clear="true" style="width:350px" required ng-model="language" ng-options="lang.label group by lang.group for lang in languages">
+    <select bs-select2="languages" data-placeholder="Select an language" data-allow-clear="true" style="width:350px" required ng-model="language">
       <option value=""></option>
+      <optgroup ng-repeat="item in languages" label="{{item.group}}">
+        <option ng-repeat="option in item.options" value="{{option.value}}">{{option.label}}</option>
+      </optgroup>
     </select>
     <h3><i class="iconic-check" ng-show="scenario.scenario" style="color: #51A351"> </i>Scenario</h3>
     <div class="scenario-btns">

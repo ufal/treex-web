@@ -1,14 +1,23 @@
 package Treex::Web::Form::Base;
 
 use Moose;
+use boolean;
+use Data::Rmap qw(:all);
+use JSON;
 use HTML::FormHandler::Moose;
 extends 'HTML::FormHandler';
+use namespace::autoclean;
 
 has '+is_html5' => (default => 1);
 
 sub build_do_form_wrapper { 1 }
 
-no HTML::FormHandler::Moose;
+# this is fixing nasty bug when serialized json booleans can't be overwritten
+after 'params' => sub {
+    my $self = shift;
+    rmap_all { $_ = $_ ? true : false if JSON::is_bool($_) } $self->{params} if @_;
+};
+
 1;
 __END__
 

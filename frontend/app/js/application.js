@@ -30,18 +30,25 @@ web.config(['$routeProvider', '$locationProvider', '$httpProvider', function($ro
 }]);
 
 web.run(['$rootScope', '$route', '$location', 'Auth', function(scope, $route, $location, Auth) {
-    Auth.ping();
+    var ping = false;
+    Auth.ping().success(function() {
+        var redirect = Auth.redirectAfterLogin();
+        if (redirect != '/')
+            $location.path(redirect);
+        ping = true;
+    });
 
     var loginPath = '/login';
     // register listener to watch route changes
     scope.$on( '$routeChangeStart', function(event, next, current) {
         var path = $location.path();
-        if (next.$route.login === true) {
+        if (next && next.$route && next.$route.login === true) {
             if (Auth.loggedIn() !== true) {
                 Auth.redirectAfterLogin(path); // save redirect path
                 if (next.redirectTo != loginPath) {
                     next.prevRedirectTo = next.redirectTo;
                     next.redirectTo = loginPath;
+                    next.params = null;
                 }
             } else {
                 if (next.redirectTo == loginPath) {

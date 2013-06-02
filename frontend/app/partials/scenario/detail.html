@@ -5,9 +5,9 @@
   <ng-switch on="status">
     <div ng-switch-when="loading" tw-loader></div>
     <div ng-switch-when="scenario">
-      <p>
+      <p class="language-tags">
         <strong>Language tags: </strong>
-        <span ng-repeat="lang in scenario.languages" class="label">{{lang.name}}</span>
+        <span ng-repeat="language in scenario.languages" class="label">{{languagesMap[language]}}</span>
       </p>
       <p ng-bind-html-unsafe="scenario.description | noHTML | newlines" class="well">
       </p>

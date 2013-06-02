@@ -33,7 +33,7 @@ sub index_POST {
         ($c->user_exists ? (user => $c->user) : ()),
     );
 
-    $form->process( params => $c->req->parameters );
+    $form->process( params => $c->req->data );
     unless ($form->is_valid) {
         $self->status_bad_request($c, message => (join "\n", $form->errors));
         return;

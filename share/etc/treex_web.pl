@@ -1,6 +1,7 @@
 ## Config used for production
 my $config = {
     name => 'Treex::Web',
+    encoding => 'UTF-8',
     'Model::WebDB' => {
         connect_info => {
             dsn => 'dbi:Pg:dbname=treex',
@@ -17,4 +18,7 @@ my $config = {
             plugins => [ 'Status' ]
         }
     },
+    'Catalyst::Controller::REST' => {
+        json_options => { convert_blessed => 1, allow_blessed => 1 }
+    }
 };

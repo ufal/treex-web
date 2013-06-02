@@ -4,8 +4,7 @@ use HTML::FormHandler::Moose;
 use MooseX::Types::Common::String qw/ NonEmptySimpleStr /;
 use namespace::autoclean;
 
-BEGIN {extends 'HTML::FormHandler';}
-with 'Treex::Web::Form::Role::Base';
+BEGIN {extends 'Treex::Web::Form::Base';}
 
 has authenticate_realm => (
     is        => 'ro',
@@ -13,10 +12,10 @@ has authenticate_realm => (
     predicate => 'has_authenticate_realm',
 );
 
-has_field 'email' => ( type => 'Email');
-has_field 'password' => ( type => 'Password');
-has_field 'remember' => ( type => 'Checkbox');
-has_field 'submit'   => ( type => 'Submit', value => 'Login');
+has_field 'email' => ( type => 'Email' );
+has_field 'password' => ( type => 'Password' );
+has_field 'remember' => ( type => 'Boolean' );
+has_field 'submit'   => ( type => 'Submit', value => 'Login' );
 
 sub validate {
     my $self = shift;

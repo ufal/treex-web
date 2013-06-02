@@ -226,32 +226,22 @@ angular.module('treex-directives', []).
                 if (!cntls[1]) return;
                 var clear = false,
                     selectCntl = cntls[0],
-                    modelCntl = cntls[1];
+                    modelCntl = cntls[1],
+                    isMultiple = (attrs.multiple !== undefined);
 
+                // watch the model for programmatic changes
                 modelCntl.$render = function() {
-                    if (!modelCntl.$modelValue)
-                        element.select2('val', null, false);
+                    var val = !modelCntl.$viewValue ? (isMultiple ? [] : null) : angular.copy(modelCntl.$viewValue);
+                    element.select2('val', val, true);
                 };
-
-                var prevVal = null;
-                element.bind('change', function() {
-                    var val = element.val();
-                    if (angular.equals(prevVal, val))
-                        return;
-                    prevVal = val;
-                    element.select2('val', !val ? null : val, false);
-                });
 
                 if (selectCntl.databound) {
                     scope.$watch(selectCntl.databound, function(value) {
-                        if (value === undefined || angular.equals(prevVal, value)) return;
-                        $timeout(function() {
-                            prevVal = value;
-                            element.trigger('change');
-                        });
+                        element.select2('val', !value ? (isMultiple ? [] : null) : value, false);
                     });
                 }
                 element.select2(element.data());
+                modelCntl.$render();
             }
         };
     }]).

@@ -32,9 +32,9 @@ sub base :Chained('/') :PathPart('') :CaptureArgs(0)  {
     $c->stash(results_rs => $results_rs);
 }
 
-sub list :Chained('base') :PathPart('results') :Args(0) :ActionClass('REST') { }
+sub results :Chained('base') :PathPart('results') :Args(0) :ActionClass('REST') { }
 
-sub list_GET {
+sub results_GET {
     my ($self, $c) = @_;
     my $rs = $c->stash->{results_rs};
     my @all = map { $_->REST } $rs->all;
@@ -49,7 +49,7 @@ sub list_GET {
     $self->status_ok($c, entity => \@all )
 }
 
-sub result :Chained('base') :PathPart('result') :CaptureArgs(1) {
+sub result :Chained('base') :PathPart('results') :CaptureArgs(1) {
     my ($self, $c, $unique_token) = @_;
 
     my $rs = $c->stash->{results_rs};

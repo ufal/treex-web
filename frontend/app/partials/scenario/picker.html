@@ -4,8 +4,11 @@
 </div>
 <div class="modal-body" style="min-height:350px">
   <label>Language:</label>
-  <select bs-select2="languages" data-allow-clear="true" data-placeholder="Select an Language" style="width:350px" required ng-model="language" ng-options="c.label group by c.group for c in languages">
+  <select bs-select2="languages" data-allow-clear="true" data-placeholder="Select an Language" style="width:350px" required ng-model="language">
     <option value=""></option>
+    <optgroup ng-repeat="item in languages" label="{{item.group}}">
+      <option ng-repeat="option in item.options" value="{{option.value}}">{{option.label}}</option>
+    </optgroup>
   </select>
   <div class="scenario-picks">
     <ng-switch on="status">
@@ -19,7 +22,7 @@
       </table>
       <div ng-switch-when="empty" class="alert alert-info">
         <h4>No Scenarios</h4>
-        <p>There are no scenarios for {{language.label}} language.</p>
+        <p>There are no scenarios for {{languagesMap[language]}} language.</p>
       </div>
     </ng-switch>
   </div>
