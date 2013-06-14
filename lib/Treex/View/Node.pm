@@ -103,8 +103,8 @@ sub TO_JSON {
     my $n = $self->node;
     my $data = {
         id => $n->id,
-        level => $n->level,
-        ($n->does('Treex::Core::Node::Ordered') ? (ord =>int($n->ord)) : ()), # force ord to be integer
+        depth => int($n->level),
+        ($n->does('Treex::Core::Node::Ordered') ? (order =>int($n->ord)) : ()), # force ord to be integer
         data => $self->traverse_data($n->type, $n),
     };
 
@@ -126,8 +126,8 @@ sub TO_JSON {
     $data->{firstson} = $n->firstson ? $n->firstson->id : undef;
     $data->{rbrother} = $n->rbrother ? $n->rbrother->id : undef;
     $data->{lbrother} = $n->lbrother ? $n->lbrother->id : undef;
-#    my @children = $n->is_leaf ? () : (map {__PACKAGE__->new(node=>$_, labels=>$self->labels, styles=>$self->styles)} $n->children);
-#    $data->{children} = \@children if @children;
+    #my @children = $n->is_leaf ? () : (map {__PACKAGE__->new(node=>$_, labels=>$self->labels)} $n->children);
+    #$data->{children} = \@children if @children;
 
     return $data;
 }

@@ -1,16 +1,13 @@
 * What needs to be done
-** DONE Post Resque patch
-   SCHEDULED: <2013-06-01 Sat>
-
-   patch: [[https://github.com/diegok/resque-perl/pull/8][Pull request]]
-
 ** TODO Drawing trees
-   SCHEDULED: <2013-04-20 So>
-
    Use [[http://d3js.org/][D3js.org]]
 
    Try not to trash everything I already have.
    Also consider dropping Coffescript
+** DONE Post Resque patch
+   SCHEDULED: <2013-06-01 Sat>
+
+   patch: [[https://github.com/diegok/resque-perl/pull/8][Pull request]]
 
 ** DONE Fix utf8
 
