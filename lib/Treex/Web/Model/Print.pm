@@ -58,9 +58,12 @@ sub process {
     my $curr = $c->stash->{current_result};
     my $file = $curr->result_filename;
 
+    $file = '/home/thc/src/Treex-Web/test.treex';
+
     -e $file or return '';
 
     my $doc = Treex::Core::Document->new({ filename => $file });
+    $self->tree_layout->treex_doc($doc);
     my $labels = Treex::Core::TredView::Labels->new( _treex_doc => $doc );
 
     my @bundles;
@@ -82,16 +85,19 @@ sub process {
             }
             $zones{$self->tree_layout->get_zone_label($zone)} = {
                 trees => \%trees,
-                sentence => $zone->sentence,
+                sentence => $zone->sentence
             };
         }
+        $bundle{desc}=$self->tree_layout->value_line($bundle);
         push @bundles, \%bundle;
     }
 
     $c->res->content_type('application/json');
-    $c->res->body(JSON->new->allow_nonref->allow_blessed->convert_blessed->
+    $c->res->body(JSON->new->allow_nonref->allow_blessed->convert_blessed->utf8->
                       pretty->encode({ print => \@bundles}));
 }
+
+__PACKAGE__->meta->make_immutable;
 
 =head1 NAME
 

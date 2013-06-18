@@ -65,6 +65,7 @@
                     var nbr = grid[depth][j];
                     if (!nbr) continue;
                     levelWidth = widths[j] + nbr.width;
+                    break;
                 }
 
                 if (levelWidth >= left) {

@@ -6,19 +6,14 @@
     // Establish the top namespace object, `window` in the browser, or `global` on the server.
     var namespace = this;
 
-    var treex = {}; // just a namespace with no constructor
+    var treex = namespace['Treex'] || (namespace['Treex'] = {}); // just a namespace with no constructor
 
     // define all `classes` here
     var Document, Bundle, Zone, Tree, Node;
 
-    namespace['Treex'] = treex; // export treex as Treex
-
     treex.documents = { }; // hash of loaded documents
 
-    var hasOwnProperty = Object.prototype.hasOwnProperty;
-    function has(obj, key) {
-        return hasOwnProperty.call(obj, key);
-    }
+    var has = 'hasOwnProperty';
 
     treex.parseStyles = function(styles) {
         var style = { };
@@ -72,15 +67,22 @@
     treex.bundle = function() { return new Bundle(); };
 
     Bundle.prototype = {
+        allZones : function() {
+            var zones = [];
+            for (var label in this.zones) {
+                zones.push(this.zones[label]);
+            }
+            return zones;
+        },
         allTrees : function() {
             var trees = [],
                 zones = this.zones;
             for (var label in zones) {
-                if (has(zones, label)) {
+                if (zones[has](label)) {
                     var zone = zones[label],
                         ztrees = zone.trees;
                     for (var layer in ztrees)
-                        if (has(ztrees, layer)) trees.push(ztrees[layer]);
+                        if (ztrees[has](layer)) trees.push(ztrees[layer]);
                 }
             }
 
@@ -96,6 +98,7 @@
             var zone = zones[label],
                 z = Zone.fromJSON(zone);
             z.bundle = bundle;
+            z.label = label;
             bundle.zones[label] = z;
         }
         return bundle;
@@ -104,6 +107,7 @@
     Zone = function() {
         this.trees = { };
         this.sentence = '';
+        this.label = '';
         this.bundle = null;
     };
     treex.Zone = Zone;
