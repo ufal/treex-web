@@ -1,4 +1,4 @@
-var vis, $tree, svg, sentence;
+var vis, $tree, svg, desc;
 
 var w = 1000,
     h = 400,
@@ -7,7 +7,7 @@ var w = 1000,
     padding = 20;
 $tree = d3.select('#tree');
 vis = $tree.append('div').attr('class', 'controls');
-sentence = $tree.append('div').attr('class', 'sentence');
+desc = $tree.append('p').attr('class', 'desc');
 svg = $tree.append('svg')
     .attr('width', w)
     .attr('height', h)
@@ -27,14 +27,21 @@ function fetch() {
         controls.exit().remove();
 
         function drawBundle(bundle) {
-            var sentences = sentence.selectAll('p')
-                    .data(bundle.allZones(), function(d) { return d.sentence; });
-            sentences.enter().append('p')
-                .text(function(d) { return '['+ d.label +'] ' + d.sentence; });
-            sentences.exit().remove();
+            console.log(bundle);
+            desc.selectAll('span').remove();
+            var sentence = desc.selectAll('span')
+                    .data(bundle.desc);
+            sentence.enter().append('span')
+                .each(function(d) {
+                    var self = d3.select(this);
+                    if (d[1] == 'newline') self.append('br');
+                    else self.text(function(d) { return d[0]; });
+                })
+                .attr('class', function(d) { return d.slice(1).join(' '); });
+            sentence.exit().remove();
 
             var trees = svg.selectAll('.tree')
-                    .data(bundle.allTrees(), function(d) { return d.layer; });
+                    .data(bundle.allTrees(), function(d) { return d.language + '-' + d.layer; });
             trees.enter().append('g')
                     .attr('class', 'tree');
 
@@ -43,7 +50,7 @@ function fetch() {
             trees.each(function(d, index) {
                 var self = d3.select(this),
                     style = Treex.Stylesheet(d),
-                    tree = d3.layout.nlp.tree(),
+                    tree = d.layer == 'p' ? d3.layout.nlp.constituency() : d3.layout.nlp.tree(),
                     nodes = tree.nodes(d),
                     links = tree.links(nodes);
                 var r = 3.5;
@@ -52,7 +59,7 @@ function fetch() {
                 !self.select('g.nodes').empty() || self.append('g').attr('class', 'nodes');
 
                 var link = self.select('g.links').selectAll('.link')
-                        .data(links);
+                        .data(links, function(d) { return d.source.uid + '|' + d.target.uid; });
                 style.styleConnection(link.enter())
                     .attr('class', 'link')
                     .order();
@@ -71,10 +78,7 @@ function fetch() {
 
                 tree.computeLayout(nodes);
 
-                link.attr("x1", function(d) { return d.source.x+r+1; })
-                    .attr("y1", function(d) { return d.source.y+r+1; })
-                    .attr("x2", function(d) { return d.target.x+r+1; })
-                    .attr("y2", function(d) { return d.target.y+r+1; });
+                style.connect(link);
                 link.exit().remove();
 
                 //node.attr('transform', function(d) { return "translate(" + d.x + "," +  d.y + ")"; });
@@ -90,7 +94,7 @@ function fetch() {
                 }
                 if (h < bbox.height) h = bbox.height;
                 bbox.x = shift;
-                self.attr('transform', "translate(" + bbox.x + "," + bbox.y + ")");
+                self.attr('transform', "translate(" + bbox.x + "," + 10 + ")");
                 lastTree = bbox;
             });
             trees.exit().remove();

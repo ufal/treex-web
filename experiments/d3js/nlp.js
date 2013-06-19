@@ -4,18 +4,114 @@
     d3.layout.nlp = {};
     function noop() {}
 
-    d3.layout.nlp.tree = function(opts) {
-        var nodeBBox = noop,
-            nodeFigure = noop,
-            index = {},
-            grid;
+    var defaultOptions = {
+        nodeXSkip : 10,
+        nodeYSkip : 5,
+        marginX: 2,
+        marginY: 2
+    };
 
-        var defaultOptions = {
-            nodeXSkip : 10,
-            nodeYSkip : 5,
-            marginX: 2,
-            marginY: 2
+    d3.layout.nlp.constituency = function(opts) {
+        var grid,
+            maxDepth;
+
+        //TODO
+        opts = defaultOptions;
+        opts.nodeXSkip = 4;
+
+        function layout(tree) {
+            var nodes = tree.allNodes()
+                    .sort(function(a, b) { return d3.ascending(a.order, b.order); });
+
+            maxDepth = d3.max(nodes, function(node) { return node.depth(); });
+
+            function populateGrid() {
+                var i = -1,
+                    n = nodes.length,
+                    depth,
+                    node;
+                grid = {};
+
+                while(++i < n) {
+                    node = nodes[i];
+                    depth = node.isLeaf() ? maxDepth : node.depth();
+                    if (!grid[depth]) {
+                        grid[depth] = {};
+                    }
+                    grid[depth][node.order] = node;
+                }
+            }
+
+            populateGrid();
+            return nodes;
+        }
+
+        layout.computeLayout = function(nodes) {
+            var i = -1, j = -1,
+                n = nodes.length,
+                widths = [],
+                left = 0,
+                levelWidth = 0,
+                heights = {},
+                depth,
+                node;
+
+            // compute widths and heights
+
+            while(++i < n) {
+                node = nodes[i];
+                depth = node.isLeaf() ? maxDepth : node.depth();
+                j = i;
+                levelWidth = 0;
+
+                left += node.width / 2;
+
+                if (i === 0) {
+                    widths[0] = left;
+                } else {
+                    while (--j > 0) {
+                        var nbr = grid[depth][j];
+                        if (!nbr) continue;
+                        levelWidth = widths[j] + nbr.width;
+                        break;
+                    }
+
+                    if (levelWidth >= left) {
+                        left = levelWidth + opts.nodeXSkip;
+                    } else {
+                        left += opts.nodeXSkip;
+                    }
+                    widths[i] = left;
+                    if (!node.isRoot() && node.children().length === 1) {
+                        left += 15;
+                    }
+                }
+
+                if (!heights[depth] || heights[depth] < node.height) {
+                    heights[depth] = node.height;
+                }
+            }
+
+            i = -1;
+            while(++i < n) {
+                node = nodes[i];
+                depth = node.isLeaf() ? maxDepth : node.depth();
+                node.y = opts.marginY;
+
+                while(--depth >= 0) {
+                    node.y += heights[depth] + opts.nodeYSkip + opts.marginY;
+                }
+                node.x = opts.marginX + i*opts.marginX + widths[i];
+            }
         };
+
+        layout.nodes = layout;
+        layout.links = d3_nlp_links;
+        return layout;
+    };
+
+    d3.layout.nlp.tree = function(opts) {
+        var grid;
 
         //TODO
         opts = defaultOptions;
@@ -79,7 +175,6 @@
                     heights[depth] = node.height;
                 }
             }
-            console.log(widths, heights);
 
             i = -1;
             while(++i < n) {

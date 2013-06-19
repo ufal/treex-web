@@ -46,7 +46,9 @@
             'clause8': '#8b0000',
             'clause9': '#008b8b'
         },
-        coordPattern = /^(ADVS|APPS|CONFR|CONJ|CONTRA|CSQ|DISJ|GRAD|OPER|REAS)$/;
+        coordPattern = /^(ADVS|APPS|CONFR|CONJ|CONTRA|CSQ|DISJ|GRAD|OPER|REAS)$/,
+        r = 3.5,
+        r2 = 7;
 
     treex['Stylesheet'] = function(tree) {
         return new stylesheet(tree);
@@ -59,14 +61,17 @@
         case 'p':
             this.styleNode = pnodeStyle;
             this.styleConnection = pnodeConnection;
+            this.connect = manhattanConnect;
             break;
         case 't':
             this.styleNode = tnodeStyle;
             this.styleConnection = tnodeConnection;
+            this.connect = directConnect;
             break;
         default:
             this.styleNode = anodeStyle;
             this.styleConnection = anodeConnection;
+            this.connect = directConnect;
         }
     }
 
@@ -78,7 +83,6 @@
     };
 
     function anodeStyle(node) {
-        var r = 3.5;
         circle(node)
             .style('fill', colors['anode']);
         node.call(standardLabel);
@@ -89,6 +93,14 @@
         return link.append('line')
             .style('stroke-width', 2)
             .style('stroke', colors['edge']);
+    }
+
+    function directConnect(link) {
+        link.attr("x1", function(d) { return d.source.x+r+1; })
+            .attr("y1", function(d) { return d.source.y+r+1; })
+            .attr("x2", function(d) { return d.target.x+r+1; })
+            .attr("y2", function(d) { return d.target.y+r+1; });
+        return link;
     }
 
     function tnodeStyle(node) {
@@ -141,11 +153,49 @@
         return link;
     }
 
-    function pnodeStyle(node) {}
-    function pnodeConnection(link) {}
+    function pnodeStyle(node) {
+        node.each(function(d) {
+            var terminal = d.isLeaf(),
+                self = d3.select(this),
+                shape, ctype;
+            if (terminal) {
+                shape = circle(self)
+                    .attr('cx', 0)
+                    .attr('cy', 0);
+                self.call(centeredLabel);
+                self.select('text')
+                    .style('text-anchor', 'middle');
+                ctype = d.attr('tag') === '-NONE-' ? 'trace' : d.attr('is_head') ? 'terminal_head' : 'terminal';
+            } else {
+                shape = pnode(self);
+                ctype = d.attr('is_head') ? 'nonterminal_head' : 'nonterminal';
+            }
+            shape.attr('fill', colors[ctype]);
+        });
+        return node;
+    }
+
+    function pnodeConnection(link) {
+        return link.append('path')
+            .attr('stroke-width', 1)
+            .attr('stroke', colors['edge'])
+            .attr('fill', 'none')
+            .attr('stroke-dasharray', function(d) { return d.target.isLeaf() ? '4,3' : 'none'; });
+    }
+
+    function manhattanConnect(link) {
+        link.attr('d', function(d) {
+            var from = d.source,
+                to = d.target,
+                fShift = from.isLeaf() ? r+1 : from.width/2,
+                tShift = to.isLeaf() ? r+1 : to.width/2;
+
+            return 'M'+ (from.x) +' '+ from.y + 'L'+ (to.x) +' '+ from.y +'L'+ (to.x) + ' ' + to.y;
+        });
+        return link;
+    }
 
     function circle(node) {
-        var r = 3.5;
         return node.append('circle')
             .style('stroke', colors['edge'])
             .style('stroke-width', 1)
@@ -156,16 +206,43 @@
 
     function rectangle(node) {
         return node.append('rect')
-            .attr('width', 7)
-            .attr('height', 7)
+            .attr('width', r2)
+            .attr('height', r2)
             .attr('x', 1)
             .attr('y', 1)
             .style('stroke', colors['edge'])
             .style('stroke-width', 1);
     }
 
+    function pnode(node) {
+        return node.append('rect')
+            .style('stroke', colors['edge'])
+            .style('stroke-width', 1)
+            .each(function(d) {
+                var self = d3.select(this),
+                    parent = d3.select(this.parentNode),
+                    text = parent.append('text')
+                        .style('text-anchor', 'middle')
+                        .style('font-family', 'Arial')
+                        .style('font-size', '12px')
+                        .style('line-height', 'normal')
+                        .attr('stroke', 'none')
+                        .attr('font-size', '12px')
+                        .attr('font', '10px "Arial"')
+                        .call(buildLabel);
+                var bbox = text.node().getBBox();
+                text.attr('x', 0)
+                    .attr('y', bbox.height/2);
+                self.attr('width', bbox.width+4)
+                    .attr('height', bbox.height+1)
+                    .attr('x', -bbox.width/2-1)
+                    .attr('y', -bbox.height/2+2);
+                ;
+            });
+    }
+
     function standardLabel(node) {
-        node.append('rect')
+        return node.append('rect')
             .attr('x', 0)
             .attr('y', 9)
             .style('fill-opacity', 0.9)
@@ -179,10 +256,35 @@
                         .style('text-anchor', 'start')
                         .style('font-family', 'Arial')
                         .style('font-size', '12px')
+                        .style('line-height', 'normal')
                         .call(buildLabel);
                 var bbox = text.node().getBBox();
                 self.attr('width', bbox.width+1)
                     .attr('height', bbox.height+2);
+            });
+    }
+
+    function centeredLabel(node) {
+        return node.append('rect')
+            .attr('x', 0)
+            .attr('y', 9)
+            .style('fill-opacity', 0.9)
+            .attr('fill', 'white')
+            .each(function(d) {
+                var self = d3.select(this),
+                    parent = d3.select(this.parentNode),
+                    text = parent.append('text')
+                        .attr('dx', 1)
+                        .attr('dy', 22)
+                        .style('text-anchor', 'middle')
+                        .style('font-family', 'Arial')
+                        .style('font-size', '12px')
+                        .style('line-height', 'normal')
+                        .call(buildLabel);
+                var bbox = text.node().getBBox();
+                self.attr('width', bbox.width+2)
+                    .attr('height', bbox.height+2)
+                    .attr('x', -bbox.width/2+1);
             });
     }
 

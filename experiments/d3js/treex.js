@@ -94,6 +94,7 @@
         var bundle = new Bundle(),
             zones = json.zones;
         bundle.style = treex.parseStyles(json.style);
+        bundle.desc = json.desc; // just assign it
         for (var label in zones) {
             var zone = zones[label],
                 z = Zone.fromJSON(zone);
@@ -132,6 +133,8 @@
     // tree is defined by root node
     Tree = function(root) {
         this.root = root;
+        this.layer = '';
+        this.language = '';
     };
     treex.Tree = Tree;
     // mask constructor
