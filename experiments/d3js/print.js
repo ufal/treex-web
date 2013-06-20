@@ -37,7 +37,38 @@ function fetch() {
                     if (d[1] == 'newline') self.append('br');
                     else self.text(function(d) { return d[0]; });
                 })
-                .attr('class', function(d) { return d.slice(1).join(' '); });
+                .attr('class', function(d) { return d.slice(1).join(' '); })
+                .on('click', function(d) {
+                    var self = d3.select(this),
+                        classes = self.attr('class').split(' '),
+                        n = classes.length,
+                        i = -1,
+                        selector = '';
+                    if (n == 0) return;
+                    while (++i < n) {
+                        classes[i] = '#'+classes[i];
+                    }
+                    svg.selectAll(classes.join(', '))
+                        .each(function(d) {
+                            var self = d3.select(this),
+                                bbox = this.firstChild.getBBox(),
+                                halfWidth = bbox.width/2,
+                                halfHeight = bbox.height/2,
+                                r = Math.sqrt(halfWidth*halfWidth + halfHeight*halfHeight);
+                            console.log(bbox);
+                            self.append('circle')
+                                .attr('cx', bbox.x + halfWidth)
+                                .attr('cy', bbox.y + halfHeight)
+                                .attr('r', r)
+                                .attr('fill', 'none')
+                                .attr('stroke', 'orange')
+                                .attr('stroke-width', 3)
+                                .transition()
+                                .duration(1000)
+                                .attr('r', 3*r)
+                                .remove();
+                        });
+                });
             sentence.exit().remove();
 
             var trees = svg.selectAll('.tree')
@@ -67,14 +98,21 @@ function fetch() {
                 var node = self.select('g.nodes').selectAll('.node')
                         .data(nodes, function(d) { return d.uid; });
                 style.styleNode(node.enter().append('g')
-                                .attr('class', 'node'));
+                                .attr('class', 'node')
+                                .attr('id', function(d) { return d.id; }));
 
                 node.each(function(d) {
                     var bbox = this.getBBox();
                     d.figure = this;
                     d.width = bbox.width;
                     d.height = bbox.height;
-                });
+                })
+                    .on('mouseover', function(d) {
+                        desc.selectAll('span.'+d.id).classed('highlite', true);
+                    })
+                    .on('mouseout', function(d) {
+                        desc.selectAll('span.'+d.id).classed('highlite', false);
+                    });
 
                 tree.computeLayout(nodes);
 
