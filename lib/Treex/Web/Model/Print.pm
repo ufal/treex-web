@@ -58,8 +58,6 @@ sub process {
     my $curr = $c->stash->{current_result};
     my $file = $curr->result_filename;
 
-    $file = '/home/thc/src/Treex-Web/test.treex';
-
     -e $file or return '';
 
     my $doc = Treex::Core::Document->new({ filename => $file });

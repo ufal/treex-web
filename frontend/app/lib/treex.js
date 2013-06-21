@@ -6,24 +6,14 @@
     // Establish the top namespace object, `window` in the browser, or `global` on the server.
     var namespace = this;
 
-    // Underscore.js library is required
-    var _ = namespace._;
-    // jQuery library for ajax requests
-    var $ = namespace.jQuery;
-
-    var treex = { '_' : _, '$' : $ }; // just a namespace with no constructor
+    var treex = namespace['Treex'] || (namespace['Treex'] = {}); // just a namespace with no constructor
 
     // define all `classes` here
     var Document, Bundle, Zone, Tree, Node;
 
-    namespace['Treex'] = treex; // export treex as Treex
-
     treex.documents = { }; // hash of loaded documents
 
-    // hardcoded options for now
-    treex.opts = {
-        print_api : 'http://localhost:3000/print' // url of printing api
-    };
+    var has = 'hasOwnProperty';
 
     treex.parseStyles = function(styles) {
         var style = { };
@@ -48,17 +38,6 @@
         return style;
     };
 
-    treex.loadDoc = function(url, callback) {
-        // TODO: use ajax with error callback
-        $.getJSON(url, {  }, function(data) {
-            console.log(data);
-            var doc = Document.fromJSON(data);
-            doc.file = url;
-            treex.documents[url] = (doc);
-            _.isFunction(callback) && callback(doc);
-        });
-    };
-
     Document = function() {
         this.bundles = [ ]; // an array, because order matters
         this.file = "";
@@ -67,12 +46,16 @@
     treex.document = function() { return new Document(); };
 
     Document.fromJSON = function(bundles) {
-        var doc = new Document();
-        _.each(bundles, function(bundle) {
-            var b = Bundle.fromJSON(bundle);
+        var doc = new Document(),
+            i = -1,
+            n = bundles.length;
+
+        while(++i < n) {
+            var bundle = bundles[i],
+                b = Bundle.fromJSON(bundle);
             b.document = doc;
-            doc.bundles.push( b );
-        });
+            doc.bundles.push(b);
+        }
         return doc;
     };
 
@@ -84,42 +67,62 @@
     treex.bundle = function() { return new Bundle(); };
 
     Bundle.prototype = {
+        allZones : function() {
+            var zones = [];
+            for (var label in this.zones) {
+                zones.push(this.zones[label]);
+            }
+            return zones;
+        },
         allTrees : function() {
-            var trees = [];
-            _.each(this.zones, function(zone) {
-                trees.push(_.toArray(zone.trees));
-            });
+            var trees = [],
+                zones = this.zones;
+            for (var label in zones) {
+                if (zones[has](label)) {
+                    var zone = zones[label],
+                        ztrees = zone.trees;
+                    for (var layer in ztrees)
+                        if (ztrees[has](layer)) trees.push(ztrees[layer]);
+                }
+            }
 
-            return _.flatten(trees);
+            return trees;
         }
     };
 
     Bundle.fromJSON = function(json) {
-        var bundle = new Bundle();
+        var bundle = new Bundle(),
+            zones = json.zones;
         bundle.style = treex.parseStyles(json.style);
-        _.each(json.zones, function(zone, label) {
-            var z = Zone.fromJSON(zone);
+        bundle.desc = json.desc; // just assign it
+        for (var label in zones) {
+            var zone = zones[label],
+                z = Zone.fromJSON(zone);
             z.bundle = bundle;
+            z.label = label;
             bundle.zones[label] = z;
-        });
+        }
         return bundle;
     };
 
     Zone = function() {
         this.trees = { };
         this.sentence = '';
+        this.label = '';
         this.bundle = null;
     };
     treex.Zone = Zone;
     treex.zone = function() { return new Zone(); };
 
     Zone.fromJSON = function(json) {
-        var zone = new Zone();
-        _.each(json.trees, function(tree, layer) {
-            var t = zone.trees[layer] = Tree.fromJSON(tree.nodes);
+        var zone = new Zone(),
+            trees = json.trees;
+        for (var layer in trees) {
+            var tree = trees[layer],
+                t = zone.trees[layer] = Tree.fromJSON(tree.nodes);
             t.layer = tree.layer;
             t.language = tree.language;
-        });
+        }
         zone.sentence = json.sentence;
         return zone;
     };
@@ -130,6 +133,8 @@
     // tree is defined by root node
     Tree = function(root) {
         this.root = root;
+        this.layer = '';
+        this.language = '';
     };
     treex.Tree = Tree;
     // mask constructor
@@ -194,15 +199,15 @@
         this.rbrother = null;
         this.firstson = null; // leftmost son
         this.order = order++;
-        this.uid = _.uniqueId('node_'); // globaly unique id
+        this.uid = 'node_'+this.order; // globaly unique id
     };
     treex.Node = Node;
     treex.node = function(id, data) { return new Node(id, data); };
 
     // Try to match function names with Treex::PML::Node
     Node.prototype = {
-        is_leaf: function() { return this.firstson == null; },
-        is_root: function() { return this.parent == null; },
+        isLeaf: function() { return this.firstson == null; },
+        isRoot: function() { return this.parent == null; },
         root: function() {
             var node = this;
             while (node && node.parent != null) node = node.parent;
@@ -233,14 +238,14 @@
             }
             return desc;
         },
-        leftmost_descendant: function() {
+        leftmostDescendant: function() {
             var node = this;
             while(node.firstson) {
                 node = node.firstson;
             }
             return node;
         },
-        rightmost_descendant: function() {
+        rightmostDescendant: function() {
             var node = this;
             while (node.firstson) {
                 node = node.firstson;
@@ -251,7 +256,7 @@
             return node;
         },
         // depth of the node
-        level: function() {
+        depth: function() {
             var level = -1;
             var node = this;
             while (node) {
