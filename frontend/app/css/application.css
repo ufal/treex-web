@@ -37,8 +37,21 @@ body {
     margin-bottom: 0px;
 }
 
-#gfx-holder {
+#treexview .node {
+    cursor: pointer;
+}
+
+.treeview-gfx {
     overflow: auto;
+}
+
+.highlight {
+    background-color: yellow;
+}
+
+.mouse-highlight:hover {
+    background-color: #ffa;
+    cursor: pointer;
 }
 
 .language-tags span {

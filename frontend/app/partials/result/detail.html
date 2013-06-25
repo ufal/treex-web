@@ -38,7 +38,7 @@
         <p>An error has occurred. We're terribly sorry about that, but it's one of those things that happens from time to time.</p>
         <p tw-if="result.job.message">Here's the error message: <strong>{{result.job.message}}</strong></p>
       </div>
-      <div tw-view="result">
+      <div tw-view="result" id="treexview">
         <ul class="pager hide" style="text-align:left" tw-view-pager>
           <li ng-class="{'disabled': !hasPreviousBundle}"><a class="prevBundle" href="">Previous</a></li>
           <li ng-class="{'disabled': !hasNextBundle}"><a class="nextBundle" href="">Next</a></li>

@@ -236,7 +236,9 @@
             self.bundle = 0;
 
             self.desc = null;
-            self.svg = top.append('svg').attr('class', 'treeview-gfx');
+            self.svg = top
+                .append('div').attr('class', 'treeview-gfx')
+                .append('svg');
         };
 
         twproto.description = function(container) {
@@ -314,8 +316,8 @@
                 });
 
                 if (desc) {
-                    node.on('mouseover', function(d) { desc.selectAll('span.'+d.id).classed('highlite', true); })
-                        .on('mouseout', function(d) { desc.selectAll('span.'+d.id).classed('highlite', false); });
+                    node.on('mouseover', function(d) { desc.selectAll('span.'+d.id).classed('highlight', true); })
+                        .on('mouseout', function(d) { desc.selectAll('span.'+d.id).classed('highlight', false); });
                 }
 
                 tree.computeLayout(nodes);
@@ -349,41 +351,47 @@
             var sentence = desc.selectAll('span')
                     .data(bundle.desc);
             sentence.enter().append('span')
-                .each(function(d) {
-                    var self = d3.select(this);
-                    if (d[1] == 'newline') self.append('br');
-                    else self.text(function(d) { return d[0]; });
-                })
                 .attr('class', function(d) { return d.slice(1).join(' '); })
-                .on('click', function(d) {
+                .each(function(d) {
                     var self = d3.select(this),
-                        classes = self.attr('class').split(' '),
-                        n = classes.length,
-                        i = -1,
-                        selector = '';
-                    if (n == 0) return;
-                    while (++i < n) {
-                        classes[i] = '#'+classes[i];
+                        main = d[1];
+                    if (main == 'newline') self.append('br');
+                    else self.text(function(d) { return d[0]; });
+
+                    if (main == 'label' || main == 'newline' || main == 'space') {
+                        return;
                     }
-                    top.selectAll(classes.join(', '))
-                        .each(function(d) {
-                            var self = d3.select(this),
-                                bbox = this.firstChild ? this.firstChild.getBBox() : this.getBBox(),
-                                halfWidth = bbox.width/2,
-                                halfHeight = bbox.height/2,
-                                r = Math.sqrt(halfWidth*halfWidth + halfHeight*halfHeight);
-                            self.append('circle')
-                                .attr('cx', bbox.x + halfWidth)
-                                .attr('cy', bbox.y + halfHeight)
-                                .attr('r', r)
-                                .attr('fill', 'none')
-                                .attr('stroke', 'orange')
-                                .attr('stroke-width', 3)
-                                .transition()
-                                .duration(1000)
-                                .attr('r', 3*r)
-                                .remove();
-                        });
+                    self.classed('mouse-highlight', true);
+                    self.on('click', function(d) {
+                        var classes = d.slice(1),
+                            n = classes.length,
+                            i = -1,
+                            selector = '';
+                        if (n == 0) return;
+                        while (++i < n) {
+                            classes[i] = '#'+classes[i];
+                        }
+                        top.selectAll(classes.join(', '))
+                            .each(function(d) {
+                                var self = d3.select(this),
+                                    elem = d3.select(this.firstChild) || self,
+                                    bbox = this.firstChild ? this.firstChild.getBBox() : this.getBBox(),
+                                    halfWidth = bbox.width/2,
+                                    halfHeight = bbox.height/2,
+                                    r = Math.sqrt(halfWidth*halfWidth + halfHeight*halfHeight);
+                                self.append('circle')
+                                    .attr('cx', bbox.x + halfWidth)
+                                    .attr('cy', bbox.y + halfHeight)
+                                    .attr('r', r)
+                                    .attr('fill', 'none')
+                                    .attr('stroke', elem.style('fill') || 'orange')
+                                    .attr('stroke-width', 3)
+                                    .transition()
+                                    .duration(1000)
+                                    .attr('r', 4*r)
+                                    .remove();
+                            });
+                    });
                 });
             sentence.exit().remove();
         }
