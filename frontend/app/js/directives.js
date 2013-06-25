@@ -6,13 +6,12 @@ angular.module('treex-directives', []).
     directive('twView', ['$rootScope', function($rootScope) {
         return {
             restrict: 'A',
-            transclude: true,
             scope: {
                 result: '=twView'
             },
-            template: '<div id="treex-view"><div ng-transclude></div><div id="gfx-holder"></div></div>',
             controller: ['$element', function($element) {
                 this.$view = null;
+                this.$sentence = null;
                 this.$doc = null;
 
                 this.nextBundle = function() {
@@ -45,9 +44,14 @@ angular.module('treex-directives', []).
 
                     var result = scope.result;
                     result.$print().then(function(data) {
+                        cntl.$view = Treex.TreeView(element[0]);
                         cntl.$doc = Treex.Document.fromJSON(data);
-                        cntl.$view = Treex.TreeView('gfx-holder');
-                        cntl.$view.renderDocument(cntl.$doc);
+                        cntl.$view.init(cntl.$doc);
+                        if (cntl.$sentence)
+                            cntl.$view.description(cntl.$sentence);
+                        cntl.$view.drawBundle();
+                        $rootScope.$broadcast('treex:rendered');
+                    }, function(error) {
                         $rootScope.$broadcast('treex:rendered');
                     });
                 });
@@ -92,16 +96,7 @@ angular.module('treex-directives', []).
             restrict: 'A',
             require: '^twView',
             link : function(scope, element, attrs, cntl) {
-                cntl.change(function() { // on view change
-                    if (cntl.$view) {
-                        scope.sentence = cntl.$view.getSentences().join("\n");
-                        scope.$apply();
-                    }
-                });
-                scope.$on('treex:rendered', function() {
-                    scope.sentence = cntl.$view.getSentences().join("\n");
-                });
-
+                cntl.$sentence = element[0];
             }
         };
     }).
