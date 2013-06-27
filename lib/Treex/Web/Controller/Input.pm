@@ -36,7 +36,7 @@ sub url :Local :Args(0) :ActionClass('REST') { }
 sub url_POST {
     my ( $self, $c ) = @_;
 
-    my $url = $c->req->param('url') || '';
+    my $url = $c->req->data->{url} || '';
     unless ($url && $url =~ /$RE{URI}{HTTP}/) {
         $self->status_bad_request($c, message => "Bad url: '$url'");
         return;
