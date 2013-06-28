@@ -15,7 +15,7 @@ angular.module('TreexWebApp', ['$strap.directives', 'http-auth-interceptor', 'ng
       when('/scenario/:scenarioId/edit', { login: true, templateUrl: 'views/scenario/form.html', controller: 'ScenarioFormCtrl' }).
       when('/results', { templateUrl: 'views/result/list.html', controller: 'ResultListCtrl' }).
       when('/result/:resultId', { templateUrl: 'views/result/detail.html', controller: 'ResultDetailCtrl' }).
-      otherwise({ redirectTo: '404.html' });
+      otherwise({ templateUrl: 'views/404.html' });
 
     $locationProvider.html5Mode(true);
   }])
