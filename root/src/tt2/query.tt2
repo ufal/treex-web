@@ -1,3 +1,0 @@
-[% META title='Run Treex' %]
-
-[% PROCESS query/form.tt2 form=query_form %]

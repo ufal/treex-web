@@ -1,6 +1,6 @@
 package Treex::Web::Controller::Root;
 use Moose;
-use Treex::Web::Form::QueryForm;
+use Treex::Web;
 use namespace::autoclean;
 
 BEGIN { extends 'Catalyst::Controller' }
@@ -29,24 +29,8 @@ The root page (/)
 
 sub index :Path :Args(0) {
     my ( $self, $c ) = @_;
-
-    my $form = Treex::Web::Form::QueryForm->new(
-        action => $c->uri_for($c->controller('Query')->action_for('index')),
-        schema => $c->model('WebDB')->schema,
-    );
-
-    $c->stash(
-        query_form => $form
-    );
-}
-
-=head2 auto
-
-=cut
-
-sub auto :Path {
-    my ( $self, $c ) = @_;
-
+    $c->response->body( 'Treex::Web API v' . $Treex::Web::VERSION );
+    $c->response->status(200);
 }
 
 =head2 default
@@ -60,14 +44,6 @@ sub default :Path {
     $c->response->body( 'Page not found' );
     $c->response->status(404);
 }
-
-=head2 end
-
-Attempt to render a view, if needed.
-
-=cut
-
-sub end : ActionClass('RenderView') {}
 
 =head1 AUTHOR
 
