@@ -65,6 +65,11 @@ sub scenarios_GET {
 sub scenarios_POST {
     my ( $self, $c ) = @_;
 
+    unless ($c->user_exists) {
+        $self->status_forbidden($c, message => 'Access denied');
+        return;
+    }
+
     my $form = $c->stash->{'scenario_form'};
     my $new_scenario = $c->model('WebDB::Scenario')->new_result({ user => $c->user->id });
 
