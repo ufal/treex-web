@@ -1,14 +1,15 @@
 'use strict';
 
-describe('Service: scenario', function () {
+describe('Scenario', function () {
 
   // load the service's module
   beforeEach(module('TreexWebApp'));
 
   // instantiate service
   var scenario;
-  beforeEach(inject(function(_scenario_) {
-    scenario = _scenario_;
+  beforeEach(inject(function(_Scenario_) {
+    scenario = _Scenario_;
+    console.log(scenario);
   }));
 
   it('should do something', function () {

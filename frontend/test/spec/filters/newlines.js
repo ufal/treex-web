@@ -11,9 +11,9 @@ describe('Filter: newlines', function () {
     newlines = $filter('newlines');
   }));
 
-  it('should return the input prefixed with "newlines filter:"', function () {
-    var text = 'angularjs';
-    expect(newlines(text)).toBe('newlines filter: ' + text);
-  });
+  // it('should return the input prefixed with "newlines filter:"', function () {
+  //   var text = 'angularjs';
+  //   expect(newlines(text)).toBe('newlines filter: ' + text);
+  // });
 
 });

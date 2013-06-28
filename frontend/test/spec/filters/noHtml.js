@@ -11,9 +11,9 @@ describe('Filter: noHtml', function () {
     noHtml = $filter('noHtml');
   }));
 
-  it('should return the input prefixed with "noHtml filter:"', function () {
-    var text = 'angularjs';
-    expect(noHtml(text)).toBe('noHtml filter: ' + text);
-  });
+  // it('should return the input prefixed with "noHtml filter:"', function () {
+  //   var text = 'angularjs';
+  //   expect(noHtml(text)).toBe('noHtml filter: ' + text);
+  // });
 
 });

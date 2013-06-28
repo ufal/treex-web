@@ -11,9 +11,9 @@ describe('Filter: ucfirst', function () {
     ucfirst = $filter('ucfirst');
   }));
 
-  it('should return the input prefixed with "ucfirst filter:"', function () {
-    var text = 'angularjs';
-    expect(ucfirst(text)).toBe('ucfirst filter: ' + text);
-  });
+  // it('should return the input prefixed with "ucfirst filter:"', function () {
+  //   var text = 'angularjs';
+  //   expect(ucfirst(text)).toBe('ucfirst filter: ' + text);
+  // });
 
 });

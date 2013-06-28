@@ -7,10 +7,19 @@ basePath = '';
 files = [
   JASMINE,
   JASMINE_ADAPTER,
-  'app/bower_components/angular/angular.js',
-  'app/bower_components/angular-mocks/angular-mocks.js',
-  'app/scripts/*.js',
-  'app/scripts/**/*.js',
+  'app/bower_components/jquery/jquery.js',
+  'app/bower_components/d3/d3.js',
+  'app/scripts/angular/angular.js',
+  'app/scripts/angular/angular-strap.js',
+  'app/scripts/angular/angular-resource.js',
+  'app/scripts/angular/angular-route.js',
+  'app/scripts/angular/angular-http-auth.js',
+  'app/scripts/angular/angular-mocks.js',
+  'app/scripts/treex.js',
+  'app/scripts/treeview.js',
+  'app/scripts/app.js',
+  'app/scripts/config.js',
+  'app/scripts/{controllers,directives,filters,services}/*.js',
   'test/mock/**/*.js',
   'test/spec/**/*.js'
 ];
