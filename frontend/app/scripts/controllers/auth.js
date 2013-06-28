@@ -1,7 +1,14 @@
 'use strict';
 
 angular.module('TreexWebApp')
-  .controller('AuthCtrl', ['$scope', function($scope) {
+  .controller('AuthCtrl', ['$scope', '$location', 'Auth', function($scope, $location, Auth) {
+
+    Auth.ping().success(function() {
+      var redirect = Auth.redirectAfterLogin();
+      if (redirect != '/')
+        $location.path(redirect);
+    });
+
     $scope.loggedIn = false;
 
     $scope.$on('auth:logginConfirmed', function(){

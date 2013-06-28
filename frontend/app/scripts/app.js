@@ -20,16 +20,8 @@ angular.module('TreexWebApp', ['$strap.directives', 'http-auth-interceptor', 'ng
     $locationProvider.html5Mode(true);
   }])
   .run(['$rootScope', '$route', '$location', 'Auth', function(scope, $route, $location, Auth) {
-
-    var ping = false;
-    Auth.ping().success(function() {
-      var redirect = Auth.redirectAfterLogin();
-      if (redirect != '/')
-        $location.path(redirect);
-      ping = true;
-    });
-
     var loginPath = '/login';
+
     // register listener to watch route changes
     scope.$on( '$routeChangeStart', function(event, next, current) {
       var path = $location.path();
