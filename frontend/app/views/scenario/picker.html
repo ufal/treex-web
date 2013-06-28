@@ -1,0 +1,32 @@
+<div class="modal-header">
+  <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+  <h3>Pick Scenario</h3>
+</div>
+<div class="modal-body" style="min-height:350px">
+  <label>Language:</label>
+  <select bs-select2="languages" data-allow-clear="true" data-placeholder="Select an Language" style="width:350px" required ng-model="language">
+    <option value=""></option>
+    <optgroup ng-repeat="item in languages" label="{{item.group}}">
+      <option ng-repeat="option in item.options" value="{{option.value}}">{{option.label}}</option>
+    </optgroup>
+  </select>
+  <div class="scenario-picks">
+    <ng-switch on="status">
+      <div ng-switch-when="loading" tw-loader></div>
+      <table ng-switch-when="result" class="table table-striped">
+        <thead><tr><th class="span2">Name</th><th>Description</th></tr></thead>
+        <tr class="rowlink" ng-click="pick(scenario)" ng-repeat="scenario in scenarios">
+          <td>{{scenario.name}}</td>
+          <td class="long-desc" ng-bind-html-unsafe="scenario.description | noHtml | newlines"></td>
+        </tr>
+      </table>
+      <div ng-switch-when="empty" class="alert alert-info">
+        <h4>No Scenarios</h4>
+        <p>There are no scenarios for {{languagesMap[language]}} language.</p>
+      </div>
+    </ng-switch>
+  </div>
+</div>
+<div class="modal-footer">
+  <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+</div>

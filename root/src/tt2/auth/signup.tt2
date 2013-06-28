@@ -1,8 +1,0 @@
-[% META title="Sign Up!" %]
-
-[% UNLESS signupForm.posted && signupForm.is_valid %]
-    [% signupForm.render %]
-[% ELSE %]
-    <p class="info">Check you mailbox for confimation mail to activate your account.</p>
-[% END %]
-

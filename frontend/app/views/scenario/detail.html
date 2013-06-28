@@ -1,0 +1,28 @@
+<div id="scenario-detail">
+  <div class="page-header">
+    <h1>{{scenario.name || 'Scenario'}}</h1>
+  </div>
+  <ng-switch on="status">
+    <div ng-switch-when="loading" tw-loader></div>
+    <div ng-switch-when="scenario">
+      <p class="language-tags">
+        <strong>Language tags: </strong>
+        <span ng-repeat="language in scenario.languages" class="label">{{languagesMap[language]}}</span>
+      </p>
+      <p ng-bind-html-unsafe="scenario.description | noHtml | newlines" class="well">
+      </p>
+      <pre>
+{{scenario.scenario}}
+      </pre>
+      <div class="row-fluid">
+        <a class="btn btn-primary" ng-href="/scenario/{{scenario.id}}/run">Run this scenario</a>
+        <a class="btn" ng-href="/scenario/{{scenario.id}}/edit">Edit</a>
+        <a class="act act-danger pull-right" href="">Delete scenario</a>
+      </div>
+    </div>
+    <div class="alert alert-error" ng-switch-when="not-found">
+      <h4>Scenario not found</h4>
+      <p>Scenario you are looking for doesn't exists or you are not allowed to access it.</p>
+    </div>
+  </ng-switch>
+</div>
