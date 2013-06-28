@@ -33,7 +33,7 @@ angular.module('TreexWebApp', ['$strap.directives', 'http-auth-interceptor', 'ng
     // register listener to watch route changes
     scope.$on( '$routeChangeStart', function(event, next, current) {
       var path = $location.path();
-      if (next && next.$route && next.$route.login === true) {
+      if (next && next.login === true) {
         if (Auth.loggedIn() !== true) {
           Auth.redirectAfterLogin(path); // save redirect path
           if (next.redirectTo != loginPath) {
