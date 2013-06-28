@@ -75,7 +75,7 @@ sub scenarios_POST {
 
     if ($form->process(item => $new_scenario, params => $c->req->data)) {
         $self->status_created($c,
-                              location => "/scenario/${$new_scenario->id}",
+                              location => "/scenarios/${$new_scenario->id}",
                               entity => $new_scenario->REST
                           );
     } else {
@@ -126,7 +126,7 @@ sub item_GET {
     $self->status_ok($c, entity => $scenario->REST);
 }
 
-sub item_PUT :Does('NeedsLogin') {
+sub item_PUT {
     my ( $self, $c ) = @_;
     my $scenario = $c->stash->{scenario};
     my $form = $c->stash->{'scenario_form'};
@@ -140,7 +140,7 @@ sub item_PUT :Does('NeedsLogin') {
     }
 }
 
-sub item_DELETE :Does('NeedsLogin') {
+sub item_DELETE {
     my ( $self, $c ) = @_;
     my $scenario = $c->stash->{scenario};
 
@@ -157,7 +157,6 @@ sub download :Chained('scenario') :PathPart('download') :Args(0) {
     $c->res->content_type('plain/text');
     $c->res->header('Content-Disposition', qq[attachment; filename="${scenario->name}.scen"]);
     $c->res->body($scenario->scenario);
-
 }
 
 =head1 AUTHOR
