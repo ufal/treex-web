@@ -1,8 +1,7 @@
 package Treex::Web::Controller::REST;
 use Moose;
-use MooseX::ClassAttribute;
-use Treex::Web;
-use Swagger;
+use Treex::Web::DB;
+use Treex::Web::Api;
 use Params::Validate qw(:all);
 use namespace::autoclean;
 
@@ -20,11 +19,14 @@ Default Treex::Web Restfull Controller.
 
 =cut
 
-class_has api => (
-    isa => 'Swagger',
-    is  => 'ro',
-    default => sub { Swagger->new(api_version => $Treex::Web::API_VERSION) },
-);
+for my $source (Treex::Web::DB->sources) {
+    my $class = Treex::Web::DB->source_registrations->{$source}->result_class;
+    if ($class->can('rest_schema')) {
+        __PACKAGE__->api_model($source, $class->rest_schema);
+    }
+}
+
+sub api { Treex::Web::Api->api }
 
 sub api_resource {
     shift->api->resource(@_);

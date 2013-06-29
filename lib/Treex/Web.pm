@@ -30,7 +30,6 @@ use Catalyst qw/
 extends 'Catalyst';
 
 our $VERSION = '0.01';
-our $API_VERSION = '1';
 
 # Configure the application.
 #

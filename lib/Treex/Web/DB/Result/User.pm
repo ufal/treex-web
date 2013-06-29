@@ -7,9 +7,6 @@ Treex::Web::DB::Result::User
 
 =cut
 
-use strict;
-use warnings;
-
 use Moose;
 use Catalyst::Authentication::User;
 use MooseX::NonMoose;
@@ -191,6 +188,13 @@ sub REST {
         id => $self->id,
         name => $self->name,
     };
+}
+
+sub rest_schema {
+    return (
+        id => { type => 'integer' },
+        name => { type => 'string' }
+    )
 }
 
 __PACKAGE__->meta->make_immutable(inline_constructor => 0);
