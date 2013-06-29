@@ -2,6 +2,7 @@ package Swagger::Api;
 
 use Moose;
 use Params::Validate qw(ARRAYREF validate validate_pos);
+use List::Util qw(first);
 use namespace::autoclean;
 
 has 'controller'   => ( is => 'ro' );
@@ -58,6 +59,25 @@ sub models {
     }
 
     return wantarray ? @models : \@models;
+}
+
+
+my $unknow_error = {
+    code => 500,
+    reason => 'Unknown error'
+};
+
+sub error {
+    my ($self, $name) = @_;
+
+    my $error;
+
+    for my $op (@{$self->operations}) {
+        $error = first { $_->{name} eq $name } @{$op->{errors}};
+        last if $error;
+    }
+
+    return $error||$unknow_error;
 }
 
 sub get { shift->operation('GET', @_); }
