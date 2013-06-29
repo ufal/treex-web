@@ -62,7 +62,7 @@ sub validate_params {
     die "Unknown model '$model_name'\n"
         unless $model;
 
-    my $params = $c->req->data;
+    my $params = $c->req->data||{};
     my $result = $model->validator->validate($params);
 
     unless ($result->valid) {
