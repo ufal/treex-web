@@ -141,5 +141,13 @@ sub REST {
     };
 }
 
+sub rest_schema {
+    return (
+        id => { type => 'integer' },
+        code => { type => 'string' },
+        name => { type => 'string' }
+    )
+}
+
 __PACKAGE__->meta->make_immutable;
 1;

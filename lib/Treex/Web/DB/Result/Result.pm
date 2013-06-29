@@ -177,6 +177,15 @@ sub REST {
     };
 }
 
+sub rest_schema {
+    return (
+        language => { type => 'string' },
+        name => { type => 'string' },
+        token => { type => 'string' },
+        last_modified => { type => 'string' }
+    )
+}
+
 sub new {
     my ( $self, $attrs ) = @_;
 

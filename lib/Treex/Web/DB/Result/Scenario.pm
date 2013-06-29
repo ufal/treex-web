@@ -198,5 +198,20 @@ sub REST {
     };
 }
 
+sub rest_schema {
+    return (
+        id => { type => 'integer' },
+        name => { type => 'string' },
+        description => { type => 'string' },
+        languages => {
+            type => 'array',
+            items => { type => 'integer' }
+        },
+        scenario => { type => 'string' },
+        user => { type => 'User' },
+        public => { type => 'boolean' },
+    )
+}
+
 __PACKAGE__->meta->make_immutable;
 1;
