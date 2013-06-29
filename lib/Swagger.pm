@@ -3,6 +3,7 @@ package Swagger;
 use Moose;
 use Params::Validate qw(HASHREF SCALAR validate validate_pos);
 use Swagger::Resource;
+use Swagger::Model;
 use boolean;
 use namespace::autoclean;
 
@@ -68,8 +69,13 @@ sub model {
 
     return $self->models->{$name} if @_ == 0;
 
-    $self->models->{$name} = {@_};
-    return $self;
+    my $model = Swagger::Model->new(
+        id => $name,
+        properties => {@_},
+    );
+
+    $self->models->{$name} = $model;
+    return $model;
 }
 
 sub param {

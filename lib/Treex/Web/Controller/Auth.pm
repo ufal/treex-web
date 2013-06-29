@@ -11,6 +11,33 @@ my $auth = __PACKAGE__->api_resource(
     path => 'auth'
 );
 
+__PACKAGE__->api_model(
+    'SessionValid',
+    session => {
+        type => 'boolean',
+        required => 1,
+        description => 'Simple flag saying that the session is valid'
+    }
+);
+
+__PACKAGE__->api_model(
+    'LoginPayload',
+    email => {
+        type => 'string',
+        required => 1,
+        description => 'User email'
+    },
+    password => {
+        type => 'string',
+        required => 1,
+        description => 'User password'
+    },
+    remember => {
+        type => 'boolean',
+        description => 'Flag whether to remmember the session or not'
+    }
+);
+
 =head1 NAME
 
 Treex::Web::Controller::Auth - Catalyst Controller

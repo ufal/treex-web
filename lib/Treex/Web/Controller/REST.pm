@@ -1,7 +1,6 @@
 package Treex::Web::Controller::REST;
 use Moose;
 use MooseX::ClassAttribute;
-use JSON::Schema;
 use Treex::Web;
 use Swagger;
 use Params::Validate qw(:all);
@@ -31,6 +30,10 @@ sub api_resource {
     shift->api->resource(@_);
 }
 
+sub api_model {
+    shift->api->model(@_);
+}
+
 sub api_param {
     shift->api->param(@_);
 }
@@ -51,23 +54,26 @@ sub status_error {
     return 1;
 }
 
-my $_schema_cache = {};
-
 sub validate_params {
     my ($self, $c, $model_name) = @_;
 
-    $_schema_cache->{$model_name} =
-        JSON::Schema->new(__PACKAGE__->api->model($model_name))
-                unless $_schema_cache->{$model_name};
+    my $model = __PACKAGE__->api->model($model_name);
 
-    my $schema = $_schema_cache->{$model_name};
-    my $params = $c->req->data||{};
+    die "Unknown model '$model_name'\n"
+        unless $model;
 
-    my $result = $schema->validate();
+    my $params = $c->req->data;
+    my $result = $model->validator->validate($params);
 
-    unless ($result) {
-        $self->status_bad_request( $c, join("\n", $result->errors) );
+    unless ($result->valid) {
+        $c->response->status(400);
+        my $error_message = 'The request cannot be fulfilled due to bad parameters. Please check api documentation at ' . $c->uri_for('/');
+        $c->stash->{ $self->{'stash_key'} } = {
+            message => $error_message,
+            errors => [ map { $_->to_string } $result->errors ]
+        };
         $c->detach;
+        return;
     }
 
     return $params;
