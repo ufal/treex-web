@@ -76,7 +76,8 @@ sub index :Path :Args(0) :ActionClass('REST') { }
 
 $index->get(
     summary  => 'Check for whether the session exists',
-    notes    => "If the session cookie is missing or the session doesn't exists request ends up with the 404 error.",
+    notes    => "If the session cookie is missing or the session doesn't exists \
+ request ends up with the 404 error. NOTE: The documentation on this item is broken.",
     response => 'SessionValid',
     nickname => 'sessionCheck',
     params   => [
