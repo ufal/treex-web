@@ -30,6 +30,17 @@ sub api {
     return $api;
 }
 
+sub all_models {
+    my $self = shift;
+
+    my @models;
+
+    for my $api (@{$self->apis}) {
+        push @models, $api->models;
+    }
+    return wantarray ? @models : \@models;
+}
+
 __PACKAGE__->meta->make_immutable;
 
 1;

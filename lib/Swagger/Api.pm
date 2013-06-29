@@ -41,6 +41,25 @@ sub operation {
     return $self;
 }
 
+sub models {
+    my $self = shift;
+
+    my @models;
+
+    for my $op (@{$self->operations}) {
+        my $response = $op->{response};
+        $response =~ s/^\w+\[(\w+)\]$/$1/;
+        push @models, $response if $response;
+
+        if ($op->{params}) {
+            push @models, map { $_->{type} }
+                grep { $_->{param} eq 'body' } @{ $op->{params} };
+        }
+    }
+
+    return wantarray ? @models : \@models;
+}
+
 sub get { shift->operation('GET', @_); }
 
 sub post { shift->operation('POST', @_); }

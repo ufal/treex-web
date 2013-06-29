@@ -139,37 +139,42 @@ sub api_listing {
     my $listing = $self->listing_header;
     my $resource = $self->resources->{$path};
 
-    if ($resource) {
-        $listing->{apis} = [
-            map { {
-                path => $_->path,
-                description => ($_->description||''),
-                operations => [ map { {
-                    httpMethod => $_->{method},
-                    nickname => $_->{nickname},
-                    responceClass => ($_->{responceClass}||'void'),
-                    ($_->{params} ? (
-                        parameters => [ map { {
-                            paramType => $_->{param},
-                            name => $_->{name},
-                            dataType => $_->{type},
-                            ($_->{description} ? (description => $_->{description}) : ()),
-                            required => ($_->{required} ? true : false),
-                            ($_->{allowable_values} ? (allowableValues => $_->{allowable_values}) : ()),
-                            ($_->{multiple} ? (multiple => $_->{multiple}) : ())
-                        } } @{ $_->{params} }]
-                    ) : ()),
-                    summary => $_->{summary},
-                    ($_->{notes} ? (notes => $_->{notes}) : ()),
-                    ($_->{errors} ? (
-                        errorResponces => [ map { {
-                            code => int($_->{code}),
-                            reason => $_->{reason}
-                        } } @{ $_->{errors} }]
-                    ) : ())
-                } } @{$_->operations} ]
-            } } @{ $resource->apis }];
-    }
+    return $listing unless $resource;
+
+    $listing->{apis} = [
+        map { {
+            path => $_->path,
+            description => ($_->description||''),
+            operations => [ map { {
+                httpMethod => $_->{method},
+                nickname => $_->{nickname},
+                responseClass => ($_->{response}||'void'),
+                ($_->{params} ? (
+                    parameters => [ map { {
+                        paramType => $_->{param},
+                        name => $_->{name},
+                        dataType => $_->{type},
+                        ($_->{description} ? (description => $_->{description}) : ()),
+                        required => ($_->{required} ? true : false),
+                        ($_->{allowable_values} ? (allowableValues => $_->{allowable_values}) : ()),
+                        ($_->{multiple} ? (multiple => $_->{multiple}) : ())
+                    } } @{ $_->{params} }]
+                ) : ()),
+                summary => $_->{summary},
+                ($_->{notes} ? (notes => $_->{notes}) : ()),
+                ($_->{errors} ? (
+                    errorResponses => [ map { {
+                        code => int($_->{code}),
+                        reason => $_->{reason}
+                    } } @{ $_->{errors} }]
+                ) : ())
+            } } @{$_->operations} ]
+        } } @{ $resource->apis }];
+
+    my %models = map { $_ =>  $self->models->{$_}->listing }
+        grep { exists $self->models->{$_} } $resource->all_models;
+
+    $listing->{models} = \%models if %models;
 
     return $listing;
 }
