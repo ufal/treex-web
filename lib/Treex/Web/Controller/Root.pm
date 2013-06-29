@@ -29,8 +29,9 @@ The root page (/)
 
 sub index :Path :Args(0) {
     my ( $self, $c ) = @_;
-    $c->response->body( 'Treex::Web API v' . $Treex::Web::VERSION );
-    $c->response->status(200);
+    $c->serve_static_file('root/index.html');
+    #$c->response->body( 'Treex::Web API v' . $Treex::Web::VERSION );
+    #$c->response->status(200);
 }
 
 =head2 default

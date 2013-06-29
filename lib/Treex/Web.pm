@@ -23,13 +23,14 @@ use Catalyst qw/
     Session::Store::FastMmap
     Session::State::Cookie
     Authentication
-    Assets
+    Static::Simple
 /;
 #    Authorization::Roles
 
 extends 'Catalyst';
 
 our $VERSION = '0.01';
+our $API_VERSION = '1';
 
 # Configure the application.
 #
