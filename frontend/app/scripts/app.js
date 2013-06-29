@@ -19,7 +19,7 @@ angular.module('TreexWebApp', ['$strap.directives', 'http-auth-interceptor', 'ng
 
     $locationProvider.html5Mode(true);
   }])
-  .run(['$rootScope', '$route', '$location', 'Auth', function(scope, $route, $location, Auth) {
+  .run(['$rootScope', '$location', 'Auth', function(scope, $location, Auth) {
     var loginPath = '/login';
 
     // register listener to watch route changes
