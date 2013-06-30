@@ -189,7 +189,7 @@ resource. Only administrator can access all user's attributes.",
 sub user_GET {
     my ( $self, $c ) = @_;
 
-    my $user = $c->stash('user');
+    my $user = $c->stash->{user};
     my $all = $user->id == $c->user->id || $user->is_admin;
 
     $self->status_ok($c, entity => $user->REST($all));
@@ -232,7 +232,7 @@ $user_api->delete(
 sub user_DELETE {
     my ( $self, $c ) = @_;
 
-    my $user = $c->stash('user');
+    my $user = $c->stash->{user};
     unless ($user->id == $c->user->id || $user->is_admin) {
         $c->status_error($c, $user_api->error('forbidden'));
         return
