@@ -12,7 +12,10 @@ use Treex::Web;
 use DBIx::Class::Migration::Script;
 
 DBIx::Class::Migration::Script
-    ->run_with_options( schema => Treex::Web->model('WebDB')->schema );
+    ->run_with_options(
+        schema => Treex::Web->model('WebDB')->schema,
+        databases => ['MySQL', 'SQLite', 'PostgreSQL'],
+    );
 
 __END__
 
