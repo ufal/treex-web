@@ -211,8 +211,8 @@ sub rest_schema {
         email => { type => 'string', format => 'email', required => 0 },
         active => { type => 'boolean', required => 0 },
         activate_token => { type => 'string', required => 0 },
-        is_admin => { type => 'boolean', required => 0 }
-        last_modified => { type => 'string', required => 0, description => 'Last modification timestamp' }
+        is_admin => { type => 'boolean', required => 0 },
+        last_modified => { type => 'string', required => 0, description => 'Last modification timestamp' },
     )
 }
 
