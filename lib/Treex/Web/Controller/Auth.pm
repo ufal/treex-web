@@ -65,7 +65,7 @@ sub _build_login_form {
 
 =cut
 
-my $index = $auth->api(
+my $index_api = $auth->api(
     controller => __PACKAGE__,
     action => 'index',
     path => '/auth',
@@ -74,7 +74,7 @@ my $index = $auth->api(
 
 sub index :Path :Args(0) :ActionClass('REST') { }
 
-$index->get(
+$index_api->get(
     summary  => 'Check for whether the session exists',
     notes    => "If the session cookie is missing or the session doesn't exists \
  request ends up with the 404 error. NOTE: The documentation on this item is broken.",
@@ -97,11 +97,11 @@ sub index_GET {
     if ($c->user_exists) {
         $self->status_ok($c, entity => { session => true });
     } else {
-        $self->status_error($c, $index->error('not_found'));
+        $self->status_error($c, $index_api->error('not_found'));
     }
 }
 
-$index->post(
+$index_api->post(
     summary  => 'Provides user login',
     notes    => 'Simple user login action',
     response => 'User',
@@ -125,11 +125,11 @@ sub index_POST {
             if $form->field( 'remember' )->value;
         $self->status_ok( $c, entity => $c->user->REST );
     } else {
-        $self->status_error($c, $index->error('login_failed'));
+        $self->status_error($c, $index_api->error('login_failed'));
     }
 }
 
-$index->delete(
+$index_api->delete(
     summary  => 'Provides user logout',
     notes    => 'Deletes user session',
     nickname => 'logout',
