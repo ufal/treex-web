@@ -162,7 +162,7 @@ sub user :Path('/users') :Args(1) :ActionClass('REST') :Does('~NeedsLogin') {
         $c->detach;
     }
 
-    unless ($c->user->id == $user->id or $user->is_admin) {
+    unless ($c->user->id == $user->id or $c->user->is_admin) {
         $self->status_error($c, $user_api->error('forbidden'));
         $c->detach;
     }
@@ -188,7 +188,7 @@ sub user_GET {
     my ( $self, $c ) = @_;
 
     my $user = $c->stash->{user};
-    my $all = $user->id == $c->user->id || $user->is_admin;
+    my $all = $user->id == $c->user->id || $c->user->is_admin;
 
     $self->status_ok($c, entity => $user->REST($all));
 }
@@ -231,7 +231,7 @@ sub user_DELETE {
     my ( $self, $c ) = @_;
 
     my $user = $c->stash->{user};
-    unless ($user->id == $c->user->id || $user->is_admin) {
+    unless ($user->id == $c->user->id || $c->user->is_admin) {
         $c->status_error($c, $user_api->error('forbidden'));
         return
     }
@@ -318,7 +318,7 @@ sub activate_GET {
         return;
     }
 
-    my $user = $c->model('WebDB::User')->single({token => $token});
+    my $user = $c->model('WebDB::User')->single({activate_token => $token});
     if ($user) {
         $user->activate_token(undef);
         $user->active(1);
