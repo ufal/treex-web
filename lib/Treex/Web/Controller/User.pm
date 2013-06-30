@@ -126,7 +126,7 @@ sub users_POST {
 
         if ($c->model('WebDB::User')->count == 1) {
             $new_user->active(1);
-            $new_user->activate_token('');
+            $new_user->activate_token(undef);
             $new_user->is_admin(1);
             $new_user->update;
         }
@@ -284,6 +284,49 @@ sub email_available_GET {
     $self->status_ok($c, entity => {
         available => $c->model('WebDB::User')->is_email_available($email) ? true : false
     });
+}
+
+my $activate_api = $user_resouce->api(
+    controller => __PACKAGE__,
+    action => 'activate',
+    path => '/users/activate',
+    description => 'Activate user by token'
+);
+
+sub activate :Path('/users/activate') :Args(0) :ActionClass('REST') { }
+
+$activate_api->get(
+    summary => 'Activates user by activation token',
+    notes => 'Returns 204 on success or 40* on failure',
+    nickname => 'activateUser',
+    params => [
+        __PACKAGE__->api_param_query('string', 'Activation token', 'token')
+    ],
+    errors => [
+        __PACKAGE__->api_error('no_token', 400, 'Token missing'),
+        __PACKAGE__->api_error('not_found', 404, 'User not found')
+    ]
+);
+
+sub activate_GET {
+    my ( $self, $c) = @_;
+
+    my $token = $c->req->params->{token}||'';
+
+    unless ($token) {
+        $self->status_error($c, $activate_api->error('no_token'));
+        return;
+    }
+
+    my $user = $c->model('WebDB::User')->single({token => $token});
+    if ($user) {
+        $user->activate_token(undef);
+        $user->active(1);
+        $user->update;
+        $self->status_no_content($c);
+    } else {
+        $self->status_error($c, $activate_api->error('not_found'));
+    }
 }
 
 
