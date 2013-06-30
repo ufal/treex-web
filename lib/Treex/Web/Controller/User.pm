@@ -95,24 +95,17 @@ sub users :Path('/users') :Args(0) :ActionClass('REST') {
 
 $users_api->get(
     summary => 'Get list of all users',
-    notes => 'Only administrators can access it.',
+    notes => "Administrators can access all user's attributes.",
     response => 'List[User]',
     nickname => 'usersList',
-    errors => [
-        __PACKAGE__->api_error('not_admin', 403, 'Access denied')
-    ]
 );
 
-sub users_GET {
+sub users_GET :Does('~NeedsLogin') {
     my ( $self, $c ) = @_;
 
-    unless ($c->user->is_admin) {
-        $self->status_error($c, $users_api->error('not_admin'));
-        return;
-    }
-
-    my @users = $c->stash->{user_rs}->all;
-    $c->status_ok($c, entity => [ map { $_->REST(1) } @users ]);
+    my @users = $c->model('WebDB::User')->all;
+    my $admin = $c->user->is_admin;
+    $self->status_ok($c, entity => [ map { $_->REST($admin) } @users ]);
 }
 
 $users_api->post(
@@ -221,6 +214,43 @@ sub user_PUT {
 
     $c->response->status(500);
     $c->response->body('TODO');
+}
+
+$user_api->delete(
+    summary => 'Deletes user and all his related records',
+    notes => "Users can only delete themselves. Administators can delete any user. Last administator cannot delete himself.",
+    nickname => 'deleteUser',
+    params => [
+        @user_params,
+    ],
+    errors => [
+        @user_errors,
+        __PACKAGE__->api_error('last_admin', 403, 'Last administator cannot be deleted')
+    ]
+);
+
+sub user_DELETE {
+    my ( $self, $c ) = @_;
+
+    my $user = $c->stash('user');
+    unless ($user->id == $c->user->id || $user->is_admin) {
+        $c->status_error($c, $user_api->error('forbidden'));
+        return
+    }
+
+    if ($user->id == $c->user->id && $user->is_admin) {
+        my $last = $c->model('WebDB::User')->search( is_admin => 1 )->count <= 0;
+        if ($last) {
+            $c->status_error($c, $user_api->error('last_admin'));
+            return
+        }
+    }
+
+    $c->logout;
+    $c->delete_session;
+    $user->delete;
+
+    $self->status_ok($c, entity => $user->REST(1));
 }
 
 my $email_available_api = $user_resouce->api(
