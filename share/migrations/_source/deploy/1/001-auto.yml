@@ -256,7 +256,7 @@ schema:
             - 60
         user:
           data_type: integer
-          default_value: &1 !!perl/ref
+          default_value: !!perl/ref
             =: null
           is_nullable: 1
           is_primary_key: 0
@@ -278,7 +278,7 @@ schema:
           type: NORMAL
       name: result
       options: []
-      order: 5
+      order: 4
     scenario_languages:
       constraints:
         - deferrable: 1
@@ -485,7 +485,7 @@ schema:
           type: NORMAL
       name: scenarios
       options: []
-      order: 3
+      order: 5
     user:
       constraints:
         - deferrable: 1
@@ -520,7 +520,7 @@ schema:
           is_primary_key: 0
           is_unique: 0
           name: activate_token
-          order: 5
+          order: 7
           size:
             - 20
         active:
@@ -530,7 +530,7 @@ schema:
           is_primary_key: 0
           is_unique: 0
           name: active
-          order: 4
+          order: 6
           size:
             - 0
         email:
@@ -554,6 +554,16 @@ schema:
           order: 1
           size:
             - 0
+        is_admin:
+          data_type: boolean
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 0
+          is_unique: 0
+          name: is_admin
+          order: 5
+          size:
+            - 0
         last_modified:
           data_type: datetime
           default_value: ~
@@ -561,9 +571,19 @@ schema:
           is_primary_key: 0
           is_unique: 0
           name: last_modified
-          order: 6
+          order: 8
           size:
             - 0
+        name:
+          data_type: varchar
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 0
+          is_unique: 0
+          name: name
+          order: 3
+          size:
+            - 120
         password:
           data_type: char
           default_value: ~
@@ -571,13 +591,13 @@ schema:
           is_primary_key: 0
           is_unique: 0
           name: password
-          order: 3
+          order: 4
           size:
             - 59
       indices: []
       name: user
       options: []
-      order: 4
+      order: 3
   triggers: {}
   views: {}
 translator:
@@ -585,497 +605,9 @@ translator:
   filename: ~
   no_comments: 0
   parser_args:
-    package: &2 !!perl/hash:Treex::Web::DB
-      class_mappings:
-        DBIx::Class::DeploymentHandler::VersionStorage::Standard::VersionResult: __VERSION
-        Treex::Web::DB::Result::Language: Language
-        Treex::Web::DB::Result::LanguageGroup: LanguageGroup
-        Treex::Web::DB::Result::Result: Result
-        Treex::Web::DB::Result::Scenario: Scenario
-        Treex::Web::DB::Result::ScenarioLanguage: ScenarioLanguage
-        Treex::Web::DB::Result::User: User
-        Treex::Web::Model::WebDB::Language: Language
-        Treex::Web::Model::WebDB::LanguageGroup: LanguageGroup
-        Treex::Web::Model::WebDB::Result: Result
-        Treex::Web::Model::WebDB::Scenario: Scenario
-        Treex::Web::Model::WebDB::ScenarioLanguage: ScenarioLanguage
-        Treex::Web::Model::WebDB::User: User
-      source_registrations:
-        Language: !!perl/hash:DBIx::Class::ResultSource::Table
-          _columns:
-            code:
-              data_type: varchar
-              is_nullable: 0
-              size: 10
-            id:
-              data_type: integer
-              is_auto_increment: 1
-              is_nullable: 0
-            language_group:
-              _inflate_info:
-                deflate: !!perl/code '{ "DUMMY" }'
-                inflate: !!perl/code '{ "DUMMY" }'
-              data_type: integer
-              is_foreign_key: 1
-              is_nullable: 0
-            name:
-              data_type: varchar
-              is_nullable: 0
-              size: 120
-            position:
-              data_type: integer
-              is_nullable: 1
-          _columns_info_loaded: 0
-          _ordered_columns:
-            - id
-            - language_group
-            - code
-            - name
-            - position
-          _primaries: &3
-            - id
-          _relationships:
-            language_group:
-              attrs:
-                accessor: filter
-                is_deferrable: 1
-                is_foreign_key_constraint: 1
-                join_type: LEFT
-                undef_on_null_fk: 1
-              class: Treex::Web::DB::Result::LanguageGroup
-              cond:
-                foreign.id: self.language_group
-              source: Treex::Web::DB::Result::LanguageGroup
-            results:
-              attrs:
-                accessor: multi
-                cascade_copy: 1
-                cascade_delete: 1
-                join_type: LEFT
-              class: Treex::Web::DB::Result::Result
-              cond:
-                foreign.language: self.id
-              source: Treex::Web::DB::Result::Result
-            scenario_languages:
-              attrs:
-                accessor: multi
-                cascade_copy: 1
-                cascade_delete: 1
-                join_type: LEFT
-              class: Treex::Web::DB::Result::ScenarioLanguage
-              cond:
-                foreign.language: self.id
-              source: Treex::Web::DB::Result::ScenarioLanguage
-          _unique_constraints:
-            primary: *3
-          name: languages
-          result_class: Treex::Web::Model::WebDB::Language
-          resultset_attributes: {}
-          resultset_class: DBIx::Class::ResultSet
-          schema: *2
-          source_name: Language
-        LanguageGroup: !!perl/hash:DBIx::Class::ResultSource::Table
-          _columns:
-            id:
-              data_type: integer
-              is_auto_increment: 1
-              is_nullable: 0
-            name:
-              data_type: varchar
-              is_nullable: 0
-              size: 200
-            position:
-              data_type: integer
-              is_nullable: 1
-          _columns_info_loaded: 0
-          _ordered_columns:
-            - id
-            - name
-            - position
-          _primaries: &4
-            - id
-          _relationships:
-            languages:
-              attrs:
-                accessor: multi
-                cascade_copy: 1
-                cascade_delete: 1
-                join_type: LEFT
-              class: Treex::Web::DB::Result::Language
-              cond:
-                foreign.language_group: self.id
-              source: Treex::Web::DB::Result::Language
-          _unique_constraints:
-            primary: *4
-          name: language_groups
-          result_class: Treex::Web::Model::WebDB::LanguageGroup
-          resultset_attributes: {}
-          resultset_class: DBIx::Class::ResultSet
-          schema: *2
-          source_name: LanguageGroup
-        Result: !!perl/hash:DBIx::Class::ResultSource::Table
-          _columns:
-            id:
-              data_type: integer
-              is_auto_increment: 1
-              is_nullable: 0
-            job_handle:
-              data_type: varchar
-              is_nullable: 1
-              size: 255
-            language:
-              _inflate_info:
-                deflate: !!perl/code '{ "DUMMY" }'
-                inflate: !!perl/code '{ "DUMMY" }'
-              data_type: integer
-              is_nullable: 1
-            last_modified:
-              _ic_dt_method: datetime
-              _inflate_info:
-                deflate: !!perl/code '{ "DUMMY" }'
-                inflate: !!perl/code '{ "DUMMY" }'
-              data_type: datetime
-              dynamic_default_on_create: get_timestamp
-              dynamic_default_on_update: get_timestamp
-              is_nullable: 0
-            name:
-              data_type: varchar
-              is_nullable: 1
-              size: 120
-            unique_token:
-              data_type: varchar
-              is_nullable: 0
-              size: 60
-            user:
-              _inflate_info:
-                deflate: !!perl/code '{ "DUMMY" }'
-                inflate: !!perl/code '{ "DUMMY" }'
-              data_type: integer
-              default_value: *1
-              is_foreign_key: 1
-              is_nullable: 1
-          _columns_info_loaded: 0
-          _ordered_columns:
-            - id
-            - job_handle
-            - unique_token
-            - user
-            - name
-            - language
-            - last_modified
-          _primaries: &5
-            - id
-          _relationships:
-            language:
-              attrs:
-                accessor: filter
-                is_foreign_key_constraint: 1
-                undef_on_null_fk: 1
-              class: Treex::Web::DB::Result::Language
-              cond:
-                foreign.id: self.language
-              source: Treex::Web::DB::Result::Language
-            user:
-              attrs:
-                accessor: filter
-                is_deferrable: 1
-                is_foreign_key_constraint: 1
-                join_type: LEFT
-                undef_on_null_fk: 1
-              class: Treex::Web::DB::Result::User
-              cond:
-                foreign.id: self.user
-              source: Treex::Web::DB::Result::User
-          _unique_constraints:
-            primary: *5
-            unique_token:
-              - unique_token
-          name: result
-          result_class: Treex::Web::Model::WebDB::Result
-          resultset_attributes: {}
-          resultset_class: DBIx::Class::InflateColumn::FS::ResultSet
-          schema: *2
-          source_name: Result
-        Scenario: !!perl/hash:DBIx::Class::ResultSource::Table
-          _columns:
-            created_at:
-              _ic_dt_method: datetime
-              _inflate_info:
-                deflate: !!perl/code '{ "DUMMY" }'
-                inflate: !!perl/code '{ "DUMMY" }'
-              data_type: datetime
-              dynamic_default_on_create: get_timestamp
-              is_nullable: 0
-            description:
-              data_type: text
-              is_nullable: 1
-            id:
-              data_type: integer
-              is_auto_increment: 1
-              is_nullable: 0
-            last_modified:
-              _ic_dt_method: datetime
-              _inflate_info:
-                deflate: !!perl/code '{ "DUMMY" }'
-                inflate: !!perl/code '{ "DUMMY" }'
-              data_type: datetime
-              dynamic_default_on_create: get_timestamp
-              dynamic_default_on_update: get_timestamp
-              is_nullable: 0
-            name:
-              data_type: varchar
-              is_nullable: 0
-              size: 120
-            public:
-              data_type: boolean
-              default: 0
-              is_boolean: 1
-              is_nullable: 0
-            scenario:
-              data_type: text
-              is_nullable: 0
-            user:
-              _inflate_info:
-                deflate: !!perl/code '{ "DUMMY" }'
-                inflate: !!perl/code '{ "DUMMY" }'
-              data_type: integer
-              default_value: 0
-              is_foreign_key: 1
-              is_nullable: 0
-          _columns_info_loaded: 0
-          _ordered_columns:
-            - id
-            - scenario
-            - name
-            - description
-            - public
-            - user
-            - created_at
-            - last_modified
-          _primaries: &6
-            - id
-          _relationships:
-            scenario_languages:
-              attrs:
-                accessor: multi
-                cascade_copy: 1
-                cascade_delete: 1
-                join_type: LEFT
-              class: Treex::Web::DB::Result::ScenarioLanguage
-              cond:
-                foreign.scenario: self.id
-              source: Treex::Web::DB::Result::ScenarioLanguage
-            user:
-              attrs:
-                accessor: filter
-                is_deferrable: 1
-                is_foreign_key_constraint: 1
-                join_type: LEFT
-                undef_on_null_fk: 1
-              class: Treex::Web::DB::Result::User
-              cond:
-                foreign.id: self.user
-              source: Treex::Web::DB::Result::User
-          _unique_constraints:
-            name_user_unique:
-              - name
-              - user
-            primary: *6
-          name: scenarios
-          result_class: Treex::Web::Model::WebDB::Scenario
-          resultset_attributes: {}
-          resultset_class: DBIx::Class::ResultSet
-          schema: *2
-          source_name: Scenario
-        ScenarioLanguage: !!perl/hash:DBIx::Class::ResultSource::Table
-          _columns:
-            language:
-              _inflate_info:
-                deflate: !!perl/code '{ "DUMMY" }'
-                inflate: !!perl/code '{ "DUMMY" }'
-              data_type: varchar
-              is_nullable: 0
-            scenario:
-              _inflate_info:
-                deflate: !!perl/code '{ "DUMMY" }'
-                inflate: !!perl/code '{ "DUMMY" }'
-              data_type: integer
-              is_nullable: 0
-          _columns_info_loaded: 0
-          _ordered_columns:
-            - scenario
-            - language
-          _primaries: &7
-            - scenario
-            - language
-          _relationships:
-            language:
-              attrs:
-                accessor: filter
-                is_foreign_key_constraint: 1
-                undef_on_null_fk: 1
-              class: Treex::Web::DB::Result::Language
-              cond:
-                foreign.id: self.language
-              source: Treex::Web::DB::Result::Language
-            scenario:
-              attrs:
-                accessor: filter
-                is_foreign_key_constraint: 1
-                undef_on_null_fk: 1
-              class: Treex::Web::DB::Result::Scenario
-              cond:
-                foreign.id: self.scenario
-              source: Treex::Web::DB::Result::Scenario
-          _unique_constraints:
-            primary: *7
-          name: scenario_languages
-          result_class: Treex::Web::Model::WebDB::ScenarioLanguage
-          resultset_attributes: {}
-          resultset_class: DBIx::Class::ResultSet
-          schema: *2
-          source_name: ScenarioLanguage
-        User: !!perl/hash:DBIx::Class::ResultSource::Table
-          _columns:
-            activate_token:
-              data_type: char
-              is_nullable: 1
-              size: 20
-            active:
-              data_type: boolean
-              default: 0
-              is_boolean: 1
-            email:
-              data_type: varchar
-              is_nullable: 0
-              size: 120
-            id:
-              data_type: integer
-              is_auto_increment: 1
-              is_nullable: 0
-            last_modified:
-              _ic_dt_method: datetime
-              _inflate_info:
-                deflate: !!perl/code '{ "DUMMY" }'
-                inflate: !!perl/code '{ "DUMMY" }'
-              data_type: datetime
-              dynamic_default_on_create: get_timestamp
-              dynamic_default_on_update: get_timestamp
-              is_nullable: 0
-            password:
-              data_type: char
-              encode_args:
-                cost: 8
-                key_nul: 0
-              encode_check_method: check_password
-              encode_class: Crypt::Eksblowfish::Bcrypt
-              encode_column: 1
-              is_nullable: 0
-              size: 59
-          _columns_info_loaded: 0
-          _ordered_columns:
-            - id
-            - email
-            - password
-            - active
-            - activate_token
-            - last_modified
-          _primaries: &8
-            - id
-          _relationships:
-            results:
-              attrs:
-                accessor: multi
-                cascade_copy: 0
-                cascade_delete: 1
-                join_type: LEFT
-              class: Treex::Web::DB::Result::Result
-              cond:
-                foreign.user: self.id
-              source: Treex::Web::DB::Result::Result
-            scenarios:
-              attrs:
-                accessor: multi
-                cascade_copy: 0
-                cascade_delete: 1
-                join_type: LEFT
-              class: Treex::Web::DB::Result::Scenario
-              cond:
-                foreign.user: self.id
-              source: Treex::Web::DB::Result::Scenario
-          _unique_constraints:
-            email_unique:
-              - email
-            primary: *8
-          name: user
-          result_class: Treex::Web::Model::WebDB::User
-          resultset_attributes: {}
-          resultset_class: DBIx::Class::ResultSet
-          schema: *2
-          source_name: User
-        __VERSION: !!perl/hash:DBIx::Class::ResultSource::Table
-          _columns:
-            ddl:
-              data_type: text
-              is_nullable: 1
-            id:
-              data_type: int
-              is_auto_increment: 1
-            upgrade_sql:
-              data_type: text
-              is_nullable: 1
-            version:
-              data_type: varchar
-              size: 50
-          _columns_info_loaded: 0
-          _ordered_columns:
-            - id
-            - version
-            - ddl
-            - upgrade_sql
-          _primaries: &9
-            - id
-          _relationships: {}
-          _unique_constraints:
-            dbix_class_deploymenthandler_versions_version:
-              - version
-            primary: *9
-          name: dbix_class_deploymenthandler_versions
-          result_class: DBIx::Class::DeploymentHandler::VersionStorage::Standard::VersionResult
-          resultset_attributes: {}
-          resultset_class: DBIx::Class::DeploymentHandler::VersionStorage::Standard::VersionResultSet
-          schema: *2
-          source_name: __VERSION
-      storage: !!perl/hash:DBIx::Class::Storage::DBI
-        _connect_info:
-          - auto_savepoint: 1
-            cursor_class: DBIx::Class::Cursor::Cached
-            dbh_maker: &10 !!perl/code '{ "DUMMY" }'
-            dsn: ''
-            password: ''
-            quote_names: 1
-            user: ''
-        _dbh_details: {}
-        _dbh_gen: 0
-        _dbi_connect_info:
-          - *10
-        _dbic_connect_attributes:
-          AutoCommit: 1
-          PrintError: 0
-          RaiseError: 1
-          ShowErrorStatement: 1
-        _in_do_block: 0
-        _sql_maker: ~
-        _sql_maker_opts:
-          quote_names: 1
-        auto_savepoint: 1
-        cursor_class: DBIx::Class::Storage::DBI::Cursor
-        savepoints: []
-        schema: *2
-        transaction_depth: 0
     sources:
-      - LanguageGroup
       - Scenario
+      - LanguageGroup
       - Result
       - ScenarioLanguage
       - Language
@@ -1085,4 +617,4 @@ translator:
   producer_type: SQL::Translator::Producer::YAML
   show_warnings: 0
   trace: 0
-  version: 0.11011
+  version: 0.11016

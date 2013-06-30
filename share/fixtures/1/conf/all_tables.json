@@ -2,11 +2,11 @@
    "sets" : [
       {
          "quantity" : "all",
-         "class" : "LanguageGroup"
+         "class" : "Scenario"
       },
       {
          "quantity" : "all",
-         "class" : "Scenario"
+         "class" : "LanguageGroup"
       },
       {
          "quantity" : "all",

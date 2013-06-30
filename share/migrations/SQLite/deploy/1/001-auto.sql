@@ -1,6 +1,6 @@
 -- 
 -- Created by SQL::Translator::Producer::SQLite
--- Created on Thu Feb  7 12:15:26 2013
+-- Created on Sun Jun 30 18:04:32 2013
 -- 
 
 ;
@@ -26,28 +26,14 @@ CREATE TABLE languages (
 );
 CREATE INDEX languages_idx_language_group ON languages (language_group);
 --
--- Table: scenarios
---
-CREATE TABLE scenarios (
-  id INTEGER PRIMARY KEY NOT NULL,
-  scenario text NOT NULL,
-  name varchar(120) NOT NULL,
-  description text,
-  public boolean NOT NULL,
-  user integer NOT NULL DEFAULT 0,
-  created_at datetime NOT NULL,
-  last_modified datetime NOT NULL,
-  FOREIGN KEY (user) REFERENCES user(id) ON DELETE CASCADE
-);
-CREATE INDEX scenarios_idx_user ON scenarios (user);
-CREATE UNIQUE INDEX name_user_unique ON scenarios (name, user);
---
 -- Table: user
 --
 CREATE TABLE user (
   id INTEGER PRIMARY KEY NOT NULL,
   email varchar(120) NOT NULL,
+  name varchar(120) NOT NULL,
   password char(59) NOT NULL,
+  is_admin boolean NOT NULL,
   active boolean NOT NULL,
   activate_token char(20),
   last_modified datetime NOT NULL
@@ -71,6 +57,22 @@ CREATE INDEX result_idx_language ON result (language);
 CREATE INDEX result_idx_user ON result (user);
 CREATE UNIQUE INDEX unique_token ON result (unique_token);
 --
+-- Table: scenarios
+--
+CREATE TABLE scenarios (
+  id INTEGER PRIMARY KEY NOT NULL,
+  scenario text NOT NULL,
+  name varchar(120) NOT NULL,
+  description text,
+  public boolean NOT NULL,
+  user integer NOT NULL DEFAULT 0,
+  created_at datetime NOT NULL,
+  last_modified datetime NOT NULL,
+  FOREIGN KEY (user) REFERENCES user(id) ON DELETE CASCADE
+);
+CREATE INDEX scenarios_idx_user ON scenarios (user);
+CREATE UNIQUE INDEX name_user_unique ON scenarios (name, user);
+--
 -- Table: scenario_languages
 --
 CREATE TABLE scenario_languages (
@@ -82,4 +84,4 @@ CREATE TABLE scenario_languages (
 );
 CREATE INDEX scenario_languages_idx_language ON scenario_languages (language);
 CREATE INDEX scenario_languages_idx_scenario ON scenario_languages (scenario);
-COMMIT
+COMMIT;

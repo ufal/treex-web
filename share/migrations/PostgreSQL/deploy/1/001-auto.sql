@@ -1,10 +1,10 @@
 -- 
 -- Created by SQL::Translator::Producer::PostgreSQL
--- Created on Thu Feb  7 12:15:26 2013
+-- Created on Sun Jun 30 18:04:32 2013
 -- 
 ;
 --
--- Table: language_groups
+-- Table: language_groups.
 --
 CREATE TABLE "language_groups" (
   "id" serial NOT NULL,
@@ -15,7 +15,7 @@ CREATE TABLE "language_groups" (
 
 ;
 --
--- Table: languages
+-- Table: languages.
 --
 CREATE TABLE "languages" (
   "id" serial NOT NULL,
@@ -29,30 +29,14 @@ CREATE INDEX "languages_idx_language_group" on "languages" ("language_group");
 
 ;
 --
--- Table: scenarios
---
-CREATE TABLE "scenarios" (
-  "id" serial NOT NULL,
-  "scenario" text NOT NULL,
-  "name" character varying(120) NOT NULL,
-  "description" text,
-  "public" boolean NOT NULL,
-  "user" integer DEFAULT 0 NOT NULL,
-  "created_at" timestamp NOT NULL,
-  "last_modified" timestamp NOT NULL,
-  PRIMARY KEY ("id"),
-  CONSTRAINT "name_user_unique" UNIQUE ("name", "user")
-);
-CREATE INDEX "scenarios_idx_user" on "scenarios" ("user");
-
-;
---
--- Table: user
+-- Table: user.
 --
 CREATE TABLE "user" (
   "id" serial NOT NULL,
   "email" character varying(120) NOT NULL,
+  "name" character varying(120) NOT NULL,
   "password" character(59) NOT NULL,
+  "is_admin" boolean NOT NULL,
   "active" boolean NOT NULL,
   "activate_token" character(20),
   "last_modified" timestamp NOT NULL,
@@ -62,7 +46,7 @@ CREATE TABLE "user" (
 
 ;
 --
--- Table: result
+-- Table: result.
 --
 CREATE TABLE "result" (
   "id" serial NOT NULL,
@@ -80,7 +64,25 @@ CREATE INDEX "result_idx_user" on "result" ("user");
 
 ;
 --
--- Table: scenario_languages
+-- Table: scenarios.
+--
+CREATE TABLE "scenarios" (
+  "id" serial NOT NULL,
+  "scenario" text NOT NULL,
+  "name" character varying(120) NOT NULL,
+  "description" text,
+  "public" boolean NOT NULL,
+  "user" integer DEFAULT 0 NOT NULL,
+  "created_at" timestamp NOT NULL,
+  "last_modified" timestamp NOT NULL,
+  PRIMARY KEY ("id"),
+  CONSTRAINT "name_user_unique" UNIQUE ("name", "user")
+);
+CREATE INDEX "scenarios_idx_user" on "scenarios" ("user");
+
+;
+--
+-- Table: scenario_languages.
 --
 CREATE TABLE "scenario_languages" (
   "scenario" integer NOT NULL,
@@ -100,15 +102,15 @@ ALTER TABLE "languages" ADD CONSTRAINT "languages_fk_language_group" FOREIGN KEY
   REFERENCES "language_groups" ("id") ON DELETE CASCADE ON UPDATE CASCADE DEFERRABLE;
 
 ;
-ALTER TABLE "scenarios" ADD CONSTRAINT "scenarios_fk_user" FOREIGN KEY ("user")
-  REFERENCES "user" ("id") ON DELETE CASCADE DEFERRABLE;
-
-;
 ALTER TABLE "result" ADD CONSTRAINT "result_fk_language" FOREIGN KEY ("language")
   REFERENCES "languages" ("id") ON DELETE CASCADE ON UPDATE CASCADE DEFERRABLE;
 
 ;
 ALTER TABLE "result" ADD CONSTRAINT "result_fk_user" FOREIGN KEY ("user")
+  REFERENCES "user" ("id") ON DELETE CASCADE DEFERRABLE;
+
+;
+ALTER TABLE "scenarios" ADD CONSTRAINT "scenarios_fk_user" FOREIGN KEY ("user")
   REFERENCES "user" ("id") ON DELETE CASCADE DEFERRABLE;
 
 ;
@@ -119,3 +121,4 @@ ALTER TABLE "scenario_languages" ADD CONSTRAINT "scenario_languages_fk_language"
 ALTER TABLE "scenario_languages" ADD CONSTRAINT "scenario_languages_fk_scenario" FOREIGN KEY ("scenario")
   REFERENCES "scenarios" ("id") ON DELETE CASCADE ON UPDATE CASCADE DEFERRABLE;
 
+;
