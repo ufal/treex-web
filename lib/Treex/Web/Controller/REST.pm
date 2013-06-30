@@ -3,6 +3,7 @@ use Moose;
 use Treex::Web::DB;
 use Treex::Web::Api;
 use Params::Validate qw(:all);
+use List::Util qw(min);
 use namespace::autoclean;
 
 BEGIN { extends 'Catalyst::Controller::REST'; }
@@ -44,17 +45,43 @@ sub api_param_body {
     shift->api->param_body(@_);
 }
 
+sub api_param_path {
+    shift->api->param_path(@_);
+}
+
+sub api_param_query {
+    shift->api->param_query(@_);
+}
+
 sub api_error {
     shift->api->error(@_);
 }
 
 sub status_error {
-    my ($self, $c, $error) = @_;
+    my ($self, $c, @errors) = @_;
 
-    $c->response->status($error->{code});
-    $c->stash->{ $self->{'stash_key'} } = { error => $error->{reason} };
+    if (@errors == 1) {
+        my $error = shift @errors;
+        $c->response->status($error->{code});
+        $c->stash->{ $self->{'stash_key'} } = { error => $error->{reason} };
+    } else {
+        # find lowest code and display only those errors
+        my $code = min map { $_->{code} } @errors;
+
+        @errors = grep { $_->{code} == $code } @errors;
+        return $self->status_error($c, @errors) if @errors == 1;
+
+        $c->response->status($code);
+        $c->stash->{ $self->{'stash_key'} } = {
+            message => 'The request cannot be fulfilled because of multiple errors',
+            errors => [ map { $_->{reason} } @errors ]
+        };
+    }
+
     return 1;
 }
+
+sub status_unauthorized {}
 
 sub validate_params {
     my ($self, $c, $model_name) = @_;
