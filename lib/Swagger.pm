@@ -110,6 +110,33 @@ sub param_body {
     )
 }
 
+sub param_path {
+    my $self = shift;
+    my ($type, $desc, $name) = validate_pos(@_, 1, 1, 1);
+
+    return $self->param(
+        param => 'path',
+        name => $name,
+        description => $desc,
+        type => $type,
+        required => 1,
+    )
+}
+
+sub param_query {
+    my $self = shift;
+    my ($type, $desc, $name, $multiple) = validate_pos(@_, 1, 1, 1, 0);
+
+    return $self->param(
+        param => 'query',
+        name => $name,
+        description => $desc,
+        type => $type,
+        required => 1,
+        ($multiple ? (multiple => 1) : ())
+    )
+}
+
 sub error {
     my $self = shift;
     my ($name, $code, $reason) = validate_pos(@_, { type => SCALAR }, { regex => qr/^\d+$/ }, 1);
