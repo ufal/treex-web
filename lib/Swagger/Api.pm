@@ -62,10 +62,10 @@ sub models {
 }
 
 
-my $unknow_error = {
-    code => 500,
-    reason => 'Unknown error'
-};
+my %unknown_error = (
+    name => 'unknown_error',
+    code => 400,
+);
 
 sub error {
     my ($self, $name) = @_;
@@ -77,7 +77,15 @@ sub error {
         last if $error;
     }
 
-    return $error||$unknow_error;
+    return $error||{ %unknown_error, reason => ucfirst($name||'Unknown') };
+}
+
+sub errors {
+    my $self = shift;
+
+    return map {
+        $self->error($_)
+    } @_;
 }
 
 sub get { shift->operation('GET', @_); }
