@@ -7,7 +7,7 @@ use namespace::autoclean;
 
 BEGIN {extends 'Treex::Web::Controller::REST'; }
 
-my $auth = __PACKAGE__->api_resource(
+my $auth_resource = __PACKAGE__->api_resource(
     path => 'auth'
 );
 
@@ -65,7 +65,7 @@ sub _build_login_form {
 
 =cut
 
-my $index_api = $auth->api(
+my $index_api = $auth_resource->api(
     controller => __PACKAGE__,
     action => 'index',
     path => '/auth',

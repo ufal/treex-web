@@ -7,7 +7,7 @@ use namespace::autoclean;
 
 BEGIN {extends 'Treex::Web::Controller::REST'; }
 
-my $input = __PACKAGE__->api_resource(
+my $input_resource = __PACKAGE__->api_resource(
     path => 'input'
 );
 
@@ -54,7 +54,7 @@ has 'browser' => (
 
 =cut
 
-my $url_api = $input->api(
+my $url_api = $input_resource->api(
     controller => __PACKAGE__,
     action => 'url',
     path => '/input/url',
