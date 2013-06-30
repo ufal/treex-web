@@ -198,6 +198,7 @@ sub REST {
             email => $self->email,
             active => $self->active ? true : false,
             activate_token => $self->activate_token,
+            is_admin => $self->is_admin ? true : false,
             last_modified => $self->last_modified->strftime('%Y-%m-%dT%H:%M:%S%z'),
         ) : ())
     };
@@ -206,11 +207,12 @@ sub REST {
 sub rest_schema {
     return (
         id => { type => 'integer', required => 1 },
-        name => { type => 'string', required => 1 },
+        name => { type => 'string', required => 1, description => 'If not set part of the email before @ is used' },
         email => { type => 'string', format => 'email', required => 0 },
         active => { type => 'boolean', required => 0 },
         activate_token => { type => 'string', required => 0 },
-        last_modified => { type => 'string', required => 0 }
+        is_admin => { type => 'boolean', required => 0 }
+        last_modified => { type => 'string', required => 0, description => 'Last modification timestamp' }
     )
 }
 
