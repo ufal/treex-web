@@ -1,28 +1,30 @@
 package Treex::Web::Form::Signup;
 
-use strict;
-use warnings;
-
 use Moose;
 use HTML::FormHandler::Moose;
+use namespace::autoclean;
 extends 'Treex::Web::Form::Base';
 with 'HTML::FormHandler::TraitFor::Model::DBIC';
 
 has '+item_class' => ( default => 'Treex::Web::DB::Result::User' );
 has '+name' => (default => 'signup-form');
 
-has_field 'email' => (type => 'Email', value => '', required => 1);
+has '+unique_messages' => (
+    default => sub {
+        {
+            email_unique => 'email_taken'
+        }
+    }
+);
+
+has_field 'email' => (type => 'Email', required => 1, unique_message => 'email_taken');
 has_field 'password' => (type => 'Password', required => 1);
-has_field 'password_confirm' => (type => 'Password', name => 'passwordConfirm', label => 'Confirm password', required => 1);
-has_field 'submit' => (type => 'Submit', value => 'Submit');
+has_field 'password_confirm' => (type => 'Password', name => 'passwordConfirm', required => 1);
 
 sub validate {
     my $self = shift;
 
-    $self->field('email')->add_error('email is already taken')
-        unless $self->schema->resultset('User')->is_email_available($self->field('email')->value);
-
-    $self->field('passwordConfirm')->add_error('passwords are not the same')
+    $self->field('passwordConfirm')->add_error('passwords_not_same')
         if $self->field('password')->value ne $self->field('passwordConfirm')->value;
 };
 

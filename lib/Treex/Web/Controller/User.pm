@@ -1,10 +1,63 @@
 package Treex::Web::Controller::User;
 use Moose;
 use Email::Valid;
+use boolean;
 use Treex::Web::Form::Signup;
 use namespace::autoclean;
 
-BEGIN {extends 'Catalyst::Controller::REST'; }
+BEGIN {extends 'Treex::Web::Controller::REST'; }
+
+my $user_resouce = __PACKAGE__->api_resource(
+    path => 'users'
+);
+
+__PACKAGE__->api_model(
+    'SignupPayload',
+    email => {
+        type => 'string',
+        format => 'email',
+        required => 1
+    },
+    password => {
+        type => 'string',
+        required => 1
+    },
+    passwordConfirm => {
+        type => 'string',
+        required => 1,
+        description => 'Must be same as password'
+    }
+);
+
+__PACKAGE__->api_model(
+    'UserUpdatePayload',
+    email => {
+        type => 'string',
+        format => 'email',
+        required => 0
+    },
+    name => {
+        type => 'string',
+        required => 0
+    },
+    password => {
+        type => 'string',
+        required => 0
+    },
+    passwordConfirm => {
+        type => 'string',
+        required => 0,
+        description => 'Must be same as password'
+    }
+);
+
+__PACKAGE__->api_model(
+    'EmailAvailability',
+    available => {
+        type => 'boolean',
+        required => 1
+    }
+);
 
 =head1 NAME
 
@@ -29,48 +82,180 @@ sub _build_signup_form {
     return Treex::Web::Form::Signup->new();
 }
 
-=head2 index
+my $users_api = $user_resouce->api(
+    controller => __PACKAGE__,
+    action => 'users',
+    path => '/users',
+    description => 'Operations on all users'
+);
 
-=cut
-
-sub index :Path :Args(0) {
+sub users :Path('/users') :Args(0) :ActionClass('REST') {
     my ( $self, $c ) = @_;
-
-    $c->response->body('Matched Treex::Web::Controller::User in User.');
 }
 
-sub email_available :Path('email-available') :Args(0) :ActionClass('REST') { }
+$users_api->get(
+    summary => 'Get list of all users',
+    notes => 'Only administrators can access it.',
+    response => 'List[User]',
+    nickname => 'usersList',
+    errors => [
+        __PACKAGE__->api_error('not_admin', 403, 'Access denied')
+    ]
+);
+
+sub users_GET {
+    my ( $self, $c ) = @_;
+
+    unless ($c->user->is_admin) {
+        $self->status_error($c, $users_api->error('not_admin'));
+        return;
+    }
+
+    my @users = $c->stash->{user_rs}->all;
+    $c->status_ok($c, entity => [ map { $_->REST(1) } @users ]);
+}
+
+$users_api->post(
+    summary => 'Create new user account',
+    notes => 'Another place of potential security threat',
+    response => 'User',
+    nickname => 'userSignup',
+    params => [
+        __PACKAGE__->api_param_body('SignupPayload', 'User signup info', 'User info')
+    ],
+    errors => [
+        __PACKAGE__->api_error('email_error', 400, 'Email address is invalid'),
+        __PACKAGE__->api_error('passwords_not_same', 400, 'Passwords are not the same'),
+        __PACKAGE__->api_error('email_taken', 409, 'Email address is already taken'),
+    ]
+);
+
+sub users_POST {
+    my ( $self, $c ) = @_;
+
+    my $p = $self->validate_params($c, 'SignupPayload');
+
+    my $form = $self->signup_form;
+    if ( $form->process(
+        ctx => $c,
+        schema => $c->model('WebDB')->schema,
+        params => $p) ) {
+        $self->status_ok( $c, entity => $form->item->REST );
+    } else {
+        $self->status_error( $c, $users_api->errors($form->errors))
+    }
+}
+
+my $user_api = $user_resouce->api(
+    controller => __PACKAGE__,
+    action => 'user',
+    path => '/users/{userId}',
+    description => 'Operations on a single user'
+);
+
+my @user_errors = (
+    __PACKAGE__->api_error('not_found', 404, 'User not found'),
+    __PACKAGE__->api_error('forbidden', 403, 'Access denied')
+);
+
+my @user_params = (
+    __PACKAGE__->api_param_path('int', 'User id', 'userId')
+);
+
+sub user :Path('/users') :Args(1) :ActionClass('REST') :Does('~NeedsLogin') {
+    my ( $self, $c, $user_id ) = @_;
+
+    my $user = $c->model('WebDB::User')->find($user_id||0);
+    unless ($user) {
+        $self->status_error($c, $user_api->error('not_found'));
+        $c->detach;
+    }
+
+    unless ($c->user->id == $user->id or $user->is_admin) {
+        $self->status_error($c, $user_api->error('forbidden'));
+        $c->detach;
+    }
+
+    $c->stash( user => $user );
+}
+
+$user_api->get(
+    summary => 'Get user by Id',
+    notes => "User must be logged in to see this \
+resource. Only administrator can access all user's attributes.",
+    response => 'User',
+    nickname => 'getUser',
+    params => [
+        @user_params
+    ],
+    errors => [
+        @user_errors
+    ]
+);
+
+sub user_GET {
+    my ( $self, $c ) = @_;
+
+    my $user = $c->stash('user');
+    my $all = $user->id == $c->user->id || $user->is_admin;
+
+    $self->status_ok($c, entity => $user->REST($all));
+}
+
+$user_api->put(
+    summary => 'Update user info',
+    notes => "User can only update his own info or have administrator privileges",
+    response => 'User',
+    nickname => 'updateUser',
+    params => [
+        @user_params,
+        __PACKAGE__->api_param_body('UserUpdatePayload', 'User data', 'User')
+    ],
+    errors => [
+        @user_errors
+    ]
+);
+
+sub user_PUT {
+    my ( $self, $c ) = @_;
+
+    $c->response->status(500);
+    $c->response->body('TODO');
+}
+
+my $email_available_api = $user_resouce->api(
+    controller => __PACKAGE__,
+    action => 'email_available',
+    path => '/users/email-available',
+    description => 'Email availability check'
+);
+
+sub email_available :Path('/users/email-available') :Args(0) :ActionClass('REST') { }
+
+$email_available_api->get(
+    summary => 'Checks whether the given email is available for registration',
+    response => 'EmailAvailability',
+    nickname => 'checkEmail',
+    params => [
+        __PACKAGE__->api_param_query('string', 'The email', 'email')
+    ],
+    errors => [
+        __PACKAGE__->api_error('email_invalid', 400, 'Email is invalid')
+    ]
+);
 
 sub email_available_GET {
     my ( $self, $c ) = @_;
 
-    my $email = $c->req->parameters->{email};
+    my $email = $c->req->parameters->{email}||'';
     unless (Email::Valid->address($email)) {
-        $self->status_bad_request($c, message => 'Email is invalid');
+        $self->status_error($c, $email_available_api->error('email_invalid'));
         return;
     }
 
     $self->status_ok($c, entity => {
-        available => $c->model('WebDB::User')->is_email_available($email) ? 1 : 0
+        available => $c->model('WebDB::User')->is_email_available($email) ? true : false
     });
-}
-
-sub signup :Local :Args(0) :ActionClass('REST') { }
-
-sub signup_POST {
-    my ( $self, $c ) = @_;
-
-    my $form = $self->signup_form;
-    #my $new_user = $c->model('WebDB::User')->new_result({});
-    if( $form->process(
-        ctx => $c,
-        schema => $c->model('WebDB')->schema,
-        params => $c->req->parameters) ) {
-        $self->status_ok( $c, entity => $form->item->REST );
-    } else {
-        $self->status_bad_request( $c, message => join "\n", $form->errors )
-    }
-
 }
 
 

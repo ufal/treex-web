@@ -10,6 +10,7 @@ Treex::Web::DB::Result::User
 use Moose;
 use Catalyst::Authentication::User;
 use MooseX::NonMoose;
+use boolean;
 use MooseX::MarkAsMethods autoclean => 1;
 extends 'DBIx::Class::Core';
 
@@ -78,6 +79,8 @@ __PACKAGE__->add_columns(
     { data_type => 'integer', is_auto_increment => 1, is_nullable => 0 },
     'email',
     { data_type => 'varchar', size => 120, is_nullable => 0 },
+    'name',
+    { data_type => 'varchar', size => 120, is_nullable => 0 },
     'password',
     {
         data_type => 'char',
@@ -88,6 +91,8 @@ __PACKAGE__->add_columns(
         encode_args   => { key_nul => 0, cost => 8 },
         encode_check_method => 'check_password',
     },
+    'is_admin',
+    { data_type => 'boolean', default => 0, is_boolean => 1 },
     'active',
     { data_type => 'boolean', default => 0, is_boolean => 1 },
     'activate_token',
@@ -175,7 +180,7 @@ sub new {
     return $new;
 }
 
-sub name {
+sub name_or_email {
     my $self = shift;
     my @parts = split /@/, $self->email;
     shift @parts;
@@ -183,17 +188,28 @@ sub name {
 
 sub REST {
     my $self = shift;
+    my $all = shift;
 
     return {
         id => $self->id,
-        name => $self->name,
+        name => $self->name_or_email,
+        ($all ? (
+            email => $self->email,
+            active => $self->active ? true : false,
+            activate_token => $self->activate_token,
+            last_modified => $self->last_modified->strftime('%Y-%m-%dT%H:%M:%S%z'),
+        ) : ())
     };
 }
 
 sub rest_schema {
     return (
-        id => { type => 'integer' },
-        name => { type => 'string' }
+        id => { type => 'integer', required => 1 },
+        name => { type => 'string', required => 1 },
+        email => { type => 'string', format => 'email', required => 0 },
+        active => { type => 'boolean', required => 0 },
+        activate_token => { type => 'string', required => 0 },
+        last_modified => { type => 'string', required => 0 }
     )
 }
 
