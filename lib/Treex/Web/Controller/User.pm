@@ -129,6 +129,8 @@ sub users_POST {
             $new_user->activate_token(undef);
             $new_user->is_admin(1);
             $new_user->update;
+        } else {
+            $c->forward('send_activation_email', $new_user);
         }
 
         $self->status_ok( $c, entity => $new_user->REST );
@@ -309,7 +311,7 @@ $activate_api->get(
 );
 
 sub activate_GET {
-    my ( $self, $c) = @_;
+    my ( $self, $c ) = @_;
 
     my $token = $c->req->params->{token}||'';
 
@@ -327,6 +329,12 @@ sub activate_GET {
     } else {
         $self->status_error($c, $activate_api->error('not_found'));
     }
+}
+
+sub send_activation_email {
+    my ( $self, $c, $user ) = @_;
+
+    #TODO
 }
 
 
