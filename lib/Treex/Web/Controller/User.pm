@@ -331,7 +331,7 @@ sub activate_GET {
     }
 }
 
-sub send_activation_email {
+sub send_activation_email :Private {
     my ( $self, $c, $user ) = @_;
 
     #TODO
