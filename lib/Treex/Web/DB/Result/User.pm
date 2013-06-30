@@ -80,7 +80,7 @@ __PACKAGE__->add_columns(
     'email',
     { data_type => 'varchar', size => 120, is_nullable => 0 },
     'name',
-    { data_type => 'varchar', size => 120, is_nullable => 0 },
+    { data_type => 'varchar', size => 120, is_nullable => 1 },
     'password',
     {
         data_type => 'char',
@@ -174,6 +174,7 @@ sub new {
     $attrs->{active} = 0 unless defined $attrs->{active} && $attrs->{active};
     $attrs->{activate_token} = $self->get_uuid
         if $attrs->{active} == 0;
+    $attrs->{is_admin} = 0;
 
     my $new = $self->next::method($attrs);
 

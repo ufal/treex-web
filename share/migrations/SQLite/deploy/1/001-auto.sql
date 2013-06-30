@@ -1,6 +1,6 @@
 -- 
 -- Created by SQL::Translator::Producer::SQLite
--- Created on Sun Jun 30 18:04:32 2013
+-- Created on Sun Jun 30 18:14:04 2013
 -- 
 
 ;
@@ -31,7 +31,7 @@ CREATE INDEX languages_idx_language_group ON languages (language_group);
 CREATE TABLE user (
   id INTEGER PRIMARY KEY NOT NULL,
   email varchar(120) NOT NULL,
-  name varchar(120) NOT NULL,
+  name varchar(120),
   password char(59) NOT NULL,
   is_admin boolean NOT NULL,
   active boolean NOT NULL,

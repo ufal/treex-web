@@ -1,6 +1,6 @@
 -- 
 -- Created by SQL::Translator::Producer::PostgreSQL
--- Created on Sun Jun 30 18:04:32 2013
+-- Created on Sun Jun 30 18:14:04 2013
 -- 
 ;
 --
@@ -34,7 +34,7 @@ CREATE INDEX "languages_idx_language_group" on "languages" ("language_group");
 CREATE TABLE "user" (
   "id" serial NOT NULL,
   "email" character varying(120) NOT NULL,
-  "name" character varying(120) NOT NULL,
+  "name" character varying(120),
   "password" character(59) NOT NULL,
   "is_admin" boolean NOT NULL,
   "active" boolean NOT NULL,
