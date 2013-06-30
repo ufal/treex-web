@@ -14,9 +14,15 @@ has 'validator' => (
     clearer    => 'clear_validator'
 );
 
+has validator_formats => (
+    isa => 'HashRef',
+    is  => 'rw',
+    default => sub { \%JSON::Schema::FORMATS },
+);
+
 sub _build_validator {
     my $self = shift;
-    return JSON::Schema->new($self->schema);
+    return JSON::Schema->new($self->schema, $self->validator_formats);
 }
 
 has 'properties' => (
