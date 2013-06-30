@@ -71,17 +71,6 @@ Catalyst Controller.
 
 =cut
 
-has signup_form => (
-    isa => 'Object',
-    is => 'ro',
-    lazy_build => 1,
-);
-
-sub _build_signup_form {
-    my $self = shift;
-    return Treex::Web::Form::Signup->new();
-}
-
 my $users_api = $user_resouce->api(
     controller => __PACKAGE__,
     action => 'users',
@@ -128,12 +117,21 @@ sub users_POST {
 
     my $p = $self->validate_params($c, 'SignupPayload');
 
-    my $form = $self->signup_form;
-    if ( $form->process(
-        ctx => $c,
-        schema => $c->model('WebDB')->schema,
-        params => $p) ) {
-        $self->status_ok( $c, entity => $form->item->REST );
+    my $form = Treex::Web::Form::Signup->new(
+        schema => $c->model('WebDB')->schema
+    );
+
+    my $new_user = $c->model('WebDB::user')->new_result({});
+    if ( $form->process(item => $new_user, params => $p) ) {
+
+        if ($c->model('WebDB::User')->count == 1) {
+            $new_user->active(1);
+            $new_user->activate_token('');
+            $new_user->is_admin(1);
+            $new_user->update;
+        }
+
+        $self->status_ok( $c, entity => $new_user->REST );
     } else {
         $self->status_error( $c, $users_api->errors($form->errors))
     }
@@ -239,9 +237,9 @@ sub user_DELETE {
     }
 
     if ($user->id == $c->user->id && $user->is_admin) {
-        my $last = $c->model('WebDB::User')->search( is_admin => 1 )->count <= 0;
+        my $last = $c->model('WebDB::User')->search( is_admin => 1 )->count <= 1;
         if ($last) {
-            $c->status_error($c, $user_api->error('last_admin'));
+            $self->status_error($c, $user_api->error('last_admin'));
             return
         }
     }
