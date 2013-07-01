@@ -8,14 +8,14 @@ angular.module('TreexWebApp')
 
     User.emailAvailable = function(email) {
       // TODO: validate email first
-      var promise = $http.get(api + 'user/email-available', { 'params' : { 'email' : email} });
+      var promise = $http.get(api + 'users/email-available', { 'params' : { 'email' : email} });
       return promise.then(function(responce) {
         return responce.data.available == 1;
       });
     };
 
     User.signup = function(data) {
-      var promise = $http.post(api + 'user/signup', data);
+      var promise = $http.post(api + 'users', data);
       return promise.then(function(responce) {
         return new User(responce.data);
       });
