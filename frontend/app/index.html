@@ -15,6 +15,7 @@
     <!-- build:css({.tmp,app}) styles/main.css -->
     <link rel="stylesheet" href="styles/bootstrap.min.css">
     <link rel="stylesheet" href="styles/select2.css">
+    <link rel="stylesheet" href="styles/joyride-2.1.css">
     <link rel="stylesheet" href="styles/application.css">
     <!-- endbuild -->
 </head>
@@ -47,15 +48,8 @@
             </li>
           </ul>
           <ul class="nav pull-right" ng-controller="AuthCtrl">
-            <li class="dropdown">
-              <a class="dropdown-toggle" id="account-label" data-toggle="dropdown" href="javascript:"><i class="icon-user"></i> Account
-                <b class="caret"></b>
-              </a>
-              <ul class="dropdown-menu" role="menu" aria-labelledby="account-label">
-                <li><a ng-hide="loggedIn" href="/login">Login</a></li>
-                <li><a ng-hide="loggedIn" href="/signup">Sign Up</a></li>
-                <li><a ng-show="loggedIn" href="/logout">Logout</a></li>
-              </ul>
+            <li data-match-route="/login">
+              <a href="/login"><i class="icon-user"></i> Login</a>
             </li>
           </ul>
         </div>
@@ -97,6 +91,8 @@
 
     <script src="scripts/bootstrap.js"></script>
     <script src="scripts/jquery.plugins.js"></script>
+    <script src="scripts/jquery.cookie.js"></script>
+    <script src="scripts/jquery.joyride-2.1.js"></script>
     <script src="scripts/treex.js"></script>
     <script src="scripts/treeview.js"></script>
     <!-- endbuild -->
@@ -123,6 +119,7 @@
     <script src="scripts/services/treex.js"></script>
     <script src="scripts/services/user.js"></script>
     <script src="scripts/services/auth.js"></script>
+    <script src="scripts/services/siteError.js"></script>
     <script src="scripts/filters/newlines.js"></script>
     <script src="scripts/filters/noHtml.js"></script>
     <script src="scripts/filters/ucfirst.js"></script>
@@ -140,7 +137,6 @@
     <script src="scripts/directives/bsActiveTab.js"></script>
     <script src="scripts/directives/ace.js"></script>
     <script src="scripts/directives/twView.js"></script>
-    <script src="scripts/services/siteError.js"></script>
     <!-- endbuild -->
 </body>
 </html>
