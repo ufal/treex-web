@@ -1,8 +1,7 @@
 'use strict';
 
 angular.module('TreexWebApp')
-  .factory('Tour', [ '$timeout', function($timeout) {
-
+  .factory('Tour', [ '$rootScope', '$timeout', function(scope, $timeout) {
     var isRunning = false,
         element = '#site-tour',
         setting = {
@@ -19,6 +18,12 @@ angular.module('TreexWebApp')
             isRunning = true;
           }
         };
+
+    scope.$on( '$routeChangeStart', function() {
+      if (isRunning) {
+        $(element).joyride('hide');
+      }
+    });
 
     return {
       start: function() {
