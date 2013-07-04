@@ -1,5 +1,3 @@
-use utf8;
-
 package Treex::Web::Controller::Scenario;
 use Moose;
 use Treex::Web::Form::Scenario;
