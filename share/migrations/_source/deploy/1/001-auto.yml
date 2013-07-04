@@ -372,19 +372,6 @@ schema:
         - deferrable: 1
           expression: ''
           fields:
-            - name
-            - user
-          match_type: ''
-          name: name_user_unique
-          on_delete: ''
-          on_update: ''
-          options: []
-          reference_fields: []
-          reference_table: ''
-          type: UNIQUE
-        - deferrable: 1
-          expression: ''
-          fields:
             - user
           match_type: ''
           name: scenarios_fk_user
@@ -403,7 +390,7 @@ schema:
           is_primary_key: 0
           is_unique: 0
           name: created_at
-          order: 7
+          order: 8
           size:
             - 0
         description:
@@ -434,7 +421,7 @@ schema:
           is_primary_key: 0
           is_unique: 0
           name: last_modified
-          order: 8
+          order: 9
           size:
             - 0
         name:
@@ -442,7 +429,7 @@ schema:
           default_value: ~
           is_nullable: 0
           is_primary_key: 0
-          is_unique: 1
+          is_unique: 0
           name: name
           order: 3
           size:
@@ -454,6 +441,16 @@ schema:
           is_primary_key: 0
           is_unique: 0
           name: public
+          order: 6
+          size:
+            - 0
+        sample:
+          data_type: text
+          default_value: ~
+          is_nullable: 1
+          is_primary_key: 0
+          is_unique: 0
+          name: sample
           order: 5
           size:
             - 0
@@ -472,9 +469,9 @@ schema:
           default_value: 0
           is_nullable: 0
           is_primary_key: 0
-          is_unique: 1
+          is_unique: 0
           name: user
-          order: 6
+          order: 7
           size:
             - 0
       indices:

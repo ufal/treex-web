@@ -1,6 +1,6 @@
 -- 
 -- Created by SQL::Translator::Producer::PostgreSQL
--- Created on Sun Jun 30 18:14:04 2013
+-- Created on Fri Jul  5 00:37:33 2013
 -- 
 ;
 --
@@ -71,12 +71,12 @@ CREATE TABLE "scenarios" (
   "scenario" text NOT NULL,
   "name" character varying(120) NOT NULL,
   "description" text,
+  "sample" text,
   "public" boolean NOT NULL,
   "user" integer DEFAULT 0 NOT NULL,
   "created_at" timestamp NOT NULL,
   "last_modified" timestamp NOT NULL,
-  PRIMARY KEY ("id"),
-  CONSTRAINT "name_user_unique" UNIQUE ("name", "user")
+  PRIMARY KEY ("id")
 );
 CREATE INDEX "scenarios_idx_user" on "scenarios" ("user");
 

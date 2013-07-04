@@ -1,6 +1,6 @@
 -- 
 -- Created by SQL::Translator::Producer::SQLite
--- Created on Sun Jun 30 18:14:04 2013
+-- Created on Fri Jul  5 00:37:33 2013
 -- 
 
 ;
@@ -64,6 +64,7 @@ CREATE TABLE scenarios (
   scenario text NOT NULL,
   name varchar(120) NOT NULL,
   description text,
+  sample text,
   public boolean NOT NULL,
   user integer NOT NULL DEFAULT 0,
   created_at datetime NOT NULL,
@@ -71,7 +72,6 @@ CREATE TABLE scenarios (
   FOREIGN KEY (user) REFERENCES user(id) ON DELETE CASCADE
 );
 CREATE INDEX scenarios_idx_user ON scenarios (user);
-CREATE UNIQUE INDEX name_user_unique ON scenarios (name, user);
 --
 -- Table: scenario_languages
 --

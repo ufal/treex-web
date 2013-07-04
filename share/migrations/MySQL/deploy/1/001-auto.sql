@@ -1,6 +1,6 @@
 -- 
 -- Created by SQL::Translator::Producer::MySQL
--- Created on Sun Jun 30 18:14:04 2013
+-- Created on Fri Jul  5 00:37:33 2013
 -- 
 ;
 SET foreign_key_checks=0;
@@ -67,13 +67,13 @@ CREATE TABLE `scenarios` (
   `scenario` text NOT NULL,
   `name` varchar(120) NOT NULL,
   `description` text NULL,
+  `sample` text NULL,
   `public` enum('0','1') NOT NULL,
   `user` integer NOT NULL DEFAULT 0,
   `created_at` datetime NOT NULL,
   `last_modified` datetime NOT NULL,
   INDEX `scenarios_idx_user` (`user`),
   PRIMARY KEY (`id`),
-  UNIQUE `name_user_unique` (`name`, `user`),
   CONSTRAINT `scenarios_fk_user` FOREIGN KEY (`user`) REFERENCES `user` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB;
 --
