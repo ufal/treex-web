@@ -1,26 +1,33 @@
 * What needs to be done
-** [Treex::Web] #2 User accounts
+** TODO [Treex::Web] #116 Fix home page by Michal Sedlak
+  :PROPERTIES:
+  :issue_id: 116
+  :updated_on: 2013/07/04 10:40:56 +0200
+  :assigned_to: Michal Sedlak
+  :version:  0.1bc
+  :END:
+** TODO [Treex::Web] #117 Filter languages by Michal Sedlak
    :PROPERTIES:
-   :issue_id: 2
-   :updated_on: 2013/02/09 16:29:17 +0100
+   :issue_id: 117
+   :updated_on: 2013/07/04 10:42:26 +0200
    :assigned_to: Michal Sedlak
-   :version:  alpha
+   :version:  0.1bc
    :END:
-** [Treex::Web] #79 Scenarios list improvements
+** TODO [Treex::Web] #79 Scenarios list improvements
    :PROPERTIES:
    :issue_id: 79
    :updated_on: 2013/06/30 12:15:15 +0200
    :assigned_to: Michal Sedlak
    :version:  0.1
    :END:
-** [Treex::Web] #113 Improved listings by Michal Sedlak
+** TODO [Treex::Web] #113 Improved listings by Michal Sedlak
    :PROPERTIES:
    :issue_id: 113
    :updated_on: 2013/06/30 12:14:59 +0200
    :assigned_to: Michal Sedlak
    :version:  0.1
    :END:
-** [Treex::Web] #112 Complete API documenation by Michal Sedlak
+** TODO [Treex::Web] #112 Complete API documenation by Michal Sedlak
    :PROPERTIES:
    :issue_id: 112
    :updated_on: 2013/06/30 12:13:26 +0200
@@ -56,3 +63,12 @@
    SCHEDULED: <2013-04-16 Út>
 
    The scenario CRUD is still /not complete/ - at least on the fronted side.
+
+* Later
+** [Treex::Web] #2 User accounts by Michal Sedlak
+   :PROPERTIES:
+   :issue_id: 2
+   :updated_on: 2013/07/04 10:37:24 +0200
+   :assigned_to: Michal Sedlak
+   :version:  nil
+   :END:
