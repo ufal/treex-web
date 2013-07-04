@@ -15,7 +15,7 @@
       </optgroup>
     </select>
     <h3><i class="iconic-check" ng-show="scenario.scenario" style="color: #51A351"> </i>Scenario</h3>
-    <div class="scenario-btns">
+    <div class="scenario-btns" id="pick-scenario">
       <button type="button" class="btn btn-primary" modal-class="modal-big" ng-controller="ScenarioPickCtrl" bs-modal="'views/scenario/picker.html'"><i class="icon-white icon-list-alt"></i> Pick scenario</button>
       <span class="muted"> or </span>
       <button type="button" class="btn" ng-class="{'btn-inverse' : !scenario.compose}" ng-model="scenario.compose" bs-button><i ng-class="{'icon-white' : !scenario.compose}" class="icon-pencil"></i> Compose your own</button>

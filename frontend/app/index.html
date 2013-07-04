@@ -34,10 +34,10 @@
         <div class="navbar-inner">
           <a class="brand" href="/" title="Treex Web Interface">Treex::Web</a>
           <ul class="nav">
-            <li data-match-route="/"><a href="/"><i class="icon-home"></i> Home</a></li>
-            <li data-match-route="/run"><a href="/run"><i class="icon-cog"></i> Run Treex</a></li>
-            <li data-match-route="/results"><a href="/results"><i class="icon-tasks"></i> Results</a></li>
-            <li class="dropdown" data-match-route="/scenario.*">
+            <li id="nav-home" data-match-route="/"><a href="/"><i class="icon-home"></i> Home</a></li>
+            <li id="nav-run" data-match-route="/run"><a href="/run"><i class="icon-cog"></i> Run Treex</a></li>
+            <li id="nav-results" data-match-route="/results"><a href="/results"><i class="icon-tasks"></i> Results</a></li>
+            <li id="nav-scenarios" class="dropdown" data-match-route="/scenario.*">
               <a class="dropdown-toggle" id="scenario-label" role="button" data-toggle="dropdown" href="javascript:"><i class="icon-list-alt"></i> Scenarios
                 <b class="caret"></b>
               </a>
@@ -63,6 +63,18 @@
         <div id="copyright">&copy; 2012-2013 Institute of Formal and Applied Linguistics. All Rights Reserved.</div>
       </footer>
     </div>
+    <ol id="site-tour" style="display:none">
+      <li data-id="nav-run" data-options="nextButton:false">
+        <h2>Hello and Welcome!</h2>
+        <p>This tour is designed to guide you through process of running a Treex scenario.</p>
+        <p>You can stop the tour anytime by clicking on <span class="label">X</span> in the top left corner of each of these windows.</p>
+        <p>Now, to get started click on <span class="label">Run Treex</span> item in the top menu.</p>
+      </li>
+      <li data-id="pick-scenario">
+        <h2>Select a Scenario</h2>
+        <p>Click on <span class="label">Pick scenario</span> to display a list of available scenarios.</p>
+      </li>
+    </ol>
 
     <!--
         Google Analytics: change UA-XXXXX-X to be your site's ID.
@@ -137,6 +149,8 @@
     <script src="scripts/directives/bsActiveTab.js"></script>
     <script src="scripts/directives/ace.js"></script>
     <script src="scripts/directives/twView.js"></script>
+    <script src="scripts/directives/jqJoyride.js"></script>
+    <script src="scripts/services/tour.js"></script>
     <!-- endbuild -->
 </body>
 </html>

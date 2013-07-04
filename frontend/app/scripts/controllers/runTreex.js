@@ -2,8 +2,13 @@
 
 angular.module('TreexWebApp').controller(
   'RunTreexCtrl',
-  ['$scope', '$rootScope', '$location', '$anchorScroll', '$timeout', 'Treex',
-   function($scope, $rootScope, $location, $anchorScroll, $timeout, Treex) {
+  ['$scope', '$rootScope', '$location', '$anchorScroll', '$timeout', 'Treex', 'Tour',
+   function($scope, $rootScope, $location, $anchorScroll, $timeout, Treex, Tour) {
+
+     if (Tour.isRunning()) {
+       Tour.showStep(1);
+     }
+
      $scope.languages = Treex.languages();
      $scope.scenario = { compose: false };
      Treex.watchLanguage($scope, this);
