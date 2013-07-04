@@ -199,7 +199,9 @@ sub api_listing {
         } } @{ $resource->apis }];
 
     my %models = map { $_ =>  $self->models->{$_}->listing }
-        grep { exists $self->models->{$_} } $resource->all_models;
+        grep { exists $self->models->{$_} }
+            map { $_, (exists $self->models->{$_} ? $self->models->{$_}->submodels : ()) }
+                $resource->all_models;
 
     $listing->{models} = \%models if %models;
 

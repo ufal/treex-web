@@ -38,6 +38,10 @@ sub all_models {
     for my $api (@{$self->apis}) {
         push @models, $api->models;
     }
+
+    my %uniq = map { $_, 1 } @models;
+    @models = keys %uniq;
+
     return wantarray ? @models : \@models;
 }
 

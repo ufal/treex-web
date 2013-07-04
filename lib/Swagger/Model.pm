@@ -50,6 +50,20 @@ sub listing {
     }
 }
 
+sub submodels {
+    my $self = shift;
+
+    my @submodels = map {
+        my $prop = $self->properties->{$_};
+        ref $prop->{items} ? $prop->{items}->{type} : $prop->{type};
+    } keys %{$self->properties};
+
+    my %uniq = map { $_, 1} @submodels;
+    @submodels = keys %uniq;
+
+    return wantarray ? @submodels : \@submodels;
+}
+
 __PACKAGE__->meta->make_immutable;
 1;
 __END__
