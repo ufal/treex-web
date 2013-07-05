@@ -32,7 +32,7 @@ sub perform {
 
     # Form a command
     my @cmd = qw(treex);# -Len Read::Text scenario.scen Write::Treex to=-);
-    push @cmd, "-L$lang";
+    push @cmd, "-L$lang" if $lang;
     push @cmd, "Read::Text from=input.txt";
     push @cmd, "scenario.scen";
     push @cmd, "Write::Treex to=result.treex";

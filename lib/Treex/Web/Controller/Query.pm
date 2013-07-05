@@ -60,7 +60,7 @@ sub index_POST {
     $resque->push(treex => {
         uuid => $rs->unique_token,
         class => 'Treex::Web::Job::Process',
-        args => [ $rs->language->code ]
+        args => [ $rs->get_column('language') ? $rs->language->code : '' ]
     });
 
     $self->status_created($c,
