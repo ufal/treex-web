@@ -148,7 +148,7 @@ sub scenarios_languages_GET {
 
     my @languages = $c->model('WebDB::Scenario')->search_related('scenario_languages', undef, {
         prefetch => [ 'language' ],
-        distinct => 1
+        group_by => [ 'language.id' ]
     });
 
     $self->status_ok($c, entity => [ map { $_->language->REST } @languages ]);
