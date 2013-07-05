@@ -95,7 +95,7 @@ sub url_POST {
 
         my $obj = HTML::Content::Extractor->new();
         $obj->analyze($content);
-        my $content = $obj->get_main_text;
+        $content = $obj->get_main_text;
         $content =~ s/^\s+//;
         $content =~ s/\s+$//;
 
