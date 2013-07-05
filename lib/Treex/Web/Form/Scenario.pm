@@ -9,14 +9,6 @@ with 'Treex::Web::Form::Role::LanguageOptions';
 with 'HTML::FormHandler::TraitFor::Model::DBIC';
 
 has '+item_class' => ( default => 'Treex::Web::DB::Result::Scenario' );
-has '+name' => ( default => 'scenario-form' );
-has '+widget_wrapper' => ( default => 'None' );
-
-has '+unique_messages' => (
-    default => sub {
-        { name_user_unique => "Duplicate value for name" };
-    }
-);
 
 has_field 'name' => (
     type => 'Text',
@@ -27,6 +19,7 @@ has_field 'name' => (
 has_field 'languages' => (type => 'Multiple', options_method => \&language_options);
 has_field 'scenario' => (type => 'TextArea', required => 1);
 has_field 'description' => (type => 'TextArea', required => 1);
+has_field 'sample' => (type => 'TextArea', required => 0);
 has_field 'public' => (type => 'Boolean', default => 0);
 
 no HTML::FormHandler::Moose;

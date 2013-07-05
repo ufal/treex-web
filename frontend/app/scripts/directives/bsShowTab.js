@@ -8,7 +8,7 @@ angular.module('TreexWebApp')
       },
       link: function (scope, element, attrs) {
         $(element).on('show', function(e) {
-          if (scope.showtab) {
+          if (attrs.bsShowTab) {
             scope.showtab();
             scope.$apply();
           }

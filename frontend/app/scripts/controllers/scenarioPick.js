@@ -4,9 +4,8 @@ angular.module('TreexWebApp').controller(
   'ScenarioPickCtrl',
   ['$scope', '$rootScope', '$timeout', 'Treex', 'Scenario',
    function($scope, $rootScope, $timeout, Treex, Scenario) {
-     $scope.languages = Treex.languages();
+     $scope.languages = Scenario.languages();
      $scope.languagesMap = Treex.languagesMap();
-     Treex.watchLanguage($scope, this);
 
      function fetchScenarios(lang) {
        $scope.status = 'loading';
@@ -26,12 +25,14 @@ angular.module('TreexWebApp').controller(
        }
      });
 
-     // propagete scenario pick to the parent scope
+     // propagate scenario pick to the parent scope
      $scope.pick = function(scenario) {
        $timeout(function() {
-         if ($scope.$parent !== null) {
-           $scope.$parent.scenario = scenario;
-         }
+         var q = $scope.query;
+         q.scenario = scenario;
+         if (scenario.sample && !q.input) q.input = scenario.sample;
+         q.scenario = scenario;
+         q.scenario.compose = true;
          $scope.dismiss();
        });
      };

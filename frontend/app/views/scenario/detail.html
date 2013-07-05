@@ -9,11 +9,24 @@
         <strong>Language tags: </strong>
         <span ng-repeat="language in scenario.languages" class="label">{{languagesMap[language]}}</span>
       </p>
-      <p ng-bind-html-unsafe="scenario.description | noHtml | newlines" class="well">
-      </p>
-      <pre>
-{{scenario.scenario}}
-      </pre>
+      <div tw-if="scenario.sample">
+        <ul class="nav nav-tabs">
+          <li><a bs-show-tab bs-active-tab href="#description" data-toggle="tab">Description</a></li>
+          <li><a bs-show-tab href="#sample" data-toggle="tab">Sample</a></li>
+        </ul>
+        <div class="tab-content">
+          <div class="tab-pane" id="description">
+            <p ng-bind-html-unsafe="scenario.description | noHtml | newlines" class="well"></p>
+          </div>
+          <div class="tab-pane" id="sample">
+            <p ng-bind-html-unsafe="scenario.sample | noHtml | newlines" class="well"></p>
+          </div>
+        </div>
+      </div>
+      <p tw-if="!scenario.sample" ng-bind-html-unsafe="scenario.description | noHtml | newlines" class="well"></p>
+
+      <div ace-highlight="perl" class="scenario-code" ng-model="scenario.scenario">
+      </div>
       <div class="row-fluid">
         <a class="btn btn-primary" ng-href="/scenario/{{scenario.id}}/run">Run this scenario</a>
         <a class="btn" ng-href="/scenario/{{scenario.id}}/edit">Edit</a>

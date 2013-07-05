@@ -9,10 +9,11 @@ angular.module('TreexWebApp').controller(
        Tour.showStep(1);
      }
 
-     $scope.languages = Treex.languages();
-     $scope.scenario = { compose: false };
+     $scope.query = {
+       scenario : {compose: false}
+     };
      Treex.watchLanguage($scope, this);
-     $scope.$watch('scenario.compose', function(value) {
+     $scope.$watch('query.scenario.compose', function(value) {
        if (value && $scope.ace) {
          $timeout(function() {
            $scope.ace.resize(true);
@@ -23,12 +24,12 @@ angular.module('TreexWebApp').controller(
 
      $scope.submit = function() {
        if ($scope.form.$invalid) return;
+       var q = $scope.query;
        Treex.query({
-         language: $scope.language,
-         scenario: $scope.scenario.scenario,
-         scenario_id: $scope.scenario.id,
-         scenario_name: $scope.scenario.name,
-         input: $scope.input
+         scenario: q.scenario.scenario,
+         scenario_id: q.scenario.id,
+         scenario_name: q.scenario.name,
+         input: q.input
        }).then(function(result) {
          $location.path('/result/'+result.token);
        }, function(reason) {

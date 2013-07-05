@@ -82,6 +82,8 @@ __PACKAGE__->add_columns(
     { data_type => "varchar", is_nullable => 0, size => 120 },
     "description",
     { data_type => "text", is_nullable => 1 },
+    "sample",
+    { data_type => "text", is_nullable => 1 },
     "public",
     {
         data_type => 'boolean',
@@ -122,24 +124,6 @@ __PACKAGE__->add_columns(
 =cut
 
 __PACKAGE__->set_primary_key("id");
-
-=head1 UNIQUE CONSTRAINTS
-
-=head2 C<name_user_unique>
-
-Unique name per user
-
-=over 4
-
-=item * L</name>
-
-=item * L</user>
-
-=back
-
-=cut
-
-__PACKAGE__->add_unique_constraint("name_user_unique", ["name", "user"]);
 
 =head1 RELATIONS
 
@@ -189,10 +173,11 @@ sub REST {
 
     return {
         id => $self->id,
-        name => $self->name,
+        name => decode_utf8($self->name),
         description => decode_utf8($self->description),
         languages => ([map { $_->id } $self->languages]),
         scenario => decode_utf8($self->scenario),
+        sample => decode_utf8($self->sample),
         ($self->user ? (user => $self->user->REST) : ()),
         public => $self->public ? true : false
     };
@@ -200,16 +185,17 @@ sub REST {
 
 sub rest_schema {
     return (
-        id => { type => 'integer' },
-        name => { type => 'string' },
-        description => { type => 'string' },
+        id => { type => 'integer', required => 1 },
+        name => { type => 'string', required => 1 },
+        description => { type => 'string', required => 1 },
         languages => {
             type => 'array',
             items => { type => 'integer' }
         },
-        scenario => { type => 'string' },
+        scenario => { type => 'string', required => 1 },
+        sample => { type => 'string' },
         user => { type => 'User' },
-        public => { type => 'boolean' },
+        public => { type => 'boolean', required => 1 },
     )
 }
 

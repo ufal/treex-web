@@ -6,8 +6,8 @@
     <div class="control-group">
       <input type="text" name="name" required ng-model="scenario.name" placeholder="Scenario name" />
       <span class="help-block">
-      Try use a very descriptive name for your scenario e.g.: "English
-      analysis using XY parser"
+        Try use a very descriptive name for your scenario e.g.:
+        "English analysis using XY parser"
       </span>
     </div>
     <div class="control-group">
@@ -17,8 +17,8 @@
         </optgroup>
       </select>
       <span class="help-block">
-      Select languages which your scenario can process. Leave empty if
-      the scenario is language independent.
+        Select languages which your scenario can process. Leave empty
+        if the scenario is language independent.
       </span>
     </div>
     <div class="control-group">
@@ -32,13 +32,29 @@
         <textarea name="scenario" id="scenario-text" rows="12" required ng-model="scenario.scenario"></textarea>
       </div>
     </div>
-    <div class="control-group">
-      <textarea name="description" ng-model="scenario.description" class="editor" placeholder="Scenario description" required="required" rows="10" cols="10"></textarea>
-      <span class="help-block">
-        <span class="label label-info">Required Field!</span> Describe
-      your scenario in detail and try to also mention some interesting
-      examples of use.
-      </span>
+    <ul class="nav nav-tabs">
+      <li><a bs-show-tab bs-active-tab href="#description" data-toggle="tab">Description</a></li>
+      <li><a bs-show-tab href="#sample" data-toggle="tab">Sample</a></li>
+    </ul>
+    <div class="tab-content">
+      <div class="tab-pane" id="description">
+        <div class="control-group">
+          <textarea name="description" ng-model="scenario.description" class="editor" placeholder="Scenario description" required="required" rows="10" cols="10"></textarea>
+          <span class="help-block">
+            <span class="label label-info">Required Field!</span> Describe
+            your scenario in detail and try to also mention some interesting
+            examples of use.
+          </span>
+        </div>
+      </div>
+      <div class="tab-pane" id="sample">
+        <div class="control-group">
+          <textarea name="sample" ng-model="scenario.sample" class="editor" placeholder="Scenario sample text" rows="10" cols="10"></textarea>
+          <span class="help-block">
+            You can optionally accompany this scenario with some sample text.
+          </span>
+        </div>
+      </div>
     </div>
     <div>
       <button class="btn btn-primary" ng-disabled="form.$invalid" ng-click="saveOrUpdate()" type="button">Save scenario</button>

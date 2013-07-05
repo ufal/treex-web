@@ -143,9 +143,9 @@ sub REST {
 
 sub rest_schema {
     return (
-        id => { type => 'integer' },
-        code => { type => 'string' },
-        name => { type => 'string' }
+        id => { type => 'integer', required => 1 },
+        code => { type => 'string', required => 1 },
+        name => { type => 'string', required => 1 }
     )
 }
 
