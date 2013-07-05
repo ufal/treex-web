@@ -2,7 +2,9 @@ package Treex::Web::Controller::Input;
 use Moose;
 use Regexp::Common qw /URI/;
 use LWP::UserAgent;
-use HTML::FormatText;
+use HTML::Strip;
+use HTML::Content::Extractor;
+use Lingua::Sentence;
 use namespace::autoclean;
 
 BEGIN {extends 'Treex::Web::Controller::REST'; }
@@ -82,7 +84,7 @@ sub url_POST {
 
     my $p = $self->validate_params($c, 'UrlPayload');
     my $url = $p->{url};
-    unless ($url && $url =~ /$RE{URI}{HTTP}/) {
+    unless ($url && $url =~ /$RE{URI}/) {
         $self->status_error($c, $url_api->error('bad_url'));
         return;
     }
@@ -90,7 +92,14 @@ sub url_POST {
     my $res = $self->browser->get($url);
     if ($res->is_success) {
         my $content = $res->decoded_content;
-        $self->status_ok($c, entity => { content => HTML::FormatText->format_string($content) });
+
+        my $obj = HTML::Content::Extractor->new();
+        $obj->analyze($content);
+        my $content = $obj->get_main_text;
+        $content =~ s/^\s+//;
+        $content =~ s/\s+$//;
+
+        $self->status_ok($c, entity => { content => $content });
     } else {
         $self->status_error($c, $url_api->error('get_failed'));
     }

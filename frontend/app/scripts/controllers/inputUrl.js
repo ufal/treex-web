@@ -15,9 +15,7 @@ angular.module('TreexWebApp')
     };
 
     $scope.insert = function() {
-      if ($scope.$parent) {
-        $scope.$parent.input = $scope.text;
-      }
+      $scope.query.input = $scope.text;
       $scope.dismiss();
     };
   }]);
