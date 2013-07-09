@@ -171,7 +171,7 @@ sub REST {
 
     return {
         ($self->language ? (language => $self->language->code) : ()),
-        name => $self->name,
+        name => utf8::decode($self->name),
         token => $self->unique_token,
         last_modified => $self->last_modified->strftime('%Y-%m-%dT%H:%M:%S%z'),
     };
@@ -260,6 +260,7 @@ sub _file_rw {
         open my $fh, '<', $file or return "";
         my $file_contents = do { local $/; <$fh> };
         close $fh;
+        utf8::decode($file_contents);
         return $file_contents;
     }
 }
