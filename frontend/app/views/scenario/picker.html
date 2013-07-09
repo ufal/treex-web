@@ -17,7 +17,7 @@
         <thead><tr><th class="span2">Name</th><th>Description</th></tr></thead>
         <tr class="rowlink" ng-click="pick(scenario)" ng-repeat="scenario in scenarios">
           <td>{{scenario.name}}</td>
-          <td class="long-desc" ng-bind-html-unsafe="scenario.description | noHtml | newlines"></td>
+          <td ng-bind-html-unsafe="scenario.description | noHtml | newlines"></td>
         </tr>
       </table>
       <div ng-switch-when="empty" class="alert alert-info">
