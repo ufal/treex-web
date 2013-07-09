@@ -39,10 +39,9 @@ sub index_POST {
         return;
     }
     # form is valid, lets create new Result
-    my ($scenario_name, $scenario, $scenario_id, $input, $lang)
+    my ($scenario_name, $scenario, $input, $lang)
         = ($form->value->{scenario_name},
            $form->value->{scenario},
-           $form->value->{scenario_id},
            $form->value->{input},
            $form->value->{language});
     my $rs = $c->model('WebDB::Result')->new({

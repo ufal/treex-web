@@ -27,7 +27,6 @@ angular.module('TreexWebApp').controller(
        var q = $scope.query;
        Treex.query({
          scenario: q.scenario.scenario,
-         scenario_id: q.scenario.id,
          scenario_name: q.scenario.name,
          input: q.input
        }).then(function(result) {

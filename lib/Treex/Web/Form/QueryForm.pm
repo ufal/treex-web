@@ -9,16 +9,13 @@ with 'Treex::Web::Form::Role::LanguageOptions';
 has 'schema' => (is => 'rw');
 has 'user' => (is => 'rw', isa => 'Maybe[Object]');
 
-has '+widget_wrapper' => ( default => 'None' );
 has '+name' => (default => 'query-form');
 
 has_field 'language' => (type => 'Select', widget => 'Select', options_method => \&language_options);
 has_field 'result_hash' => (type => 'Hidden');
-has_field 'scenario_id' => (type => 'Hidden');
-has_field 'scenario' => (type => 'TextArea');
+has_field 'scenario' => (type => 'TextArea', required => 1);
 has_field 'scenario_name' => (type => 'Text');
-has_field 'input' => (type => 'TextArea', required => 1, rows => 10, element_attr => { class => 'input-block-level' });
-has_field 'submit' => (type => 'Submit', value => 'Run this Treex scenario', element_attr => { class => 'btn btn-primary btn-large'});
+has_field 'input' => (type => 'TextArea', required => 1);
 
 sub validate {
     my $self = shift;
@@ -28,9 +25,6 @@ sub validate {
         $self->field('language')->value($self->fetch_language_id($language));
     }
 
-    my $id = $self->field('scenario_id')->value;
-    $self->field('scenario')->value($self->fetch_scenario($id))
-        if ($id && $id =~ /\d+/);
     $self->field('scenario')->add_error('Scenario is empty')
         unless $self->field('scenario')->value;
 }
