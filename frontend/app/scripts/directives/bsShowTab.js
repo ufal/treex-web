@@ -10,13 +10,14 @@ angular.module('TreexWebApp')
         $(element).on('show', function(e) {
           if (attrs.bsShowTab) {
             scope.showtab();
-            scope.$apply();
           }
         });
         element.click(function(e) {
           e.preventDefault();
           e.stopPropagation();
-          $(element).tab('show');
+          scope.$apply(function() {
+            $(element).tab('show');
+          });
         });
       }
     };
