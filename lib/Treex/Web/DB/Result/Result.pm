@@ -12,7 +12,7 @@ use warnings;
 use DBIx::Class::UUIDColumns;
 use File::Path ();
 use File::Spec ();
-use Treex::Web;
+use Treex::Web; # TODO: THIS MUST BE REMOVED
 
 use Moose;
 use MooseX::NonMoose;

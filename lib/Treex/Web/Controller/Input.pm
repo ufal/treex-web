@@ -2,9 +2,8 @@ package Treex::Web::Controller::Input;
 use Moose;
 use Regexp::Common qw /URI/;
 use LWP::UserAgent;
-use HTML::Strip;
 use HTML::Content::Extractor;
-use Lingua::Sentence;
+use File::Basename;
 use namespace::autoclean;
 
 BEGIN {extends 'Treex::Web::Controller::REST'; }
@@ -102,6 +101,42 @@ sub url_POST {
         $self->status_ok($c, entity => { content => $content });
     } else {
         $self->status_error($c, $url_api->error('get_failed'));
+    }
+}
+
+sub samples :Local :Args(0) :ActionClass('REST') { }
+
+sub samples_GET {
+    my ( $self, $c ) = @_;
+
+    my $path = $c->path_to('data', 'samples', '*.txt');
+    my @files;
+
+    for my $file (glob $path) {
+        push @files, basename($file, '.txt');
+    }
+    @files = sort @files;
+
+    $self->status_ok($c, entity => [ @files ]);
+}
+
+sub sample :Path('samples') :Args(1) :ActionClass('REST') { }
+
+sub sample_GET {
+    my ( $self, $c, $file ) = @_;
+
+    if ( $file =~ /[-\w\.]/ ) {
+        my $path = $c->path_to('data', 'samples', $file.'.txt');
+
+        if (-f $path) {
+            my $content = do {
+                local $/ = undef;
+                open my $fh, '<', $path or die "Can't open '$file': $!";
+                <$fh>;
+            };
+            utf8::decode($content);
+            $self->status_ok($c, entity => { content => $content });
+        }
     }
 }
 

@@ -1,0 +1,26 @@
+<div class="modal-header">
+  <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+  <h3 id="insert-sample-file-modal-label">Insert Sample File</h3>
+</div>
+<div class="modal-body">
+  <ng-switch on="status">
+    <div ng-switch-when="loading" tw-loader></div>
+    <table ng-switch-when="result" class="table table-striped">
+      <thead><tr><th class="span2">Name</th></tr></thead>
+      <tr class="rowlink" ng-click="insert(file)" ng-repeat="file in samples">
+        <td>{{file}}</td>
+      </tr>
+    </table>
+    <div ng-switch-when="empty" class="alert alert-info">
+      <h4>No Samples</h4>
+      Sorry we have no sample files at this moment.
+    </div>
+    <div ng-switch-when="error" class="alert alert-error">
+      <h4>Oh Snap!</h4>
+      {{error||'An unknown error has occurred.'}}
+    </div>
+  </ng-switch>
+</div>
+<div class="modal-footer">
+  <button type="button" class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+</div>
