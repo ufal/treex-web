@@ -48,8 +48,11 @@
             </li>
           </ul>
           <ul class="nav pull-right" ng-controller="AuthCtrl">
-            <li data-match-route="/login">
+            <li ng-show="!loggedIn" data-match-route="/login">
               <a href="/login"><i class="icon-user"></i> Login</a>
+            </li>
+            <li ng-show="loggedIn" data-match-route="/logout">
+              <a href="/logout"><i class="icon-user"></i> Logout</a>
             </li>
           </ul>
         </div>
