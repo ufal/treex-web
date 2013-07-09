@@ -5,6 +5,7 @@ angular.module('TreexWebApp')
     function Result(data) {
       angular.copy(data || {}, this);
       if (!this.name) this.name = this.token;
+      this.downloadUrl = api + 'results/' + this.token + '/download';
     }
 
     function asyncCall(method, token) {

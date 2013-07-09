@@ -51,30 +51,6 @@ sub all :Chained('base') :PathPart('') :Args(0) {
     $c->res->body($data);
 }
 
-sub scenario :Chained('base') :PathPart('scenario') :Args(0) {
-    my ( $self, $c ) = @_;
-
-    $c->response->body('Download scenario.');
-}
-
-sub output :Chained('base') :PathPart('output') :Args(0) {
-    my ( $self, $c ) = @_;
-
-    $c->response->body('Download output.');
-}
-
-sub input :Chained('base') :PathPart('input') :Args(0) {
-    my ( $self, $c ) = @_;
-
-    $c->response->body('Download input.');
-}
-
-sub error :Chained('base') :PathPart('error') :Args(0) {
-    my ( $self, $c ) = @_;
-
-    $c->response->body('Download error.');
-}
-
 =head1 AUTHOR
 
 Michal Sedlák,,,

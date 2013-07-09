@@ -17,17 +17,8 @@
     </div>
     <div tw-if="result.job.status && result.job.status != 'queued' && result.job.status != 'working'">
       <div class="btn-toolbar">
-        <div class="btn-group">
-          <a class="btn" ng-href="/result/{{result.token}}.zip"><i class="icon-download-alt"></i> Download all</a>
-          <button class="btn dropdown-toggle" data-toggle="dropdown">
-            <span class="caret"></span>
-          </button>
-          <ul class="dropdown-menu">
-            <li><a href="">Result file</a></li>
-            <li><a href="">Scenario</a></li>
-            <li><a href="">Input</a></li>
-            <li><a href="">Error log</a></li>
-          </ul>
+        <div tw-if="result.job.status != 'failed'" class="btn-group">
+          <button class="btn" ng-click="download()"><i class="icon-download-alt"></i> Download</button>
         </div>
         <div class="btn-group">
           <button class="btn"><i class="icon-repeat"></i> Run again</button>
@@ -38,7 +29,7 @@
         <p>An error has occurred. We're terribly sorry about that, but it's one of those things that happens from time to time.</p>
         <p tw-if="result.job.message">Here's the error message: <strong>{{result.job.message}}</strong></p>
       </div>
-      <div tw-view="result" id="treexview">
+      <div tw-if="result.job.status != 'failed'" tw-view="result" id="treexview">
         <ul class="pager hide" style="text-align:left" tw-view-pager>
           <li ng-class="{'disabled': !hasPreviousBundle}"><a class="prevBundle" href="">Previous</a></li>
           <li ng-class="{'disabled': !hasNextBundle}"><a class="nextBundle" href="">Next</a></li>
