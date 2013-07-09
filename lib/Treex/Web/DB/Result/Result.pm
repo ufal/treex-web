@@ -12,6 +12,7 @@ use warnings;
 use DBIx::Class::UUIDColumns;
 use File::Path ();
 use File::Spec ();
+use Encode;
 use Treex::Web; # TODO: THIS MUST BE REMOVED
 
 use Moose;
@@ -171,7 +172,7 @@ sub REST {
 
     return {
         ($self->language ? (language => $self->language->code) : ()),
-        name => utf8::decode($self->name),
+        name => decode_utf8($self->name),
         token => $self->unique_token,
         last_modified => $self->last_modified->strftime('%Y-%m-%dT%H:%M:%S%z'),
     };
