@@ -4,6 +4,7 @@ angular.module('TreexWebApp').controller(
   'ScenarioPickCtrl',
   ['$scope', '$rootScope', '$timeout', 'Treex', 'Scenario',
    function($scope, $rootScope, $timeout, Treex, Scenario) {
+     $scope.status = 'loading';
      $scope.languages = Scenario.languages();
      $scope.languagesMap = Treex.languagesMap();
 
@@ -11,12 +12,13 @@ angular.module('TreexWebApp').controller(
        $scope.status = 'loading';
        $scope.scenarios = Scenario.query({language: lang}, function(data) {
          $scope.status = (data.length > 0) ? 'result' : 'empty';
+         return data;
        });
      }
 
-     $scope.$watch('visible', function(visible) {
-       if (visible) fetchScenarios($scope.language);
-       else $scope.status = 'loading';
+     $scope.$on('modal-shown', function() {
+       fetchScenarios($scope.language);
+       $scope.$apply();
      });
 
      $scope.$watch('language', function(value, old) {

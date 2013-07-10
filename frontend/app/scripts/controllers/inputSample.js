@@ -5,12 +5,16 @@ angular.module('TreexWebApp')
     $scope.status = 'loading';
     $scope.error = null;
 
-    $scope.samples = Input.sampleFiles().then(function(data) {
-      $scope.status = data && data.length > 0 ? 'result' : 'empty';
-      return data;
-    }, function(reason) {
-      $scope.status = 'error';
-      $scope.error = reason.data.error;
+    $scope.$on('modal-shown', function() {
+      if ($scope.samples) return;
+      $scope.samples = Input.sampleFiles().then(function(data) {
+        $scope.status = data && data.length > 0 ? 'result' : 'empty';
+        return data;
+      }, function(reason) {
+        $scope.status = 'error';
+        $scope.error = reason.data.error;
+      });
+      $scope.$apply();
     });
 
     $scope.insert = function(file) {
