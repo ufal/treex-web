@@ -4,7 +4,7 @@ angular.module('TreexWebApp')
   .controller('AuthCtrl', ['$scope', '$location', 'Auth', function($scope, $location, Auth) {
 
     Auth.ping().success(function(data) {
-      if (!data.session) return;
+      if (!data.id) return;
       var redirect = Auth.redirectAfterLogin();
       if (redirect != '/')
         $location.path(redirect);

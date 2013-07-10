@@ -7,6 +7,7 @@ angular.module('TreexWebApp').controller(
      $scope.languages = Treex.languages();
      var scenario = $scope.scenario =
            params.scenarioId ? Scenario.get({id : params.scenarioId}) : new Scenario();
+     scenario['public'] = !!scenario['public'];
      $scope.saveOrUpdate = function() {
        if (scenario.id) {
          scenario.$update();

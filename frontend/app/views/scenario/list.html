@@ -36,10 +36,12 @@
         </td>
         <td title="Description" ng-bind-html-unsafe="scenario.description | noHtml | newlines"></td>
         <td sortable="username" title="User">{{scenario.user.name}}</td>
-        <td class="nolink span2">
+        <td class="nolink span2" title="">
           <button type="button" ng-click="download(scenario)" bs-tooltip="'Download'" class="btn btn-mini"><i class="icon-download-alt"></i></button>
-          <a ng-href="/scenario/{{scenario.id}}/edit" bs-tooltip="'Edit'" class="btn btn-mini"><i class="icon-edit"></i></a>
-          <button type="button" ng-click="scenarios.$remove(scenario);" bs-tooltip="'Remove'" class="btn btn-mini pull-right"><i class="icon-remove"></i></button>
+          <span ng-show="scenario.editable">
+            <a ng-href="/scenario/{{scenario.id}}/edit" bs-tooltip="'Edit'" class="btn btn-mini"><i class="icon-edit"></i></a>
+            <button type="button" bs-popover="'ask-delete'" data-title="Scenario Delete" data-unique="1" data-placement="left" class="btn btn-mini pull-right"><i class="icon-remove"></i></button>
+          </span>
         </td>
       </tr>
     </table>
@@ -48,4 +50,9 @@
     <h4>No Scenarios</h4>
     <p>There are no scenarios to browse.</p>
   </div>
+  <script type="text/ng-template" id="ask-delete">
+    <p>Do you really want to delete this scenario?</p>
+    <button type="button" class="btn btn-danger" ng-click="scenarios.$remove(scenario);hide()">Delete</button>
+    <button class="btn" ng-click="hide()">Close</button>
+  </script>
 </div>

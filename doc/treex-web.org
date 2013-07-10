@@ -1,19 +1,19 @@
 * What needs to be done
-** TODO [Treex::Web] #116 Fix home page by Michal Sedlak
+** DONE [Treex::Web] #116 Fix home page by Michal Sedlak
   :PROPERTIES:
   :issue_id: 116
   :updated_on: 2013/07/04 10:40:56 +0200
   :assigned_to: Michal Sedlak
   :version:  0.1bc
   :END:
-** TODO [Treex::Web] #117 Filter languages by Michal Sedlak
+** DONE [Treex::Web] #117 Filter languages by Michal Sedlak
    :PROPERTIES:
    :issue_id: 117
    :updated_on: 2013/07/04 10:42:26 +0200
    :assigned_to: Michal Sedlak
    :version:  0.1bc
    :END:
-** TODO [Treex::Web] #79 Scenarios list improvements
+** DONE [Treex::Web] #79 Scenarios list improvements
    :PROPERTIES:
    :issue_id: 79
    :updated_on: 2013/06/30 12:15:15 +0200

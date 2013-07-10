@@ -3,14 +3,18 @@
 angular.module('TreexWebApp')
   .factory('Auth', ['$rootScope', '$http', 'apiUrl', function(scope, $http, api) {
     var loggedIn = false;
-    var user = {};
+    var user = null;
     var redirectPath = '/';
 
     function Auth() {}
     Auth.ping = function() {
-      return $http.get(api + 'auth').success(function() {
+      return $http.get(api + 'auth').success(function(data) {
         scope.$broadcast('auth:logginConfirmed');
         loggedIn = true;
+        user = data;
+      }).error(function() {
+        loggedIn = false;
+        user = null;
       });
     };
 
@@ -22,12 +26,15 @@ angular.module('TreexWebApp')
 
     Auth.loggedIn = function() { return loggedIn; };
 
+    Auth.user = function() {
+      return user;
+    };
+
     Auth.login = function(params) {
       return $http.post(api + 'auth', params).success(function(data) {
         scope.$broadcast('auth:logginConfirmed');
         loggedIn = true;
         user = data;
-        return data;
       });
     };
 
@@ -35,7 +42,7 @@ angular.module('TreexWebApp')
       return $http.delete(api + 'auth').success(function(data) {
         scope.$broadcast('auth:loggedOut');
         loggedIn = false;
-        user = {};
+        user = null;
         return data;
       });
     };

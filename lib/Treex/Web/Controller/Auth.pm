@@ -12,15 +12,6 @@ my $auth_resource = __PACKAGE__->api_resource(
 );
 
 __PACKAGE__->api_model(
-    'SessionValid',
-    session => {
-        type => 'boolean',
-        required => 1,
-        description => 'Simple flag saying that the session is valid'
-    }
-);
-
-__PACKAGE__->api_model(
     'LoginPayload',
     email => {
         type => 'string',
@@ -78,7 +69,7 @@ $index_api->get(
     summary  => 'Check for whether the session exists',
     notes    => "If the session cookie is missing or the session doesn't exists \
  request ends up with the 404 error. NOTE: The documentation on this item is broken.",
-    response => 'SessionValid',
+    response => 'User',
     nickname => 'sessionCheck',
     params   => [
         __PACKAGE__->api_param(
@@ -94,8 +85,8 @@ $index_api->get(
 
 sub index_GET {
     my ( $self, $c ) = @_;
-    if ($c->user_exists) {
-        $self->status_ok($c, entity => { session => true });
+    if ($c->user_exists && $c->user) {
+        $self->status_ok($c, entity => $c->user->REST);
     } else {
         $self->status_error($c, $index_api->error('not_found'));
     }

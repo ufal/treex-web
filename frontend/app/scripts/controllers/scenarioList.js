@@ -41,6 +41,16 @@ angular.module('TreexWebApp').controller(
          source = $filter('orderBy')(source, params.sorting[0], params.sortingDirection[0]);
        }
        $scope.scenarios = source.slice((pager.current-1)*pager.countPerPage, pager.current*pager.countPerPage);
+       $scope.scenarios.$remove = function(item) {
+         var self = this;
+         item.$delete().then(function() {
+           var idx = self.indexOf(item);
+           if (idx != -1) {
+             self.splice(idx, 1);
+           }
+           if (self.length == 0) $scope.status = 'empty';
+         });
+       };
      };
 
      $scope.run = function(scenario) {
@@ -68,6 +78,10 @@ angular.module('TreexWebApp').controller(
          return [];
        }
        scenarios = data;
+       for (var i = 0, ii = scenarios.length; i < ii; i++) {
+         scenarios[i].editable = scenarios[i].isEditable();
+       }
+
        $scope.update({
          page: 1,
          count: 10
