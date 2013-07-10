@@ -1,64 +1,73 @@
 <div id="scenario-list">
   <div class="page-header">
-    <h1>{{scenario.name || 'Add New Scenario'}}</h1>
+    <h1 ng-show="status == 'form'">{{scenario.name || 'Add New Scenario'}}</h1>
+    <h1 ng-show="status != 'form'">Edit Scenario</h1>
   </div>
-  <form name="form" id="scenario-form">
-    <div class="control-group">
-      <input type="text" name="name" required ng-model="scenario.name" placeholder="Scenario name" />
-      <span class="help-block">
-        Try use a very descriptive name for your scenario e.g.:
-        "English analysis using XY parser"
-      </span>
-    </div>
-    <div class="control-group">
-      <select bs-select2="languages" multiple data-placeholder="Select languages" style="width:350px" ng-model="scenario.languages">
-        <optgroup ng-repeat="item in languages" label="{{item.group}}">
-          <option ng-repeat="option in item.options" value="{{option.value}}">{{option.label}}</option>
-        </optgroup>
-      </select>
-      <span class="help-block">
-        Select languages which your scenario can process. Leave empty
-        if the scenario is language independent.
-      </span>
-    </div>
-    <div class="control-group">
-      <label for="scenario-public" class="checkbox">
-      <input type="checkbox" name="public" id="scenario-public" ng-model="scenario.public"/> Should this scenario be public?
-      </label>
-    </div>
-    <div class="control-group">
-      <h3>Scenario Editor</h3>
-      <div ace="perl" ng-model="scenario.scenario">
-        <textarea name="scenario" id="scenario-text" rows="12" required ng-model="scenario.scenario"></textarea>
+  <ng-switch on="status">
+    <div ng-switch-when="loading" tw-loader></div>
+    <form ng-switch-when="form" name="form" id="scenario-form">
+      <div class="control-group">
+        <input type="text" name="name" required ng-model="scenario.name" placeholder="Scenario name" />
+        <span class="help-block">
+          Try use a very descriptive name for your scenario e.g.:
+          "English analysis using XY parser"
+        </span>
       </div>
-    </div>
-    <ul class="nav nav-tabs">
-      <li><a bs-show-tab bs-active-tab href="#description" data-toggle="tab">Description</a></li>
-      <li><a bs-show-tab href="#sample" data-toggle="tab">Sample</a></li>
-    </ul>
-    <div class="tab-content">
-      <div class="tab-pane" id="description">
-        <div class="control-group">
-          <textarea name="description" ng-model="scenario.description" class="editor" placeholder="Scenario description" required="required" rows="10" cols="10"></textarea>
-          <span class="help-block">
-            <span class="label label-info">Required Field!</span> Describe
-            your scenario in detail and try to also mention some interesting
-            examples of use.
-          </span>
+      <div class="control-group">
+        <select bs-select2="languages" multiple data-placeholder="Select languages" style="width:350px" ng-model="scenario.languages">
+          <optgroup ng-repeat="item in languages" label="{{item.group}}">
+            <option ng-repeat="option in item.options" value="{{option.value}}">{{option.label}}</option>
+          </optgroup>
+        </select>
+        <span class="help-block">
+          Select languages which your scenario can process. Leave empty
+          if the scenario is language independent.
+        </span>
+      </div>
+      <div class="control-group">
+        <label for="scenario-public" class="checkbox">
+          <input type="checkbox" name="public" id="scenario-public" ng-model="scenario.public"/> Should this scenario be public?
+        </label>
+      </div>
+      <div class="control-group">
+        <h3>Scenario Editor</h3>
+        <div ace="perl" ng-model="scenario.scenario">
+          <textarea name="scenario" id="scenario-text" rows="12" required ng-model="scenario.scenario"></textarea>
         </div>
       </div>
-      <div class="tab-pane" id="sample">
-        <div class="control-group">
-          <textarea name="sample" ng-model="scenario.sample" class="editor" placeholder="Scenario sample text" rows="10" cols="10"></textarea>
-          <span class="help-block">
-            You can optionally accompany this scenario with some sample text.
-          </span>
+      <ul class="nav nav-tabs">
+        <li><a bs-show-tab bs-active-tab href="#description" data-toggle="tab">Description</a></li>
+        <li><a bs-show-tab href="#sample" data-toggle="tab">Sample</a></li>
+      </ul>
+      <div class="tab-content">
+        <div class="tab-pane" id="description">
+          <div class="control-group">
+            <textarea name="description" ng-model="scenario.description" class="editor" placeholder="Scenario description" required="required" rows="10" cols="10"></textarea>
+            <span class="help-block">
+              <span class="label label-info">Required Field!</span> Describe
+              your scenario in detail and try to also mention some interesting
+              examples of use.
+            </span>
+          </div>
+        </div>
+        <div class="tab-pane" id="sample">
+          <div class="control-group">
+            <textarea name="sample" ng-model="scenario.sample" class="editor" placeholder="Scenario sample text" rows="10" cols="10"></textarea>
+            <span class="help-block">
+              You can optionally accompany this scenario with some sample text.
+            </span>
+          </div>
         </div>
       </div>
+      <div>
+        <button class="btn btn-primary" ng-disabled="form.$invalid || form.$pristine" ng-click="saveOrUpdate(true)" type="button">Save and go back</button>
+        <button class="btn" ng-disabled="form.$invalid || form.$pristine" ng-click="saveOrUpdate()" type="button">Save and continue editing</button>
+        <a class="btn" href="/scenarios">Cancel</a>
+      </div>
+    </form>
+    <div class="alert alert-error" ng-switch-when="not-found">
+      <h4>Scenario not found</h4>
+      <p>Scenario you are looking for doesn't exists or you are not allowed to change it.</p>
     </div>
-    <div>
-      <button class="btn btn-primary" ng-disabled="form.$invalid" ng-click="saveOrUpdate()" type="button">Save scenario</button>
-      <a class="btn" href="/scenarios">Cancel</a>
-    </div>
-  </form>
+  </ng-switch>
 </div>

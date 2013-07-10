@@ -28,9 +28,9 @@
       <div ace-highlight="perl" class="scenario-code" ng-model="scenario.scenario">
       </div>
       <div class="row-fluid">
-        <a class="btn btn-primary" ng-href="/scenario/{{scenario.id}}/run">Run this scenario</a>
-        <a class="btn" ng-href="/scenario/{{scenario.id}}/edit">Edit</a>
-        <a class="act act-danger pull-right" href="">Delete scenario</a>
+        <button class="btn btn-primary" ng-click="run()">Run this scenario</button>
+        <a ng-show="scenario.isEditable()" class="btn" ng-href="/scenario/{{scenario.id}}/edit">Edit</a>
+        <button ng-show="scenario.isEditable()" class="act act-danger pull-right" bs-popover="'ask-delete'" data-title="Scenario Delete" data-unique="1" data-placement="left">Delete scenario</button>
       </div>
     </div>
     <div class="alert alert-error" ng-switch-when="not-found">
@@ -38,4 +38,9 @@
       <p>Scenario you are looking for doesn't exists or you are not allowed to access it.</p>
     </div>
   </ng-switch>
+  <script type="text/ng-template" id="ask-delete">
+    <p>Do you really want to delete this scenario?</p>
+    <button type="button" class="btn btn-danger" ng-click="remove();hide()">Delete</button>
+    <button class="btn" ng-click="hide()">Close</button>
+  </script>
 </div>

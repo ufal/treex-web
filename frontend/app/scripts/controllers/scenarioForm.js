@@ -5,14 +5,34 @@ angular.module('TreexWebApp').controller(
   ['$scope', '$routeParams', '$location', 'Scenario', 'Treex',
    function($scope, params, $location, Scenario, Treex) {
      $scope.languages = Treex.languages();
-     var scenario = $scope.scenario =
-           params.scenarioId ? Scenario.get({id : params.scenarioId}) : new Scenario();
-     scenario['public'] = !!scenario['public'];
-     $scope.saveOrUpdate = function() {
+     $scope.status = 'form';
+
+     var scenario;
+     if (params.scenarioId) {
+       $scope.status = 'loading';
+       $scope.scenario = Scenario.get({id : params.scenarioId}, function(data) {
+         $scope.status = 'form';
+         scenario = data;
+         return data;
+       }, function() {
+         $scope.status = 'not-found';
+       });
+     } else {
+       scenario = $scope.scenario = new Scenario({ 'public' : false});
+     }
+
+     $scope.saveOrUpdate = function(redirect) {
        if (scenario.id) {
-         scenario.$update();
+         scenario.$update(function() { postSave(redirect); });
        } else {
-         scenario.$save();
+         scenario.$save(function() { postSave(redirect); });
        }
      };
+
+     function postSave(redirect) {
+       $scope.form.$setPristine();
+       if (redirect) {
+         $location.path('/scenarios');
+       }
+     }
    }]);
