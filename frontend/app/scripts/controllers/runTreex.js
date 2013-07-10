@@ -25,6 +25,10 @@ angular.module('TreexWebApp').controller(
        $scope.query.compose = true;
      }
 
+     $scope.clear = function() {
+       $scope.query = Result.lastResult = new Result();
+     };
+
      $scope.submit = function() {
        if ($scope.form.$invalid) return;
        var q = $scope.query;
