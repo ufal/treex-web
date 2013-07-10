@@ -22,17 +22,17 @@
     <table tw-table="update" pager="pager"  class="table table-striped">
       <tr ng-repeat="scenario in scenarios" bs-rowlink="/scenario/{{scenario.id}}">
         <td class="nolink span1">
-          <button type="button" rel="tooltip" ng-click="run(scenario)" bs-tooltip="'Run'" class="btn btn-primary btn-mini"><i class="icon-white icon-forward"></i></button>
+          <button type="button" rel="tooltip" ng-click="run(scenario)" bs-tooltip="'Run'" class="btn btn-inverse btn-mini"><i class="icon-white icon-forward"></i></button>
         </td>
         <td sortable="public" title="Access" class="span1">
-          <span tw-if="scenario.public" class="label label-success">Public</span>
-          <span tw-if="!scenario.public" class="label label-inverse">Private</span>
+          <span tw-if="scenario.public" class="badge badge-success">Public</span>
+          <span tw-if="!scenario.public" class="badge badge-inverse">Private</span>
         </td>
         <td sortable="name" title="Name">
           {{scenario.name}}
         </td>
         <td title="Languages">
-          <span ng-repeat="language in scenario.languages">{{languagesMap[language]}}</span>
+          <span class="label" style="margin-right: 4px" ng-repeat="language in scenario.languages">{{languagesMap[language]}}</span>
         </td>
         <td title="Description" ng-bind-html-unsafe="scenario.description | noHtml | newlines"></td>
         <td sortable="username" title="User">{{scenario.user.name}}</td>

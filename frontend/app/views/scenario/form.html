@@ -5,7 +5,7 @@
   </div>
   <ng-switch on="status">
     <div ng-switch-when="loading" tw-loader></div>
-    <form ng-switch-when="form" name="form" id="scenario-form">
+    <form ng-show="status == 'form'" name="form" id="scenario-form">
       <div class="control-group">
         <input type="text" name="name" required ng-model="scenario.name" placeholder="Scenario name" />
         <span class="help-block">
