@@ -2,8 +2,8 @@
 
 angular.module('TreexWebApp').controller(
   'ScenarioListCtrl',
-  ['$scope', '$filter', '$location', 'Scenario', 'Result', 'Treex',
-   function($scope, $filter, $location, Scenario, Result, Treex) {
+  ['$scope', '$filter', '$location', '$window', 'Scenario', 'Result', 'Treex',
+   function($scope, $filter, $location, $window, Scenario, Result, Treex) {
      $scope.languages = Scenario.languages();
      $scope.languagesMap = Treex.languagesMap();
      $scope.status = 'loading';
@@ -47,8 +47,12 @@ angular.module('TreexWebApp').controller(
        var result = Result.lastResult = new Result();
        result.scenario = scenario.scenario;
        result.name = scenario.name;
-       result.input = scenario.sample;
+       result.input = result.sample = scenario.sample;
        $location.path('/run');
+     };
+
+     $scope.download = function(scenario) {
+       $window.open(scenario.downloadUrl());
      };
 
      $scope.pager = {

@@ -7,6 +7,11 @@ angular.module('TreexWebApp')
                                'query': {method: 'GET', params: {language: '@language'}, isArray : true}
                              });
 
+
+    var proto = Scenario.prototype;
+    proto.downloadUrl = function() {
+      return api + 'scenarios/' + this.id + '/download';
+    };
     Scenario.languages = function() {
       return $http.get(api + 'scenarios/languages').then(function(responce) {
         return responce.data;

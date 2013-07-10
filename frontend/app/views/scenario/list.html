@@ -37,8 +37,8 @@
         <td title="Description" ng-bind-html-unsafe="scenario.description | noHtml | newlines"></td>
         <td sortable="username" title="User">{{scenario.user.name}}</td>
         <td class="nolink span2">
+          <button type="button" ng-click="download(scenario)" bs-tooltip="'Download'" class="btn btn-mini"><i class="icon-download-alt"></i></button>
           <a ng-href="/scenario/{{scenario.id}}/edit" bs-tooltip="'Edit'" class="btn btn-mini"><i class="icon-edit"></i></a>
-          <a ng-href="/scenario/{{scenario.id}}/download" bs-tooltip="'Download'" class="btn btn-mini"><i class="icon-download-alt"></i></a>
           <button type="button" ng-click="scenarios.$remove(scenario);" bs-tooltip="'Remove'" class="btn btn-mini pull-right"><i class="icon-remove"></i></button>
         </td>
       </tr>

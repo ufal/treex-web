@@ -283,8 +283,11 @@ sub download :Chained('scenario') :PathPart('download') :Args(0) {
     my ( $self, $c ) = @_;
     my $scenario = $c->stash->{scenario};
 
+    my $name = $scenario->name||'scenario';
+    $name =~ y/A-Z /a-z_/;
+
     $c->res->content_type('plain/text');
-    $c->res->header('Content-Disposition', qq[attachment; filename="${scenario->name}.scen"]);
+    $c->res->header('Content-Disposition', qq[attachment; filename="$name.scen"]);
     $c->res->body($scenario->scenario);
 }
 
