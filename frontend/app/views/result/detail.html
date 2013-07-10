@@ -45,7 +45,7 @@
       </ul>
       <div class="tab-content result-tabs">
         <div class="tab-pane" id="scenario">
-          <pre tw-if="result.scenario" class="pre-scrollable">{{result.scenario}}</pre>
+          <pre tw-if="result.scenario" class="pre-scrollable" ace-highlight="perl" ng-model="result.scenario"></pre>
           <div tw-if="result.hasScenario && !result.scenario" class="alert alert-error">
              Scenario is empty.
           </div>
