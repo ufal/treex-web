@@ -7,23 +7,26 @@ angular.module('TreexWebApp')
       scope: {
         result: '=twView'
       },
-      controller: ['$element', function($element) {
+      controller: ['$element', '$scope', function($element, $scope) {
+        var self = this, lastBundle = 0;
         this.$view = null;
         this.$sentence = null;
         this.$doc = null;
 
-        this.nextBundle = function() {
-          var view = this.$view;
-          if (view && view.hasNextBundle()) {
-            view.nextBundle();
-            this.change();
-          }
+        this.setDocument = function(doc) {
+          this.$doc = doc;
+          $scope.noOfPages = doc.bundles.length;
+          $scope.currentPage = 1;
         };
 
-        this.previousBundle = function() {
+        $scope.$watch('currentPage', function(value) {
+          self.setBundle(value-1);
+        });
+
+        this.setBundle = function(bundle) {
           var view = this.$view;
-          if (view && view.hasPreviousBundle()) {
-            view.previousBundle();
+          if (view && bundle != lastBundle) {
+            view.setBundle(bundle);
             this.change();
           }
         };
@@ -43,7 +46,7 @@ angular.module('TreexWebApp')
           var result = scope.result;
           result.$print().then(function(data) {
             cntl.$view = Treex.TreeView(element[0]);
-            cntl.$doc = Treex.Document.fromJSON(data);
+            cntl.setDocument(Treex.Document.fromJSON(data));
             cntl.$view.init(cntl.$doc);
             if (cntl.$sentence)
               cntl.$view.description(cntl.$sentence);
@@ -56,39 +59,6 @@ angular.module('TreexWebApp')
       }
     };
   }]).
-  directive('twViewPager', function() {
-    return {
-      restrict: 'A',
-      require: '^twView',
-      link : function(scope, element, attrs, cntl) {
-        cntl.change(function() { // on view change
-          if (cntl.$view) {
-            scope.hasPreviousBundle = cntl.$view.hasPreviousBundle();
-            scope.hasNextBundle = cntl.$view.hasNextBundle();
-            scope.$apply();
-          }
-        });
-        element.find('.prevBundle').bind('click', function(e) {
-          e.stopPropagation();
-          cntl.previousBundle();
-        });
-        element.find('.nextBundle').bind('click', function(e) {
-          e.stopPropagation();
-          cntl.nextBundle();
-        });
-
-        scope.$on('treex:rendered', function() {
-          if (cntl.$doc && cntl.$doc.bundles.length > 1) {
-            element.show();
-            scope.hasPreviousBundle = cntl.$view.hasPreviousBundle();
-            scope.hasNextBundle = cntl.$view.hasNextBundle();
-          } else {
-            element.hide();
-          }
-        });
-      }
-    };
-  }).
   directive('twViewSentence', function() {
     return {
       restrict: 'A',

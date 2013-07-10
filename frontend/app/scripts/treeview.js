@@ -241,8 +241,6 @@
         .append('svg');
     };
 
-
-
     twproto.description = function(container) {
       this.desc = d3.select(container);
     };
@@ -265,6 +263,11 @@
         self.bundle -= 1;
         self.drawBundle();
       }
+    };
+
+    twproto.setBundle = function(bundle) {
+      this.bundle = bundle;
+      this.drawBundle();
     };
 
     twproto.hasPreviousBundle = function() {
