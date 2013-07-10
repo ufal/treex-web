@@ -2,8 +2,8 @@
 
 angular.module('TreexWebApp').controller(
   'ScenarioListCtrl',
-  ['$scope', '$filter', 'Scenario', 'Treex',
-   function($scope, $filter, Scenario, Treex) {
+  ['$scope', '$filter', '$location', 'Scenario', 'Result', 'Treex',
+   function($scope, $filter, $location, Scenario, Result, Treex) {
      $scope.languages = Scenario.languages();
      $scope.languagesMap = Treex.languagesMap();
      $scope.status = 'loading';
@@ -41,6 +41,14 @@ angular.module('TreexWebApp').controller(
          source = $filter('orderBy')(source, params.sorting[0], params.sortingDirection[0]);
        }
        $scope.scenarios = source.slice((pager.current-1)*pager.countPerPage, pager.current*pager.countPerPage);
+     };
+
+     $scope.run = function(scenario) {
+       var result = Result.lastResult = new Result();
+       result.scenario = scenario.scenario;
+       result.name = scenario.name;
+       result.input = scenario.sample;
+       $location.path('/run');
      };
 
      $scope.pager = {

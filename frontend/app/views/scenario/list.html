@@ -22,7 +22,7 @@
     <table tw-table="update" pager="pager"  class="table table-striped">
       <tr ng-repeat="scenario in scenarios" bs-rowlink="/scenario/{{scenario.id}}">
         <td class="nolink span1">
-          <button type="button" rel="tooltip" bs-tooltip="'Run'" class="btn btn-primary btn-mini"><i class="icon-white icon-forward"></i></button>
+          <button type="button" rel="tooltip" ng-click="run(scenario)" bs-tooltip="'Run'" class="btn btn-primary btn-mini"><i class="icon-white icon-forward"></i></button>
         </td>
         <td sortable="public" title="Access" class="span1">
           <span tw-if="scenario.public" class="label label-success">Public</span>
