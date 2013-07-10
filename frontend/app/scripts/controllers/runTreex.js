@@ -2,18 +2,17 @@
 
 angular.module('TreexWebApp').controller(
   'RunTreexCtrl',
-  ['$scope', '$rootScope', '$location', '$anchorScroll', '$timeout', 'Treex', 'Tour',
-   function($scope, $rootScope, $location, $anchorScroll, $timeout, Treex, Tour) {
+  ['$scope', '$location', '$anchorScroll', '$timeout', 'Treex', 'Result', 'Tour',
+   function($scope, $location, $anchorScroll, $timeout, Treex, Result, Tour) {
 
      if (Tour.isRunning()) {
        Tour.showStep(1);
+       Result.lastResult = null;
      }
 
-     $scope.query = {
-       scenario : {compose: false}
-     };
-     Treex.watchLanguage($scope, this);
-     $scope.$watch('query.scenario.compose', function(value) {
+     $scope.query = Result.lastResult || (Result.lastResult = new Result());
+
+     $scope.$watch('query.compose', function(value) {
        if (value && $scope.ace) {
          $timeout(function() {
            $scope.ace.resize(true);
@@ -22,14 +21,19 @@ angular.module('TreexWebApp').controller(
        }
      });
 
+     if ($scope.query.scenario) {
+       $scope.query.compose = true;
+     }
+
      $scope.submit = function() {
        if ($scope.form.$invalid) return;
        var q = $scope.query;
        Treex.query({
-         scenario: q.scenario.scenario,
-         scenario_name: q.scenario.name,
+         scenario: q.scenario,
+         scenario_name: q.name,
          input: q.input
        }).then(function(result) {
+         Result.lastResult = null;
          $location.path('/result/'+result.token);
        }, function(reason) {
          $scope.error = angular.isObject(reason.data) ?

@@ -129,7 +129,7 @@ angular.module('TreexWebApp')
         });
 
         editor.getSession().setValue(textarea.val());
-        read();
+        //read();
         editor.getSession().on('change', change);
 
         scope.$watch(attrs.ngModel, function() {

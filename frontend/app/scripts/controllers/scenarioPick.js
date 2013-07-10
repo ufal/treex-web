@@ -29,10 +29,13 @@ angular.module('TreexWebApp').controller(
      $scope.pick = function(scenario) {
        $timeout(function() {
          var q = $scope.query;
-         q.scenario = scenario;
+         q.scenarioId = scenario.id;
+         q.scenario = scenario.scenario;
+         q.name = scenario.name;
+         q.description = scenario.description;
+         q.sample = scenario.sample;
          if (scenario.sample && !q.input) q.input = scenario.sample;
-         q.scenario = scenario;
-         q.scenario.compose = true;
+         q.compose = true;
          $scope.dismiss();
        });
      };

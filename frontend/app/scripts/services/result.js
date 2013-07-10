@@ -4,8 +4,10 @@ angular.module('TreexWebApp')
   .factory('Result', ['$http', '$q', 'apiUrl', function($http, $q, api) {
     function Result(data) {
       angular.copy(data || {}, this);
-      if (!this.name) this.name = this.token;
-      this.downloadUrl = api + 'results/' + this.token + '/download';
+      if (data) {
+        if (!this.name) this.name = this.token;
+        this.downloadUrl = api + 'results/' + this.token + '/download';
+      }
     }
 
     function asyncCall(method, token) {
@@ -44,6 +46,7 @@ angular.module('TreexWebApp')
       });
     };
 
+    Result.lastResult = new Result();
     Result.get = function(token) { return asyncCall('get', token); };
     Result.delete = function(token) { return asyncCall('delete', token); };
     Result.job = function(token) {
