@@ -213,3 +213,7 @@ body {
   -webkit-user-select: none;
   user-select: none;
 }
+
+.form-inline .select2-container {
+    vertical-align: middle;
+}

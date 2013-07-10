@@ -9,30 +9,41 @@
     </div>
   </div>
   <div ng-show="status == 'loading'" tw-loader></div>
-  <table tw-table="update" pager="pager" ng-show="status == 'results'" class="table table-condensed table-striped">
-    <tr ng-repeat="scenario in scenarios" bs-rowlink="/scenario/{{scenario.id}}">
-      <td sortable="public" title="Access" class="span1">
-        <span tw-if="scenario.public" class="label label-success">Public</span>
-        <span tw-if="!scenario.public" class="label label-inverse">Private</span>
-      </td>
-      <td sortable="name" title="Name">
-        {{scenario.name}}
-      </td>
-      <td title="Languages">
-        <p class="language-tags"><span ng-repeat="language in scenario.languages">{{languagesMap[language]}}</span></p>
-      </td>
-      <td title="Description" ng-bind-html-unsafe="scenario.description | noHtml | newlines"></td>
-      <td sortable="username" title="User">{{scenario.user.name}}</td>
-      <td class="nolink span2">
-        <a ng-href="/scenario/{{scenario.id}}/edit" bs-tooltip="'Edit'" class="btn btn-mini"><i class="icon-edit"></i></a>
-        <a ng-href="/scenario/{{scenario.id}}/download" bs-tooltip="'Download'" class="btn btn-mini"><i class="icon-download-alt"></i></a>
-        <button type="button" ng-click="scenarios.$remove(scenario);" bs-tooltip="'Remove'" class="btn btn-mini btn-danger"><i class="icon-white icon-remove"></i></button>
-      </td>
-      <td class="nolink span1">
-        <a rel="tooltip" ng-href="/scenario/{{scenario.id}}/run" bs-tooltip="'Run'" class="btn btn-primary btn-mini pull-right"><i class="icon-white icon-forward"></i></a>
-      </td>
-    </tr>
-  </table>
+  <div ng-show="status == 'results'" style="margin-top:40px">
+    <form class="form-inline">
+      <label for="language-filter">Filter by language:</label>
+      <select bs-select2="languages" id="language-filter" data-allow-clear="true" data-placeholder="Select an Language" style="width:250px" ng-model="language">
+        <option value=""></option>
+        <option ng-repeat="item in languages" value="{{item.id}}">
+          {{item.name}}
+        </option>
+      </select>
+    </form>
+    <table tw-table="update" pager="pager"  class="table table-striped">
+      <tr ng-repeat="scenario in scenarios" bs-rowlink="/scenario/{{scenario.id}}">
+        <td class="nolink span1">
+          <button type="button" rel="tooltip" bs-tooltip="'Run'" class="btn btn-primary btn-mini"><i class="icon-white icon-forward"></i></button>
+        </td>
+        <td sortable="public" title="Access" class="span1">
+          <span tw-if="scenario.public" class="label label-success">Public</span>
+          <span tw-if="!scenario.public" class="label label-inverse">Private</span>
+        </td>
+        <td sortable="name" title="Name">
+          {{scenario.name}}
+        </td>
+        <td title="Languages">
+          <span ng-repeat="language in scenario.languages">{{languagesMap[language]}}</span>
+        </td>
+        <td title="Description" ng-bind-html-unsafe="scenario.description | noHtml | newlines"></td>
+        <td sortable="username" title="User">{{scenario.user.name}}</td>
+        <td class="nolink span2">
+          <a ng-href="/scenario/{{scenario.id}}/edit" bs-tooltip="'Edit'" class="btn btn-mini"><i class="icon-edit"></i></a>
+          <a ng-href="/scenario/{{scenario.id}}/download" bs-tooltip="'Download'" class="btn btn-mini"><i class="icon-download-alt"></i></a>
+          <button type="button" ng-click="scenarios.$remove(scenario);" bs-tooltip="'Remove'" class="btn btn-mini pull-right"><i class="icon-remove"></i></button>
+        </td>
+      </tr>
+    </table>
+  </div>
   <div ng-show="status == 'empty'" class="alert alert-info">
     <h4>No Scenarios</h4>
     <p>There are no scenarios to browse.</p>
