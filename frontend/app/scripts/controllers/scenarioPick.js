@@ -22,7 +22,7 @@ angular.module('TreexWebApp').controller(
      });
 
      $scope.$watch('language', function(value, old) {
-       if (value !== old && $scope.visible) {
+       if (value !== old) {
          fetchScenarios(value);
        }
      });
