@@ -95,14 +95,6 @@ body {
     margin-left: -350px;
 }
 
-@media (max-width: 767px) {
-    .modal-big {
-        width: auto;
-        margin-left: auto;
-    }
-}
-
-
 .table th.sortable {
     cursor:pointer;
 }
