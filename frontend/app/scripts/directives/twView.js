@@ -27,6 +27,7 @@ angular.module('TreexWebApp')
           var view = this.$view;
           if (view && bundle != lastBundle) {
             view.setBundle(bundle);
+            lastBundle = bundle;
             this.change();
           }
         };
