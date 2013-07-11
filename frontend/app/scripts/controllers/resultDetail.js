@@ -2,9 +2,20 @@
 
 angular.module('TreexWebApp').controller(
   'ResultDetailCtrl',
-  ['$scope', '$routeParams', '$location', '$window', 'Result',
-   function($scope, params, $location, $window, Result) {
+  ['$scope', '$routeParams', '$location', '$window', 'Result', 'Tour',
+   function($scope, params, $location, $window, Result, Tour) {
      $scope.loading = true;
+
+     if (Tour.isRunning()) {
+       $scope.$watch('result.job.status', function(value) {
+         if (value == 'queued' || value == 'working') {
+           Tour.showStep(4);
+         } else if (value) {
+           Tour.end();
+         }
+       });
+     }
+
      $scope.result = Result.get(params.resultId).then(function(result) {
        $scope.loading = false;
 

@@ -2,8 +2,8 @@
 
 angular.module('TreexWebApp').controller(
   'ScenarioPickCtrl',
-  ['$scope', '$rootScope', '$timeout', 'Treex', 'Scenario',
-   function($scope, $rootScope, $timeout, Treex, Scenario) {
+  ['$scope', '$rootScope', '$timeout', 'Treex', 'Scenario', 'Tour',
+   function($scope, $rootScope, $timeout, Treex, Scenario, Tour) {
      $scope.status = 'loading';
      $scope.languages = Scenario.languages();
      $scope.languagesMap = Treex.languagesMap();

@@ -8,6 +8,14 @@ angular.module('TreexWebApp').controller(
      if (Tour.isRunning()) {
        Tour.showStep(1);
        Result.lastResult = null;
+
+       $scope.$watch('query.scenario', function(value) {
+         if (angular.isString(value) && value.length > 20) {
+           Tour.showStep(2);
+         } else {
+           Tour.showStep(1);
+         }
+       });
      }
 
      $scope.query = Result.lastResult || (Result.lastResult = new Result());
@@ -27,6 +35,9 @@ angular.module('TreexWebApp').controller(
 
      $scope.clear = function() {
        $scope.query = Result.lastResult = new Result();
+       if (Tour.isRunning()) {
+         Tour.showStep(1);
+       }
      };
 
      $scope.submit = function() {
