@@ -242,7 +242,7 @@ $scenario_api->put(
     ]
 );
 
-sub item_PUT {
+sub item_PUT :Does('~NeedsLogin') {
     my ( $self, $c ) = @_;
     my $scenario = $c->stash->{scenario};
     my $form = $c->stash->{'scenario_form'};
@@ -269,7 +269,7 @@ $scenario_api->delete(
     ]
 );
 
-sub item_DELETE {
+sub item_DELETE :Does('~NeedsLogin') {
     my ( $self, $c ) = @_;
     my $scenario = $c->stash->{scenario};
 

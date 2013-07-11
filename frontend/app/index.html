@@ -49,8 +49,8 @@
             </li>
           </ul>
           <ul class="nav pull-right" ng-controller="AuthCtrl">
-            <li ng-show="!loggedIn" data-match-route="/login">
-              <a href="/login"><i class="icon-user"></i> Login</a>
+            <li ng-show="!loggedIn">
+              <a href="javascript:void(0)" ng-click="showLogin()"><i class="icon-user"></i> Login</a>
             </li>
             <li ng-show="loggedIn" data-match-route="/logout">
               <a href="/logout"><i class="icon-user"></i> Logout</a>

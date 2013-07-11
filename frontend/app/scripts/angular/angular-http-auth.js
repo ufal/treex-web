@@ -40,8 +40,11 @@ angular.module('http-auth-interceptor', [])
 
       return {
         loginConfirmed: function() {
-          $rootScope.$broadcast('event:auth-loginConfirmed');
+          $rootScope.$broadcast('auth:loginConfirmed');
           retryAll();
+        },
+        loginFailed: function() {
+          buffer = [];
         }
       };
     }];
@@ -62,7 +65,7 @@ angular.module('http-auth-interceptor', [])
         if (response.status === 401) {
           var deferred = $q.defer();
           authServiceProvider.pushToBuffer(response.config, deferred);
-          $rootScope.$broadcast('event:auth-loginRequired');
+          $rootScope.$broadcast('auth:loginRequired');
           return deferred.promise;
         }
         // otherwise

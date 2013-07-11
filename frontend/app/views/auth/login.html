@@ -1,37 +1,27 @@
-<div id="auth-login">
-  <div class="page-header">
-    <h1>Login</h1>
+<div class="modal-header">
+  <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+  <h3 id="login-modal-label">Login{{(forced||'') && ' Required'}}</h3>
+</div>
+<div class="modal-body">
+  <div ng-show="error" id="login-error" class="alert alert-error">
+    <button type="button" class="close" ng-click="error=''">&times;</button>
+    <h4>Login Error!</h4>
+    {{error}}
   </div>
-  <div class="row-fluid">
-    <div class="span6">
-      <div ng-show="error" id="login-error" class="alert alert-error">
-        <h4>Login Error!</h4>
-        {{error}}
-      </div>
-      <form name="form">
-        <div class="control-group">
-          <label class="control-label" for="input-email">Email:</label>
-          <input type="email" ng-model="auth.email" id="input-email" required class="input-xlarge" placeholder="Email address">
-        </div>
-        <div class="control-group">
-          <label class="control-label" for="input-password">Password:</label>
-          <input type="password" ng-model="auth.password" id="input-password" required class="input-xlarge" placeholder="Password">
-        </div>
-        <div class="control-group">
-          <label class="checkbox">
-            <input type="checkbox" ng-model="auth.remember"> Remember me
-          </label>
-        </div>
-        <input ng-disabled="form.$invalid" ng-click="login()" class="btn btn-large btn-primary" type="submit" value="Sign in" />
-      </form>
+  <form name="form">
+    <div class="control-group">
+      <label class="control-label" for="input-email">Email:</label>
+      <input type="email" ng-model="auth.email" id="input-email" required class="input-xlarge" placeholder="Email address">
     </div>
-    <div class="span6">
-      <h2>Why should I login?</h2>
-      <p>Todo: list some cool advantages</p>
-      <ul>
-        <li><a href="/signup">Sign up!</a></li>
-        <li><a href="/forgotten-password">Forgot your password?</a></li>
-      </ul>
+    <div class="control-group">
+      <label class="control-label" for="input-password">Password:</label>
+      <input type="password" ng-model="auth.password" id="input-password" required class="input-xlarge" placeholder="Password">
     </div>
-  </div>
+    <div class="control-group">
+      <label class="checkbox">
+        <input type="checkbox" ng-model="auth.remember" ng-init="auth.remember=false"> Remember me
+      </label>
+    </div>
+    <input ng-disabled="form.$invalid" ng-click="login()" class="btn btn-large btn-primary" type="submit" value="Sign in" />
+  </form>
 </div>
