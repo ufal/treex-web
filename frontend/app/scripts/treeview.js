@@ -11,8 +11,7 @@
   };
 
   d3.layout.nlp.constituency = function(opts) {
-    var grid,
-        maxDepth;
+    var maxDepth;
 
     //TODO
     opts = defaultOptions;
@@ -24,24 +23,6 @@
 
       maxDepth = d3.max(nodes, function(node) { return node.depth(); });
 
-      function populateGrid() {
-        var i = -1,
-            n = nodes.length,
-            depth,
-            node;
-        grid = {};
-
-        while(++i < n) {
-          node = nodes[i];
-          depth = node.isLeaf() ? maxDepth : node.depth();
-          if (!grid[depth]) {
-            grid[depth] = {};
-          }
-          grid[depth][node.order] = node;
-        }
-      }
-
-      populateGrid();
       return nodes;
     }
 
@@ -50,8 +31,8 @@
           n = nodes.length,
           widths = [],
           left = 0,
-          levelWidth = 0,
-          heights = {},
+          levelWidths = [],
+          heights = [],
           depth,
           node;
 
@@ -61,26 +42,23 @@
         node = nodes[i];
         depth = node.isLeaf() ? maxDepth : node.depth();
         j = i;
-        levelWidth = 0;
 
+        if (!levelWidths[depth])
+          levelWidths[depth] = 0;
         left += node.width / 2;
 
         if (i === 0) {
           widths[0] = left;
         } else {
-          while (--j > 0) {
-            var nbr = grid[depth][j];
-            if (!nbr) continue;
-            levelWidth = widths[j] + nbr.width;
-            break;
-          }
 
-          if (levelWidth >= left) {
-            left = levelWidth + opts.nodeXSkip;
+          if (levelWidths[depth] >= left) {
+            left = levelWidths[depth] + opts.nodeXSkip;
           } else {
             left += opts.nodeXSkip;
           }
           widths[i] = left;
+          levelWidths[depth] = left + node.width;
+
           if (!node.isRoot() && node.children().length === 1) {
             left += 15;
           }
@@ -91,15 +69,20 @@
         }
       }
 
+      heights.push(0);
+      for(i = 0, ii = heights.length, depth = 0; i < ii; i++) {
+        var swap = heights[i];
+        heights[i] = depth;
+        depth += swap;
+      }
+
       i = -1;
       while(++i < n) {
         node = nodes[i];
         depth = node.isLeaf() ? maxDepth : node.depth();
         node.y = opts.marginY;
 
-        while(--depth >= 0) {
-          node.y += heights[depth] + opts.nodeYSkip + opts.marginY;
-        }
+        node.y += heights[depth] + (opts.nodeYSkip + opts.marginY)*depth;
         node.x = opts.marginX + i*opts.marginX + widths[i];
       }
     };
@@ -110,7 +93,6 @@
   };
 
   d3.layout.nlp.tree = function(opts) {
-    var grid;
 
     //TODO
     opts = defaultOptions;
@@ -118,34 +100,16 @@
     function layout(tree) { // expecting Treex.Tree here
       var nodes = tree.allNodes()
             .sort(function(a, b) { return d3.ascending(a.order, b.order); });
-      function populateGrid() {
-        var i = -1,
-            n = nodes.length,
-            depth,
-            node;
-        grid = {};
-
-        while(++i < n) {
-          node = nodes[i];
-          depth = node.depth();
-          if (!grid[depth]) {
-            grid[depth] = {};
-          }
-          grid[depth][node.order] = node;
-        }
-      }
-
-      populateGrid();
       return nodes;
     }
 
     layout.computeLayout = function(nodes) {
-      var i = -1, j = -1,
+      var i = -1, ii = -1,
           n = nodes.length,
           widths = [],
           left = 0,
-          levelWidth = 0,
-          heights = {},
+          levelWidths = [],
+          heights = [],
           depth,
           node;
 
@@ -154,25 +118,28 @@
       while(++i < n) {
         node = nodes[i];
         depth = node.depth();
-        j = i;
-        levelWidth = 0;
-        while (--j > 0) {
-          var nbr = grid[depth][j];
-          if (!nbr) continue;
-          levelWidth = widths[j] + nbr.width;
-          break;
-        }
 
-        if (levelWidth >= left) {
-          left = levelWidth + opts.nodeXSkip;
+        if (!levelWidths[depth])
+          levelWidths[depth] = 0;
+
+        if (levelWidths[depth] >= left) {
+          left = levelWidths[depth] + opts.nodeXSkip;
         } else {
           left += opts.nodeXSkip;
         }
         widths[i] = left;
+        levelWidths[depth] = left + node.width;
 
         if (!heights[depth] || heights[depth] < node.height) {
           heights[depth] = node.height;
         }
+      }
+
+      heights.push(0);
+      for(i = 0, ii = heights.length, depth = 0; i < ii; i++) {
+        var swap = heights[i];
+        heights[i] = depth;
+        depth += swap;
       }
 
       i = -1;
@@ -181,9 +148,7 @@
         depth = node.depth();
         node.y = opts.marginY;
 
-        while(--depth >= 0) {
-          node.y += heights[depth] + opts.nodeYSkip + opts.marginY;
-        }
+        node.y = heights[depth] + (opts.nodeYSkip + opts.marginY)*depth;
         node.x = opts.marginX + i*opts.marginX + widths[i];
       }
     };
@@ -348,7 +313,7 @@
       });
       trees.exit().remove();
       svg.attr('width', w)
-        .attr('height', h);
+        .attr('height', h+10);
     };
 
     function displayDesc(desc, top, bundle) {
