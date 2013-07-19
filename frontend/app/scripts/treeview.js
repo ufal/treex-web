@@ -27,7 +27,7 @@
     }
 
     layout.computeLayout = function(nodes) {
-      var i = -1, j = -1,
+      var i = -1, ii = -1,
           n = nodes.length,
           widths = [],
           left = 0,
@@ -41,7 +41,6 @@
       while(++i < n) {
         node = nodes[i];
         depth = node.isLeaf() ? maxDepth : node.depth();
-        j = i;
 
         if (!levelWidths[depth])
           levelWidths[depth] = 0;
