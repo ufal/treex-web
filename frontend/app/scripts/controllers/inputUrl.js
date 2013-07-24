@@ -11,6 +11,7 @@ angular.module('TreexWebApp')
         $timeout(function() {
           $scope.$modal('layout');
         });
+        $scope.text = data;
         return data;
       }, function(reason) {
         $scope.loading = false;
