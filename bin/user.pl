@@ -7,12 +7,15 @@ use warnings;
 use strict;
 $|=1;
 
+use FindBin;
+use lib "$FindBin::Bin/../lib";
+
 use Getopt::Long;
 use Pod::Usage;
 use Treex::Web;
 use IO::Prompter;
 use Email::Valid;
-use lib 'lib';
+
 Getopt::Long::Configure ("bundling");
 my %opts;
 GetOptions(\%opts,
