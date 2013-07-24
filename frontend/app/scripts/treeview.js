@@ -304,6 +304,8 @@
         if (lastTree) {
           shift = lastTree.x + lastTree.width + 10;
           w = shift + bbox.width;
+        } else {
+          w = bbox.x + bbox.width;
         }
         if (h < bbox.height) h = bbox.height;
         bbox.x = shift;
