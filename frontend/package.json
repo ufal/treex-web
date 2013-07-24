@@ -27,7 +27,8 @@
     "grunt-google-cdn": "~0.2.0",
     "grunt-ngmin": "~0.0.2",
     "proxy-middleware": "~0.4.0",
-    "connect-modrewrite": "~0.3.16"
+    "connect-modrewrite": "~0.3.16",
+    "grunt-text-replace": "~0.3.6"
   },
   "engines": {
     "node": ">=0.8.0"

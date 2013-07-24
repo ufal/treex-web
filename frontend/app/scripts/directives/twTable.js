@@ -40,7 +40,7 @@ angular.module('TreexWebApp')
     return {
       restrict: 'A',
       priority: 1001,
-      controller: function($scope, $timeout) {
+      controller: ['$scope', '$timeout', function($scope, $timeout) {
         $scope.goToPage = function(page, count) {
           var data = $scope.grid;
           if (((page > 0 && data.page !== page && $scope.pager.count >= page) || angular.isDefined(count)) && $scope.callback) {
@@ -80,7 +80,7 @@ angular.module('TreexWebApp')
             $scope.callback($scope.grid);
           }
         };
-      },
+      }],
       compile: function(element, attrs) {
         element.addClass('table');
         var i = 0;

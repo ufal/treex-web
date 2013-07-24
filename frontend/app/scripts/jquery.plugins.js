@@ -210,7 +210,7 @@ if (!(window.console && console.log)) {
         }
 })(jQuery);
 
-(function ($, undefined) {
+;(function ($, undefined) {
     "use strict";
     /*global document, window, jQuery, console */
 
@@ -2582,4 +2582,4 @@ if (!(window.console && console.log)) {
         }
     };
 
-}(jQuery))
+}(jQuery));

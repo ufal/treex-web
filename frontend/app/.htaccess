@@ -64,7 +64,7 @@
 # http://httpd.apache.org/docs/current/content-negotiation.html#multiviews
 # http://www.webmasterworld.com/apache/3808792.htm
 
-Options -MultiViews
+#Options -MultiViews
 
 # ------------------------------------------------------------------------------
 # | Custom error messages / pages                                              |
@@ -210,10 +210,25 @@ AddDefaultCharset utf-8
 # http://www.rackspace.com/knowledge_center/frequently-asked-question/why-is-mod-rewrite-not-working-on-my-site
 
 <IfModule mod_rewrite.c>
+    #RewriteLog "/var/www/treex-web/rewrite.log"
+    #RewriteLogLevel 3
+
     Options +FollowSymlinks
   # Options +SymLinksIfOwnerMatch
     RewriteEngine On
-  # RewriteBase /
+    RewriteBase /treex-web/
+</IfModule>
+
+
+# ------------------------------------------------------------------------------
+# | Proxy rewrite                                                              |
+# ------------------------------------------------------------------------------
+
+<IfModule mod_rewrite.c>
+    <IfModule mod_proxy.c>
+        RewriteRule    /api/v1/(.*)$  http://treex-web/api/v1/$1  [P]
+        ProxyPassReverse /treex-web/api/v1/ http://treex-web/api/v1/
+    </IfModule>
 </IfModule>
 
 # ------------------------------------------------------------------------------
@@ -237,11 +252,11 @@ AddDefaultCharset utf-8
 
 # Option 1: rewrite www.example.com → example.com
 
-<IfModule mod_rewrite.c>
-    RewriteCond %{HTTPS} !=on
-    RewriteCond %{HTTP_HOST} ^www\.(.+)$ [NC]
-    RewriteRule ^ http://%1%{REQUEST_URI} [R=301,L]
-</IfModule>
+# <IfModule mod_rewrite.c>
+#     RewriteCond %{HTTPS} !=on
+#     RewriteCond %{HTTP_HOST} ^www\.(.+)$ [NC]
+#     RewriteRule ^ http://%1%{REQUEST_URI} [R=301,L]
+# </IfModule>
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 

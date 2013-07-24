@@ -30,7 +30,8 @@ module.exports = function (grunt) {
   // configurable paths
   var yeomanConfig = {
     app: 'app',
-    dist: 'dist'
+    dist: 'dist',
+    distBase: '/treex-web/'
   };
 
   try {
@@ -179,6 +180,7 @@ module.exports = function (grunt) {
         files: {
           src: [
             '<%= yeoman.dist %>/scripts/{,*/}*.js',
+            '!<%= yeoman.dist %>/scripts/ace/*.js',
             '<%= yeoman.dist %>/styles/{,*/}*.css',
             '<%= yeoman.dist %>/images/{,*/}*.{png,jpg,jpeg,gif,webp,svg}',
             '<%= yeoman.dist %>/styles/fonts/*'
@@ -193,7 +195,7 @@ module.exports = function (grunt) {
       }
     },
     usemin: {
-      html: ['<%= yeoman.dist %>/{,*/}*.html'],
+      html: ['<%= yeoman.dist %>/{,*/}*.html', '<%= yeoman.dist %>/views/{,*/}*.html', '<%= yeoman.dist %>/scripts/*.js'],
       css: ['<%= yeoman.dist %>/styles/{,*/}*.css'],
       options: {
         dirs: ['<%= yeoman.dist %>']
@@ -239,16 +241,16 @@ module.exports = function (grunt) {
         files: [{
           expand: true,
           cwd: '<%= yeoman.app %>',
-          src: ['*.html', 'views/*.html'],
+          src: ['*.html', 'views/{,*/}*.html'],
           dest: '<%= yeoman.dist %>'
         }]
       },
       deploy: {
         options: {
           removeComments: true,
-          removeCommentsFromCDATA: true,
+          removeCommentsFromCDATA: true
           // https://github.com/yeoman/grunt-usemin/issues/44
-          collapseWhitespace: true
+          // collapseWhitespace: true
           // collapseBooleanAttributes: true,
           // removeAttributeQuotes: true,
           // removeRedundantAttributes: true
@@ -259,7 +261,7 @@ module.exports = function (grunt) {
         files: [{
           expand: true,
           cwd: '<%= yeoman.dist %>',
-          src: ['*.html', 'views/*.html'],
+          src: ['*.html', 'views/{,*/}*.html'],
           dest: '<%= yeoman.dist %>'
         }]
       }
@@ -277,7 +279,8 @@ module.exports = function (grunt) {
             '.htaccess',
             'bower_components/**/*',
             'images/{,*/}*.{gif,webp,svg}',
-            'styles/fonts/*'
+            'styles/fonts/*',
+            'scripts/ace/*'
           ]
         }, {
           expand: true,
@@ -329,11 +332,25 @@ module.exports = function (grunt) {
     },
     uglify: {
       dist: {
-        files: {
-          '<%= yeoman.dist %>/scripts/scripts.js': [
-            '<%= yeoman.dist %>/scripts/scripts.js'
-          ]
-        }
+        files: [{
+          expand: true,
+          cwd: '<%= yeoman.dist %>/scripts',
+          src: '*.js',
+          dest: '<%= yeoman.dist %>/scripts'
+        }]
+      }
+    },
+    replace: {
+      dist: {
+        overwrite: true,
+        src: ['<%= yeoman.dist %>/*.html', '<%= yeoman.dist %>/views/{,*/}*.html', '<%= yeoman.dist %>/scripts/*.js'],
+        replacements: [{
+          from: /(href|src)=\"\/([^\/][^\"]*)\"/g,
+          to: '$1="<%= yeoman.distBase %>$2"'
+        }, {
+          from: 'href="http://localhost:9000/"',
+          to: 'href="<%= yeoman.distBase %>"'
+        }]
       }
     }
   });
@@ -368,10 +385,11 @@ module.exports = function (grunt) {
     'cdnify',
     'ngmin',
     'cssmin',
-    'uglify',
+    //'uglify',
     'rev',
     'usemin',
-    'htmlmin:deploy'
+    'htmlmin:deploy',
+    'replace:dist'
   ]);
 
   grunt.registerTask('default', [
