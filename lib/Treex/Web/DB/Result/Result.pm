@@ -249,11 +249,12 @@ sub error_log {
 sub _file_rw {
     my ( $self, $filename, $content ) = @_;
 
-    my $path = $self->files_path;
+    my $path = $self->files_path->stringify;
     my $file = File::Spec->catfile($path, $filename);
 
     if (defined $content and $content ne '') {
         open my $fh, '>', $file or die $!;
+        utf8::encode($content);
         print $fh $content;
         close $fh;
         return $content;
