@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('TreexWebApp', ['$strap.directives', 'http-auth-interceptor', 'ngResource', 'ngRoute'])
+angular.module('TreexWebApp', ['$strap.directives', 'http-auth-interceptor', 'blueimp.fileupload', 'ngResource', 'ngRoute'])
   .config(['$routeProvider', '$locationProvider', '$httpProvider', function($routeProvider, $locationProvider, $httpProvider) {
     $routeProvider.
       when('/', { templateUrl: 'views/home.html', controller: 'MainCtrl' }).

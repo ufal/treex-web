@@ -36,7 +36,7 @@ angular.module('TreexWebApp').controller(
          q.name = scenario.name;
          q.description = scenario.description;
          q.sample = scenario.sample;
-         if (scenario.sample && !q.input) q.input = scenario.sample;
+         if (scenario.sample && !q.input && !q.filename) q.input = scenario.sample;
          q.compose = true;
          $scope.dismiss();
        });
