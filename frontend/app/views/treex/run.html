@@ -7,19 +7,37 @@
     {{error}}
   </div>
   <form name="form" id="treex-run-form" file-upload="upload">
-    <h3><i class="iconic-check" ng-show="query.scenario" style="color: #51A351"> </i>Scenario</h3>
+    <h3><i class="iconic-check" ng-show="form.scenario.$valid" style="color: #51A351"> </i>Scenario</h3>
     <div class="scenario-btns" id="pick-scenario">
       <button type="button" class="btn btn-primary" modal-class="modal-big" ng-controller="ScenarioPickCtrl" bs-modal="'views/scenario/picker.html'"><i class="icon-white icon-list-alt"></i> Pick scenario</button>
       <span class="muted"> or </span>
       <button type="button" class="btn" ng-disabled="query.compose" ng-class="{'btn-inverse' : !query.compose}" ng-model="query.compose" bs-button><i ng-class="{'icon-white' : !query.compose}" class="icon-pencil"></i> Compose your own</button>
     </div>
     <h4 ng-show="scenario.name">{{scenario.name}}</h4>
-    <p ng-show="query.description" class="well well-small" ng-bind-html-unsafe="query.description | noHtml | newlines"></p>
+    <!-- <p ng-show="query.description" class="well well-small" ng-bind-html-unsafe="query.description | noHtml | newlines"></p> -->
     <div class="form-controls" ng-show="query.compose">
-      <input type="text" id="scenario-name" placeholder="Enter Scenario Name" name="scenario-name" ng-model="query.name" />
-      <span class="help-block"><span class="label label-info">Optional</span> Scenario name is optional but it can help you navigate the results.</span>
+      <input type="text" id="scenario-name" placeholder="Name this run" name="scenario-name" ng-model="query.name" />
+      <span class="help-block"><span class="label label-info">Optional</span> Run name is optional but it can help you navigate the results.</span>
       <div ace="perl" ng-model="query.scenario">
-        <textarea name="scenario" id="scenario-text" rows="12" required ng-model="query.scenario"></textarea>
+        <textarea name="scenario" id="scenario-text" rows="12" required ng-model="query.scenario" validate-scenario input-file="{{queue[0].name}}" input="true"></textarea>
+      </div>
+      <div class="alert alert-block alert-error" ng-show="form.scenario.$invalid && !form.scenario.$error.required">
+        <button type="button" class="close" data-dismiss="alert">&times;</button>
+        <h4>Scenario Error!</h4>
+        <ul>
+          <li ng-show="form.scenario.$error.missingRead">
+            Scenario is missing a Read block
+          </li>
+          <li ng-show="form.scenario.$error.readMatch">
+            Scenario Read block doesn't match input type
+          </li>
+          <li ng-show="form.scenario.$error.readSupport">
+            Scenario Read block doesn't support plain text input - choose either Read::Text or Read::Sentences
+          </li>
+          <li ng-show="form.scenario.$error.missingWrite">
+            Scenario is missing a Write block
+          </li>
+        </ul>
       </div>
     </div>
     <h3><i class="iconic-check" ng-show="query.input || query.filename" style="color: #51A351"> </i>Input</h3>
@@ -69,7 +87,7 @@
       </table>
     </div>
     <div id="input-select" ng-hide="queue && queue.length > 0">
-      <textarea name="input" id="input" ng-model="query.input" class="input-block-level" ng-required="!query.filename" rows="10" cols="10"></textarea>
+      <textarea name="input" id="input" ng-model="query.input" class="input-block-level" ng-required="!query.filename" rows="10" cols="10" placeholder="Enter text input for Treex"></textarea>
     </div>
     <button type="button" ng-click="submit()" class="btn btn-primary btn-large" ng-disabled="form.$invalid" id="run-treex-btn">Run this Treex scenario</button>
     <button type="button" ng-click="clearForm()" class="act act-danger pull-right">Clean form</button>
