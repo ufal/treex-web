@@ -1,7 +1,6 @@
 package Treex::Web::Controller::Query;
 use Moose;
 use Treex::Web::Form::QueryForm;
-use Carp::Always;
 use jQuery::File::Upload;
 use namespace::autoclean;
 
@@ -21,7 +20,7 @@ Catalyst Controller.
 
 =head2 index
 
-Process the scenario and create the new result
+Process the scenario and create a new result
 
 =cut
 
@@ -140,8 +139,14 @@ sub download :Local :Args(1) {
 
     $filename =~ s/[^-a-zA-Z0-9_.]/_/go;
     my $file_path = $c->path_to('tmp', $filename);
+    my $name = $filename;
+
+    if ($c->session->{upload} && ($c->session->{upload}->{filename}||'') eq $filename) {
+        $name = $c->session->{upload}->{name};
+    }
 
     if (-f $file_path) {
+        $c->res->header('Content-Disposition', qq[attachment; filename="$name"]);
         $c->serve_static_file($file_path);
     } else {
         $c->res->code(404);

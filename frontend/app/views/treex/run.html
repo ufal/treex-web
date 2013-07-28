@@ -43,8 +43,11 @@
       <table class="table files ng-cloak">
         <tr ng-repeat="file in queue">
           <td>
-            <p class="name">
-              {{file.name}}
+            <p class="name" ng-switch on="!!file.url">
+              <span ng-switch-when="true">
+                <a tw-download="{{file.url}}" title="{{file.name}}" download="{{file.name}}">{{file.name}}</a>
+              </span>
+              <span ng-switch-default>{{file.name}}</span>
             </p>
             <div ng-show="file.error"><span class="label label-important">Error</span> {{file.error}}</div>
           </td>
