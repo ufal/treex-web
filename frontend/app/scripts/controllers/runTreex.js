@@ -2,8 +2,8 @@
 
 angular.module('TreexWebApp').controller(
   'RunTreexCtrl',
-  ['$scope', '$location', '$anchorScroll', '$timeout', '$http', 'Treex', 'Result', 'Tour', 'apiUrl',
-   function($scope, $location, $anchorScroll, $timeout, $http, Treex, Result, Tour, apiUrl) {
+  ['$scope', '$location', '$anchorScroll', '$timeout', '$http', 'Treex', 'Result', 'Scenario', 'Tour', 'apiUrl',
+   function($scope, $location, $anchorScroll, $timeout, $http, Treex, Result, Scenario, Tour, apiUrl) {
 
      if (Tour.isRunning()) {
        Tour.showStep(1);
@@ -67,6 +67,9 @@ angular.module('TreexWebApp').controller(
 
      $scope.$watch('query.compose', function(value) {
        if (value && $scope.ace) {
+         if (!$scope.query.scenario) {
+           $scope.query.scenario = Scenario.$template;
+         }
          $timeout(function() {
            $scope.ace.resize(true);
            $scope.ace.focus();

@@ -5,16 +5,22 @@ angular.module('TreexWebApp')
     var Scenario = $resource(api + 'scenarios/:id', { id : '@id' },
                              { 'update': {method : 'PUT' },
                                'query': {method: 'GET', params: {language: '@language'}, isArray : true}
-                             });
+                             }),
+        proto = Scenario.prototype,
+        template =
+          "Util::SetGlobal language=und    # desired language e.g. en,cs,de...\n" +
+          "Read::Text                      # 'from' parameter will be ignored\n" +
+          "\n# Your scenario goes here...\n\n" +
+          "Write::Treex                    # 'to' parameter will be ignored\n";
 
-
-    var proto = Scenario.prototype;
     proto.downloadUrl = function() {
       return api + 'scenarios/' + this.id + '/download';
     };
     proto.isEditable = function() {
       return Scenario.isEditable(this);
     };
+
+    Scenario.$template = template;
 
     Scenario.isEditable = function(scenario) {
       var user = Auth.user();
