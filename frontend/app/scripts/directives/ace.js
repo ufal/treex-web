@@ -43,7 +43,7 @@ angular.module('TreexWebApp')
 
         for(var ix = 0; ix < length; ix++) {
           stringBuilder.push('<div class="ace_line">');
-          stringBuilder.push('<span class="ace_gutter ace_gutter-cell" unselectable="on">' + (ix+1) + '</span>');
+          //stringBuilder.push('<span class="ace_gutter ace_gutter-cell" unselectable="on">' + (ix+1) + '</span>');
           textLayer.$renderLine(stringBuilder, ix, true, false);
           stringBuilder.push("</div>");
         }

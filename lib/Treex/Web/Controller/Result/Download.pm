@@ -81,7 +81,7 @@ sub result :Chained('base') :PathPart('result') :Args(0) {
     }
 }
 
-sub scenario :Chained('base') :PathPart('result') :Args(0) {
+sub scenario :Chained('base') :PathPart('scenario') :Args(0) {
     my ( $self, $c ) = @_;
 
     my $curr = $c->stash->{current_result};

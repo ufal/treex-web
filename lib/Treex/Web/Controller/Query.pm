@@ -59,7 +59,7 @@ sub index_POST {
             $self->status_bad_request($c, message => 'Uploaded file not found');
             return;
         }
-        my ($type) = $upload->{filename} =~ /\.(\w+(?:\.gz)?)$/;
+        my ($type) = $upload->{name} =~ /\.(\w+?(?:\.gz)?)$/;
         $rs->input_file($file_path, $type);
         $input = undef;
         delete $c->session->{upload};

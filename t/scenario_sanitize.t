@@ -61,4 +61,9 @@ SCEN
 is( $scenario, $result->_sanitize_scenario($scenario2), 'Remove all params' );
 is( $scenario3, $result->_inject_scenario($scenario2), 'Inject scenario with params');
 
+my ($type) = 'input.treex.gz' =~ /\.(\w+?(?:\.gz)?)$/;
+#diag("Type is: $type");
+is( 'treex.gz', $type, 'Extraction pattern works');
+
+
 done_testing();
