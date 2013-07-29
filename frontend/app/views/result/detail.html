@@ -18,7 +18,10 @@
     <div tw-if="result.job.status && result.job.status != 'queued' && result.job.status != 'working'">
       <div class="btn-toolbar">
         <div tw-if="result.job.status != 'failed'" class="btn-group">
-          <button class="btn" ng-click="download()"><i class="icon-download-alt"></i> Download</button>
+          <a class="btn btn-success" tw-download="{{result.downloadResultUrl}}"><i class="icon-download"></i> Download result</a>
+        </div>
+        <div tw-if="result.job.status != 'failed'" class="btn-group">
+          <a class="btn" tw-download="{{result.downloadAllUrl}}"><i class="icon-download-alt"></i> Download all</a>
         </div>
         <div class="btn-group">
           <button class="btn" ng-click="rerun()"><i class="icon-repeat"></i> Run again</button>
@@ -26,7 +29,7 @@
       </div>
       <div tw-if="result.job.status == 'failed'" class="treex-failed alert alert-error">
         <h4>Oh Snap!</h4>
-        <p>An error has occurred. We're terribly sorry about that, but it's one of those things that happens from time to time.</p>
+        <p>An error has occurred.</p>
         <p tw-if="result.job.message">Here's the error message: <strong>{{result.job.message}}</strong></p>
       </div>
       <div tw-if="result.job.status != 'failed'" tw-view="result" id="treexview">
@@ -45,13 +48,15 @@
       </ul>
       <div class="tab-content result-tabs">
         <div class="tab-pane" id="scenario">
+          <p tw-if="result.scenario"><a tw-download="{{result.downloadScenarioUrl}}">Download scenario</a></p>
           <pre tw-if="result.scenario" class="pre-scrollable" ace-highlight="perl" ng-model="result.scenario"></pre>
           <div tw-if="result.hasScenario && !result.scenario" class="alert alert-error">
              Scenario is empty.
           </div>
         </div>
         <div class="tab-pane" id="input">
-          <pre class="pre-scrollable">{{result.input}}</pre>
+          <p><a tw-download="{{result.downloadInputUrl}}">Download input</a></p>
+          <pre tw-if="result.input" class="pre-scrollable">{{result.input}}</pre>
         </div>
         <div class="tab-pane" id="stderr">
           <pre tw-if="result.error" class="pre-scrollable">{{result.error}}</pre>

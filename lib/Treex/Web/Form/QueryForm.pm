@@ -15,7 +15,8 @@ has_field 'language' => (type => 'Select', widget => 'Select', options_method =>
 has_field 'result_hash' => (type => 'Hidden');
 has_field 'scenario' => (type => 'TextArea', required => 1);
 has_field 'scenario_name' => (type => 'Text');
-has_field 'input' => (type => 'TextArea', required => 1);
+has_field 'input' => (type => 'TextArea');
+has_field 'filename' => (type => 'Text');
 
 sub validate {
     my $self = shift;
@@ -27,6 +28,9 @@ sub validate {
 
     $self->field('scenario')->add_error('Scenario is empty')
         unless $self->field('scenario')->value;
+
+    $self->field('input')->add_error('Input not specified')
+        unless $self->field('input')->value || $self->field('filename')->value;
 }
 
 sub fetch_scenario {

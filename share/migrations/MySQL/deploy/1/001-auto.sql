@@ -1,6 +1,6 @@
 -- 
 -- Created by SQL::Translator::Producer::MySQL
--- Created on Fri Jul  5 00:37:33 2013
+-- Created on Mon Jul 29 06:45:13 2013
 -- 
 ;
 SET foreign_key_checks=0;
@@ -48,8 +48,11 @@ CREATE TABLE `result` (
   `id` integer NOT NULL auto_increment,
   `job_handle` varchar(255) NULL,
   `unique_token` varchar(60) NOT NULL,
+  `session` varchar(100) NULL,
   `user` integer NULL DEFAULT null,
   `name` varchar(120) NULL,
+  `input_type` varchar(20) NOT NULL DEFAULT 'txt',
+  `output_type` varchar(20) NOT NULL DEFAULT 'treex',
   `language` integer NULL,
   `last_modified` datetime NOT NULL,
   INDEX `result_idx_language` (`language`),

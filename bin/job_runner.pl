@@ -46,6 +46,7 @@ my $self = Path::Class::File->new( File::Spec->rel2abs( $0 ) );
 my $app_dir = $self->parent->parent;
 
 $ENV{'TREEX_WEB_DATA'} = File::Spec->catdir($app_dir, 'data');
+#print STDERR $ENV{'TREEX_WEB_DATA'}."\n";
 
 my $config_file = Path::Class::File->new($app_dir, 'share', 'etc', 'treex_web.pl' );
 

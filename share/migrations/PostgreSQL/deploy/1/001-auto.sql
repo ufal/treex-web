@@ -1,6 +1,6 @@
 -- 
 -- Created by SQL::Translator::Producer::PostgreSQL
--- Created on Fri Jul  5 00:37:33 2013
+-- Created on Mon Jul 29 06:45:13 2013
 -- 
 ;
 --
@@ -52,8 +52,11 @@ CREATE TABLE "result" (
   "id" serial NOT NULL,
   "job_handle" character varying(255),
   "unique_token" character varying(60) NOT NULL,
+  "session" character varying(100),
   "user" integer DEFAULT null,
   "name" character varying(120),
+  "input_type" character varying(20) DEFAULT 'txt' NOT NULL,
+  "output_type" character varying(20) DEFAULT 'treex' NOT NULL,
   "language" integer,
   "last_modified" timestamp NOT NULL,
   PRIMARY KEY ("id"),

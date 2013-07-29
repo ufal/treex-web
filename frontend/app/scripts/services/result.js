@@ -5,8 +5,11 @@ angular.module('TreexWebApp')
     function Result(data) {
       angular.copy(data || {}, this);
       if (data) {
-        if (!this.name) this.name = this.token;
-        this.downloadUrl = api + 'results/' + this.token + '/download';
+        if (!this.name) this.name = 'Run '+this.id;
+        this.downloadAllUrl = 'results/' + this.token + '/download';
+        this.downloadResultUrl = this.downloadAllUrl + '/result';
+        this.downloadInputUrl = this.downloadAllUrl + '/input';
+        this.downloadScenarioUrl = this.downloadAllUrl + '/scenario';
       }
     }
 

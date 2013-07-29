@@ -19,10 +19,6 @@ angular.module('TreexWebApp').controller(
      $scope.result = Result.get(params.resultId).then(function(result) {
        $scope.loading = false;
 
-       $scope.download = function() {
-         $window.open(result.downloadUrl);
-       };
-
        $scope.rerun = function() {
          var wait = 2;
          result.$input().then(function(data) {
@@ -43,6 +39,5 @@ angular.module('TreexWebApp').controller(
        return result;
      });
 
-     $scope.download = angular.noop;
      $scope.rerun = angular.noop;
    }]);

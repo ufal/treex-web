@@ -33,12 +33,10 @@ sub perform {
     # Form a command
     my @cmd = qw(treex);# -Len Read::Text scenario.scen Write::Treex to=-);
     push @cmd, "-L$lang" if $lang;
-    push @cmd, "Read::Text from=input.txt";
     push @cmd, "scenario.scen";
-    push @cmd, "Write::Treex to=result.treex";
 
     open my $err, ">error.log" or die $!;
-    my $timeout = 120; # two minutes
+    my $timeout = 5*60; # 5 minutes
     my ( $ret, $h );
     try {
         $h = harness \@cmd, '<', \undef, '>&', $err, (my $t = timeout($timeout, exception => Treex::Web::Job::Exception::TimedOut->new()));

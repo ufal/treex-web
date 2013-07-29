@@ -42,10 +42,16 @@ angular.module('TreexWebApp')
       }],
       link : function(scope, element, attrs, cntl) {
         scope.$watch('result.job.status', function(value) {
-          if (cntl.$view != null || value != 'completed') return;
+          if (cntl.$view != null
+              || value != 'completed'
+              || !scope.result.printable) return;
 
           var result = scope.result;
           result.$print().then(function(data) {
+            if (!data || data.length == 0) {
+              $rootScope.$broadcast('treex:rendered');
+              return;
+            }
             cntl.$view = Treex.TreeView(element[0]);
             cntl.setDocument(Treex.Document.fromJSON(data));
             cntl.$view.init(cntl.$doc);

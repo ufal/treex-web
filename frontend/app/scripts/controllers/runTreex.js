@@ -107,12 +107,13 @@ angular.module('TreexWebApp').controller(
        }
      };
 
-     $scope.submit = function() {
+     $scope.submitForm = function() {
        if ($scope.form.$invalid) return;
        var q = $scope.query;
        Treex.query({
          scenario: q.scenario,
-         scenario_name: q.name,
+         name: q.name,
+         filename: q.filename,
          input: q.input
        }).then(function(result) {
          Result.lastResult = null;

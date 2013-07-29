@@ -40,18 +40,36 @@ sub index_POST {
         return;
     }
     # form is valid, lets create new Result
-    my ($scenario_name, $scenario, $input, $lang)
-        = ($form->value->{scenario_name},
-           $form->value->{scenario},
-           $form->value->{input},
-           $form->value->{language});
+    my ($scenario_name, $scenario, $input, $filename, $lang)
+        = ( map { $form->value->{$_} } (qw/scenario_name scenario input filename language/) );
+
     my $rs = $c->model('WebDB::Result')->new({
-#        session => $c->create_session_id_if_needed,
+        session => $c->create_session_id_if_needed,
+        input_type => 'txt',
         name => $scenario_name,
         language => $lang,
         ($c->user_exists ? (user => $c->user->id) : ())
     });
-    $rs->insert($scenario, $input);
+
+    my $upload = $c->session->{upload};
+    if ($filename && $upload && ($upload->{filename}||'') eq $filename) {
+        $filename =~ s/[^-a-zA-Z0-9_.]/_/go;
+        my $file_path = $c->path_to('tmp', $filename);
+        unless (-f $file_path) {
+            $self->status_bad_request($c, message => 'Uploaded file not found');
+            return;
+        }
+        my ($type) = $upload->{filename} =~ /\.(\w+(?:\.gz)?)$/;
+        $rs->input_file($file_path, $type);
+        $input = undef;
+        delete $c->session->{upload};
+    } elsif (not $input) {
+        $self->status_bad_request($c, message => 'Input is empty');
+        return;
+    }
+
+    $rs->insert($scenario, $input); # TODO: we need transaction here
+
     $c->log->debug("Creating new result: " . $rs->unique_token);
 
     # post the job
@@ -128,7 +146,7 @@ sub upload_item_DELETE {
     my $file_path = $c->path_to('tmp', $filename);
     unlink $file_path;
     if ($c->session->{upload} && ($c->session->{upload}->{filename}||'') eq $filename) {
-        $c->session->{upload} = undef;
+        delete $c->session->{upload};
     }
 
     $self->status_no_content($c);

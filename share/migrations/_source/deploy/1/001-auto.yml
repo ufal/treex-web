@@ -204,6 +204,16 @@ schema:
           order: 1
           size:
             - 0
+        input_type:
+          data_type: varchar
+          default_value: txt
+          is_nullable: 0
+          is_primary_key: 0
+          is_unique: 0
+          name: input_type
+          order: 7
+          size:
+            - 20
         job_handle:
           data_type: varchar
           default_value: ~
@@ -221,7 +231,7 @@ schema:
           is_primary_key: 0
           is_unique: 0
           name: language
-          order: 6
+          order: 9
           size:
             - 0
         last_modified:
@@ -231,7 +241,7 @@ schema:
           is_primary_key: 0
           is_unique: 0
           name: last_modified
-          order: 7
+          order: 10
           size:
             - 0
         name:
@@ -241,9 +251,29 @@ schema:
           is_primary_key: 0
           is_unique: 0
           name: name
-          order: 5
+          order: 6
           size:
             - 120
+        output_type:
+          data_type: varchar
+          default_value: treex
+          is_nullable: 0
+          is_primary_key: 0
+          is_unique: 0
+          name: output_type
+          order: 8
+          size:
+            - 20
+        session:
+          data_type: varchar
+          default_value: ~
+          is_nullable: 1
+          is_primary_key: 0
+          is_unique: 0
+          name: session
+          order: 4
+          size:
+            - 100
         unique_token:
           data_type: varchar
           default_value: ~
@@ -262,7 +292,7 @@ schema:
           is_primary_key: 0
           is_unique: 0
           name: user
-          order: 4
+          order: 5
           size:
             - 0
       indices:

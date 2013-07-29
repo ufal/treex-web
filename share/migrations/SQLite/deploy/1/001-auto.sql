@@ -1,6 +1,6 @@
 -- 
 -- Created by SQL::Translator::Producer::SQLite
--- Created on Fri Jul  5 00:37:33 2013
+-- Created on Mon Jul 29 06:45:13 2013
 -- 
 
 ;
@@ -46,8 +46,11 @@ CREATE TABLE result (
   id INTEGER PRIMARY KEY NOT NULL,
   job_handle varchar(255),
   unique_token varchar(60) NOT NULL,
+  session varchar(100),
   user integer DEFAULT null,
   name varchar(120),
+  input_type varchar(20) NOT NULL DEFAULT 'txt',
+  output_type varchar(20) NOT NULL DEFAULT 'treex',
   language integer,
   last_modified datetime NOT NULL,
   FOREIGN KEY (language) REFERENCES languages(id) ON DELETE CASCADE ON UPDATE CASCADE,

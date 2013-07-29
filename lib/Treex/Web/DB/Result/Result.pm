@@ -12,7 +12,9 @@ use warnings;
 use DBIx::Class::UUIDColumns;
 use File::Path ();
 use File::Spec ();
+use File::Copy ();
 use Encode;
+use boolean;
 use Treex::Web; # TODO: THIS MUST BE REMOVED
 
 use Moose;
@@ -91,6 +93,8 @@ __PACKAGE__->add_columns(
     { data_type => "varchar", is_nullable => 1, size => 255 },
     "unique_token",
     { data_type => "varchar", is_nullable => 0, size => 60 },
+    "session",
+    { data_type => "varchar", is_nullable => 1, size => 100 },
     "user",
     {
         data_type      => "integer",
@@ -100,6 +104,10 @@ __PACKAGE__->add_columns(
     },
     "name",
     { data_type => "varchar", is_nullable => 1, size => 120 },
+    "input_type",
+    { data_type => "varchar", is_nullable => 0, default_value => 'txt', size => 20 },
+    "output_type",
+    { data_type => "varchar", is_nullable => 0, default_value => 'treex', size => 20 },
     "language",
     { data_type => "integer", is_nullable => 1 },
     "last_modified",
@@ -171,8 +179,12 @@ sub REST {
     my $self = shift;
 
     return {
+        id => $self->id,
         ($self->language ? (language => $self->language->code) : ()),
         name => decode_utf8($self->name),
+        printable => ($self->output_type eq 'treex' ? true : false),
+        output_type => $self->output_type,
+        input_type => $self->input_type,
         token => $self->unique_token,
         last_modified => $self->last_modified->strftime('%Y-%m-%dT%H:%M:%S%z'),
     };
@@ -180,8 +192,12 @@ sub REST {
 
 sub rest_schema {
     return (
+        id => { type => 'number' },
         language => { type => 'string' },
         name => { type => 'string' },
+        printable => { type => 'boolean' },
+        output_type => { type => 'string' },
+        input_type => { type => 'string' },
         token => { type => 'string' },
         last_modified => { type => 'string' }
     )
@@ -202,13 +218,15 @@ sub insert {
     my ( $self, $scenario, $input ) = @_;
 
     my $path = $self->files_path;
-    File::Path::make_path("$path/") or die "Path: $path, Error: $!";
+    if (!-d $path) {
+        File::Path::make_path("$path/") or die "Path: $path, Error: $!";
+    }
 
     # write down scenario file
     $self->scenario($scenario);
 
     # write input file
-    $self->input($input);
+    $self->input($input) if $input;
 
     return $self->next::method();
 }
@@ -227,14 +245,36 @@ sub input {
     my ( $self, $input ) = @_;
 
     # write down input file
-    return $self->_file_rw('input.txt', $input);
+    return $self->_file_rw('input.'.$self->input_type, $input)
+        if $self->input_type eq 'txt';
+}
+
+sub input_file {
+    my ( $self, $input_file, $type ) = @_;
+
+    $self->input_type($type);
+    my $path = $self->files_path;
+    if (!-d $path) {
+        File::Path::make_path("$path/") or die "Path: $path, Error: $!";
+    }
+    my $file = File::Spec->catfile($path, 'input.'.$self->input_type);
+
+    print STDERR "Move $input_file -> $file\n";
+
+    File::Copy::move($input_file, $file) or die "File move failed: $!";
 }
 
 sub scenario {
     my ( $self, $scenario ) = @_;
 
+    if ($scenario) {
+        $scenario = $self->_inject_scenario($scenario);
+    }
+
     # write down scenario file
-    return $self->_file_rw('scenario.scen', $scenario);
+    my $res = $self->_file_rw('scenario.scen', $scenario);
+
+    return $scenario ? $res : $self->_sanitize_scenario($res);
 }
 
 sub result_filename {
@@ -259,12 +299,44 @@ sub _file_rw {
         close $fh;
         return $content;
     } else {
+        # ignore too large files
+        my $filesize = -s $file;
+        if ($filesize > 1024*500) {
+            return '';
+        }
         open my $fh, '<', $file or return "";
         my $file_contents = do { local $/; <$fh> };
         close $fh;
         utf8::decode($file_contents);
         return $file_contents;
     }
+}
+
+sub _sanitize_scenario {
+    my ( $self, $scenario ) = @_;
+
+    $scenario =~ s/^\s*((?:Read|Write)::\w+)(?:\s\w+=\S+)*/$1/gim;
+    return $scenario;
+}
+
+sub _inject_scenario {
+    my ( $self, $scenario ) = @_;
+
+    $scenario = $self->_sanitize_scenario($scenario);
+    my ($input, $output ) = ('input.'.$self->input_type, 'result.treex');
+
+    # inject write block
+    my ($block) = $scenario =~ /Write::(\w+)/;
+    if ($block eq 'Text') {
+        $output = 'result.txt';
+        $self->output_type('txt');
+    } elsif ($block eq 'CoNLLX') {
+        $output = 'result.conll';
+        $self->output_type('conll');
+    }
+    $scenario =~ s/(Write::\w+)/$1 to=$output/g; # inject output param
+    $scenario =~ s/(Read::\w+)/$1 from=$input/g; # inject input param
+    return $scenario;
 }
 
 sub files_path {
