@@ -6,6 +6,14 @@ BEGIN {extends 'HTML::FormHandler';}
 with 'Treex::Web::Form::Role::Base';
 with 'Treex::Web::Form::Role::LanguageOptions';
 
+=head1 NAME
+
+Treex::Web::Forms::QueryForm - Treex query form
+
+=head1 METHODS
+
+=cut
+
 has 'schema' => (is => 'rw');
 has 'user' => (is => 'rw', isa => 'Maybe[Object]');
 
@@ -14,9 +22,13 @@ has '+name' => (default => 'query-form');
 has_field 'language' => (type => 'Select', widget => 'Select', options_method => \&language_options);
 has_field 'result_hash' => (type => 'Hidden');
 has_field 'scenario' => (type => 'TextArea', required => 1);
-has_field 'scenario_name' => (type => 'Text');
+has_field 'name' => (type => 'Text');
 has_field 'input' => (type => 'TextArea');
 has_field 'filename' => (type => 'Text');
+
+=head2 validate
+
+=cut
 
 sub validate {
     my $self = shift;
@@ -33,6 +45,10 @@ sub validate {
         unless $self->field('input')->value || $self->field('filename')->value;
 }
 
+=head2 fetch_scenario
+
+=cut
+
 sub fetch_scenario {
     my ( $self, $scenario_id ) = @_;
     return unless $self->schema;
@@ -48,6 +64,10 @@ sub fetch_scenario {
     return $scenario->scenario;
 }
 
+=head2 fetch_language_id
+
+=cut
+
 sub fetch_language_id {
     my ( $self, $code ) = @_;
     return unless $self->schema;
@@ -61,36 +81,6 @@ sub fetch_language_id {
 no HTML::FormHandler::Moose;
 1;
 __END__
-
-=head1 NAME
-
-Treex::Web::Forms::QueryForm - Perl extension for blah blah blah
-
-=head1 SYNOPSIS
-
-   use Treex::Web::Forms::QueryForm;
-   blah blah blah
-
-=head1 DESCRIPTION
-
-Stub documentation for Treex::Web::Forms::QueryForm,
-
-Blah blah blah.
-
-=head2 EXPORT
-
-None by default.
-
-=head1 SEE ALSO
-
-Mention other useful documentation such as the documentation of
-related modules or operating system documentation (such as man pages
-in UNIX), or any relevant external documentation such as RFCs or
-standards.
-
-If you have a mailing list set up for your module, mention it here.
-
-If you have a web site set up for your module, mention it here.
 
 =head1 AUTHOR
 

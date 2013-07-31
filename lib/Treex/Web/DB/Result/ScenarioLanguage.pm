@@ -19,18 +19,16 @@ __PACKAGE__->table("scenario_languages");
 
 =head1 ACCESSORS
 
-=head2 id
+=head2 scenario
 
   data_type: 'integer'
-  is_auto_increment: 1
   is_nullable: 0
 
 
-=head2 name
+=head2 language
 
   data_type: 'varchar'
   is_nullable: 0
-  size: 120
 
 =cut
 

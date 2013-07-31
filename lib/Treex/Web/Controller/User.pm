@@ -61,13 +61,25 @@ __PACKAGE__->api_model(
 
 =head1 NAME
 
-Treex::Web::Controller::User - Catalyst Controller
+Treex::Web::Controller::User
 
 =head1 DESCRIPTION
 
-Catalyst Controller.
+DEPRECATED
 
 =head1 METHODS
+
+=cut
+
+=head2 users
+
+=over
+
+=item users_GET
+
+=item users_POST
+
+=back
 
 =cut
 
@@ -154,6 +166,20 @@ my @user_errors = (
 my @user_params = (
     __PACKAGE__->api_param_path('int', 'User id', 'userId')
 );
+
+=head2 user
+
+=over
+
+=item user_GET
+
+=item user_PUT
+
+=item user_DELETE
+
+=back
+
+=cut
 
 sub user :Path('/users') :Args(1) :ActionClass('REST') :Does('~NeedsLogin') {
     my ( $self, $c, $user_id ) = @_;
@@ -260,6 +286,16 @@ my $email_available_api = $user_resouce->api(
     description => 'Email availability check'
 );
 
+=head2 email_available
+
+=over
+
+=item email_available_GET
+
+=back
+
+=cut
+
 sub email_available :Path('/users/email-available') :Args(0) :ActionClass('REST') { }
 
 $email_available_api->get(
@@ -294,6 +330,16 @@ my $activate_api = $user_resouce->api(
     path => '/users/activate',
     description => 'Activate user by token'
 );
+
+=head2 activate
+
+=over
+
+=item activate_GET
+
+=back
+
+=cut
 
 sub activate :Path('/users/activate') :Args(0) :ActionClass('REST') { }
 
@@ -331,6 +377,12 @@ sub activate_GET {
     }
 }
 
+=head2 send_activation_email
+
+TODO
+
+=cut
+
 sub send_activation_email :Private {
     my ( $self, $c, $user ) = @_;
 
@@ -340,7 +392,7 @@ sub send_activation_email :Private {
 
 =head1 AUTHOR
 
-root
+Michal Sedlak E<lt>sedlak@ufal.mff.cuni.czE<gt>
 
 =head1 LICENSE
 

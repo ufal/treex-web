@@ -7,23 +7,48 @@ use namespace::autoclean;
 
 requires qw/redis/;
 
+
+=head1 NAME
+
+Resque::Plugin::Status::Statused - Role added to Resque
+
+=head1 DESCRIPTION
+
+Enhances every job pushed on queue with a status structure
+
+=head1 METHODS
+
+=cut
+
 has 'status_manager' => (
     is => 'ro',
     isa => 'Resque::Plugin::Status::Manager',
     lazy => 1,
-    builder => 'build_status_manager'
+    builder => '_build_status_manager'
 );
 
-sub build_status_manager {
+sub _build_status_manager {
     my $self = shift;
 
     return Resque::Plugin::Status::Manager->new( redis => $self->redis );
 }
 
+=head2 get_status
+
+Gets status from status_manager by it's uuid
+
+=cut
+
 sub get_status {
     my ( $self, $uuid ) = @_;
     $self->status_manager->get($uuid);
 }
+
+=head2 set_status
+
+Sets status by it's uuid
+
+=cut
 
 sub set_status {
     my $self = shift;
@@ -31,6 +56,12 @@ sub set_status {
 
     $self->status_manager->set($uuid, @_);
 }
+
+=head2 push
+
+Wrapper around push method adding status structure to Redis
+
+=cut
 
 around 'push' => sub {
     my $orig = shift;
@@ -53,39 +84,9 @@ around 'push' => sub {
 1;
 __END__
 
-=head1 NAME
-
-Resque::Plugin::Status::Statused - Perl extension for blah blah blah
-
-=head1 SYNOPSIS
-
-   use Resque::Plugin::Status::Statused;
-   blah blah blah
-
-=head1 DESCRIPTION
-
-Stub documentation for Resque::Plugin::Status::Statused,
-
-Blah blah blah.
-
-=head2 EXPORT
-
-None by default.
-
-=head1 SEE ALSO
-
-Mention other useful documentation such as the documentation of
-related modules or operating system documentation (such as man pages
-in UNIX), or any relevant external documentation such as RFCs or
-standards.
-
-If you have a mailing list set up for your module, mention it here.
-
-If you have a web site set up for your module, mention it here.
-
 =head1 AUTHOR
 
-Michal Sedlak, E<lt>sedlakmichal@gmail.comE<gt>
+Michal Sedlak E<lt>sedlak@ufal.mff.cuni.czE<gt>
 
 =head1 COPYRIGHT AND LICENSE
 

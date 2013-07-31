@@ -11,6 +11,22 @@ use Exception::Class (
 );
 use IPC::Run qw(run harness start finish timeout);
 
+=head1 NAME
+
+Treex::Web::Job::Process - Job for executing treex commands
+
+=head1 DESCRIPTION
+
+Run the Treex using L<IPC::Run>
+
+=head1 METHODS
+
+=head2 perform
+
+The method executed by Resque worker
+
+=cut
+
 sub perform {
     my $job = shift;
 
@@ -70,39 +86,9 @@ sub perform {
 1;
 __END__
 
-=head1 NAME
-
-Treex::Web::Job::Process - Job for executing treex commands
-
-=head1 SYNOPSIS
-
-   use Treex::Web::Job::Process;
-   blah blah blah
-
-=head1 DESCRIPTION
-
-Stub documentation for Treex::Web::Job::Process,
-
-Blah blah blah.
-
-=head2 EXPORT
-
-None by default.
-
-=head1 SEE ALSO
-
-Mention other useful documentation such as the documentation of
-related modules or operating system documentation (such as man pages
-in UNIX), or any relevant external documentation such as RFCs or
-standards.
-
-If you have a mailing list set up for your module, mention it here.
-
-If you have a web site set up for your module, mention it here.
-
 =head1 AUTHOR
 
-Michal Sedlak, E<lt>sedlakmichal@gmail.comE<gt>
+Michal Sedlak E<lt>sedlak@ufal.mff.cuni.czE<gt>
 
 =head1 COPYRIGHT AND LICENSE
 

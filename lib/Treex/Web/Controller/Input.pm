@@ -53,6 +53,14 @@ has 'browser' => (
 
 =head2 url
 
+Base method for REST
+
+=over 2
+
+=item url_POST
+
+=back
+
 =cut
 
 my $url_api = $input_resource->api(
@@ -104,7 +112,30 @@ sub url_POST {
     }
 }
 
+=head2 samples
+
+=over
+
+=item samples_GET
+
+=back
+
+=cut
+
+my $samples_api = $input_resource->api(
+    controller => __PACKAGE__,
+    action => 'url',
+    path => '/input/samples',
+    description => 'Returns a list of all text samples'
+);
+
 sub samples :Local :Args(0) :ActionClass('REST') { }
+
+$samples_api->get(
+    summary => 'Returns list of all available sample files',
+    response => 'List[string]',
+    nickname => 'listSamples',
+);
 
 sub samples_GET {
     my ( $self, $c ) = @_;
@@ -120,12 +151,50 @@ sub samples_GET {
     $self->status_ok($c, entity => [ @files ]);
 }
 
+=head2 sample
+
+=over
+
+=item sample_GET
+
+=back
+
+=cut
+
+my $sample_api = $input_resource->api(
+    controller => __PACKAGE__,
+    action => 'url',
+    path => '/input/samples/{sampleName}',
+    description => 'Returns a content of given sample'
+);
+
 sub sample :Path('samples') :Args(1) :ActionClass('REST') { }
+
+__PACKAGE__->api_model(
+    'SampleContent',
+    content => {
+        type => 'string',
+        required => 1,
+        description => 'Sample content'
+    }
+);
+
+$sample_api->get(
+    summary => 'Get sample contents',
+    response => 'SampleContent',
+    nickname => 'getSample',
+    params => [
+        __PACKAGE__->api_param_path('string', 'Sample name', 'sampleName')
+    ],
+    errors => [
+        __PACKAGE__->api_error('not_found', 404, 'Sample not found'),
+    ]
+);
 
 sub sample_GET {
     my ( $self, $c, $file ) = @_;
 
-    if ( $file =~ /[-\w\.]/ ) {
+    if ( $file =~ /[-\w\.]+/ ) {
         my $path = $c->path_to('data', 'samples', $file.'.txt');
 
         if (-f $path) {
@@ -136,14 +205,18 @@ sub sample_GET {
             };
             utf8::decode($content);
             $self->status_ok($c, entity => { content => $content });
+        } else {
+            $self->status_error($c, $sample_api->error('not_found'));
         }
+    } else {
+        $self->status_error($c, $sample_api->error('not_found'));
     }
 }
 
 
 =head1 AUTHOR
 
-Michal Sedlák,,,
+Michal Sedlak E<lt>sedlak@ufal.mff.cuni.czE<gt>
 
 =head1 LICENSE
 

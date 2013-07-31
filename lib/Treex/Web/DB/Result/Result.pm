@@ -26,11 +26,7 @@ extends 'DBIx::Class::Core';
 
 =over 4
 
-=item * L<DBIx::Class::InflateColumn::DateTime>
-
 =item * L<DBIx::Class::TimeStamp>
-
-=item * L<DBIx::Class::PK::Auto>
 
 =item * L<DBIx::Class::UUIDColumns>
 
@@ -38,7 +34,7 @@ extends 'DBIx::Class::Core';
 
 =cut
 
-__PACKAGE__->load_components('InflateColumn::DateTime', 'TimeStamp', 'PK::Auto', 'UUIDColumns', 'InflateColumn::FS');
+__PACKAGE__->load_components('TimeStamp', 'UUIDColumns');
 
 =head1 TABLE: C<result>
 
@@ -54,7 +50,13 @@ __PACKAGE__->table("result");
   is_auto_increment: 1
   is_nullable: 0
 
-=head2 job_uid
+=head2 job_handle
+
+  data_type: 'varchar'
+  is_nullable: 1
+  size: 255
+
+=head2 unique_token
 
   data_type: 'varchar'
   is_nullable: 0
@@ -63,7 +65,7 @@ __PACKAGE__->table("result");
 =head2 session
 
   data_type: 'varchar'
-  is_nullable: 0
+  is_nullable: 1
   size: 100
 
 =head2 user
@@ -76,8 +78,27 @@ __PACKAGE__->table("result");
 =head2 name
 
   data_type: 'varchar'
-  is_nullable: 0
+  is_nullable: 1
   size: 120
+
+=head2 input_type
+
+  data_type: 'varchar'
+  default_value: 'txt'
+  is_nullable: 0
+  size: 20
+
+=head2 output_type
+
+  data_type: 'varchar'
+  default_value: 'treex'
+  is_nullable: 0
+  size: 20
+
+=head2 language
+
+  data_type: 'integer'
+  is_nullable: 1
 
 =head2 last_modified
 
@@ -133,11 +154,11 @@ __PACKAGE__->set_primary_key("id");
 
 =head1 UNIQUE CONSTRAINTS
 
-=head2 C<hash_unique>
+=head2 C<unique_token>
 
 =over 4
 
-=item * L</hash>
+=item * L</unique_token>
 
 =back
 
@@ -175,6 +196,12 @@ __PACKAGE__->belongs_to(
 
 =cut
 
+=head2 REST
+
+REST representation
+
+=cut
+
 sub REST {
     my $self = shift;
 
@@ -190,6 +217,12 @@ sub REST {
     };
 }
 
+=head2 rest_schema
+
+JSON Schema
+
+=cut
+
 sub rest_schema {
     return (
         id => { type => 'number' },
@@ -203,6 +236,12 @@ sub rest_schema {
     )
 }
 
+=head2 new
+
+Creates a new instace with a L</unique_token>
+
+=cut
+
 sub new {
     my ( $self, $attrs ) = @_;
 
@@ -213,6 +252,14 @@ sub new {
 
     return $self->next::method( $attrs );
 }
+
+=head2 insert
+
+Inserts new record to the database together with scenario and input
+
+TODO: We need a transaction here
+
+=cut
 
 sub insert {
     my ( $self, $scenario, $input ) = @_;
@@ -231,6 +278,12 @@ sub insert {
     return $self->next::method();
 }
 
+=head2 delete
+
+Deletes record from the database and all related files
+
+=cut
+
 sub delete {
     my $self = shift;
 
@@ -241,6 +294,12 @@ sub delete {
     return $self->next::method(@_);
 }
 
+=head2 input
+
+get/set input
+
+=cut
+
 sub input {
     my ( $self, $input ) = @_;
 
@@ -248,6 +307,12 @@ sub input {
     return $self->_file_rw('input.'.$self->input_type, $input)
         if $self->input_type eq 'txt';
 }
+
+=head2 input_file
+
+Set input file
+
+=cut
 
 sub input_file {
     my ( $self, $input_file, $type ) = @_;
@@ -264,6 +329,12 @@ sub input_file {
     File::Copy::move($input_file, $file) or die "File move failed: $!";
 }
 
+=head2 scenario
+
+get/set scenario
+
+=cut
+
 sub scenario {
     my ( $self, $scenario ) = @_;
 
@@ -277,10 +348,22 @@ sub scenario {
     return $scenario ? $res : $self->_sanitize_scenario($res);
 }
 
+=head2 result_filename
+
+Constructs result filename
+
+=cut
+
 sub result_filename {
     my $self = shift;
-    return File::Spec->catfile($self->files_path, 'result.treex');
+    return File::Spec->catfile($self->files_path, 'result.'.$self->output_type);
 }
+
+=head2 error_log
+
+Gets error log
+
+=cut
 
 sub error_log {
     shift->_file_rw('error.log');
@@ -338,6 +421,12 @@ sub _inject_scenario {
     $scenario =~ s/(Read::\w+)/$1 from=$input/g; # inject input param
     return $scenario;
 }
+
+=head2 files_path
+
+Constructs a path for current result
+
+=cut
 
 sub files_path {
     my $self = shift;

@@ -19,20 +19,33 @@ sub mangle_arguments {
 
 =head1 NAME
 
-Treex::Web::Model::Resque - Catalyst Model
+Treex::Web::Model::Resque - Simple adapter for Resque
 
 =head1 DESCRIPTION
 
-Catalyst Model.
+A Catalyst model adapter for resque
+
+=head1 METHODS
+
+=over 2
+
+=item prepare_arguments
+
+=item mangle_arguments
+
+=back
 
 =head1 AUTHOR
 
-Michal Sedlák,,,
+Michal Sedlak E<lt>sedlak@ufal.mff.cuni.czE<gt>
 
-=head1 LICENSE
+=head1 COPYRIGHT AND LICENSE
 
-This library is free software. You can redistribute it and/or modify
-it under the same terms as Perl itself.
+Copyright (C) 2013 by Michal Sedlak
+
+This program is free software; you can redistribute it and/or modify
+it under the same terms as Perl itself, either Perl version 5.8.2 or,
+at your option, any later version of Perl 5 you may have available.
 
 =cut
 

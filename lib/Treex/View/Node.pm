@@ -5,7 +5,50 @@ BEGIN { $ENV{NO_FS_CLASSES}=1; }
 use Treex::PML::Schema;
 use Treex::PML::Instance;
 use Scalar::Util qw(blessed);
-use Data::Dump qw(pp);
+
+=head1 NAME
+
+Treex::View::Node - This is L<Treex::Core::Node> wrapper
+
+=head1 SYNOPSIS
+
+   use Treex::View::Node;
+
+   my $root = Treex::View::Node->new( node => $treex_root );
+
+=head1 DESCRIPTION
+
+Wrapper around regular L<Treex::Core::Node> to provide L<TO_JSON>
+method used for converting Treex structure to simple Perl hashes and
+arrays.
+
+=head1 IMPORTED CONSTANTS
+
+=over 2
+
+=item PML_STRUCTURE_DECL
+
+=item PML_CONTAINER_DECL
+
+=item PML_SEQUENCE_DECL
+
+=item PML_LIST_DECL
+
+=item PML_ALT_DECL
+
+=item PML_CDATA_DECL
+
+=item PML_CHOICE_DECL
+
+=item PML_CONSTANT_DECL
+
+=item PML_ELEMENT_DECL
+
+=back
+
+=head1 METHODS
+
+=cut
 
 has 'node' => (is => 'ro', isa => 'Treex::Core::Node', required => 1);
 
@@ -14,7 +57,13 @@ has 'labels' => (
     isa    => 'Treex::Core::TredView::Labels',
 );
 
-# will traverse data and dumps structures to hashes and arrays
+
+=head2 traverse_data
+
+Will traverse data and dumps structures to hashes and arrays
+
+=cut
+
 sub traverse_data {
     my ($self, $decl, $value) = @_;
     my $data;
@@ -97,6 +146,12 @@ sub traverse_data {
     return $data;
 }
 
+=head2 TO_JSON
+
+Called by L<JSON> package while converting blessed items
+
+=cut
+
 sub TO_JSON {
     my $self = shift;
 
@@ -137,39 +192,9 @@ __PACKAGE__->meta->make_immutable();
 1;
 __END__
 
-=head1 NAME
-
-Treex::View::Node - This is Treex::Core::Node wrapper
-
-=head1 SYNOPSIS
-
-   use Treex::View::Node;
-   blah blah blah
-
-=head1 DESCRIPTION
-
-Stub documentation for Treex::View::Node,
-
-Blah blah blah.
-
-=head2 EXPORT
-
-None by default.
-
-=head1 SEE ALSO
-
-Mention other useful documentation such as the documentation of
-related modules or operating system documentation (such as man pages
-in UNIX), or any relevant external documentation such as RFCs or
-standards.
-
-If you have a mailing list set up for your module, mention it here.
-
-If you have a web site set up for your module, mention it here.
-
 =head1 AUTHOR
 
-Michal Sedlak, E<lt>sedlakmichal@gmail.comE<gt>
+Michal Sedlak E<lt>sedlak@ufal.mff.cuni.czE<gt>
 
 =head1 COPYRIGHT AND LICENSE
 

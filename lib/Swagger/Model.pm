@@ -4,6 +4,25 @@ use Moose;
 use JSON::Schema;
 use namespace::autoclean;
 
+
+=head1 NAME
+
+Swagger::Model - Representing Swagger Model data holder
+
+=head1 SYNOPSIS
+
+   use Swagger::Model;
+   blah blah blah
+
+=head1 DESCRIPTION
+
+Model can generate output in Swagger but also in JSON Schema format
+which can be used for validation
+
+=head1 METHODS
+
+=cut
+
 has 'id' => ( is => 'ro' );
 
 has 'validator' => (
@@ -31,6 +50,12 @@ has 'properties' => (
     default => sub { {} },
 );
 
+=head2 schema
+
+Returns JSON Schema representation of the model
+
+=cut
+
 sub schema {
     my $self = shift;
 
@@ -41,6 +66,12 @@ sub schema {
     };
 }
 
+=head2 listing
+
+Returns Swagger representation of the model
+
+=cut
+
 sub listing {
     my $self = shift;
 
@@ -49,6 +80,12 @@ sub listing {
         properties => { %{$self->properties} }
     }
 }
+
+=head2 submodels
+
+Returns all submodel of this model
+
+=cut
 
 sub submodels {
     my $self = shift;
@@ -68,39 +105,9 @@ __PACKAGE__->meta->make_immutable;
 1;
 __END__
 
-=head1 NAME
-
-Swagger::Model - Perl extension for blah blah blah
-
-=head1 SYNOPSIS
-
-   use Swagger::Model;
-   blah blah blah
-
-=head1 DESCRIPTION
-
-Stub documentation for Swagger::Model,
-
-Blah blah blah.
-
-=head2 EXPORT
-
-None by default.
-
-=head1 SEE ALSO
-
-Mention other useful documentation such as the documentation of
-related modules or operating system documentation (such as man pages
-in UNIX), or any relevant external documentation such as RFCs or
-standards.
-
-If you have a mailing list set up for your module, mention it here.
-
-If you have a web site set up for your module, mention it here.
-
 =head1 AUTHOR
 
-Michal Sedlak, E<lt>sedlakmichal@gmail.comE<gt>
+Michal Sedlak E<lt>sedlak@ufal.mff.cuni.czE<gt>
 
 =head1 COPYRIGHT AND LICENSE
 

@@ -1,5 +1,5 @@
 #!/usr/bin/perl -Iblib/lib -Iblib/arch -I../blib/lib -I../blib/arch
-# 
+#
 # Before `make install' is performed this script should be runnable with
 # `make test'. After `make install' it should work as `perl buffer_copy.t'
 

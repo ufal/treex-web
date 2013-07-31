@@ -7,26 +7,38 @@ use namespace::autoclean;
 
 BEGIN {extends 'Catalyst::Controller'; }
 
+=encoding utf8
+
 =head1 NAME
 
 Treex::Web::Controller::Result::Download - Catalyst Controller
 
 =head1 DESCRIPTION
 
-Catalyst Controller.
+Routes for downloading result files.
 
 =head1 METHODS
 
 =cut
 
+=head2 base
 
-=head2 index
+Base method hooked on Result chain
+
+See L<Treex::Web::Controller::Result/download>
 
 =cut
 
 sub base :Chained('../result') :PathPart('download') :CaptureArgs(0) {
     my ( $self, $c ) = @_;
 }
+
+=head2 all
+
+Initiate download of whole result content in a zip archive using
+L<Archive::Zip>
+
+=cut
 
 sub all :Chained('base') :PathPart('') :Args(0) {
     my ( $self, $c ) = @_;
@@ -51,6 +63,15 @@ sub all :Chained('base') :PathPart('') :Args(0) {
     $c->res->body($data);
 }
 
+=head2 input
+
+Initiate input download. It will try to guess input type from result's
+L<input_type|Treex::Web::DB::Result::Result/input_type>
+
+See L<result>
+
+=cut
+
 sub input :Chained('base') :PathPart('input') :Args(0) {
     my ( $self, $c ) = @_;
 
@@ -66,6 +87,15 @@ sub input :Chained('base') :PathPart('input') :Args(0) {
     }
 }
 
+=head2 result
+
+Initiate result download. It will try to guess result type from result's
+L<output_type|Treex::Web::DB::Result::Result/output_type>
+
+See L<input>
+
+=cut
+
 sub result :Chained('base') :PathPart('result') :Args(0) {
     my ( $self, $c ) = @_;
 
@@ -80,6 +110,12 @@ sub result :Chained('base') :PathPart('result') :Args(0) {
         $c->res->code(404);
     }
 }
+
+=head2 scenario
+
+Initiate download of scenario as a plain text C<scenario.scen> file
+
+=cut
 
 sub scenario :Chained('base') :PathPart('scenario') :Args(0) {
     my ( $self, $c ) = @_;
@@ -98,7 +134,7 @@ sub scenario :Chained('base') :PathPart('scenario') :Args(0) {
 
 =head1 AUTHOR
 
-Michal Sedlák,,,
+Michal Sedlak E<lt>sedlak@ufal.mff.cuni.czE<gt>
 
 =head1 LICENSE
 

@@ -56,14 +56,31 @@ __PACKAGE__->table("scenarios");
   is_nullable: 0
   size: 120
 
-=head2 comment
+=head2 description
 
   data_type: 'text'
   is_nullable: 1
 
+=head2 sample
+
+  data_type: 'text'
+  is_nullable: 1
+
+=head2 public
+
+  data_type: 'boolean'
+  is_nullable: 1
+  default: 0
+
 =head2 user
 
   data_type: 'integer'
+  is_foreign_key: 1
+  is_nullable: 0
+
+=head2 created_at
+
+  data_type: 'datetime'
   is_nullable: 0
 
 =head2 last_modified
@@ -164,9 +181,25 @@ Related object: L<Treex::Web::DB::Result::Language>
 
 __PACKAGE__->many_to_many( "languages" => "scenario_languages", "language" );
 
+=head1 METHODS
+
+=cut
+
+=head2 languages_names
+
+Returns languages' names instead of ids
+
+=cut
+
 sub languages_names {
     map { $_->name } shift->languages;
 }
+
+=head2 REST
+
+REST representation
+
+=cut
 
 sub REST {
     my $self = shift;
@@ -182,6 +215,12 @@ sub REST {
         public => $self->public ? true : false
     };
 }
+
+=head2 rest_schema
+
+JSON Schema
+
+=cut
 
 sub rest_schema {
     return (

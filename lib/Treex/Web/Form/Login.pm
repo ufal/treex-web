@@ -6,16 +6,44 @@ use namespace::autoclean;
 
 BEGIN {extends 'Treex::Web::Form::Base';}
 
+=head1 NAME
+
+Treex::Web::Forms::Login - Login from validator
+
+=head1 FIELDS
+
+=cut
+
 has authenticate_realm => (
     is        => 'ro',
     isa       => NonEmptySimpleStr,
     predicate => 'has_authenticate_realm',
 );
 
+=over
+
+=item email
+
+=item password
+
+=item remember
+
+=back
+
+=cut
+
 has_field 'email' => ( type => 'Email' );
 has_field 'password' => ( type => 'Password' );
 has_field 'remember' => ( type => 'Boolean' );
-has_field 'submit'   => ( type => 'Submit', value => 'Login' );
+
+=head1 METHODS
+
+=head2 validate
+
+Validates the form and triggers the authentification. In other words
+the form is invalid unless the authentification is successful
+
+=cut
 
 sub validate {
     my $self = shift;
@@ -36,50 +64,25 @@ sub validate {
     return 1;
 }
 
+=head2 add_auth_errors
+
+Triggers in case of missing email or password
+
+=cut
+
 sub add_auth_errors {
     my $self = shift;
     $self->field( 'password' )->add_error( 'Wrong username or password' )
         if $self->field( 'email' )->has_value && $self->field( 'password' )->has_value;
 }
 
-
 __PACKAGE__->meta->make_immutable;
 1;
 __END__
 
-=head1 NAME
-
-Treex::Web::Forms::Login - Perl extension for blah blah blah
-
-=head1 SYNOPSIS
-
-   use Treex::Web::Forms::Login;
-   blah blah blah
-
-=head1 DESCRIPTION
-
-Stub documentation for Treex::Web::Forms::Login;
-
-Blah blah blah.
-
-=head2 EXPORT
-
-None by default.
-
-=head1 SEE ALSO
-
-Mention other useful documentation such as the documentation of
-related modules or operating system documentation (such as man pages
-in UNIX), or any relevant external documentation such as RFCs or
-standards.
-
-If you have a mailing list set up for your module, mention it here.
-
-If you have a web site set up for your module, mention it here.
-
 =head1 AUTHOR
 
-Michal Sedlak, E<lt>sedlakmichal@gmail.comE<gt>
+Michal Sedlak E<lt>sedlak@ufal.mff.cuni.czE<gt>
 
 =head1 COPYRIGHT AND LICENSE
 
@@ -88,9 +91,5 @@ Copyright (C) 2012 by Michal Sedlak
 This program is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself, either Perl version 5.8.2 or,
 at your option, any later version of Perl 5 you may have available.
-
-=head1 BUGS
-
-None reported... yet.
 
 =cut

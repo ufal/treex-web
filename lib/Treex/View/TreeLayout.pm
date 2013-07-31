@@ -3,9 +3,33 @@ package Treex::View::TreeLayout;
 use Moose;
 use Treex::Core::Types;
 
+=head1 NAME
+
+Treex::View::TreeLayout - Inspired by L<Treex::Core::TredView::TreeLayout>
+
+=head1 DESCRIPTION
+
+Set of helper methods for generating layout for p-trees and labels
+
+These methods are heavily inspired by L<Treex::Core::TredView::TreeLayout>
+
+=head1 NOTE
+
+TODO: Refactoring needed
+
+=head1 METHODS
+
+=cut
+
 has 'treex_doc' => ( is => 'rw' );
 
 my @layers = map {lc} Treex::Core::Types::layers();
+
+=head2 get_tree_label
+
+Tree label based on tree type, current language and selector
+
+=cut
 
 sub get_tree_label {
     my ( $self, $tree ) = @_;
@@ -14,6 +38,15 @@ sub get_tree_label {
     $label .= '-' . $sel if $sel;
     return $label;
 }
+
+=head2 get_layout_label
+
+Returns comma separated string of layout labels - used for storing
+layout configuration.
+
+C<NOT USED>
+
+=cut
 
 sub get_layout_label {
     my ( $self, $bundle ) = @_;
@@ -28,6 +61,12 @@ sub get_layout_label {
 
     return join ',', @label;
 }
+
+=head2 get_zone_label
+
+Zone label based on language and selectors
+
+=cut
 
 sub get_zone_label {
     my ( $self, $zone ) = @_;
@@ -63,6 +102,12 @@ sub _spread_nodes {
     return ( $mid + 1 ), @lower[ 0 .. $mid ], $node, @lower[ ( $mid + 1 ) .. $#lower ];
 }
 
+=head2 get_nodes
+
+List of all nodes in given tree
+
+=cut
+
 sub get_nodes {
     my ($self, $tree) = @_;
     my @nodes;
@@ -79,6 +124,13 @@ sub get_nodes {
     }
     return @nodes;
 }
+
+=head2 get_sentence_for_a_zone
+
+Get sentence - array of array refs, including separate words and
+pointers to tree nodes
+
+=cut
 
 sub get_sentence_for_a_zone {
     my ( $self, $zone, $alignment ) = @_;
@@ -132,6 +184,12 @@ sub get_sentence_for_a_zone {
     return \@out;
 }
 
+=head2 value_line
+
+Returns all sentences in current bundle, creating so called value_line
+
+=cut
+
 sub value_line {
     my ( $self, $bundle ) = @_;
 
@@ -173,39 +231,9 @@ __PACKAGE__->meta->make_immutable;
 1;
 __END__
 
-=head1 NAME
-
-Treex::View::TreeLayout - Inspired by Treex::Core::TredView::TreeLayout.
-
-=head1 SYNOPSIS
-
-   use Treex::View::TreeLayout;
-   blah blah blah
-
-=head1 DESCRIPTION
-
-Stub documentation for Treex::View::TreeLayout,
-
-Blah blah blah.
-
-=head2 EXPORT
-
-None by default.
-
-=head1 SEE ALSO
-
-Mention other useful documentation such as the documentation of
-related modules or operating system documentation (such as man pages
-in UNIX), or any relevant external documentation such as RFCs or
-standards.
-
-If you have a mailing list set up for your module, mention it here.
-
-If you have a web site set up for your module, mention it here.
-
 =head1 AUTHOR
 
-Michal Sedlak, E<lt>sedlakmichal@gmail.comE<gt>
+Michal Sedlak E<lt>sedlak@ufal.mff.cuni.czE<gt>
 
 =head1 COPYRIGHT AND LICENSE
 

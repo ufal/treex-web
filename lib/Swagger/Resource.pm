@@ -5,6 +5,21 @@ use Params::Validate qw(validate);
 use Swagger::Api;
 use namespace::autoclean;
 
+=head1 NAME
+
+Swagger::Resource - Representing Swagger Resource data holder
+
+=head1 SYNOPSIS
+
+   use Swagger::Resource;
+   my $resource = Swagger::Resource->new( path => 'my_resource');
+
+   $resource->api( ... ); # define new api
+
+=head1 METHODS
+
+=cut
+
 has 'path'   => ( is => 'ro' );
 has 'description' => (is => 'rw');
 
@@ -13,6 +28,14 @@ has 'apis' => (
     isa => 'ArrayRef',
     default => sub { [] },
 );
+
+=head2 api
+
+Defines a new api for this resource
+
+TODO: list parameters
+
+=cut
 
 sub api {
     my $self = shift;
@@ -29,6 +52,12 @@ sub api {
 
     return $api;
 }
+
+=head2 all_models
+
+All models in all apis
+
+=cut
 
 sub all_models {
     my $self = shift;
@@ -50,39 +79,9 @@ __PACKAGE__->meta->make_immutable;
 1;
 __END__
 
-=head1 NAME
-
-Swagger::Resource - Perl extension for blah blah blah
-
-=head1 SYNOPSIS
-
-   use Swagger::Resource;
-   blah blah blah
-
-=head1 DESCRIPTION
-
-Stub documentation for Swagger::Resource,
-
-Blah blah blah.
-
-=head2 EXPORT
-
-None by default.
-
-=head1 SEE ALSO
-
-Mention other useful documentation such as the documentation of
-related modules or operating system documentation (such as man pages
-in UNIX), or any relevant external documentation such as RFCs or
-standards.
-
-If you have a mailing list set up for your module, mention it here.
-
-If you have a web site set up for your module, mention it here.
-
 =head1 AUTHOR
 
-Michal Sedlak, E<lt>sedlakmichal@gmail.comE<gt>
+Michal Sedlak E<lt>sedlak@ufal.mff.cuni.czE<gt>
 
 =head1 COPYRIGHT AND LICENSE
 

@@ -4,6 +4,28 @@ use Moose;
 use List::MoreUtils qw/none/;
 use namespace::autoclean;
 
+=head1 NAME
+
+Resque::Plugin::Status::Hash - Represents status structure in Redis
+
+=head1 SYNOPSIS
+
+   use Resque::Plugin::Status::Hash;
+
+   my $status = Resque::Plugin::Status::Hash->new();
+
+=head1 DESCRIPTION
+
+Helper structure to represent a status in the Redis
+
+=head1 NOTE
+
+TODO: Refactoring needed
+
+=head1 METHODS
+
+=cut
+
 my @STATUSES = qw{queued working completed failed killed};
 
 has uuid => (
@@ -13,6 +35,12 @@ has uuid => (
 
 has [qw/ name status message time num total /] => ( is => 'rw' );
 
+=head2 BUILD
+
+Constructor automatically sets status to queued
+
+=cut
+
 sub BUILD {
     my $self = shift;
 
@@ -20,11 +48,35 @@ sub BUILD {
     $self->status('queued') unless $self->status;
 }
 
+=head2 Status check predicates
+
+=over 2
+
+=item is_queued
+
+=item is_working
+
+=item is_completed
+
+=item has_failed
+
+=item is_killed
+
+=back
+
+=cut
+
 sub is_queued    { $_[0]->status eq 'queued' }
 sub is_working   { $_[0]->status eq 'working' }
 sub is_completed { $_[0]->status eq 'completed' }
 sub has_failed   { $_[0]->status eq 'failed' }
 sub is_killed    { $_[0]->status eq 'killed' }
+
+=head2 pct_comlete
+
+How many percent of the job is done (NOT USED)
+
+=cut
 
 sub pct_comlete {
     my $self = shift;
@@ -34,10 +86,22 @@ sub pct_comlete {
     return int((($self->num||0) / ($self->total||1)) * 100);
 }
 
+=head2 is_killable
+
+Predicate whether is possible to kill the job
+
+=cut
+
 sub is_killable {
     my $self = shift;
     none { $_ eq $self->status } qw{failed killed completed};
 }
+
+=head2 REST
+
+Returns REST representation (simple hash)
+
+=cut
 
 sub REST {
     my $self = shift;
@@ -53,45 +117,21 @@ sub REST {
     };
 }
 
+=head2 TO_JSON
+
+Alias for REST method
+
+=cut
+
 *TO_JSON = \&REST;
 
 __PACKAGE__->meta->make_immutable;
 1;
 __END__
 
-=head1 NAME
-
-Resque::Plugin::Status::Hash - Perl extension for blah blah blah
-
-=head1 SYNOPSIS
-
-   use Resque::Plugin::Status::Hash;
-   blah blah blah
-
-=head1 DESCRIPTION
-
-Stub documentation for Resque::Plugin::Status::Hash,
-
-Blah blah blah.
-
-=head2 EXPORT
-
-None by default.
-
-=head1 SEE ALSO
-
-Mention other useful documentation such as the documentation of
-related modules or operating system documentation (such as man pages
-in UNIX), or any relevant external documentation such as RFCs or
-standards.
-
-If you have a mailing list set up for your module, mention it here.
-
-If you have a web site set up for your module, mention it here.
-
 =head1 AUTHOR
 
-Michal Sedlak, E<lt>sedlakmichal@gmail.comE<gt>
+Michal Sedlak E<lt>sedlak@ufal.mff.cuni.czE<gt>
 
 =head1 COPYRIGHT AND LICENSE
 

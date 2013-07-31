@@ -11,6 +11,26 @@ use namespace::autoclean;
 
 extends 'Catalyst::Model';
 
+=head1 NAME
+
+Treex::Web::Model::Print
+
+=head1 SYNOPSIS
+
+   $c->forward($c->model('Print'));
+
+=head1 DESCRIPTION
+
+This works as a forward model
+
+=head1 METHODS
+
+=head2 process
+
+Processes the forwarded request and returns JSON structure
+
+=cut
+
 has 'tree_layout' => (
     is => 'ro',
     isa => 'Treex::View::TreeLayout',
@@ -97,22 +117,17 @@ sub process {
 
 __PACKAGE__->meta->make_immutable;
 
-=head1 NAME
-
-Treex::Web::Model::Print - Catalyst Model
-
-=head1 DESCRIPTION
-
-Catalyst Model.
-
 =head1 AUTHOR
 
-THC,,,
+Michal Sedlak E<lt>sedlak@ufal.mff.cuni.czE<gt>
 
-=head1 LICENSE
+=head1 COPYRIGHT AND LICENSE
 
-This library is free software. You can redistribute it and/or modify
-it under the same terms as Perl itself.
+Copyright (C) 2013 by Michal Sedlak
+
+This program is free software; you can redistribute it and/or modify
+it under the same terms as Perl itself, either Perl version 5.8.2 or,
+at your option, any later version of Perl 5 you may have available.
 
 =cut
 

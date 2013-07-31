@@ -2,26 +2,82 @@ package Treex::Web::Controller::Treex;
 use Moose;
 use namespace::autoclean;
 
-BEGIN {extends 'Catalyst::Controller::REST'; }
+BEGIN {extends 'Treex::Web::Controller::REST'; }
+
+my $treex_resource = __PACKAGE__->api_resource(
+    path => 'treex'
+);
 
 =head1 NAME
 
-Treex::Web::Controller::Treex - Catalyst Controller
+Treex::Web::Controller::Treex - Auxiliary controller
 
 =head1 DESCRIPTION
 
-Catalyst Controller.
+Catalyst Restful Controller for common tasks
 
 =head1 METHODS
 
 =cut
 
 
-=head2 index
+=head2 languages
+
+Dummy route for:
+
+=over 2
+
+=item languages_GET
+
+=back
 
 =cut
 
+my $languages_api = $treex_resource->api(
+    controller => __PACKAGE__,
+    action => 'languages',
+    path => '/treex/languages',
+    description => 'Common tasks'
+);
+
 sub languages :Local :Args(0) :ActionClass(REST) { }
+
+__PACKAGE__->api_model(
+    'LanguageOption',
+    value => {
+        type => 'integer',
+        required => 1,
+        description => 'Language id'
+    },
+    label => {
+        type => 'string',
+        required => 1,
+        description => 'Language name e.g. English'
+    }
+);
+
+__PACKAGE__->api_model(
+    'LanguageGroup',
+    group => {
+        type => 'string',
+        required => 1,
+        description => 'Group name'
+    },
+    options => {
+        type => 'array',
+        items => {
+            type => 'LanguageOption'
+        },
+        description => 'Languages in the group'
+    }
+);
+
+$languages_api->get(
+    summary => 'Returns all available language options',
+    response => 'List[LanguageGroup]',
+    nickname => 'getLanguages',
+);
+
 sub languages_GET {
     my ( $self, $c ) = @_;
 
@@ -45,7 +101,7 @@ sub languages_GET {
 
 =head1 AUTHOR
 
-Michal Sedlák,,,
+Michal Sedlak E<lt>sedlak@ufal.mff.cuni.czE<gt>
 
 =head1 LICENSE
 

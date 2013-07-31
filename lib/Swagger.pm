@@ -7,6 +7,31 @@ use Swagger::Model;
 use boolean;
 use namespace::autoclean;
 
+=head1 NAME
+
+Swagger - Perl implementation of Swagger
+
+=head1 SYNOPSIS
+
+   use Swagger;
+   my $doc = Swagger->new(api_version => $API_VERSION);
+
+   # define doc
+
+   $doc->resource_listing;       # to list all resources
+   # or
+   $doc->api_listing($resource); # list api of specific resource
+
+=head1 DESCRIPTION
+
+Swagger is a specification and complete framework implementation for
+describing, producing, consuming, and visualizing RESTful web
+services.
+
+=head1 METHODS
+
+=cut
+
 has swagger_version => (
     is => 'rw',
     default => '1.1'
@@ -46,6 +71,17 @@ has resources => (
     default => sub { {} },
 );
 
+=head2 resource
+
+Define new resouce
+
+   resource(
+     path => 'resource',
+     description => 'Desc or my resource',
+   )
+
+=cut
+
 sub resource {
     my $self = shift;
 
@@ -63,6 +99,17 @@ sub resource {
     return $res;
 }
 
+=head2 model
+
+Define new model
+
+   model(
+     id => 'model',
+     properties => { ... model props ... }
+   )
+
+=cut
+
 sub model {
     my $self = shift;
     my $name = shift;
@@ -77,6 +124,22 @@ sub model {
     $self->models->{$name} = $model;
     return $model;
 }
+
+=head2 param
+
+Define new parameter
+
+   param(
+     param => 'param_type: body, query, header, path',
+     name => 'param_name',
+     description => 'Optional expression',
+     type => 'type_name',
+     required => 0/1,
+     allowable_values => { ... },
+     multiple => 0/1
+   )
+
+=cut
 
 sub param {
     my $self = shift;
@@ -97,6 +160,12 @@ sub param {
     return {%p};
 }
 
+=head2 param_body
+
+Shortcut to L<param> using param_type body
+
+=cut
+
 sub param_body {
     my $self = shift;
     my ($type, $desc, $name) = validate_pos(@_, 1, 1, 0);
@@ -110,6 +179,12 @@ sub param_body {
     )
 }
 
+=head2 param_path
+
+Shortcut to L<param> using param_type path
+
+=cut
+
 sub param_path {
     my $self = shift;
     my ($type, $desc, $name) = validate_pos(@_, 1, 1, 1);
@@ -122,6 +197,12 @@ sub param_path {
         required => 1,
     )
 }
+
+=head2 param_query
+
+Shortcut to L<param> using param_type query
+
+=cut
 
 sub param_query {
     my $self = shift;
@@ -137,6 +218,18 @@ sub param_query {
     )
 }
 
+=head2 error
+
+Define new error
+
+   error(
+     name => 'error_name',
+     code => 404,
+     reason => 'Item not found'
+   )
+
+=cut
+
 sub error {
     my $self = shift;
     my ($name, $code, $reason) = validate_pos(@_, { type => SCALAR }, { regex => qr/^\d+$/ }, 1);
@@ -148,6 +241,13 @@ sub error {
     };
 }
 
+=head2 listing_header
+
+Returns default Swagger listing header. Used for both resource listing
+and api listing.
+
+=cut
+
 sub listing_header {
     my $self = shift;
     return {
@@ -157,6 +257,12 @@ sub listing_header {
         apis => [],
     }
 }
+
+=head2 api_listing
+
+Get listing of api of specific resource. Resource path serves as a parameter.
+
+=cut
 
 sub api_listing {
     my ($self, $path) = @_;
@@ -208,6 +314,12 @@ sub api_listing {
     return $listing;
 }
 
+=head2 resource_listing
+
+List all available resources
+
+=cut
+
 sub resource_listing {
     my $self = shift;
 
@@ -226,39 +338,14 @@ __PACKAGE__->meta->make_immutable;
 1;
 __END__
 
-=head1 NAME
-
-Swagger - Perl extension for blah blah blah
-
-=head1 SYNOPSIS
-
-   use Swagger;
-   blah blah blah
-
-=head1 DESCRIPTION
-
-Stub documentation for Swagger,
-
-Blah blah blah.
-
-=head2 EXPORT
-
-None by default.
 
 =head1 SEE ALSO
 
-Mention other useful documentation such as the documentation of
-related modules or operating system documentation (such as man pages
-in UNIX), or any relevant external documentation such as RFCs or
-standards.
-
-If you have a mailing list set up for your module, mention it here.
-
-If you have a web site set up for your module, mention it here.
+This module is part of L<Treex::Web>
 
 =head1 AUTHOR
 
-Michal Sedlak, E<lt>sedlakmichal@gmail.comE<gt>
+Michal Sedlak E<lt>sedlak@ufal.mff.cuni.czE<gt>
 
 =head1 COPYRIGHT AND LICENSE
 

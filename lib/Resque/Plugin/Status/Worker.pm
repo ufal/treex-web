@@ -3,7 +3,25 @@ package Resque::Plugin::Status::Worker;
 use Moose::Role;
 use namespace::autoclean;
 
+=head1 NAME
+
+Resque::Plugin::Status::Worker - Role added to Resque::Worker
+
+=head1 DESCRIPTION
+
+Hooks worker's methods to ensure correct status change
+
+=head1 METHODS
+
+=cut
+
 has current_job => ( is => 'rw' );
+
+=head2 perform
+
+Wrapper around perform method to ensure the status is set to 'working'
+
+=cut
 
 around 'perform' => sub {
     my $orig = shift;
@@ -29,36 +47,6 @@ after 'kill_child' => sub {
 
 1;
 __END__
-
-=head1 NAME
-
-Resque::Plugin::Status::Worker - Perl extension for blah blah blah
-
-=head1 SYNOPSIS
-
-   use Resque::Plugin::Status::Worker;
-   blah blah blah
-
-=head1 DESCRIPTION
-
-Stub documentation for Resque::Plugin::Status::Worker,
-
-Blah blah blah.
-
-=head2 EXPORT
-
-None by default.
-
-=head1 SEE ALSO
-
-Mention other useful documentation such as the documentation of
-related modules or operating system documentation (such as man pages
-in UNIX), or any relevant external documentation such as RFCs or
-standards.
-
-If you have a mailing list set up for your module, mention it here.
-
-If you have a web site set up for your module, mention it here.
 
 =head1 AUTHOR
 

@@ -35,7 +35,9 @@ Catalyst Controller.
 
 =cut
 
-=head2 index
+=head2 base
+
+Base for all chained methods
 
 =cut
 
@@ -58,6 +60,18 @@ my $scenarios_api = $scenario_resource->api(
     path => '/scenarios',
     description => 'Operations on all scenarios'
 );
+
+=head2 scenarios
+
+=over
+
+=item scenarios_GET
+
+=item scenarios_POST
+
+=back
+
+=cut
 
 sub scenarios :Chained('base') :PathPart('scenarios') :Args(0) :ActionClass('REST') { }
 
@@ -135,6 +149,18 @@ my $scenarios_languages_api = $scenario_resource->api(
     description => 'Operations on all scenarios'
 );
 
+=head2 scenarios_languages
+
+All languages that can be used for filetering the scenarios
+
+=over
+
+=item scenarios_languages_GET
+
+=back
+
+=cut
+
 sub scenarios_languages :Path('/scenarios/languages') :Args(0) :ActionClass('REST') { }
 
 $scenarios_languages_api->get(
@@ -172,6 +198,14 @@ my @scenario_params = (
     __PACKAGE__->api_param_path('integer', 'Scenario id', 'scenarioId')
 );
 
+=head2 scenario
+
+Gets scenario from database by it's ID and stores it in the stash as
+
+   $c->stash->{scenario}
+
+=cut
+
 sub scenario :Chained('base') :PathPart('scenarios') CaptureArgs(1) {
     my ( $self, $c, $scenario_id ) = @_;
 
@@ -195,8 +229,29 @@ sub scenario :Chained('base') :PathPart('scenarios') CaptureArgs(1) {
     }
 }
 
+=head2 item
+
+Operations on the scenario
+
+=over
+
+=item item_GET
+
+=item item_PUT
+
+=item item_DELETE
+
+=back
+
+=cut
 
 sub item :Chained('scenario') :PathPart('') Args(0) :ActionClass('REST') { }
+
+=head2 check_user
+
+Private method for checking user's credentials for scenario operations
+
+=cut
 
 sub check_user :Pivate {
     my ( $self, $c ) = @_;
@@ -279,6 +334,12 @@ sub item_DELETE :Does('~NeedsLogin') {
     $self->status_ok($c, entity => $scenario->REST);
 }
 
+=head2 download
+
+Initiate scenario download
+
+=cut
+
 sub download :Chained('scenario') :PathPart('download') :Args(0) {
     my ( $self, $c ) = @_;
     my $scenario = $c->stash->{scenario};
@@ -293,7 +354,7 @@ sub download :Chained('scenario') :PathPart('download') :Args(0) {
 
 =head1 AUTHOR
 
-root
+Michal Sedlak E<lt>sedlak@ufal.mff.cuni.czE<gt>
 
 =head1 LICENSE
 

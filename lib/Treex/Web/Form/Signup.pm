@@ -6,6 +6,18 @@ use namespace::autoclean;
 extends 'Treex::Web::Form::Base';
 with 'HTML::FormHandler::TraitFor::Model::DBIC';
 
+=head1 NAME
+
+Treex::Web::Forms::Signup - registration form
+
+=head1 DESCRIPTION
+
+NOT USED
+
+=head1 METHODS
+
+=cut
+
 has '+item_class' => ( default => 'Treex::Web::DB::Result::User' );
 has '+name' => (default => 'signup-form');
 
@@ -21,6 +33,10 @@ has_field 'email' => (type => 'Email', required => 1, unique_message => 'email_t
 has_field 'password' => (type => 'Password', required => 1);
 has_field 'password_confirm' => (type => 'Password', name => 'passwordConfirm', required => 1);
 
+=head2 validate
+
+=cut
+
 sub validate {
     my $self = shift;
 
@@ -32,39 +48,9 @@ no HTML::FormHandler::Moose;
 1;
 __END__
 
-=head1 NAME
-
-Treex::Web::Forms::Signup - Perl extension for blah blah blah
-
-=head1 SYNOPSIS
-
-   use Treex::Web::Forms::Signup;
-   blah blah blah
-
-=head1 DESCRIPTION
-
-Stub documentation for Treex::Web::Forms::Signup;
-
-Blah blah blah.
-
-=head2 EXPORT
-
-None by default.
-
-=head1 SEE ALSO
-
-Mention other useful documentation such as the documentation of
-related modules or operating system documentation (such as man pages
-in UNIX), or any relevant external documentation such as RFCs or
-standards.
-
-If you have a mailing list set up for your module, mention it here.
-
-If you have a web site set up for your module, mention it here.
-
 =head1 AUTHOR
 
-Michal Sedlak, E<lt>sedlakmichal@gmail.comE<gt>
+Michal Sedlak E<lt>sedlak@ufal.mff.cuni.czE<gt>
 
 =head1 COPYRIGHT AND LICENSE
 

@@ -58,6 +58,11 @@ __PACKAGE__->add_columns(
 
 =head1 POSITIONING
 
+=head2 position
+
+  data_type: 'integer'
+  is_nullable: 1
+
 =cut
 
 __PACKAGE__->position_column('position');

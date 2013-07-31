@@ -5,6 +5,28 @@ use Params::Validate qw(ARRAYREF validate validate_pos);
 use List::Util qw(first);
 use namespace::autoclean;
 
+=head1 NAME
+
+Swagger::Api - Representing Swagger Api data holder
+
+=head1 SYNOPSIS
+
+   use Swagger::Api;
+
+=head1 DESCRIPTION
+
+Simple API object
+
+This has no constructor of it's own.
+
+=head1 NOTE
+
+The API of this class will be subject of change.
+
+=head1 METHODS
+
+=cut
+
 has 'controller'   => ( is => 'ro' );
 has 'action'       => ( is => 'ro' );
 has 'path'         => ( is => 'ro' );
@@ -16,6 +38,12 @@ has 'operations' => (
     isa => 'ArrayRef',
     default => sub { [] },
 );
+
+=head2 operation
+
+Defines a new operation on the Api
+
+=cut
 
 sub operation {
     my $self = shift;
@@ -41,6 +69,12 @@ sub operation {
     push @{$self->operations}, {%p, method => $method};
     return $self;
 }
+
+=head2 models
+
+List of all models used in this Api
+
+=cut
 
 sub models {
     my $self = shift;
@@ -69,6 +103,12 @@ my %unknown_error = (
     code => 400,
 );
 
+=head2 error
+
+Returns an error by given C<name>
+
+=cut
+
 sub error {
     my ($self, $name) = @_;
 
@@ -82,6 +122,12 @@ sub error {
     return $error||{ %unknown_error, reason => ucfirst($name||'Unknown') };
 }
 
+=head2 errors
+
+List of errors by name C<errors('error1', 'error2', ...)>
+
+=cut
+
 sub errors {
     my $self = shift;
 
@@ -89,6 +135,21 @@ sub errors {
         $self->error($_)
     } @_;
 }
+
+=head2 get
+
+=head2 post
+
+=head2 delete
+
+=head2 put
+
+=head2 patch
+
+Shortcuts to C<operation('METHOD', @_)>
+
+=cut
+
 
 sub get { shift->operation('GET', @_); }
 
@@ -105,39 +166,10 @@ __PACKAGE__->meta->make_immutable;
 1;
 __END__
 
-=head1 NAME
-
-Swagger::Api - Perl extension for blah blah blah
-
-=head1 SYNOPSIS
-
-   use Swagger::Api;
-   blah blah blah
-
-=head1 DESCRIPTION
-
-Stub documentation for Swagger::Api,
-
-Blah blah blah.
-
-=head2 EXPORT
-
-None by default.
-
-=head1 SEE ALSO
-
-Mention other useful documentation such as the documentation of
-related modules or operating system documentation (such as man pages
-in UNIX), or any relevant external documentation such as RFCs or
-standards.
-
-If you have a mailing list set up for your module, mention it here.
-
-If you have a web site set up for your module, mention it here.
 
 =head1 AUTHOR
 
-Michal Sedlak, E<lt>sedlakmichal@gmail.comE<gt>
+Michal Sedlak E<lt>sedlak@ufal.mff.cuni.czE<gt>
 
 =head1 COPYRIGHT AND LICENSE
 

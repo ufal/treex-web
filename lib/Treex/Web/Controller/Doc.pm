@@ -6,11 +6,11 @@ BEGIN { extends 'Treex::Web::Controller::REST'; }
 
 =head1 NAME
 
-Treex::Web::Controller::Doc - Catalyst Controller
+Treex::Web::Controller::Doc
 
 =head1 DESCRIPTION
 
-Catalyst Controller.
+Catalyst Controller for serving Swagger documentation.
 
 =head1 METHODS
 
@@ -18,6 +18,11 @@ Catalyst Controller.
 
 __PACKAGE__->api->resource_path('/doc');
 
+=head2 base
+
+Sets base path according to current request
+
+=cut
 
 sub base :Chained('/') :PathPart('') :CaptureArgs(0)  {
     my ( $self, $c ) = @_;
@@ -26,6 +31,14 @@ sub base :Chained('/') :PathPart('') :CaptureArgs(0)  {
 }
 
 =head2 index
+
+Returns list of resources
+
+=over
+
+=item index_GET
+
+=back
 
 =cut
 
@@ -36,6 +49,18 @@ sub index_GET {
 
     $self->status_ok($c, entity => __PACKAGE__->api->resource_listing );
 }
+
+=head2 listing
+
+Returns listing of each api
+
+=over
+
+=item listing_GET
+
+=back
+
+=cut
 
 sub listing :Chained('base') :PathPart(doc) Args(1) :ActionClass('REST') { }
 
@@ -48,7 +73,7 @@ sub listing_GET {
 
 =head1 AUTHOR
 
-Michal Sedlák,,,
+Michal Sedlak E<lt>sedlak@ufal.mff.cuni.czE<gt>
 
 =head1 LICENSE
 

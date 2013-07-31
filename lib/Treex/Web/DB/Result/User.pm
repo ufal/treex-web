@@ -22,6 +22,8 @@ extends 'DBIx::Class::Core';
 
 =item * L<DBIx::Class::TimeStamp>
 
+=item * L<DBIx::Class::UUIDColumns>
+
 =back
 
 =cut
@@ -57,12 +59,17 @@ __PACKAGE__->table('user');
 
 =head2 active
 
-  data_type: boolean
+  data_type: 'boolean'
+  default: 0
+
+=head2 is_admin
+
+  data_type: 'boolean'
   default: 0
 
 =head2 activate_token
 
-  data_type: char
+  data_type: 'char'
   size: 20
   is_nullable: 1
   default: null
@@ -137,7 +144,7 @@ __PACKAGE__->add_unique_constraint('email_unique', ['email']);
 =head2 results
 
 Type: has_many
-p
+
 Related object: L<Treex::Web::DB::Result::Result>
 
 =cut
@@ -168,6 +175,12 @@ __PACKAGE__->has_many(
 
 =cut
 
+=head2 new
+
+Creates a new instace with a L</activate_token>
+
+=cut
+
 sub new {
     my ( $self, $attrs ) = @_;
 
@@ -181,11 +194,23 @@ sub new {
     return $new;
 }
 
+=head2 name_or_email
+
+Returns name or first part of the email
+
+=cut
+
 sub name_or_email {
     my $self = shift;
     my @parts = split /@/, $self->email;
     shift @parts;
 }
+
+=head2 REST
+
+REST representation
+
+=cut
 
 sub REST {
     my $self = shift;
@@ -203,6 +228,12 @@ sub REST {
         ) : ())
     };
 }
+
+=head2 rest_schema
+
+JSON Schema
+
+=cut
 
 sub rest_schema {
     return (

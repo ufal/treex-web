@@ -14,6 +14,15 @@ use Exception::Class (
 
 requires qw / resque /;
 
+
+=head1 NAME
+
+Resque::Plugin::Status::Job - Role added to Resque::Job
+
+=head1 METHODS
+
+=cut
+
 has uuid => (
     is => 'rw',
     isa => 'Str'
@@ -45,9 +54,21 @@ has payload => (
     }
 );
 
+=head2 status
+
+Get status based on current uuid
+
+=cut
+
 sub status {
     return $_[0]->uuid ? $_[0]->resque->get_status($_[0]->uuid) : undef;
 }
+
+=head2 set_status
+
+Will set a new status calling C<< $self->resque->set_status >>
+
+=cut
 
 sub set_status {
     my $self = shift;
@@ -81,6 +102,13 @@ after 'fail' => sub {
     $_[0]->failed if $status && $status->is_working;
 };
 
+
+=head2 at
+
+Reporting method, NOT USED
+
+=cut
+
 sub at {
     my $self = shift;
     my $num = shift;
@@ -92,11 +120,23 @@ sub at {
     );
 }
 
+=head2 tick
+
+Updates status by either killing it or continues working on ti
+
+=cut
+
 sub tick {
     my $self = shift;
     $self->kill if $self->should_kill;
     $self->set_status(status => 'working', @_);
 }
+
+=head2 failed
+
+Sets status to failed. Message is optional
+
+=cut
 
 sub failed {
     my $self = shift;
@@ -109,6 +149,12 @@ sub failed {
     );
 }
 
+=head2 completed
+
+Marks job as completed
+
+=cut
+
 sub completed {
     my $self = shift;
     return if $self->killed;
@@ -118,6 +164,12 @@ sub completed {
         @_
     );
 }
+
+=head2 kill
+
+Kills job and sets status to killed
+
+=cut
 
 sub kill {
     my ( $self, $no_throw ) = @_;
@@ -131,6 +183,13 @@ sub kill {
     Resque::Plugin::Status::Exception::Killed->throw unless $no_throw;
 }
 
+=head2 should_kill
+
+Checks through status_manager whether the status can and should be
+killed
+
+=cut
+
 sub should_kill {
     $_[0]->status_manager->should_kill($_[0]->uuid)
 }
@@ -138,39 +197,9 @@ sub should_kill {
 1;
 __END__
 
-=head1 NAME
-
-Resque::Plugin::Status::Job - Perl extension for blah blah blah
-
-=head1 SYNOPSIS
-
-   use Resque::Plugin::Status::Job;
-   blah blah blah
-
-=head1 DESCRIPTION
-
-Stub documentation for Resque::Plugin::Status::Job,
-
-Blah blah blah.
-
-=head2 EXPORT
-
-None by default.
-
-=head1 SEE ALSO
-
-Mention other useful documentation such as the documentation of
-related modules or operating system documentation (such as man pages
-in UNIX), or any relevant external documentation such as RFCs or
-standards.
-
-If you have a mailing list set up for your module, mention it here.
-
-If you have a web site set up for your module, mention it here.
-
 =head1 AUTHOR
 
-Michal Sedlak, E<lt>sedlakmichal@gmail.comE<gt>
+Michal Sedlak E<lt>sedlak@ufal.mff.cuni.czE<gt>
 
 =head1 COPYRIGHT AND LICENSE
 

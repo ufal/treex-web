@@ -8,11 +8,15 @@ BEGIN {extends 'Catalyst::Controller::REST'; }
 
 =head1 NAME
 
-Treex::Web::Controller::Query - Catalyst Controller
+Treex::Web::Controller::Query - Turns query into Treex result
 
 =head1 DESCRIPTION
 
-Catalyst Controller.
+Treex query and file upload/download
+
+=head1 TODO
+
+Missing API documentation
 
 =head1 METHODS
 
@@ -21,6 +25,12 @@ Catalyst Controller.
 =head2 index
 
 Process the scenario and create a new result
+
+=over
+
+=item index_POST
+
+=back
 
 =cut
 
@@ -40,13 +50,13 @@ sub index_POST {
         return;
     }
     # form is valid, lets create new Result
-    my ($scenario_name, $scenario, $input, $filename, $lang)
-        = ( map { $form->value->{$_} } (qw/scenario_name scenario input filename language/) );
+    my ($name, $scenario, $input, $filename, $lang)
+        = ( map { $form->value->{$_} } (qw/name scenario input filename language/) );
 
     my $rs = $c->model('WebDB::Result')->new({
         session => $c->create_session_id_if_needed,
         input_type => 'txt',
-        name => $scenario_name,
+        name => $name,
         language => $lang,
         ($c->user_exists ? (user => $c->user->id) : ())
     });
@@ -85,6 +95,24 @@ sub index_POST {
                           location => "/result/{$rs->unique_token}",
                           entity => $rs->REST);
 }
+
+=head2 upload
+
+Upload operations
+
+=over
+
+=item upload_GET
+
+=item upload_POST
+
+=item upload_item
+
+=item upload_item_DELETE
+
+=back
+
+=cut
 
 sub upload :Local :Args(0) :ActionClass('REST') {
     my ( $self, $c ) = @_;
@@ -152,6 +180,12 @@ sub upload_item_DELETE {
     $self->status_no_content($c);
 }
 
+=head2 download
+
+Download file uploaded for this query
+
+=cut
+
 sub download :Local :Args(1) {
     my ( $self, $c, $filename ) = @_;
 
@@ -173,7 +207,7 @@ sub download :Local :Args(1) {
 
 =head1 AUTHOR
 
-Michal Sedlák,,,
+Michal Sedlak E<lt>sedlak@ufal.mff.cuni.czE<gt>
 
 =head1 LICENSE
 

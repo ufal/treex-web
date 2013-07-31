@@ -31,11 +31,11 @@ __PACKAGE__->api_model(
 
 =head1 NAME
 
-Treex::Web::Controller::Auth - Catalyst Controller
+Treex::Web::Controller::Auth - Authentication
 
 =head1 DESCRIPTION
 
-Catalyst Controller.
+Catalyst Restful Controller.
 
 =head1 METHODS
 
@@ -53,6 +53,18 @@ sub _build_login_form {
 }
 
 =head2 index
+
+REST base for all CRUD methods
+
+=over 2
+
+=item index_GET
+
+=item index_POST
+
+=item index_DELETE
+
+=back
 
 =cut
 
@@ -136,7 +148,7 @@ sub index_DELETE {
 
 =head1 AUTHOR
 
-Michal Sedlák,,,
+Michal Sedlak E<lt>sedlak@ufal.mff.cuni.czE<gt>
 
 =head1 LICENSE
 

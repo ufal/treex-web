@@ -37,6 +37,16 @@ __PACKAGE__->table("languages");
   is_auto_increment: 1
   is_nullable: 0
 
+=head2 language_group
+
+  data_type: 'integer'
+  is_nullable: 0
+
+=head2 code
+
+  data_type: 'varchar'
+  is_nullable: 0
+  size: 10
 
 =head2 name
 
@@ -60,6 +70,11 @@ __PACKAGE__->add_columns(
 );
 
 =head1 POSITIONING
+
+=head2 position
+
+  data_type: 'integer'
+  is_nullable: 0
 
 =cut
 
@@ -132,6 +147,16 @@ Related object: L<Treex::Web::DB::Result::Result>
 
 __PACKAGE__->has_many( "results" => "Treex::Web::DB::Result::Result", "language" );
 
+=head1 METHODS
+
+=head2 REST
+
+REST representation
+
+  (id, code, name)
+
+=cut
+
 sub REST {
     my $self = shift;
     return {
@@ -140,6 +165,12 @@ sub REST {
         name => $self->name,
     };
 }
+
+=head2 rest_schema
+
+JSON Schema
+
+=cut
 
 sub rest_schema {
     return (

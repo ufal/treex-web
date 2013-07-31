@@ -27,6 +27,30 @@ for my $source (Treex::Web::DB->sources) {
     }
 }
 
+=head2 API shortcuts
+
+=over
+
+=item api
+
+=item api_resource
+
+=item api_model
+
+=item api_param
+
+=item api_param_body
+
+=item api_param_path
+
+=item api_param_query
+
+=item api_error
+
+=back
+
+=cut
+
 sub api { Treex::Web::Api->api }
 
 sub api_resource {
@@ -57,6 +81,14 @@ sub api_error {
     shift->api->error(@_);
 }
 
+=head2 status_error
+
+Will create error according to Swagger error definition
+
+NOTE: This method won't detach
+
+=cut
+
 sub status_error {
     my ($self, $c, @errors) = @_;
 
@@ -81,7 +113,12 @@ sub status_error {
     return 1;
 }
 
-sub status_unauthorized {}
+=head2 validate_params
+
+Validates the object according to Swagger model definition using JSON
+Schema
+
+=cut
 
 sub validate_params {
     my ($self, $c, $model_name) = @_;
@@ -110,7 +147,7 @@ sub validate_params {
 
 =head1 AUTHOR
 
-Michal Sedlák,,,
+Michal Sedlak E<lt>sedlak@ufal.mff.cuni.czE<gt>
 
 =head1 LICENSE
 
