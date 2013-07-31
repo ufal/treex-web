@@ -2,7 +2,7 @@ package Treex::Web;
 use Moose;
 use namespace::autoclean;
 
-use Catalyst::Runtime 5.80;
+use Catalyst::Runtime 5.90;
 
 # Set flags and add plugins for the application.
 #
@@ -90,19 +90,19 @@ Treex::Web - Catalyst based application
 
 =head1 SYNOPSIS
 
-    script/treex_web_server.pl
+    bin/server.pl
 
 =head1 DESCRIPTION
 
-[enter your description here]
+Treex::Web is a web interface for NLP framework Treex
 
 =head1 SEE ALSO
 
-L<Treex::Web::Controller::Root>, L<Catalyst>
+L<Treex::Web::Controller::Root>, L<Catalyst>, L<Treex::Core>
 
 =head1 AUTHOR
 
-THC,,,
+Michal Sedlak E<lt>sedlak@ufal.mff.cuni.czE<gt>
 
 =head1 LICENSE
 

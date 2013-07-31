@@ -7,8 +7,6 @@ use namespace::autoclean;
 
 BEGIN {extends 'Catalyst::Controller'; }
 
-=encoding utf8
-
 =head1 NAME
 
 Treex::Web::Controller::Result::Download - Catalyst Controller
