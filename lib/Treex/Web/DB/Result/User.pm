@@ -18,6 +18,8 @@ extends 'DBIx::Class::Core';
 
 =over 4
 
+=item * L<DBIx::Class::EncodedColumn>
+
 =item * L<DBIx::Class::InflateColumn::DateTime>
 
 =item * L<DBIx::Class::TimeStamp>
@@ -202,6 +204,7 @@ Returns name or first part of the email
 
 sub name_or_email {
     my $self = shift;
+    return $self->name if $self->name;
     my @parts = split /@/, $self->email;
     shift @parts;
 }
