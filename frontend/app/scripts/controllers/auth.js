@@ -32,6 +32,12 @@ angular.module('TreexWebApp')
          $rootScope.loggedIn = false;
        });
 
+       modalScope.auth = {
+         email: 'treex@ufal.mff.cuni.cz',
+         password: 'LetMeIn'
+       };
+       console.log(modalScope.auth);
+
        modalScope.login = function() {
          Auth.login(modalScope.auth)
            .success(function() {
