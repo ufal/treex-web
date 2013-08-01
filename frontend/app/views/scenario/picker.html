@@ -14,7 +14,7 @@
     <ng-switch on="status">
       <div ng-switch-when="loading" tw-loader></div>
       <table ng-switch-when="result" class="table table-striped">
-        <thead><tr><th class="span2">Name</th><th>Description</th></tr></thead>
+        <thead><tr><th class="span3">Name</th><th>Description</th></tr></thead>
         <tr class="rowlink" ng-click="pick(scenario)" ng-repeat="scenario in scenarios">
           <td>{{scenario.name}}</td>
           <td ng-bind-html-unsafe="scenario.description | noHtml | newlines"></td>
