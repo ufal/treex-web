@@ -1,11 +1,13 @@
 'use strict';
 
 angular.module('TreexWebApp')
-  .directive('bsActiveTab', [function() {
+  .directive('bsActiveTab', [ '$timeout', function($timeout) {
     return {
       terminal : true,
       link: function (scope, element, attrs) {
-        $(element).tab('show');
+        $timeout(function() {
+          $(element).tab('show');
+        });
       }
     };
   }]);
