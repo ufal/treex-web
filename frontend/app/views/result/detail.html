@@ -32,7 +32,7 @@
         <p>An error has occurred.</p>
         <p tw-if="result.job.message">Here's the error message: <strong>{{result.job.message}}</strong></p>
       </div>
-      <div tw-if="result.job.status != 'failed'" tw-view="result" id="treexview">
+      <div tw-if="result.printable && result.job.status == 'completed'" tw-view="result" id="treexview">
         <div ng-show="noOfPages > 1">
           <pagination num-pages="noOfPages" current-page="currentPage" max-size="7"></pagination>
         </div>

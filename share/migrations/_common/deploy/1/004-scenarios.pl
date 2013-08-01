@@ -440,4 +440,37 @@ SCEN
         last_modified => DateTime->now,
     });
 
+    my $convertor = <<SCEN;
+Util::SetGlobal language=und selector=conll # set language and selector you want to convert
+Read::Treex
+Write::CoNLLX
+SCEN
+
+    $scenario_rs->create({
+        scenario => $convertor,
+        name => 'Treex -> CoNLLX convertor',
+        description => 'Convert Treex to CoNLLX',
+        public => 1,
+        scenario_languages => [],
+        user => $user->id,
+        created_at => DateTime->now,
+        last_modified => DateTime->now,
+    });
+
+    $convertor = <<SCEN;
+Util::SetGlobal language=und selector=conll # set language and selector
+Read::CoNLLX
+Write::Treex
+SCEN
+
+    $scenario_rs->create({
+        scenario => $convertor,
+        name => 'CoNLLX -> Treex convertor',
+        description => 'Convert CoNLLX to Treex',
+        public => 1,
+        scenario_languages => [],
+        user => $user->id,
+        created_at => DateTime->now,
+        last_modified => DateTime->now,
+    });
 };

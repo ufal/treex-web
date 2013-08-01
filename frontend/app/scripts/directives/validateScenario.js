@@ -28,8 +28,8 @@ angular.module('TreexWebApp')
               var check = {
                 txt: /Read::(Text|Sentences)/,
                 treex: /Read::Treex/,
-                conll: /Read::ConllX/,
-                conllx: /Read::ConllX/
+                conll: /Read::CoNLLX/,
+                conllx: /Read::CoNLLX/
               };
               if (check[ext] && !check[ext].test(scenario)) {
                 errors['readMatch'].valid = false;
@@ -52,11 +52,11 @@ angular.module('TreexWebApp')
 
           if (/Read::(\w+)/.test(scenario)) {
             if (ext == 'txt') {
-              return scenario.replace(/Read::(Treex|ConllX)/, 'Read::Text');
+              return scenario.replace(/Read::(Treex|CoNLLX)/, 'Read::Text');
             } else if (ext == 'treex') {
               return scenario.replace(/Read::\w+/, 'Read::Treex');
             } else if (ext == 'conll' || ext == 'conllx') {
-              return scenario.replace(/Read::\w+/, 'Read::ConllX');
+              return scenario.replace(/Read::\w+/, 'Read::CoNLLX');
             }
           }
 
