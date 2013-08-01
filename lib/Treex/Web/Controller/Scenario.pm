@@ -73,7 +73,18 @@ my $scenarios_api = $scenario_resource->api(
 
 =cut
 
-sub scenarios :Chained('base') :PathPart('scenarios') :Args(0) :ActionClass('REST') { }
+sub scenarios :Chained('base') :PathPart('scenarios') :Args(0) :ActionClass('REST') {
+    my ( $self, $c ) = @_;
+
+    my $scenarios_rs = $c->stash->{scenarios};
+    $c->stash->{scenarios} = $c->user_exists ?
+        $scenarios_rs->search_rs({
+            -or => [
+                public => 1,
+                user => $c->user->id
+            ]
+        }) : $scenarios_rs->search_rs({ public => 1 });
+}
 
 $scenarios_api->get(
     summary => 'Get list of all scenarios',
@@ -96,14 +107,6 @@ sub scenarios_GET {
 
     my $lang = $c->req->param('language');
     my $scenarios_rs = $c->stash->{scenarios};
-
-    $scenarios_rs = $c->user_exists ?
-        $scenarios_rs->search_rs({
-            -or => [
-                public => 1,
-                user => $c->user->id
-            ]
-        }) : $scenarios_rs->search_rs({ public => 1 });
 
     $scenarios_rs = $scenarios_rs->search({
         -or => [
@@ -172,7 +175,15 @@ $scenarios_languages_api->get(
 sub scenarios_languages_GET {
     my ( $self, $c ) = @_;
 
-    my @languages = $c->model('WebDB::Scenario')->search_related('scenario_languages', undef, {
+    my $scenario_rs = $c->user_exists ?
+        $c->model('WebDB::Scenario')->search_rs({
+            -or => [
+                public => 1,
+                user => $c->user->id
+            ]
+        }) : $c->model('WebDB::Scenario')->search_rs({ public => 1 });
+
+    my @languages = $scenario_rs->search_related('scenario_languages', undef, {
         prefetch => [ 'language' ],
         group_by => [ 'language.id' ]
     });
