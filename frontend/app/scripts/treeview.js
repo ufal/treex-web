@@ -1,3 +1,8 @@
+/*
+ * Michal Sedlak 2013
+ */
+
+
 // nlp tree rendering based on d3js
 (function(d3) {
   d3.layout.nlp = {};
@@ -10,6 +15,7 @@
     marginY: 2
   };
 
+  // let's abuse d3 namespace
   d3.layout.nlp.constituency = function(opts) {
     var maxDepth;
 
