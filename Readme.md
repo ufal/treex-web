@@ -4,21 +4,28 @@ Web frontend for NLP framework Treex
 
 ## How to run it
 
+Everything can be run together as defined in Procfile. Use Proclet or
+Foreman or any other program that can understand Procfiles.
+
+https://devcenter.heroku.com/articles/procfile
+
+    proclet start
+
 ### Perl API
 
 Following will start development server http://localhost:3000/
 
-    cpanm --instaldeps
+    cpanm --instaldeps .
     ./bin/server.pl -rd
 
 ### Angular Frontend
 
 Frontend is separate app. For frontend to work you will need working
-node.js, npm, grunt and bower installed. Also having Yeoman installed
-is recommended.
+node.js, npm, grunt and bower installed. Having Yeoman installed
+is also recommended.
 
 Following will start development server at http://localhost:9000/ it
-will automatically proxy API server at http://localhost:9000/APO/v1
+will automatically proxy API server at http://localhost:9000/api/v1
 
     cd frontend
     npm install
@@ -49,6 +56,10 @@ $VERSION. Make sure you have at least one db running with the old
 schema and use:
 
     ./bin/migration.pl update
+
+Add new users using script
+
+    ./bin/user.pl
 
 ## History
 
