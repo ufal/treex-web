@@ -18,7 +18,7 @@ angular.module('TreexWebApp').controller(
          $scope.status = 'not-found';
        });
      } else {
-       scenario = $scope.scenario = new Scenario({ 'public' : false});
+       scenario = $scope.scenario = new Scenario({ 'public' : false, 'scenario': Scenario.$template });
      }
 
      $scope.saveOrUpdate = function(redirect) {
