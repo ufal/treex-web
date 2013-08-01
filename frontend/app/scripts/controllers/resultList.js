@@ -2,8 +2,8 @@
 
 angular.module('TreexWebApp')
   .controller('ResultListCtrl', ['$scope', 'Result', function($scope, Result) {
-    $scope.status = 'loading';
-    $scope.results = Result.query().then(function(results) {
+
+    function setResults(results) {
       $scope.status = (results.length > 0) ? 'results' : 'empty';
       results.$remove = function(item) {
         var self = this;
@@ -16,7 +16,16 @@ angular.module('TreexWebApp')
         });
       };
       return results;
+    }
+
+    $scope.status = 'loading';
+
+    $scope.$on('auth:loginConfirmed', function(){
+      $scope.status = 'loading';
+      $scope.results = Result.query().then(setResults);
     });
+
+    $scope.results = Result.query().then(setResults);
 
     $scope.trash = function(index) {
       $scope.results.$remove(index);

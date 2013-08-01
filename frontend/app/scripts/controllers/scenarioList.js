@@ -19,6 +19,34 @@ angular.module('TreexWebApp').controller(
 
      var scenarios = [],
          lastParams;
+
+     function fetchScenarios() {
+       $scope.status = 'loading';
+       $scope.languages = Scenario.languages();
+       Scenario.query({ language : '' }, function(data) {
+         if (data.length == 0) {
+           $scope.status = 'empty';
+           $scope.totalFound = 0;
+           return [];
+         }
+         scenarios = data;
+         for (var i = 0, ii = scenarios.length; i < ii; i++) {
+           scenarios[i].editable = scenarios[i].isEditable();
+         }
+
+         $scope.update({
+           page: 1,
+           count: 10
+         });
+       });
+     }
+
+     $scope.$on('auth:loginConfirmed', function(){
+       $scope.status = 'loading';
+       fetchScenarios();
+     });
+
+
      $scope.update = function(params) {
        var maxPages = Math.ceil(scenarios.length / params.count),
            pager = {},
@@ -71,20 +99,5 @@ angular.module('TreexWebApp').controller(
        countPerPage: 10
      };
 
-     Scenario.query({ language : '' }, function(data) {
-       if (data.length == 0) {
-         $scope.status = 'empty';
-         $scope.totalFound = 0;
-         return [];
-       }
-       scenarios = data;
-       for (var i = 0, ii = scenarios.length; i < ii; i++) {
-         scenarios[i].editable = scenarios[i].isEditable();
-       }
-
-       $scope.update({
-         page: 1,
-         count: 10
-       });
-     });
+     fetchScenarios();
    }]);
