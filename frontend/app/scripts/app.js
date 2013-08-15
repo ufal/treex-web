@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('TreexWebApp', ['$strap.directives', 'http-auth-interceptor', 'blueimp.fileupload', 'ngResource', 'ngRoute'])
-  .config(['$routeProvider', '$locationProvider', '$httpProvider', function($routeProvider, $locationProvider, $httpProvider) {
+  .config(['$routeProvider', '$locationProvider', function($routeProvider, $locationProvider) {
     $routeProvider.
       when('/', { templateUrl: 'views/home.html', controller: 'MainCtrl' }).
       //when('/login', { templateUrl: 'views/auth/login.html', controller: 'LoginCtrl' }).
@@ -19,11 +19,10 @@ angular.module('TreexWebApp', ['$strap.directives', 'http-auth-interceptor', 'bl
 
     $locationProvider.html5Mode(true);
   }])
-  .run(['$rootScope', '$location', 'Auth', function(scope, $location, Auth) {
+  .run(['$rootScope', function(scope) {
 
     // register listener to watch route changes
-    scope.$on( '$routeChangeStart', function(event, next, current) {
-      var path = $location.path();
+    scope.$on( '$routeChangeStart', function(event, next) {
       if (next && next.login === true) {
         scope.$broadcast('auth:loginRequired');
       }

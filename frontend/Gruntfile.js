@@ -1,17 +1,16 @@
 // Generated on 2013-06-27 using generator-angular 0.3.0
 'use strict';
 var LIVERELOAD_PORT = 35729;
+var proxyOptions = {
+  host: 'localhost',
+  port: 3000,
+  pathname: '/',
+  route: '/api/v1/'
+};
 var lrSnippet = require('connect-livereload')({ port: LIVERELOAD_PORT });
 var httpProxy = require('proxy-middleware'),
     modRewrite = require('connect-modrewrite'),
-    proxyOptions = {
-      host: 'localhost',
-      port: 3000,
-      pathname: '/',
-      route: '/api/v1/'
-    },
     proxyRequest = httpProxy(proxyOptions),
-
     mountFolder = function (connect, dir) {
       return connect.static(require('path').resolve(dir));
     };
@@ -116,8 +115,7 @@ module.exports = function (grunt) {
           middleware: function (connect) {
             return [
               proxyRequest,
-              mountFolder(connect, yeomanConfig.dist),
-              rewriteRules
+              mountFolder(connect, yeomanConfig.dist)
             ];
           }
         }
@@ -350,6 +348,15 @@ module.exports = function (grunt) {
         }, {
           from: 'href="http://localhost:9000/"',
           to: 'href="<%= yeoman.distBase %>"'
+        }, {
+          from: '.constant("apiUrl","/api/v1/")',
+          to: function() {
+            if (yeomanConfig.distBase !== '/') {
+              return '.constant("apiUrl","'+ yeomanConfig.distBase + 'api/v1/")';
+            } else {
+              return '.constant("apiUrl","/api/v1/")';
+            }
+          }
         }]
       }
     }
@@ -385,7 +392,7 @@ module.exports = function (grunt) {
     'cdnify',
     'ngmin',
     'cssmin',
-    //'uglify',
+    'uglify',
     'rev',
     'usemin',
     'htmlmin:deploy',
