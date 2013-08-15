@@ -233,12 +233,12 @@ AddDefaultCharset utf-8
 # | Proxy rewrite                                                              |
 # ------------------------------------------------------------------------------
 
-<IfModule mod_rewrite.c>
-    <IfModule mod_proxy.c>
-        RewriteRule    /api/v1/(.*)$  http://treex-web/api/v1/$1  [P]
-        ProxyPassReverse /treex-web/api/v1/ http://treex-web/api/v1/
-    </IfModule>
-</IfModule>
+# <IfModule mod_rewrite.c>
+#     <IfModule mod_proxy.c>
+#         RewriteRule    /api/v1/(.*)$  http://treex-web/api/v1/$1  [P]
+#         ProxyPassReverse /treex-web/api/v1/ http://treex-web/api/v1/
+#     </IfModule>
+# </IfModule>
 
 # ------------------------------------------------------------------------------
 # | Suppressing / Forcing the "www." at the beginning of URLs                  |
