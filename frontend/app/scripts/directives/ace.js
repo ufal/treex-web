@@ -12,7 +12,9 @@ angular.module('TreexWebApp')
       ace.config.loadModule(['mode', mode], function() {
         var m = ace.require('ace/mode/'+mode);
         mode =  new m.Mode();
-        --wait || done();
+        if (--wait === 0) {
+          done();
+        }
       });
 
       ace.config.loadModule(['theme', 'textmate'], function() {
@@ -21,15 +23,17 @@ angular.module('TreexWebApp')
           theme.cssText,
           theme.cssClass
         );
-        --wait || done();
+        if (--wait === 0) {
+          done();
+        }
       });
 
       function done() {
-        var session = new EditSession("");
+        var session = new EditSession('');
         session.setUseWorker(false);
         session.setMode(mode);
 
-        var textLayer = new TextLayer(document.createElement("div"));
+        var textLayer = new TextLayer(document.createElement('div'));
         textLayer.setSession(session);
         textLayer.config = {
           characterWidth: 10,
@@ -45,14 +49,14 @@ angular.module('TreexWebApp')
           stringBuilder.push('<div class="ace_line">');
           //stringBuilder.push('<span class="ace_gutter ace_gutter-cell" unselectable="on">' + (ix+1) + '</span>');
           textLayer.$renderLine(stringBuilder, ix, true, false);
-          stringBuilder.push("</div>");
+          stringBuilder.push('</div>');
         }
 
         textLayer.destroy();
 
         var html = '<div class="' + theme.cssClass + '">' +
               '<div class="ace_static_highlight">' +
-              stringBuilder.join("") +
+              stringBuilder.join('') +
               '</div>' +
               '</div>';
         callback(html);
@@ -65,6 +69,11 @@ angular.module('TreexWebApp')
       link: function(scope, element, attrs, ngModel) {
         var mode = attrs.aceHighlight||'text';
 
+        function placeHtml(html) {
+          $(element)
+            .html(html);
+        }
+
         if (ngModel) {
           ngModel.$render = function() {
             var value = ngModel.$viewValue || '';
@@ -72,11 +81,6 @@ angular.module('TreexWebApp')
           };
         } else {
           loadHighlighter($(element).text(), mode, placeHtml);
-        }
-
-        function placeHtml(html) {
-          $(element)
-            .html(html);
         }
       }
     };
@@ -86,7 +90,7 @@ angular.module('TreexWebApp')
 
     function loadAceEditor(element, mode) {
       var editor = ace.edit($(element).find('.' + ACE_EDITOR_CLASS)[0]);
-      editor.session.setMode("ace/mode/" + mode);
+      editor.session.setMode('ace/mode/' + mode);
       editor.renderer.setShowPrintMargin(false);
       editor.session.setUseWrapMode(false);
 
@@ -94,7 +98,7 @@ angular.module('TreexWebApp')
     }
 
     function valid(editor) {
-      return (Object.keys(editor.getSession().getAnnotations()).length == 0);
+      return (Object.keys(editor.getSession().getAnnotations()).length === 0);
     }
 
     return {
@@ -104,6 +108,18 @@ angular.module('TreexWebApp')
       template: '<div class="transcluded" ng-transclude></div><div class="' + ACE_EDITOR_CLASS + '"></div>',
 
       link: function(scope, element, attrs, ngModel) {
+
+        function change() {
+          var value = ngModel.$viewValue;
+          var editorValue = editor.getSession().getValue();
+          if (value !== editorValue) {
+            scope.$apply(function() {
+              ngModel.$setViewValue(editorValue);
+              textarea.val(editorValue);
+            });
+          }
+        }
+
         var textarea = $(element).find('textarea');
         textarea.hide();
 
@@ -112,7 +128,9 @@ angular.module('TreexWebApp')
 
         scope.ace = editor;
 
-        if (!ngModel) return; // do nothing if no ngModel
+        if (!ngModel) {
+          return; // do nothing if no ngModel
+        }
 
         ngModel.$render = function() {
           var value = ngModel.$viewValue || '';
@@ -137,16 +155,6 @@ angular.module('TreexWebApp')
           // I think it is an angular bug
         });
 
-        function change() {
-          var value = ngModel.$viewValue;
-          var editorValue = editor.getSession().getValue();
-          if (value != editorValue) {
-            scope.$apply(function() {
-              ngModel.$setViewValue(editorValue);
-              textarea.val(editorValue);
-            });
-          }
-        }
 
         function read() {
           ngModel.$setViewValue(editor.getValue());
