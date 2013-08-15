@@ -2,8 +2,8 @@
 
 angular.module('TreexWebApp').controller(
   'ScenarioPickCtrl',
-  ['$scope', '$rootScope', '$timeout', 'Treex', 'Scenario', 'Tour',
-   function($scope, $rootScope, $timeout, Treex, Scenario, Tour) {
+  ['$scope', '$rootScope', '$timeout', 'Treex', 'Scenario',
+   function($scope, $rootScope, $timeout, Treex, Scenario) {
      $scope.status = 'loading';
      $scope.languages = Scenario.languages();
      $scope.languagesMap = Treex.languagesMap();
@@ -36,9 +36,12 @@ angular.module('TreexWebApp').controller(
          q.name = scenario.name;
          q.description = scenario.description;
          q.sample = scenario.sample;
-         if (scenario.sample && !q.input && !q.filename) q.input = scenario.sample;
+         if (scenario.sample && !q.input && !q.filename) {
+           q.input = scenario.sample;
+         }
          q.compose = true;
          $scope.dismiss();
+         $scope.status = 'loading';
        });
      };
    }]);
