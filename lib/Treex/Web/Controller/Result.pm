@@ -30,7 +30,7 @@ sub base :Chained('/') :PathPart('') :CaptureArgs(0)  {
     my ($self, $c) = @_;
     my $results_rs = $c->model('WebDB::Result')
         ->search_rs(
-            {($c->user_exists ? (user => $c->user->id) : (user => undef))},
+            {($c->user_exists ? (user => $c->user->id) : (session => $c->create_session_id_if_needed))},
             { order_by => { -desc => 'last_modified' } });
     $c->stash(results_rs => $results_rs);
 }
