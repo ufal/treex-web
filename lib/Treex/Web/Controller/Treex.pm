@@ -87,7 +87,7 @@ sub languages_GET {
         prefetch => [ 'languages' ],
     });
     my @options;
-    while (my $group = $res->next) {
+    for my $group ($res->all) {
         push @options, {
             group => $group->name,
             options => [
