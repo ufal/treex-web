@@ -125,6 +125,7 @@ sub run_remote {
     $ssh->login($user, $pass) if $user;
 
     my($stdout, $stderr, $exit) = $ssh->cmd("source ~/.profile; cd $remote_path; treex scenario.scen >error.log 2>&1");
+    $ssh->cmd("exit");
 
     if ($exit) {
         $job->failed('Treex failed to execute the scenario');
