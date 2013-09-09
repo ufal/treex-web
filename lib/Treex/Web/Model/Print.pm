@@ -7,6 +7,8 @@ use Treex::PML::Factory;
 use Treex::View::TreeLayout;
 use Treex::View::Node;
 use JSON;
+use CHI;
+use Digest::SHA;
 use namespace::autoclean;
 
 extends 'Catalyst::Model';
@@ -31,11 +33,30 @@ Processes the forwarded request and returns JSON structure
 
 =cut
 
+my $app_class;
+
+before COMPONENT => sub {
+    $app_class = ref $_[1] || $_[1];
+};
+
 has 'tree_layout' => (
     is => 'ro',
     isa => 'Treex::View::TreeLayout',
     default => sub { Treex::View::TreeLayout->new },
 );
+
+has 'cache' => (
+    is => 'ro',
+    isa => 'CHI::Driver',
+    default => sub {
+        CHI->new(
+            driver => 'File',
+            root_dir => $app_class->path_to('tmp', 'cache')->stringify,
+            depth => 2
+        );
+    }
+);
+
 
 # fake TredMacro package so that TMT TrEd macros can be used directly
 {
@@ -78,7 +99,23 @@ sub process {
     my $curr = $c->stash->{current_result};
     my $file = $curr->result_filename;
 
-    -e $file or return '';
+    $c->res->content_type('application/json');
+
+    unless (-e $file) {
+        $c->res->body('');
+        return;
+    }
+
+    my $sha = Digest::SHA->new(256);
+    $sha->addfile($file);
+    my $key = $sha->hexdigest;
+
+    my $json = $self->cache->get($key);
+    if ($json) {
+        $c->log->info('Loading from cache...');
+        $c->res->body($json);
+        return;
+    }
 
     my $doc = Treex::Core::Document->new({ filename => $file });
     $self->tree_layout->treex_doc($doc);
@@ -110,9 +147,10 @@ sub process {
         push @bundles, \%bundle;
     }
 
-    $c->res->content_type('application/json');
-    $c->res->body(JSON->new->allow_nonref->allow_blessed->convert_blessed->utf8->
-                      pretty->encode({ print => \@bundles}));
+    $json = JSON->new->allow_nonref->allow_blessed->convert_blessed->utf8->
+        pretty->encode({ print => \@bundles});
+    $self->cache->set($key, $json, 'never');
+    $c->res->body($json);
 }
 
 __PACKAGE__->meta->make_immutable;

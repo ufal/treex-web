@@ -56,6 +56,9 @@ requires 'Exception::Class';
 requires 'Encode';
 requires 'Archive::Zip';
 requires 'boolean';
+requires 'Net::SFTP';
+requires 'CHI';
+requires 'Digest::SHA';
 
 on 'test' => sub {
     requires 'Test::More' => '0.88';
