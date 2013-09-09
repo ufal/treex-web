@@ -107,12 +107,12 @@ sub run_remote {
     my $key = $job->uuid;
     my $remote_path = "/tmp/tw-$key";
 
-    my ($host, $user, $pass) =
-        @ENV{qw(TREEX_REMOTE_HOST TREEX_REMOTE_USER TREEX_REMOTE_PASS)};
+    my ($host, $user, $pass, $port) =
+        @ENV{qw(TREEX_REMOTE_HOST TREEX_REMOTE_USER TREEX_REMOTE_PASS TREEX_REMOTE_PORT)};
 
-    print "Connect using: $user\@${host} with password: '$pass'\n";
+    #print "Connect using: $user\@${host} with password: '$pass'\n";
 
-    my $sftp = Net::SFTP->new($host, $user ? (user => $user, ($pass ? (password => $pass) : ())) : ());
+    my $sftp = Net::SFTP->new($host, $user ? (user => $user, ($pass ? (password => $pass) : ())) : (), $port ? (ssh_args => { port => $port }) : ());
 
     my $a = Net::SFTP::Attributes->new;
     $a->flags( $a->flags | SSH2_FILEXFER_ATTR_PERMISSIONS );
@@ -121,7 +121,7 @@ sub run_remote {
 
     $sftp->put($_, "$remote_path/$_") for (glob('*')); # copy all files from local directory to remote
 
-    my $ssh = Net::SSH::Perl->new($host);
+    my $ssh = Net::SSH::Perl->new($host, $port ? (port => $port) : ());
     $ssh->login($user, $pass) if $user;
 
     my($stdout, $stderr, $exit) = $ssh->cmd("source ~/.profile; cd $remote_path; treex scenario.scen >error.log 2>&1");

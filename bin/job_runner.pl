@@ -23,6 +23,7 @@ GetOptions(\%opts,
            'remote|r=s',
            'user|u=s',
            'password|p=s',
+           'port=s',
            'help|h',
            'version|V',
            'man',
@@ -49,6 +50,7 @@ if ($opts{remote}) {            # setup remote
     $ENV{'TREEX_REMOTE_HOST'} = $opts{remote};
     $ENV{'TREEX_REMOTE_USER'} = $opts{user};
     $ENV{'TREEX_REMOTE_PASS'} = $opts{password};
+    $ENV{'TREEX_REMOTE_PORT'} = $opts{port};
 }
 #print STDERR $ENV{'TREEX_WEB_DATA'}."\n";
 
