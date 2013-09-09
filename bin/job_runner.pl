@@ -68,7 +68,7 @@ my $args = $config->{"Model::Resque"}->{args};
 
 my $w = Resque->new( $args )->worker;
 $w->add_queue('treex');
-$w->verbose(1);
+#$w->verbose(1);
 $w->work;
 
 __END__
