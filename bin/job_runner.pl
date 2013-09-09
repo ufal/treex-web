@@ -20,17 +20,14 @@ use Pod::Usage;
 Getopt::Long::Configure ("bundling");
 my %opts;
 GetOptions(\%opts,
-#       'debug|D',
-#       'quiet|q',
-        'help|h',
-        'usage|u',
-        'version|V',
-        'man',
+           'remote|r=s',
+           'user|u=s',
+           'password|p=s',
+           'help|h',
+           'version|V',
+           'man',
        ) or $opts{usage}=1;
 
-if ($opts{usage}) {
-  pod2usage(-msg => 'job_runner.pl');
-}
 if ($opts{help}) {
   pod2usage(-exitstatus => 0, -verbose => 1);
 }
@@ -46,6 +43,13 @@ my $self = Path::Class::File->new( File::Spec->rel2abs( $0 ) );
 my $app_dir = $self->parent->parent;
 
 $ENV{'TREEX_WEB_DATA'} = File::Spec->catdir($app_dir, 'data');
+
+if ($opts{remote}) {            # setup remote
+    $ENV{'TREEX_REMOTE'} = 1;
+    $ENV{'TREEX_REMOTE_HOST'} = $opts{remote};
+    $ENV{'TREEX_REMOTE_USER'} = $opts{user};
+    $ENV{'TREEX_REMOTE_PASS'} = $opts{password};
+}
 #print STDERR $ENV{'TREEX_WEB_DATA'}."\n";
 
 my $config_file = Path::Class::File->new($app_dir, 'share', 'etc', 'treex_web.pl' );
@@ -62,7 +66,7 @@ my $args = $config->{"Model::Resque"}->{args};
 
 my $w = Resque->new( $args )->worker;
 $w->add_queue('treex');
-#$w->verbose(1);
+$w->verbose(1);
 $w->work;
 
 __END__
@@ -74,8 +78,14 @@ job_runner.pl
 =head1 SYNOPSIS
 
 job_runner.pl
+
 or
-  job_runner.pl -u          for usage
+
+  job_runner.pl --remote=host --user=username --password=pwd
+  For running on a remote machine
+
+or
+
   job_runner.pl -h          for help
   job_runner.pl --man       for the manual page
   job_runner.pl --version   for version
