@@ -163,6 +163,11 @@ sub TO_JSON {
         data => $self->traverse_data($n->type, $n),
     };
 
+    $n->deserialize_wild; # We want to see wild :)
+    if ($n->wild) {
+        $data->{data}->{wild_dump} = $n->wild;
+    }
+
     ## some fake values to stop warnings
     $n->{'_shift_down'} = 0;
     $n->{'_shift_right'} = 0;

@@ -1,3 +1,4 @@
+'use strict';
 /*
  * Michal Sedlak 2013
  */
@@ -315,11 +316,11 @@
         }
         if (h < bbox.height) h = bbox.height;
         bbox.x = shift;
-        self.attr('transform', "translate(" + bbox.x + "," + 10 + ")");
+        self.attr('transform', 'translate(' + bbox.x + ',' + 10 + ')');
         lastTree = bbox;
       });
       trees.exit().remove();
-      svg.attr('width', w)
+      svg.attr('width', w+10)
         .attr('height', h+10);
     };
 
@@ -674,7 +675,15 @@
     selection.each(function(d) {
       if (!d.labels) return;
       var self = d3.select(this),
-          labels = d.labels;
+          labels = d.labels.slice(),
+          dump = d.data['wild_dump'];
+      if (dump && dump.labels) {
+        for (var lb in dump.labels) {
+          if (dump.labels.hasOwnProperty(lb) && dump.labels[lb]) {
+            labels.push('#{orange}'+lb);
+          }
+        }
+      }
       for (var i = 0, ii = labels.length; i < ii; i++) {
         var tspan, label = labels[i]||'',
             n = label.match(/#\{[\w#]+\}/g),
