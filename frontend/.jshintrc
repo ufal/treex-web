@@ -23,6 +23,8 @@
     "angular": false,
     "ace": false,
     "$": false,
-    "jQuery": false
+    "jQuery": false,
+    "Treex": false,
+    "d3": false
   }
 }

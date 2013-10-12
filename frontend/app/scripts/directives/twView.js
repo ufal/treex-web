@@ -25,7 +25,7 @@ angular.module('TreexWebApp')
 
         this.setBundle = function(bundle) {
           var view = this.$view;
-          if (view && bundle != lastBundle) {
+          if (view && bundle !== lastBundle) {
             view.setBundle(bundle);
             lastBundle = bundle;
             this.change();
@@ -42,24 +42,27 @@ angular.module('TreexWebApp')
       }],
       link : function(scope, element, attrs, cntl) {
         scope.$watch('result.job.status', function(value) {
-          if (cntl.$view != null
-              || value != 'completed'
-              || !scope.result.printable) return;
+          if (cntl.$view !== null ||
+              value !== 'completed' ||
+              !scope.result.printable) {
+            return;
+          }
 
           var result = scope.result;
           result.$print().then(function(data) {
-            if (!data || data.length == 0) {
+            if (!data || data.length === 0) {
               $rootScope.$broadcast('treex:rendered');
               return;
             }
             cntl.$view = Treex.TreeView(element[0]);
             cntl.setDocument(Treex.Document.fromJSON(data));
             cntl.$view.init(cntl.$doc);
-            if (cntl.$sentence)
+            if (cntl.$sentence) {
               cntl.$view.description(cntl.$sentence);
+            }
             cntl.$view.drawBundle();
             $rootScope.$broadcast('treex:rendered');
-          }, function(error) {
+          }, function() {
             $rootScope.$broadcast('treex:rendered');
           });
         });
@@ -79,7 +82,7 @@ angular.module('TreexWebApp')
     return {
       restrict: 'A',
       require: '^twView',
-      link : function(scope, element, attrs, cntl) {
+      link : function(scope, element) {
         scope.$on('treex:rendered', function() {
           element.hide();
         });
