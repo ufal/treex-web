@@ -374,7 +374,9 @@
             })
             .on('mouseout', function(d) {
               desc.selectAll('span.'+d.id).classed('highlight', false);
-              hint.hide();
+              if (d.hint) {
+                hint.hide();
+              }
             });
         }
 
