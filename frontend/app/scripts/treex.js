@@ -41,7 +41,7 @@
 
   Document = function() {
     this.bundles = [ ]; // an array, because order matters
-    this.file = "";
+    this.file = '';
   };
   treex.Document = Document;
   treex.document = function() { return new Document(); };
@@ -150,6 +150,7 @@
       node = nodes[i];
       treeNode = new Node(node.id, node.data, node.style);
       treeNode.labels = node.labels;
+      treeNode.hint = node.hint;
       treeNode.order = i;
       nodesIndex[node.id] = treeNode;
       treeNodes.push(treeNode);
@@ -159,7 +160,7 @@
     }
     if (!root) {
       // this should never happen
-      throw "Tree has no root!";
+      throw 'Tree has no root!';
     }
     var tree = new Tree(root);
     // manually assign these

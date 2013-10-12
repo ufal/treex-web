@@ -1,3 +1,5 @@
+/*global d3, Treex */
+
 'use strict';
 /*
  * Michal Sedlak 2013
@@ -7,7 +9,6 @@
 // nlp tree rendering based on d3js
 (function(d3) {
   d3.layout.nlp = {};
-  function noop() {}
 
   var defaultOptions = {
     nodeXSkip : 10,
@@ -34,7 +35,7 @@
     }
 
     layout.computeLayout = function(nodes) {
-      var i = -1, ii = -1,
+      var i = -1, ii,
           n = nodes.length,
           widths = [],
           left = 0,
@@ -104,13 +105,12 @@
     opts = defaultOptions;
 
     function layout(tree) { // expecting Treex.Tree here
-      var nodes = tree.allNodes()
+      return tree.allNodes()
             .sort(function(a, b) { return d3.ascending(a.order, b.order); });
-      return nodes;
     }
 
     layout.computeLayout = function(nodes) {
-      var i = -1, ii = -1,
+      var i = -1, ii,
           n = nodes.length,
           widths = [],
           left = 0,
@@ -193,6 +193,73 @@
   }
 })(d3);
 
+(function(treex, $){
+
+  function Hint() {
+    this.parent = $('body');
+    this.visible = false;
+    this.hint = $('<div>')
+      .css({
+        position: 'absolute',
+        'z-index': 350,
+        border: '1px solid black',
+        'background-color': '#faf7aa',
+        'padding': '4px',
+        'border-radius': '4px',
+        'white-space': 'nowrap'
+      });
+  }
+
+  treex.Hint = function() {
+    return new Hint();
+  };
+
+  (function(proto) {
+    proto.show = function(content) {
+      if (this.lastContent !== content) {
+        this.hint.html(content.replace(/\n/g, '<br />'));
+        this.lastContent = content;
+      }
+
+      if (!this.visible) {
+        this.parent.append(this.hint);
+        this.visible = true;
+      }
+    };
+
+    proto.move = function(event, side) {
+      // When side == 'left', the tree_hint object will have its 'left' CSS property
+      // set - it will be positioned on the right side of the mouse pointer.
+      // And otherwise for side == 'right'.
+      if (typeof(side) === 'undefined' || (side !== 'left' && side !== 'right')) {
+        side = 'left';
+      }
+
+      var posY = event.pageY + 10;
+      var posX = 0;
+      if (side === 'left') {
+        posX = event.pageX + 10;
+      } else {
+        posX = this.parent.width() - event.pageX + 10;
+      }
+      console.log('Move: ', posX, posY);
+      this.hint.css(side, posX).css('top', posY);
+    };
+
+    proto.hide = function() {
+      if (this.hint) {
+        this.hint.remove();
+        this.visible = false;
+      }
+    };
+
+    proto.offsetX = function() { return this.parent.offset().left; };
+    proto.offsetY = function() { return this.parent.offset().top; };
+
+  }(Hint.prototype));
+
+}(Treex, jQuery));
+
 (function(treex, d3) {
 
   function treeview(container) {
@@ -249,6 +316,7 @@
       var self = this,
           bundle = self.$doc.bundles[self.bundle],
           desc = self.desc,
+          hint = Treex.Hint(),
           svg = self.svg, w, h;
 
       if (desc) {
@@ -264,7 +332,7 @@
       trees.each(function(d, index) {
         var self = d3.select(this),
             style = treex.Stylesheet(d),
-            tree = d.layer == 'p' ? d3.layout.nlp.constituency() : d3.layout.nlp.tree(),
+            tree = d.layer === 'p' ? d3.layout.nlp.constituency() : d3.layout.nlp.tree(),
             nodes = tree.nodes(d),
             links = tree.links(nodes);
         var r = 3.5;
@@ -292,8 +360,22 @@
         });
 
         if (desc) {
-          node.on('mouseover', function(d) { desc.selectAll('span.'+d.id).classed('highlight', true); })
-            .on('mouseout', function(d) { desc.selectAll('span.'+d.id).classed('highlight', false); });
+          node
+            .on('mouseover', function(d) {
+              desc.selectAll('span.'+d.id).classed('highlight', true);
+              if(d.hint) {
+                hint.show(d.hint);
+              }
+            })
+            .on('mousemove', function(d) {
+              if(d.hint) {
+                hint.move(d3.event) ;
+              }
+            })
+            .on('mouseout', function(d) {
+              desc.selectAll('span.'+d.id).classed('highlight', false);
+              hint.hide();
+            });
         }
 
         tree.computeLayout(nodes);
@@ -302,7 +384,7 @@
         link.exit().remove();
 
         //node.attr('transform', function(d) { return "translate(" + d.x + "," +  d.y + ")"; });
-        node.attr('transform', function(d) { return "translate(" + d.x + "," +  d.y + ")"; });
+        node.attr('transform', function(d) { return 'translate(' + d.x + ',' +  d.y + ')'; });
         node.exit().remove();
 
         var bbox = this.getBBox(),
@@ -432,38 +514,6 @@
       r = 3.5,
       r2 = 7;
 
-  treex.Stylesheet = function(tree) {
-    return new stylesheet(tree);
-  };
-
-  function stylesheet(tree) {
-    this.tree = tree;
-
-    switch (tree.layer) {
-    case 'p':
-      this.styleNode = pnodeStyle;
-      this.styleConnection = pnodeConnection;
-      this.connect = manhattanConnect;
-      break;
-    case 't':
-      this.styleNode = tnodeStyle;
-      this.styleConnection = tnodeConnection;
-      this.connect = directConnect;
-      break;
-    default:
-      this.styleNode = anodeStyle;
-      this.styleConnection = anodeConnection;
-      this.connect = directConnect;
-    }
-  }
-
-  stylesheet.prototype.isCoord = function(d) {
-    if (this.layer !== 't') {
-      return false;
-    }
-    return ((d != null ? d.data.functor : void 0) != null) && coordPattern.test(d.data.functor);
-  };
-
   function anodeStyle(node) {
     circle(node)
       .style('fill', colors['anode']);
@@ -478,10 +528,10 @@
   }
 
   function directConnect(link) {
-    link.attr("x1", function(d) { return d.source.x+r+1; })
-      .attr("y1", function(d) { return d.source.y+r+1; })
-      .attr("x2", function(d) { return d.target.x+r+1; })
-      .attr("y2", function(d) { return d.target.y+r+1; });
+    link.attr('x1', function(d) { return d.source.x+r+1; })
+      .attr('y1', function(d) { return d.source.y+r+1; })
+      .attr('x2', function(d) { return d.target.x+r+1; })
+      .attr('y2', function(d) { return d.target.y+r+1; });
     return link;
   }
 
@@ -619,7 +669,6 @@
           .attr('height', bbox.height+1)
           .attr('x', -bbox.width/2-1)
           .attr('y', -bbox.height/2+2);
-        ;
       });
   }
 
@@ -701,5 +750,37 @@
       }
     });
   }
+
+  function Stylesheet(tree) {
+    this.tree = tree;
+
+    switch (tree.layer) {
+    case 'p':
+      this.styleNode = pnodeStyle;
+      this.styleConnection = pnodeConnection;
+      this.connect = manhattanConnect;
+      break;
+    case 't':
+      this.styleNode = tnodeStyle;
+      this.styleConnection = tnodeConnection;
+      this.connect = directConnect;
+      break;
+    default:
+      this.styleNode = anodeStyle;
+      this.styleConnection = anodeConnection;
+      this.connect = directConnect;
+    }
+  }
+
+  Stylesheet.prototype.isCoord = function(d) {
+    if (this.layer !== 't') {
+      return false;
+    }
+    return ((d !== null ? d.data.functor : void 0) !== null) && coordPattern.test(d.data.functor);
+  };
+
+  treex.Stylesheet = function(tree) {
+    return new Stylesheet(tree);
+  };
 
 })(Treex || (Treex = {}));

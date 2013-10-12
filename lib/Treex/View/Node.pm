@@ -4,6 +4,7 @@ use Moose;
 BEGIN { $ENV{NO_FS_CLASSES}=1; }
 use Treex::PML::Schema;
 use Treex::PML::Instance;
+use Treex::Core::TredView;
 use Scalar::Util qw(blessed);
 
 =head1 NAME
@@ -179,9 +180,11 @@ sub TO_JSON {
         $n->{_precomputed_hint}       = '';
     } else {
         $n->{_precomputed_buffer}     = $self->labels->node_labels( $n, $n->get_layer );
+        $n->{_precomputed_hint}       = Treex::Core::TredView->node_hint( $n, $n->get_layer );
         $self->labels->set_labels($n);
     }
     $data->{labels} = $n->{_precomputed_labels};
+    $data->{hint} = $n->{_precomputed_hint};
     $data->{parent} = $n->parent ? $n->parent->id : undef;
     $data->{firstson} = $n->firstson ? $n->firstson->id : undef;
     $data->{rbrother} = $n->rbrother ? $n->rbrother->id : undef;
