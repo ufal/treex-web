@@ -238,19 +238,21 @@
       var posY = event.pageY + 10,
           posX = 0,
           width = this.hint.outerWidth(),
-          height = this.hint.outerHeight();
+          height = this.hint.outerHeight(),
+          winWidth = $(window).width(),
+          winHeigth = $(document).height();
 
       if (side === 'left') {
         posX = event.pageX + 10;
-        if (posX + width > $(window).width()) {
-          posX -= posX + width - $(window).width();
+        if (posX + width > winWidth) {
+          posX -= posX + width - winWidth;
         }
       } else {
         posX = this.parent.width() - event.pageX + 10;
       }
 
-      if (posY + height > $(window).height()) {
-        posY -= posY + height - $(window).height();
+      if (posY + height > winHeigth) {
+        posY -= posY + height - winHeigth;
       }
 
       this.hint.css(side, posX).css('top', posY);
