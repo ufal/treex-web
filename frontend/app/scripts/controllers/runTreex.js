@@ -132,6 +132,8 @@ angular.module('TreexWebApp').controller(
          input: q.input
        }).then(function(result) {
          Result.lastResult = null;
+         $location.replace();
+         $location.search('scenario', null);
          $location.path('/result/'+result.token);
        }, function(reason) {
          $scope.error = angular.isObject(reason.data) ?
