@@ -235,13 +235,24 @@
         side = 'left';
       }
 
-      var posY = event.pageY + 10;
-      var posX = 0;
+      var posY = event.pageY + 10,
+          posX = 0,
+          width = this.hint.outerWidth(),
+          height = this.hint.outerHeight();
+
       if (side === 'left') {
         posX = event.pageX + 10;
+        if (posX + width > $(window).width()) {
+          posX -= posX + width - $(window).width();
+        }
       } else {
         posX = this.parent.width() - event.pageX + 10;
       }
+
+      if (posY + height > $(window).height()) {
+        posY -= posY + height - $(window).height();
+      }
+
       this.hint.css(side, posX).css('top', posY);
     };
 
