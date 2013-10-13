@@ -1,2 +1,3 @@
-web: ./script/treex_web_server.pl -rd
+web: ./bin/server.pl -rd
 treex: ./bin/job_runner.pl
+frontend: cd ./frontend/ && grunt server

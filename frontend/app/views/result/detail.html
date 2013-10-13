@@ -40,6 +40,18 @@
           <img title="Printing result..." src="/images/treex-printing.gif" />
         </div>
         <p class="sentence" tw-view-sentence></p>
+        <div class="row-fluid">
+          <div ng-show="attributes" ng-class="{span3 : !!attributes}" tw-view-attributes="selectedNode">
+            <table class="table table-condensed table-bordered table-striped node-attributes">
+              <tr ng-repeat="item in attributes | orderBy:'name'">
+                <td>{{item.name}}</td>
+                <td>{{item.value}}</td>
+              </tr>
+            </table>
+            <p class="alert alert-warning"><strong>Please note: </strong>List of node attributes is still in beta phrase and doesn't show all lists and complex structures.</p>
+          </div>
+          <div ng-class="{span9: !!selectedNode}" tw-view-graphics></div>
+        </div>
       </div>
       <ul class="nav nav-tabs">
         <li><a bs-show-tab="result.$scenario()" bs-active-tab href="#scenario" data-toggle="tab">Scenario</a></li>
@@ -51,7 +63,7 @@
           <p tw-if="result.scenario"><a tw-download="{{result.downloadScenarioUrl}}">Download scenario</a></p>
           <pre tw-if="result.scenario" class="pre-scrollable" ace-highlight="perl" ng-model="result.scenario"></pre>
           <div tw-if="result.hasScenario && !result.scenario" class="alert alert-error">
-             Scenario is empty.
+            Scenario is empty.
           </div>
         </div>
         <div class="tab-pane" id="input">
@@ -61,7 +73,7 @@
         <div class="tab-pane" id="stderr">
           <pre tw-if="result.error" class="pre-scrollable">{{result.error}}</pre>
           <div tw-if="result.hasError && !result.error" class="alert alert-info">
-             Error log doesn't exist.
+            Error log doesn't exist.
           </div>
         </div>
       </div>

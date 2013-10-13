@@ -147,6 +147,17 @@ body {
     opacity:0.6;
 }
 
+/* Attributes table */
+
+.node-attributes {
+    white-space: nowrap;
+    font-size: 90%;
+}
+.node-attributes td {
+    padding: 2px;
+    line-height: 16px;
+}
+
 /* 404 page */
 .container-404 {
     width: 500px;

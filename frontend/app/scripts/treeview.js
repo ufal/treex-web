@@ -242,7 +242,6 @@
       } else {
         posX = this.parent.width() - event.pageX + 10;
       }
-      console.log('Move: ', posX, posY);
       this.hint.css(side, posX).css('top', posY);
     };
 
@@ -272,6 +271,8 @@
           top = self.$top;
       self.$doc = document;
       self.bundle = 0;
+      self.dispatch = d3.dispatch('nodeSelect');
+      self.selectedNode = null;
 
       self.desc = null;
       self.svg = top
@@ -281,6 +282,42 @@
 
     twproto.description = function(container) {
       this.desc = d3.select(container);
+    };
+
+    twproto.selectNode = function(datum, node) {
+      var self = this,
+          lastNode = self.selectedNode;
+      if (lastNode !== node) {
+        self.deselectNode(true); // deselect but suppress event
+        self.nodeSelection = d3.select(node).append('rect')
+          .attr('width', datum.width)
+          .attr('height', datum.height)
+          .attr('x', 0)
+          .attr('y', 0)
+          .style('fill', '#c80000')
+          .style('fill-opacity', '0.1')
+          .style('stroke', '#c80000')
+          .style('stroke-width', '1.5px');
+        self.selectedNode = node;
+        self.dispatch.nodeSelect(datum, node, lastNode);
+      } else {
+        self.deselectNode();
+      }
+    };
+
+    twproto.deselectNode = function(suppressEvent) {
+      var self = this;
+      if (self.nodeSelection) {
+        self.nodeSelection.remove();
+        if (!suppressEvent) {
+          self.dispatch.nodeSelect(null, null, self.selectedNode);
+        }
+        self.selectedNode = self.nodeSelection = null;
+      }
+    };
+
+    twproto.onNodeSelect = function(listener) {
+      this.dispatch.on('nodeSelect', listener);
     };
 
     twproto.nextBundle = function() {
@@ -319,6 +356,7 @@
           hint = Treex.Hint(),
           svg = self.svg, w, h;
 
+      self.deselectNode();
       if (desc) {
         displayDesc(desc, self.svg, bundle);
       }
@@ -327,15 +365,15 @@
       trees.enter().append('g')
         .attr('class', 'tree');
 
-      var lastTree;
+      var lastTree,
+          me = self;
       w = h = 0;
-      trees.each(function(d, index) {
+      trees.each(function(d) {
         var self = d3.select(this),
             style = treex.Stylesheet(d),
             tree = d.layer === 'p' ? d3.layout.nlp.constituency() : d3.layout.nlp.tree(),
             nodes = tree.nodes(d),
             links = tree.links(nodes);
-        var r = 3.5;
 
         !self.select('g.links').empty() || self.append('g').attr('class', 'links');
         !self.select('g.nodes').empty() || self.append('g').attr('class', 'nodes');
@@ -359,7 +397,15 @@
           d.height = bbox.height;
         });
 
+        var mouseout;
         if (desc) {
+          mouseout = function(d) {
+            desc.selectAll('span.'+d.id).classed('highlight', false);
+            if (d.hint) {
+              hint.hide();
+            }
+          };
+
           node
             .on('mouseover', function(d) {
               desc.selectAll('span.'+d.id).classed('highlight', true);
@@ -372,13 +418,19 @@
                 hint.move(d3.event) ;
               }
             })
-            .on('mouseout', function(d) {
-              desc.selectAll('span.'+d.id).classed('highlight', false);
-              if (d.hint) {
-                hint.hide();
-              }
-            });
+            .on('mouseout', mouseout);
         }
+
+        node.on('click', function(d) {
+          me.selectNode(d, this);
+          if (mouseout) {
+            var pos = d3.mouse(this);
+            if (pos[0] < 0 || pos[0] > d.width ||
+                pos[1] < 0 || pos[1] > d.height) {
+              mouseout(d);
+            }
+          }
+        });
 
         tree.computeLayout(nodes);
 
@@ -404,8 +456,8 @@
         lastTree = bbox;
       });
       trees.exit().remove();
-      svg.attr('width', w+10)
-        .attr('height', h+10);
+      svg.attr('width', w+14)   // include possible selection stroke
+        .attr('height', h+12);
     };
 
     function displayDesc(desc, top, bundle) {
@@ -417,7 +469,7 @@
         .each(function(d) {
           var self = d3.select(this),
               main = d[1];
-          if (main == 'newline') self.append('br');
+          if (main === 'newline') self.append('br');
           else self.text(function(d) { return d[0]; });
 
           if (main == 'label' || main == 'newline' || main == 'space') {
