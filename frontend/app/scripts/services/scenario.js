@@ -8,10 +8,10 @@ angular.module('TreexWebApp')
                              }),
         proto = Scenario.prototype,
         template =
-          "Util::SetGlobal language=und    # desired language e.g. en,cs,de...\n" +
-          "Read::Text                      # 'from' parameter will be ignored\n" +
-          "\n# Your scenario goes here...\n\n" +
-          "Write::Treex                    # 'to' parameter will be ignored\n";
+          'Util::SetGlobal language=und    # desired language e.g. en,cs,de...\n' +
+          'Read::Text                      # \'from\' parameter will be ignored\n' +
+          '\n# Your scenario goes here...\n\n' +
+          'Write::Treex                    # \'to\' parameter will be ignored\n';
 
     proto.downloadUrl = function() {
       return api + 'scenarios/' + this.id + '/download';

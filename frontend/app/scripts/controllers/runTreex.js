@@ -2,8 +2,8 @@
 
 angular.module('TreexWebApp').controller(
   'RunTreexCtrl',
-  ['$scope', '$location', '$anchorScroll', '$timeout', '$http', 'Treex', 'Result', 'Scenario', 'Tour', 'apiUrl',
-   function($scope, $location, $anchorScroll, $timeout, $http, Treex, Result, Scenario, Tour, apiUrl) {
+  ['$scope', '$location', '$routeParams', '$anchorScroll', '$timeout', '$http', 'Treex', 'Result', 'Scenario', 'Tour', 'apiUrl',
+   function($scope, $location, $routeParams, $anchorScroll, $timeout, $http, Treex, Result, Scenario, Tour, apiUrl) {
 
      if (Tour.isRunning()) {
        Tour.showStep(1);
@@ -19,6 +19,21 @@ angular.module('TreexWebApp').controller(
      }
 
      $scope.query = Result.lastResult || (Result.lastResult = new Result());
+
+     if (!$scope.query.scenario && $routeParams.scenario) {
+       Scenario.get({id: $routeParams.scenario}, function(data) {
+         var q = $scope.query;
+         q.scenarioId = data.id;
+         q.scenario = data.scenario;
+         q.name = data.name;
+         q.description = data.description;
+         q.sample = data.sample;
+         if (data.sample && !q.input && !q.filename) {
+           q.input = data.sample;
+         }
+         q.compose = true;
+       });
+     }
 
      // constructor for uploaded file
      function uploadedFile(file) {
