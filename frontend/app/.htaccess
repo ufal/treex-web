@@ -218,6 +218,9 @@ AddDefaultCharset utf-8
     RewriteEngine On
     RewriteBase /treex-web/
 
+    RewriteCond %{HTTP:X-Forwarded-For} ^$
+    RewriteRule ^(.*)$ https://ufal-point.mff.cuni.cz/services/treex-web/$1 [R,L]
+
     # if a directory or a file exists, use it directly
     RewriteCond %{REQUEST_FILENAME} !-s
     RewriteCond %{REQUEST_FILENAME} !-l

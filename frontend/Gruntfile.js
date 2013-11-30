@@ -30,7 +30,7 @@ module.exports = function (grunt) {
   var yeomanConfig = {
     app: 'app',
     dist: 'dist',
-    distBase: '/treex-web/'
+    distBase: '/services/treex-web/'
   };
 
   try {
