@@ -221,6 +221,12 @@ body {
     vertical-align: middle;
 }
 
+/* Lindat theme styles */
+
+.lindat-theme-footer {
+    margin-top: 40px;
+}
+
 
 /*
  * jQuery File Upload UI Plugin CSS 8.1
