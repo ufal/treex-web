@@ -17,9 +17,9 @@
     <link rel="stylesheet" href="styles/bootstrap-modal.css">
     <link rel="stylesheet" href="styles/select2.css">
     <link rel="stylesheet" href="styles/joyride-2.1.css">
-    <link rel="stylesheet" href="lindat/public/css/lindat.css">
     <link rel="stylesheet" href="styles/application.css">
     <!-- endbuild -->
+    <link rel="stylesheet" href="lindat/public/css/lindat.css">
 </head>
   <body ng-app="TreexWebApp" id="lindat-tools">
     <!--[if lt IE 7]>
@@ -31,7 +31,7 @@
       <script src="bower_components/json3/lib/json3.min.js"></script>
     <![endif]-->
 
-    <div class="lindat-header" ng-include="'/lindat/header.htm'"></div>
+    <div class="lindat-header" ng-include="'lindat/header.htm'"></div>
 
     <header>
       <nav class="navbar navbar-static-top" bs-navbar>
@@ -67,7 +67,7 @@
       <article ng-view class="row-fluid">
       </article>
     </div>
-    <footer ng-include="'/lindat/footer.htm'" class="lindat-theme-footer">
+    <footer ng-include="'lindat/footer.htm'" class="lindat-theme-footer">
     </footer>
     <ol id="site-tour" style="display:none">
       <li data-id="nav-run" data-options="nextButton:false">
