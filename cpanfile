@@ -36,6 +36,9 @@ requires 'CatalystX::SimpleLogin';
 requires 'HTML::FormHandler' => '0.40001';
 requires 'HTML::FormHandler::Model::DBIC';
 
+# PML
+requires 'Treex::PML';
+
 # misc
 requires 'Catalyst::Plugin::Assets';
 requires 'IPC::Run';            # used to run treex command
@@ -59,6 +62,7 @@ requires 'boolean';
 requires 'Net::SFTP';
 requires 'CHI';
 requires 'Digest::SHA';
+requires 'jQuery::File::Upload';
 
 on 'test' => sub {
     requires 'Test::More' => '0.88';
