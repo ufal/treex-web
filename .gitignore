@@ -13,3 +13,4 @@ MYMETA.*
 /Makefile
 /pm_to_blib
 .#*
+/frontend/.idea/*
