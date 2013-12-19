@@ -163,7 +163,7 @@ sub shibboleth :Local :Args(0) {
   if ($req->header('shib-session-id')) {
     my $organization = $req->header('shib-identity-provider');
 
-    my $persistent_token = first {defined} map { $req->header($_) }
+    my $persistent_token = first {defined && length} map { $req->header($_) }
       qw(eppn persistent-id mail);
 
     my $email = $req->header('mail');
