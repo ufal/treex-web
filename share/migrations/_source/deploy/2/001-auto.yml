@@ -1,0 +1,677 @@
+---
+schema:
+  procedures: {}
+  tables:
+    language_groups:
+      constraints:
+        - deferrable: 1
+          expression: ''
+          fields:
+            - id
+          match_type: ''
+          name: ''
+          on_delete: ''
+          on_update: ''
+          options: []
+          reference_fields: []
+          reference_table: ''
+          type: PRIMARY KEY
+      fields:
+        id:
+          data_type: integer
+          default_value: ~
+          is_auto_increment: 1
+          is_nullable: 0
+          is_primary_key: 1
+          is_unique: 0
+          name: id
+          order: 1
+          size:
+            - 0
+        name:
+          data_type: varchar
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 0
+          is_unique: 0
+          name: name
+          order: 2
+          size:
+            - 200
+        position:
+          data_type: integer
+          default_value: ~
+          is_nullable: 1
+          is_primary_key: 0
+          is_unique: 0
+          name: position
+          order: 3
+          size:
+            - 0
+      indices: []
+      name: language_groups
+      options: []
+      order: 1
+    languages:
+      constraints:
+        - deferrable: 1
+          expression: ''
+          fields:
+            - id
+          match_type: ''
+          name: ''
+          on_delete: ''
+          on_update: ''
+          options: []
+          reference_fields: []
+          reference_table: ''
+          type: PRIMARY KEY
+        - deferrable: 1
+          expression: ''
+          fields:
+            - language_group
+          match_type: ''
+          name: languages_fk_language_group
+          on_delete: CASCADE
+          on_update: CASCADE
+          options: []
+          reference_fields:
+            - id
+          reference_table: language_groups
+          type: FOREIGN KEY
+      fields:
+        code:
+          data_type: varchar
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 0
+          is_unique: 0
+          name: code
+          order: 3
+          size:
+            - 10
+        id:
+          data_type: integer
+          default_value: ~
+          is_auto_increment: 1
+          is_nullable: 0
+          is_primary_key: 1
+          is_unique: 0
+          name: id
+          order: 1
+          size:
+            - 0
+        language_group:
+          data_type: integer
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 0
+          is_unique: 0
+          name: language_group
+          order: 2
+          size:
+            - 0
+        name:
+          data_type: varchar
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 0
+          is_unique: 0
+          name: name
+          order: 4
+          size:
+            - 120
+        position:
+          data_type: integer
+          default_value: ~
+          is_nullable: 1
+          is_primary_key: 0
+          is_unique: 0
+          name: position
+          order: 5
+          size:
+            - 0
+      indices:
+        - fields:
+            - language_group
+          name: languages_idx_language_group
+          options: []
+          type: NORMAL
+      name: languages
+      options: []
+      order: 2
+    result:
+      constraints:
+        - deferrable: 1
+          expression: ''
+          fields:
+            - id
+          match_type: ''
+          name: ''
+          on_delete: ''
+          on_update: ''
+          options: []
+          reference_fields: []
+          reference_table: ''
+          type: PRIMARY KEY
+        - deferrable: 1
+          expression: ''
+          fields:
+            - unique_token
+          match_type: ''
+          name: unique_token
+          on_delete: ''
+          on_update: ''
+          options: []
+          reference_fields: []
+          reference_table: ''
+          type: UNIQUE
+        - deferrable: 1
+          expression: ''
+          fields:
+            - language
+          match_type: ''
+          name: result_fk_language
+          on_delete: CASCADE
+          on_update: CASCADE
+          options: []
+          reference_fields:
+            - id
+          reference_table: languages
+          type: FOREIGN KEY
+        - deferrable: 1
+          expression: ''
+          fields:
+            - user
+          match_type: ''
+          name: result_fk_user
+          on_delete: CASCADE
+          on_update: ''
+          options: []
+          reference_fields:
+            - id
+          reference_table: user
+          type: FOREIGN KEY
+      fields:
+        id:
+          data_type: integer
+          default_value: ~
+          is_auto_increment: 1
+          is_nullable: 0
+          is_primary_key: 1
+          is_unique: 0
+          name: id
+          order: 1
+          size:
+            - 0
+        input_type:
+          data_type: varchar
+          default_value: txt
+          is_nullable: 0
+          is_primary_key: 0
+          is_unique: 0
+          name: input_type
+          order: 7
+          size:
+            - 20
+        job_handle:
+          data_type: varchar
+          default_value: ~
+          is_nullable: 1
+          is_primary_key: 0
+          is_unique: 0
+          name: job_handle
+          order: 2
+          size:
+            - 255
+        language:
+          data_type: integer
+          default_value: ~
+          is_nullable: 1
+          is_primary_key: 0
+          is_unique: 0
+          name: language
+          order: 9
+          size:
+            - 0
+        last_modified:
+          data_type: datetime
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 0
+          is_unique: 0
+          name: last_modified
+          order: 10
+          size:
+            - 0
+        name:
+          data_type: varchar
+          default_value: ~
+          is_nullable: 1
+          is_primary_key: 0
+          is_unique: 0
+          name: name
+          order: 6
+          size:
+            - 120
+        output_type:
+          data_type: varchar
+          default_value: treex
+          is_nullable: 0
+          is_primary_key: 0
+          is_unique: 0
+          name: output_type
+          order: 8
+          size:
+            - 20
+        session:
+          data_type: varchar
+          default_value: ~
+          is_nullable: 1
+          is_primary_key: 0
+          is_unique: 0
+          name: session
+          order: 4
+          size:
+            - 100
+        unique_token:
+          data_type: varchar
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 0
+          is_unique: 1
+          name: unique_token
+          order: 3
+          size:
+            - 60
+        user:
+          data_type: integer
+          default_value: !!perl/ref
+            =: null
+          is_nullable: 1
+          is_primary_key: 0
+          is_unique: 0
+          name: user
+          order: 5
+          size:
+            - 0
+      indices:
+        - fields:
+            - language
+          name: result_idx_language
+          options: []
+          type: NORMAL
+        - fields:
+            - user
+          name: result_idx_user
+          options: []
+          type: NORMAL
+      name: result
+      options: []
+      order: 4
+    scenario_languages:
+      constraints:
+        - deferrable: 1
+          expression: ''
+          fields:
+            - scenario
+            - language
+          match_type: ''
+          name: ''
+          on_delete: ''
+          on_update: ''
+          options: []
+          reference_fields: []
+          reference_table: ''
+          type: PRIMARY KEY
+        - deferrable: 1
+          expression: ''
+          fields:
+            - language
+          match_type: ''
+          name: scenario_languages_fk_language
+          on_delete: CASCADE
+          on_update: CASCADE
+          options: []
+          reference_fields:
+            - id
+          reference_table: languages
+          type: FOREIGN KEY
+        - deferrable: 1
+          expression: ''
+          fields:
+            - scenario
+          match_type: ''
+          name: scenario_languages_fk_scenario
+          on_delete: CASCADE
+          on_update: CASCADE
+          options: []
+          reference_fields:
+            - id
+          reference_table: scenarios
+          type: FOREIGN KEY
+      fields:
+        language:
+          data_type: varchar
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 1
+          is_unique: 0
+          name: language
+          order: 2
+          size:
+            - 0
+        scenario:
+          data_type: integer
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 1
+          is_unique: 0
+          name: scenario
+          order: 1
+          size:
+            - 0
+      indices:
+        - fields:
+            - language
+          name: scenario_languages_idx_language
+          options: []
+          type: NORMAL
+        - fields:
+            - scenario
+          name: scenario_languages_idx_scenario
+          options: []
+          type: NORMAL
+      name: scenario_languages
+      options: []
+      order: 6
+    scenarios:
+      constraints:
+        - deferrable: 1
+          expression: ''
+          fields:
+            - id
+          match_type: ''
+          name: ''
+          on_delete: ''
+          on_update: ''
+          options: []
+          reference_fields: []
+          reference_table: ''
+          type: PRIMARY KEY
+        - deferrable: 1
+          expression: ''
+          fields:
+            - user
+          match_type: ''
+          name: scenarios_fk_user
+          on_delete: CASCADE
+          on_update: ''
+          options: []
+          reference_fields:
+            - id
+          reference_table: user
+          type: FOREIGN KEY
+      fields:
+        created_at:
+          data_type: datetime
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 0
+          is_unique: 0
+          name: created_at
+          order: 8
+          size:
+            - 0
+        description:
+          data_type: text
+          default_value: ~
+          is_nullable: 1
+          is_primary_key: 0
+          is_unique: 0
+          name: description
+          order: 4
+          size:
+            - 0
+        id:
+          data_type: integer
+          default_value: ~
+          is_auto_increment: 1
+          is_nullable: 0
+          is_primary_key: 1
+          is_unique: 0
+          name: id
+          order: 1
+          size:
+            - 0
+        last_modified:
+          data_type: datetime
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 0
+          is_unique: 0
+          name: last_modified
+          order: 9
+          size:
+            - 0
+        name:
+          data_type: varchar
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 0
+          is_unique: 0
+          name: name
+          order: 3
+          size:
+            - 120
+        public:
+          data_type: boolean
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 0
+          is_unique: 0
+          name: public
+          order: 6
+          size:
+            - 0
+        sample:
+          data_type: text
+          default_value: ~
+          is_nullable: 1
+          is_primary_key: 0
+          is_unique: 0
+          name: sample
+          order: 5
+          size:
+            - 0
+        scenario:
+          data_type: text
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 0
+          is_unique: 0
+          name: scenario
+          order: 2
+          size:
+            - 0
+        user:
+          data_type: integer
+          default_value: 0
+          is_nullable: 0
+          is_primary_key: 0
+          is_unique: 0
+          name: user
+          order: 7
+          size:
+            - 0
+      indices:
+        - fields:
+            - user
+          name: scenarios_idx_user
+          options: []
+          type: NORMAL
+      name: scenarios
+      options: []
+      order: 5
+    user:
+      constraints:
+        - deferrable: 1
+          expression: ''
+          fields:
+            - id
+          match_type: ''
+          name: ''
+          on_delete: ''
+          on_update: ''
+          options: []
+          reference_fields: []
+          reference_table: ''
+          type: PRIMARY KEY
+        - deferrable: 1
+          expression: ''
+          fields:
+            - persistent_token
+          match_type: ''
+          name: token_unique
+          on_delete: ''
+          on_update: ''
+          options: []
+          reference_fields: []
+          reference_table: ''
+          type: UNIQUE
+      fields:
+        activate_token:
+          data_type: char
+          default_value: ~
+          is_nullable: 1
+          is_primary_key: 0
+          is_unique: 0
+          name: activate_token
+          order: 10
+          size:
+            - 20
+        active:
+          data_type: boolean
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 0
+          is_unique: 0
+          name: active
+          order: 9
+          size:
+            - 0
+        email:
+          data_type: varchar
+          default_value: ~
+          is_nullable: 1
+          is_primary_key: 0
+          is_unique: 0
+          name: email
+          order: 6
+          size:
+            - 120
+        first_name:
+          data_type: varchar
+          default_value: ~
+          is_nullable: 1
+          is_primary_key: 0
+          is_unique: 0
+          name: first_name
+          order: 4
+          size:
+            - 120
+        id:
+          data_type: integer
+          default_value: ~
+          is_auto_increment: 1
+          is_nullable: 0
+          is_primary_key: 1
+          is_unique: 0
+          name: id
+          order: 1
+          size:
+            - 0
+        is_admin:
+          data_type: boolean
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 0
+          is_unique: 0
+          name: is_admin
+          order: 8
+          size:
+            - 0
+        last_modified:
+          data_type: datetime
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 0
+          is_unique: 0
+          name: last_modified
+          order: 11
+          size:
+            - 0
+        last_name:
+          data_type: varchar
+          default_value: ~
+          is_nullable: 1
+          is_primary_key: 0
+          is_unique: 0
+          name: last_name
+          order: 5
+          size:
+            - 120
+        organization:
+          data_type: varchar
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 0
+          is_unique: 0
+          name: organization
+          order: 3
+          size:
+            - 120
+        password:
+          data_type: char
+          default_value: ~
+          is_nullable: 1
+          is_primary_key: 0
+          is_unique: 0
+          name: password
+          order: 7
+          size:
+            - 59
+        persistent_token:
+          data_type: varchar
+          default_value: ~
+          is_nullable: 0
+          is_primary_key: 0
+          is_unique: 1
+          name: persistent_token
+          order: 2
+          size:
+            - 120
+      indices: []
+      name: user
+      options: []
+      order: 3
+  triggers: {}
+  views: {}
+translator:
+  add_drop_table: 0
+  filename: ~
+  no_comments: 0
+  parser_args:
+    sources:
+      - Scenario
+      - LanguageGroup
+      - Result
+      - ScenarioLanguage
+      - Language
+      - User
+  parser_type: SQL::Translator::Parser::DBIx::Class
+  producer_args: {}
+  producer_type: SQL::Translator::Producer::YAML
+  show_warnings: 0
+  trace: 0
+  version: 0.11016

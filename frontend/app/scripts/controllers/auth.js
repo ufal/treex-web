@@ -3,8 +3,8 @@
 angular.module('TreexWebApp')
   .controller(
     'AuthCtrl',
-    ['$scope', '$rootScope', '$timeout', '$location', '$modal', 'authService', 'Auth',
-     function($scope, $rootScope, $timeout, $location, $modal, authService, Auth) {
+    ['$scope', '$rootScope', '$timeout', '$location', '$modal', '$window', 'authService', 'Auth',
+     function($scope, $rootScope, $timeout, $location, $modal, $window, authService, Auth) {
        var modal = null;
        var modalScope = $rootScope.$new();
 
@@ -32,11 +32,6 @@ angular.module('TreexWebApp')
          $rootScope.loggedIn = false;
        });
 
-       modalScope.auth = {
-         email: 'treex@ufal.mff.cuni.cz',
-         password: 'LetMeIn'
-       };
-
        modalScope.login = function() {
          Auth.login(modalScope.auth)
            .success(function() {
@@ -47,12 +42,38 @@ angular.module('TreexWebApp')
            });
        };
 
-       modalScope.$watch('error', function(value) {
+       modalScope.discojuice = function() {
+         var frame = $('<iframe/>');
+         frame.appendTo($('body'));
+         frame.css({
+           position: 'absolute',
+           'z-index': '1099',
+           border: '0',
+           width: '100%',
+           height: '100%',
+           left: '0',
+           top: '0'
+         });
+         frame.attr('src', 'login.html');
+         angular.forEach(['noMetadata', 'loginFailed', 'loginSuccess'], function(val) {
+           $window[val] = function() {
+             $window.closeIframe();
+           };
+         });
+         $window.closeIframe = function() {
+           frame.remove();
+         };
+       };
+
+       var layout = function() {
          if (!modal) return;
          $timeout(function() {
            modal.modal('layout');
          });
-       });
+       };
+
+       modalScope.$watch('error', layout);
+       modalScope.$watch('localAccount', layout);
 
        function showLogin(forced) {
          modalScope.forced = !!forced;

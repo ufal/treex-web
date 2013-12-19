@@ -52,7 +52,8 @@ sub validate {
     unless (
         $self->ctx->authenticate(
             {
-                email => $values{email},
+                persistent_token => $values{email},
+                organization => 'local',
                 password => $values{password}
             },
             ($self->has_authenticate_realm ? $self->authenticate_realm : ()),

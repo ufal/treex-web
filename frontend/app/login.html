@@ -1,0 +1,69 @@
+<!doctype html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
+  <head>
+    <base href="/" />
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>Treex::Web Interface Login</title>
+    <meta name="viewport" content="width=device-width">
+    <link rel="shortcut icon" href="favicon.ico" />
+
+    <link rel="stylesheet" type="text/css" href="https://static.discojuice.org/css/discojuice.css" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7/jquery.min.js" type="text/javascript"></script>
+    <script src="https://engine.discojuice.org/discojuice-stable.min.js" type="text/javascript"></script>
+    <script src="https://ufal-point.mff.cuni.cz/aai/aai.js" type="text/javascript"></script>
+    <style>
+     div.discojuice {
+       right: 0;
+       left: 50%;
+       width: 700px;
+       margin-left: -350px;
+     }
+    </style>
+    <script type="text/javascript">
+     jQuery(document).ready(function() {
+       var l = window.location,
+       hash = window.location.hash,
+       point = 'https://ufal-point.mff.cuni.cz',
+       target = l.protocol + '//' + l.hostname + (l.port && ':' + l.port) + jQuery('base').attr('href') + 'api/v1/auth/shibboleth',
+       target = target + '?loc=' + l.protocol + '//' + l.hostname + (l.port && ':' + l.port) + jQuery('base').attr('href') + 'login.html';
+       opts = {
+         target: target,
+         responseUrl: point + "/xmlui/themes/UFAL/lib/html/disco-juice.html?",
+         metadataFeed: point + "/xmlui/discojuice/feeds",
+         serviceName: 'Treex::Web Interface',
+       };
+
+       if (window != window.parent && hash) {
+         if (hash === '#no-metadata') {
+           window.parent.noMetadata();
+         } else if (hash == '#failed') {
+           window.parent.loginFailed();
+         } else if (hash == '#success') {
+           window.parent.loginSuccess();
+         }
+       } else {
+         if (!window.aai) {
+           throw 'Failed to find aai.';
+         }
+         aai.setup(opts);
+         jQuery('a.signon').click();
+         jQuery('a').click(function(e) { e.preventDefault(); });
+         jQuery('a.discojuice_close').click(function() {
+           if (window != window.parent && window.parent.closeIframe) {
+             window.parent.closeIframe();
+           } else {
+             window.close();
+           }
+         });
+       }
+     });
+    </script>
+  </head>
+  <body>
+    <a href="#" class="signon" style="display:none"></a>
+  </body>
+</html>

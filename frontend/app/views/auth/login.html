@@ -8,20 +8,43 @@
     <h4>Login Error!</h4>
     {{error}}
   </div>
-  <form name="form">
-    <div class="control-group">
-      <label class="control-label" for="input-email">Email:</label>
-      <input type="email" ng-model="auth.email" id="input-email" required class="input-xlarge" placeholder="Email address">
+  <div ng-hide="localAccount">
+    <div>
+      <p class="alert alert-info">
+        To sign in, you can use any account with an <strong>Identity Provider</strong> that is a member of <strong>EduGAIN</strong> federation.
+        If you don't have an academic account that works with us, let us know. We will make you a local account.
+      </p>
     </div>
-    <div class="control-group">
-      <label class="control-label" for="input-password">Password:</label>
-      <input type="password" ng-model="auth.password" id="input-password" required class="input-xlarge" placeholder="Password">
+    <div class="container-fluid">
+      <div class="row-fluid text-center">
+        <div class="span6">
+          <button class="btn btn-primary btn-large" ng-click="discojuice()">Academic login</button>
+        </div>
+        <div class="span6">
+          <button class="btn btn-large" ng-click="localAccount=true">Local account</button>
+        </div>
+      </div>
     </div>
-    <div class="control-group">
-      <label class="checkbox">
-        <input type="checkbox" ng-model="auth.remember" ng-init="auth.remember=false"> Remember me
-      </label>
-    </div>
-    <input ng-disabled="form.$invalid" ng-click="login()" class="btn btn-large btn-primary" type="submit" value="Sign in" />
-  </form>
+  </div>
+  <div ng-show="localAccount">
+    <form name="form">
+      <div class="pull-right">
+        <button class="btn" ng-click="localAccount=false">Back <i class="icon-chevron-right"></i></button>
+      </div>
+      <div class="control-group">
+        <label class="control-label" for="input-email">Email:</label>
+        <input tabindex="1" autofocus="autofocus" type="email" ng-model="auth.email" id="input-email" required class="input-xlarge" placeholder="Email address">
+      </div>
+      <div class="control-group">
+        <label class="control-label" for="input-password">Password:</label>
+        <input tabindex="2" type="password" ng-model="auth.password" id="input-password" required class="input-xlarge" placeholder="Password">
+      </div>
+      <div class="control-group">
+        <label class="checkbox">
+          <input tabindex="3" type="checkbox" ng-model="auth.remember" ng-init="auth.remember=false"> Remember me
+        </label>
+      </div>
+      <input tabindex="4" ng-disabled="form.$invalid" ng-click="login()" class="btn btn-large btn-primary" type="submit" value="Sign in" />
+    </form>
+  </div>
 </div>

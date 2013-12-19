@@ -86,15 +86,21 @@ __PACKAGE__->table('user');
 __PACKAGE__->add_columns(
     'id',
     { data_type => 'integer', is_auto_increment => 1, is_nullable => 0 },
+    'persistent_token',
+    { data_type => 'varchar', is_nullable => 0, size => 120 },
+    'organization',
+    { data_type => 'varchar', is_nullable => 0, size => 120 },
+    'first_name',
+    { data_type => 'varchar', is_nullable => 1, size => 120 },
+    'last_name',
+    { data_type => 'varchar', is_nullable => 1, size => 120 },
     'email',
-    { data_type => 'varchar', size => 120, is_nullable => 0 },
-    'name',
-    { data_type => 'varchar', size => 120, is_nullable => 1 },
+    { data_type => 'varchar', is_nullable => 1, size => 120 },
     'password',
     {
         data_type => 'char',
         size => 59,
-        is_nullable => 0,
+        is_nullable => 1,
         encode_column => 1,
         encode_class  => 'Crypt::Eksblowfish::Bcrypt',
         encode_args   => { key_nul => 0, cost => 8 },
@@ -129,17 +135,17 @@ __PACKAGE__->set_primary_key('id');
 
 =head1 UNIQUE CONSTRAINTS
 
-=head2 C<email_unique>
+=head2 C<token_unique>
 
 =over 4
 
-=item * L</email>
+=item * L</persistent_token>
 
 =back
 
 =cut
 
-__PACKAGE__->add_unique_constraint('email_unique', ['email']);
+__PACKAGE__->add_unique_constraint('token_unique', ['persistent_token']);
 
 =head1 RELATIONS
 
@@ -186,7 +192,14 @@ Creates a new instace with a L</activate_token>
 sub new {
     my ( $self, $attrs ) = @_;
 
-    $attrs->{active} = 0 unless defined $attrs->{active} && $attrs->{active};
+    $attrs->{organization} ||= 'local';
+
+    unless (defined $attrs->{active} && $attrs->{active}) {
+      $attrs->{active} = 0;
+    } elsif ($attrs->{organization}) {
+      $attrs->{active} = 1;
+    }
+
     $attrs->{activate_token} = $self->get_uuid
         if $attrs->{active} == 0;
     $attrs->{is_admin} = 0;
@@ -204,7 +217,9 @@ Returns name or first part of the email
 
 sub name_or_email {
     my $self = shift;
-    return $self->name if $self->name;
+    my $name = $self->first_name||'';
+    $name .= ' '.$self->last_name if $self->last_name;
+    return $name if $name;
     my @parts = split /@/, $self->email;
     shift @parts;
 }

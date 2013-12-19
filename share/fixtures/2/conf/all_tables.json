@@ -1,0 +1,37 @@
+{
+   "sets" : [
+      {
+         "quantity" : "all",
+         "class" : "Scenario"
+      },
+      {
+         "quantity" : "all",
+         "class" : "LanguageGroup"
+      },
+      {
+         "quantity" : "all",
+         "class" : "Result"
+      },
+      {
+         "quantity" : "all",
+         "class" : "ScenarioLanguage"
+      },
+      {
+         "quantity" : "all",
+         "class" : "Language"
+      },
+      {
+         "quantity" : "all",
+         "class" : "User"
+      }
+   ],
+   "might_have" : {
+      "fetch" : 0
+   },
+   "belongs_to" : {
+      "fetch" : 0
+   },
+   "has_many" : {
+      "fetch" : 0
+   }
+}

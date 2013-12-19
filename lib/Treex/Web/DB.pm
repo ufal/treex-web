@@ -3,7 +3,7 @@ package Treex::Web::DB;
 use Moose;
 use MooseX::MarkAsMethods autoclean => 1;
 extends 'DBIx::Class::Schema';
-our $VERSION = 1;
+our $VERSION = 2;
 
 __PACKAGE__->load_namespaces;
 
