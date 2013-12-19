@@ -45,12 +45,19 @@ angular.module('TreexWebApp')
          });
        }
 
+       // TODO: rewrite this variable mess to some object stuff
        modalScope.$watch(['error', 'localAccount', 'noMetadata', 'loginFailed'], layoutModal);
        modalScope.$watch('loginSuccess', function(value) {
          if (value) {
            modalScope.hideLoginChoice = true;
            layoutModal();
-           Auth.ping().success(successfulPing).error(function() {
+           Auth.ping().success(function() {
+             successfulPing();
+             modalScope.hideLoginChoice = false;
+             angular.forEach(['noMetadata', 'loginFailed', 'loginSuccess', 'localAccount', 'error'], function(val) {
+               modalScope[val] = false;
+             });
+           }).error(function() {
              modalScope.hideLoginChoice = false;
              modalScope.loginSuccess = false;
              modalScope.loginFailed = true;
