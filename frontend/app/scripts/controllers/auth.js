@@ -81,6 +81,7 @@ angular.module('TreexWebApp')
            angular.forEach(['closeIframe', 'noMetadata', 'loginFailed', 'loginSuccess'], function(val) {
              delete $window[val];
            });
+           modalScope.$apply();
          };
          angular.forEach(['noMetadata', 'loginFailed', 'loginSuccess'], function(val) {
            $window[val] = function() {
