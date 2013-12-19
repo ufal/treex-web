@@ -51,8 +51,8 @@ angular.module('TreexWebApp')
          if (value) {
            modalScope.hideLoginChoice = true;
            layoutModal();
-           Auth.ping().success(function() {
-             successfulPing();
+           Auth.ping().success(function(data) {
+             successfulPing(data);
              modalScope.hideLoginChoice = false;
              angular.forEach(['noMetadata', 'loginFailed', 'loginSuccess', 'localAccount', 'error'], function(val) {
                modalScope[val] = false;
