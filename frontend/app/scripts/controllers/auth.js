@@ -46,7 +46,10 @@ angular.module('TreexWebApp')
        }
 
        // TODO: rewrite this variable mess to some object stuff
-       modalScope.$watch(['error', 'localAccount', 'noMetadata', 'loginFailed'], layoutModal);
+       angular.forEach(['error', 'localAccount', 'noMetadata', 'loginFailed'], function(val) {
+         modalScope.$watch(val, layoutModal);
+       });
+
        modalScope.$watch('loginSuccess', function(value) {
          if (value) {
            modalScope.hideLoginChoice = true;
