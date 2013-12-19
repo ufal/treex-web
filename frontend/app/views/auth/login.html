@@ -44,7 +44,7 @@
           <button class="btn btn-primary btn-large" ng-click="discojuice()">Academic login</button>
         </div>
         <div class="span6">
-          <button class="btn btn-large" ng-click="localAccount=true;hideLoginChoice=false">Local account</button>
+          <button class="btn btn-large" ng-click="localAccount=true;hideLoginChoice=true">Local account</button>
         </div>
       </div>
     </div>
@@ -52,7 +52,7 @@
   <div ng-show="localAccount">
     <form name="form">
       <div class="pull-right">
-        <button class="btn" ng-click="localAccount=false;hideLoginChoice=true">Back <i class="icon-chevron-right"></i></button>
+        <button class="btn" ng-click="localAccount=false;hideLoginChoice=false">Back <i class="icon-chevron-right"></i></button>
       </div>
       <div class="control-group">
         <label class="control-label" for="input-email">Email:</label>
