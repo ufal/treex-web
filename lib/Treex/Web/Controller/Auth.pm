@@ -178,6 +178,7 @@ sub shibboleth :Local :Args(0) {
       organization => $organization
     });
 
+    $user->password('');
     $user->email($email);
     $user->first_name($first_name);
     $user->last_name($last_name);
