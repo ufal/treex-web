@@ -9,7 +9,9 @@ angular.module('TreexWebApp')
        var modalScope = $rootScope.$new();
 
        Auth.ping().success(function(data) {
-         if (!data.id) return;
+         if (!data.id) {
+           return;
+         }
          $rootScope.$broadcast('auth:loginConfirmed');
        });
 
@@ -30,6 +32,24 @@ angular.module('TreexWebApp')
 
        $scope.$on('auth:loggedOut', function(){
          $rootScope.loggedIn = false;
+       });
+
+       function layoutModal() {
+         if (!modal) {
+           return;
+         }
+         $timeout(function() {
+           modal.modal('layout');
+         });
+       }
+
+       modalScope.$watch(['error', 'localAccount', 'noMetadata', 'loginFailed'], layoutModal);
+       modalScope.$watch('loginSuccess', function(value) {
+         if (value) {
+           modalScope.hideLoginChoice = true;
+           layoutModal();
+           Auth.ping();
+         }
        });
 
        modalScope.login = function() {
@@ -55,25 +75,20 @@ angular.module('TreexWebApp')
            top: '0'
          });
          frame.attr('src', 'login.html');
+         $window.closeIframe = function() {
+           frame.remove();
+           // clean up global functions
+           angular.forEach(['closeIframe', 'noMetadata', 'loginFailed', 'loginSuccess'], function(val) {
+             delete $window[val];
+           });
+         };
          angular.forEach(['noMetadata', 'loginFailed', 'loginSuccess'], function(val) {
            $window[val] = function() {
+             modalScope[val] = true;
              $window.closeIframe();
            };
          });
-         $window.closeIframe = function() {
-           frame.remove();
-         };
        };
-
-       var layout = function() {
-         if (!modal) return;
-         $timeout(function() {
-           modal.modal('layout');
-         });
-       };
-
-       modalScope.$watch('error', layout);
-       modalScope.$watch('localAccount', layout);
 
        function showLogin(forced) {
          modalScope.forced = !!forced;
@@ -86,11 +101,12 @@ angular.module('TreexWebApp')
          } else {
            getModal().then(function(m) {
              modal = m;
-             if (!$rootScope.loggedIn)
+             if (!$rootScope.loggedIn) {
                m.modal('show');
+             }
            });
          }
-       };
+       }
 
        $scope.showLogin = function() {
          showLogin();
