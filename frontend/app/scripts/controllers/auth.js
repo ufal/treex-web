@@ -8,12 +8,14 @@ angular.module('TreexWebApp')
        var modal = null;
        var modalScope = $rootScope.$new();
 
-       Auth.ping().success(function(data) {
+       function successfulPing(data) {
          if (!data.id) {
            return;
          }
          $rootScope.$broadcast('auth:loginConfirmed');
-       });
+       }
+
+       Auth.ping().success(successfulPing);
 
        $rootScope.loggedIn = false;
 
@@ -48,7 +50,11 @@ angular.module('TreexWebApp')
          if (value) {
            modalScope.hideLoginChoice = true;
            layoutModal();
-           Auth.ping();
+           Auth.ping().success(successfulPing).error(function() {
+             modalScope.hideLoginChoice = false;
+             modalScope.loginSuccess = false;
+             modalScope.loginFailed = true;
+           });
          }
        });
 
