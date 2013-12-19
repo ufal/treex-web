@@ -170,7 +170,7 @@ sub shibboleth :Local :Args(0) {
     my $first_name = $req->header('givenName') || $req->header('cn');
     my $last_name = $req->header('sn');
 
-    return $c->res->redirect($redirect."#no-metadata")
+    return $redirect ? $c->res->redirect($redirect."#no-metadata") : $self->status_ok( $c, entity => $req->headers )
       unless $persistent_token;
 
     my $user = $c->model('WebDB::User')->find_or_new({
@@ -185,11 +185,11 @@ sub shibboleth :Local :Args(0) {
     $user->update_or_insert;
 
     if ($c->authenticate({ dbix_class => { result => $user } })) {
-      return $c->res->redirect($redirect."#success");
+      return $redirect ? $c->res->redirect($redirect."#success") : $self->status_ok( $c, entity => $req->headers );
     }
   }
 
-  return $c->res->redirect($redirect."#failed");
+  return $redirect ? $c->res->redirect($redirect."#failed") : $self->status_ok( $c, entity => $req->headers );
 }
 
 =head1 AUTHOR
