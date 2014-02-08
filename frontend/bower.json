@@ -5,10 +5,10 @@
     "jquery": "~2.0.2",
     "es5-shim": "~2.0.12",
     "json3": "~3.2.5",
-    "d3": "~3.2.2"
+    "d3": "~3.2.2",
+    "angulartics": "~0.8.7"
   },
-  "devDependencies": {
-  },
+  "devDependencies": {},
   "ignore": [
     "**/.*",
     "node_modules",
