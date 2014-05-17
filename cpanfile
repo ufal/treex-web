@@ -4,6 +4,7 @@ requires 'Catalyst::Plugin::ConfigLoader';
 requires 'Catalyst::Plugin::Static::Simple';
 requires 'Catalyst::Model::Adaptor';
 requires 'Moose';
+requires 'MooseX::SemiAffordanceAccessor';
 requires 'namespace::autoclean';
 requires 'Config::Any'; # This should reflect the config file format you've chosen
                         # See Catalyst::Plugin::ConfigLoader for supported forma
@@ -11,6 +12,7 @@ requires 'Config::Any'; # This should reflect the config file format you've chos
 # DB stuff
 requires 'Catalyst::Model::DBIC::Schema';
 requires 'DBIx::Class::Migration';
+requires 'DBIx::Class::Cursor::Cached';
 requires 'DBIx::Class::TimeStamp';
 requires 'DBIx::Class::UUIDColumns';
 requires 'DBIx::Class::EncodedColumn';
@@ -38,6 +40,9 @@ requires 'HTML::FormHandler::Model::DBIC';
 
 # PML
 requires 'Treex::PML';
+requires 'PerlIO::via::gzip';
+requires 'Cache::LRU';
+
 
 # misc
 requires 'Catalyst::Plugin::Assets';
@@ -65,6 +70,6 @@ requires 'Digest::SHA';
 requires 'jQuery::File::Upload';
 
 on 'test' => sub {
-    requires 'Test::More' => '0.88';
-    requires 'DBICx::TestDatabase';
+  requires 'Test::More' => '0.88';
+  requires 'DBICx::TestDatabase';
 };

@@ -278,7 +278,7 @@ module.exports = function (grunt) {
             'bower_components/**/*',
             'images/{,*/}*.{gif,webp,svg}',
             'lindat/{header,footer}.htm',
-            'lindat/public/{,*/}*',
+            'lindat/public/**/*',
             'styles/fonts/*',
             'scripts/ace/*'
           ]
