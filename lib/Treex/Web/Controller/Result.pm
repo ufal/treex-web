@@ -154,6 +154,7 @@ All above serves as dummy methods using C<:ActionClass('REST')>
 sub status   :Chained('result') :PathPart(status)   :Args(0) :ActionClass('REST') { };
 sub input    :Chained('result') :PathPart(input)    :Args(0) :ActionClass('REST') { };
 sub error    :Chained('result') :PathPart(error)    :Args(0) :ActionClass('REST') { };
+sub output   :Chained('result') :PathPart(output)   :Args(0) :ActionClass('REST') { };
 sub scenario :Chained('result') :PathPart(scenario) :Args(0) :ActionClass('REST') { };
 
 =head2 status_GET
@@ -193,6 +194,18 @@ sub error_GET {
     my ( $self, $c ) = @_;
     my $curr = $c->stash->{current_result};
     $self->status_ok($c, entity => { error => $curr->error_log } );
+}
+
+=head2 output_GET
+
+Returns C<current_result>'s standard output log
+
+=cut
+
+sub output_GET {
+    my ( $self, $c ) = @_;
+    my $curr = $c->stash->{current_result};
+    $self->status_ok($c, entity => { output => $curr->output_log } );
 }
 
 =head2 scenario_GET

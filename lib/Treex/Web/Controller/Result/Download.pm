@@ -49,7 +49,7 @@ sub all :Chained('base') :PathPart('') :Args(0) {
     my $fh = new IO::Scalar \$data;
 
     my $path = $curr->files_path;
-    for (qw/scenario.scen error.log/, 'input.'.$curr->input_type, 'result.'.$curr->output_type) {
+    for (qw/scenario.scen error.log out.log/, 'input.'.$curr->input_type, 'result.'.$curr->output_type) {
         my $file = File::Spec->catfile($path, $_);
         next unless -e $file;
         $zip->addFile($file, $_);
@@ -128,6 +128,27 @@ sub scenario :Chained('base') :PathPart('scenario') :Args(0) {
     } else {
         $c->res->code(404);
     }
+}
+
+=head2 output
+
+Downloads standard output if any
+
+=cut
+
+sub output :Chained('base') :PathPart('output') :Args(0) {
+  my ( $self, $c ) = @_;
+
+  my $curr = $c->stash->{current_result};
+  my $path = $curr->files_path;
+  my $filename = 'out.log';
+  my $file = File::Spec->catfile($path, $filename);
+  if (-f $file) {
+    $c->res->header('Content-Disposition', qq[attachment; filename="output.txt"]);
+    $c->serve_static_file($file);
+  } else {
+    $c->res->code(404);
+  }
 }
 
 =head1 AUTHOR

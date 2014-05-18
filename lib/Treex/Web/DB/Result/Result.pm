@@ -211,6 +211,7 @@ sub REST {
         name => decode_utf8($self->name),
         printable => ($self->output_type eq 'treex' ? true : false),
         output_type => $self->output_type,
+        has_output_log => ($self->has_output_log ? true : false),
         input_type => $self->input_type,
         token => $self->unique_token,
         last_modified => $self->last_modified->strftime('%Y-%m-%dT%H:%M:%S%z'),
@@ -230,6 +231,7 @@ sub rest_schema {
         name => { type => 'string' },
         printable => { type => 'boolean' },
         output_type => { type => 'string' },
+        has_output_log => { type => 'boolean' },
         input_type => { type => 'string' },
         token => { type => 'string' },
         last_modified => { type => 'string' }
@@ -367,6 +369,29 @@ Gets error log
 
 sub error_log {
     shift->_file_rw('error.log');
+}
+
+=head2 has_output_log
+
+Gets output log
+
+=cut
+
+sub has_output_log {
+    my $self = shift;
+    my $path = $self->files_path->stringify;
+    my $file = File::Spec->catfile($path, 'out.log');
+    return -s $file;
+}
+
+=head2 output_log
+
+Gets output log
+
+=cut
+
+sub output_log {
+    shift->_file_rw('out.log');
 }
 
 sub _file_rw {

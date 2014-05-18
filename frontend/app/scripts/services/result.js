@@ -9,6 +9,7 @@ angular.module('TreexWebApp')
         this.downloadAllUrl = 'results/' + this.token + '/download';
         this.downloadResultUrl = this.downloadAllUrl + '/result';
         this.downloadInputUrl = this.downloadAllUrl + '/input';
+        this.downloadOutputUrl = this.downloadAllUrl + '/output';
         this.downloadScenarioUrl = this.downloadAllUrl + '/scenario';
       }
     }
@@ -72,7 +73,7 @@ angular.module('TreexWebApp')
       return true;
     };
 
-    angular.forEach(['input', 'error', 'scenario', 'print'], function(name) {
+    angular.forEach(['input', 'output', 'error', 'scenario', 'print'], function(name) {
       var has = 'has' + name.charAt(0).toUpperCase() + name.slice(1);
       Result.prototype['$'+name] = function() {
         var self = this;

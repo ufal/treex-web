@@ -55,10 +55,18 @@
       </div>
       <ul class="nav nav-tabs">
         <li><a bs-show-tab="result.$scenario()" bs-active-tab href="#scenario" data-toggle="tab">Scenario</a></li>
+        <li><a tw-if="result.has_output_log" bs-show-tab="result.$output()" bs-active-tab href="#output" data-toggle="tab">Output</a></li>
         <li><a bs-show-tab="result.$input()" href="#input" data-toggle="tab">Input</a></li>
         <li><a bs-show-tab="result.$error()" href="#stderr" data-toggle="tab">Error Log</a></li>
       </ul>
       <div class="tab-content result-tabs">
+        <div class="tab-pane" id="output">
+          <p tw-if="result.hasOutput"><a tw-download="{{result.downloadOutputUrl}}">Download output</a></p>
+          <pre tw-if="result.output" class="pre-scrollable">{{result.output}}</pre>
+          <div tw-if="result.hasOutput && !result.output" class="alert alert-error">
+            Output is empty.
+          </div>
+        </div>
         <div class="tab-pane" id="scenario">
           <p tw-if="result.scenario"><a tw-download="{{result.downloadScenarioUrl}}">Download scenario</a></p>
           <pre tw-if="result.scenario" class="pre-scrollable" ace-highlight="perl" ng-model="result.scenario"></pre>

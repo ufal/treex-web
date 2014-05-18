@@ -69,10 +69,11 @@ sub run_local {
     push @cmd, "scenario.scen";
 
     open my $err, ">error.log" or die $!;
+    open my $out, ">out.log" or die $!;
     my $timeout = 5*60; # 5 minutes
     my ( $ret, $h );
     try {
-        $h = harness \@cmd, '<', \undef, '>&', $err, (my $t = timeout($timeout, exception => Treex::Web::Job::Exception::TimedOut->new()));
+        $h = harness \@cmd, \undef, $out, $err, (my $t = timeout($timeout, exception => Treex::Web::Job::Exception::TimedOut->new()));
         $h->start;
         $h->{non_blocking}   = 0;
         $h->{auto_close_ins} = 1;
@@ -98,6 +99,9 @@ sub run_local {
         }
         $h->kill_kill(grace => 5); # this can also throw
     };
+
+    close $err;
+    close $out;
 
     return $ret;
 }
