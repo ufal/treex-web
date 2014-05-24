@@ -20,7 +20,12 @@ angular.module('TreexWebApp')
         fake.resolve({});
         return fake.promise;
       }
-      var promise = $http[method](api + 'results/' + token);
+      var args = Array.prototype.slice.call(arguments, 2),
+          cmd = '';
+      if (args.length > 0) {
+        cmd = '/' + args.join('/');
+      }
+      var promise = $http[method](api + 'results/' + token + cmd);
       return promise.then(function(responce) {
         return new Result(responce.data);
       });
@@ -72,6 +77,8 @@ angular.module('TreexWebApp')
       this.$job();
       return true;
     };
+
+    Result.prototype.$files = function() { return asyncCmd('get', this.token, 'files'); };
 
     angular.forEach(['input', 'output', 'error', 'scenario', 'print'], function(name) {
       var has = 'has' + name.charAt(0).toUpperCase() + name.slice(1);

@@ -145,7 +145,11 @@ sub item_DELETE {
 
 =head2 error
 
+=head2 output
+
 =head2 scenario
+
+=head2 files
 
 All above serves as dummy methods using C<:ActionClass('REST')>
 
@@ -156,6 +160,7 @@ sub input    :Chained('result') :PathPart(input)    :Args(0) :ActionClass('REST'
 sub error    :Chained('result') :PathPart(error)    :Args(0) :ActionClass('REST') { };
 sub output   :Chained('result') :PathPart(output)   :Args(0) :ActionClass('REST') { };
 sub scenario :Chained('result') :PathPart(scenario) :Args(0) :ActionClass('REST') { };
+sub files    :Chained('result') :PathPart(files)    :Args(0) :ActionClass('REST') { };
 
 =head2 status_GET
 
@@ -218,6 +223,18 @@ sub scenario_GET {
     my ( $self, $c ) = @_;
     my $curr = $c->stash->{current_result};
     $self->status_ok($c, entity => { scenario => $curr->scenario } );
+}
+
+=head2 files_GET
+
+Returns C<current_result>'s files list
+
+=cut
+
+sub files_GET {
+    my ( $self, $c ) = @_;
+    my $curr = $c->stash->{current_result};
+    $self->status_ok($c, entity => { files => $curr->list_directory } );
 }
 
 =head2 print_result

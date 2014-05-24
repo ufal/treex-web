@@ -409,7 +409,7 @@ sub _file_rw {
     } else {
         # ignore too large files
         my $filesize = -s $file;
-        if ($filesize > 1024*500) {
+        if (($filesize||0) > 1024*500) {
             return '';
         }
         open my $fh, '<', $file or return "";
@@ -458,6 +458,26 @@ sub files_path {
 
     my $hash = $self->unique_token;
     return Treex::Web->path_to('data', 'results', substr($hash, 0, 2), $hash);
+}
+
+sub list_directory {
+    my $self = shift;
+    my $path = $self->files_path->stringify;
+
+    return [] unless -d $path;
+
+    opendir(my $dh, $path) or die "Cannot open dir: $!";
+    my @files = sort { $a->{name} cmp $b->{name} } map {
+        my $file = File::Spec->catfile($path, $_);
+        {
+            name => $_,
+            filesize => -s $file,
+            is_treex => (/\.treex(?:\.gz)?$/) ? true : false,
+            is_text => -T $file ? true : false,
+        }
+    } grep { !-d } readdir $dh;
+    closedir $dh;
+    return \@files;
 }
 
 __PACKAGE__->meta->make_immutable(inline_constructor => 0);
