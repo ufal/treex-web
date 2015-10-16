@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('TreexWebApp', ['$strap.directives', 'http-auth-interceptor', 'blueimp.fileupload', 'ngResource', 'ngRoute', 'angulartics', 'angulartics.google.analytics'])
+angular.module('TreexWebApp', ['$strap.directives', 'http-auth-interceptor', 'blueimp.fileupload', 'ngResource', 'ngRoute', 'lindat'])
   .config(['$routeProvider', '$locationProvider', function($routeProvider, $locationProvider) {
     $routeProvider.
       when('/', { templateUrl: 'views/home.html', controller: 'MainCtrl' }).
@@ -19,12 +19,15 @@ angular.module('TreexWebApp', ['$strap.directives', 'http-auth-interceptor', 'bl
 
     $locationProvider.html5Mode(true);
   }])
-  .run(['$rootScope', function(scope) {
+  .run(['$rootScope', 'Piwik', '$location', function(scope, Piwik, $location) {
 
     // register listener to watch route changes
     scope.$on( '$routeChangeStart', function(event, next) {
       if (next && next.login === true) {
         scope.$broadcast('auth:loginRequired');
       }
+
+      Piwik.setCustomUrl($location.absUrl());
+      Piwik.trackPageView();
     });
   }]);

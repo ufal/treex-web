@@ -6,7 +6,7 @@
     "es5-shim": "~2.0.12",
     "json3": "~3.2.5",
     "d3": "~3.2.2",
-    "angulartics": "~0.8.7"
+    "lindat-common": "releases"
   },
   "devDependencies": {},
   "ignore": [
@@ -17,5 +17,9 @@
     "lib",
     "test",
     "src"
-  ]
+  ],
+  "resolutions": {
+    "jquery": "~2.1.4",
+    "angular": ">=1"
+  }
 }
