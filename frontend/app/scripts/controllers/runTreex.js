@@ -70,7 +70,7 @@ angular.module('TreexWebApp').controller(
      }
 
      if (!$scope.query.input) {
-       $scope.queue = $http.get(apiUrl + '/query/upload').success(function(data) {
+       $http.get(apiUrl + '/query/upload').success(function(data) {
          angular.forEach(data.files, uploadedFile);
          var file = data.files[0];
          if (file && !$scope.query.input) {
@@ -149,7 +149,7 @@ angular.module('TreexWebApp').controller(
        maxFileSize: 5000000, // 5MB
        //maxNumberOfFiles: 1,
        autoUpload: true,
-       formData: function(form) { return ''; },
+       formData: function(form) { return {}; },
        add: function (e, data) {
          var scope = data.scope();
          data.process(function () {
